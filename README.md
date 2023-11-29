@@ -7,6 +7,7 @@ Notamment en lui proposant des indicateurs issus des différentes tâches qu'il 
 
 L'outil au final sera composé de "modules".
 Chaque "module" sera dédié à une partie du travail du RSSI/RPCA.
+Comme je suis également l'auteur de Loxense, ce dernier sera inclus dans Loxense qui va devenir à son tour GPLv2 (à suivre...)
 
 Pour des raisons pratiques, le premier module sera dédié à la gestion de la "Continuité" :
 - Gestion des BIA (Bilan d'Impact sur l'Activité) ou BIA (Business Impact Analysis)

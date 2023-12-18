@@ -1,0 +1,162 @@
+.plmTree {
+	width: 100%;
+}
+
+
+.plmTree-spacer, .plmTree-code, .plmTree-version, .plmTree-label, .plmTree-mesures, .plmTree-actions {
+	float: left;
+	margin: 0 9px;
+}
+
+.plmTree-actions .btn-sm {
+	font-size: 12px;
+}
+
+.plmTree-actions .btn-sm {
+	padding: 3px 6px;
+}
+
+.row.level-1, .row.level-2, .row.level-3, .row.level-4, .row.level-5, .row.level-6 {
+	padding: 6px 0;
+}
+.plmTree-spacer, .plmTree-code, .plmTree-version, .plmTree-label, .plmTree-mesures {
+	cursor: pointer;
+}
+
+
+/* Tailles pour le niveau 1 */
+.level-1 .plmTree-spacer {
+	margin-left: 0;
+	max-width: 2%;
+}
+
+.level-1 .plmTree-code {
+	max-width: 10%;
+}
+
+.level-1 .plmTree-version {
+	max-width: 6%;
+}
+
+.level-1 .plmTree-label {
+	max-width: 66%;
+}
+
+.level-1 .plmTree-actions {
+	max-width: 10%;
+}
+
+
+/* Tailles pour le niveau 2 */
+.level-2 .plmTree-spacer {
+	margin-left: 2%;
+	max-width: 2%;
+}
+
+.level-2 .plmTree-code {
+	max-width: 3%;
+}
+
+.level-2 .plmTree-label {
+	max-width: 78%;
+}
+
+.level-2 .plmTree-mesures {
+	max-width: 6%;
+}
+
+.level-2 .plmTree-actions {
+	max-width: 10%;
+}
+
+
+/* Tailles pour le niveau 3 */
+.level-3 .plmTree-spacer {
+	margin-left: 4%;
+	max-width: 2%;
+}
+
+.level-3 .plmTree-code {
+	max-width: 4%;
+}
+
+.level-3 .plmTree-label {
+	max-width: 75%;
+}
+
+.level-3 .plmTree-mesures {
+	max-width: 6%;
+}
+
+.level-3 .plmTree-actions {
+	max-width: 10%;
+}
+
+
+/* Tailles pour le niveau 4 */
+.level-4 .plmTree-spacer {
+	margin-left: 6%;
+	max-width: 2%;
+}
+
+.level-4 .plmTree-code {
+	max-width: 6%;
+}
+
+.level-4 .plmTree-label {
+	max-width: 71%;
+}
+
+.level-4 .plmTree-mesures {
+	max-width: 6%;
+}
+
+.level-4 .plmTree-actions {
+	max-width: 10%;
+}
+
+
+/* Tailles pour le niveau 5 */
+.level-5 .plmTree-spacer {
+	margin-left: 8%;
+	max-width: 2%;
+}
+
+.level-5 .plmTree-code {
+	max-width: 8%;
+}
+
+.level-5 .plmTree-label {
+	max-width: 67%;
+}
+
+.level-5 .plmTree-mesures {
+	max-width: 6%;
+}
+
+.level-5 .plmTree-actions {
+	max-width: 10%;
+}
+
+
+/* Tailles pour le niveau 6 */
+.level-6 .plmTree-spacer {
+	margin-left: 10%;
+	max-width: 2%;
+}
+
+.level-6 .plmTree-code {
+	max-width: 10%;
+}
+
+.level-6 .plmTree-label {
+	max-width: 63%;
+}
+
+.level-6 .plmTree-mesures {
+	max-width: 6%;
+}
+
+.level-6 .plmTree-actions {
+	max-width: 10%;
+}

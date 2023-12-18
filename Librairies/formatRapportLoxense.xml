@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<RapportLoxense>
+
+ <Chapitre nom="page_garde" orientation="portrait" />
+
+ <Chapitre nom="table_matieres" orientation="portrait" />
+
+ <Chapitre nom="perimetre_cartographie" orientation="portrait">
+ 	<Chapitre nom="presentation" />
+ 	<Chapitre nom="valorisation_actifs_primordiaux" organisation="informations,fonctions,tableau_synthese" />
+ 	<Chapitre nom="localisation_actifs_primordiaux" orientation="paysage" />
+ </Chapitre>
+
+ <Chapitre nom="conclusion_analyse_cartographie" orientation="portrait" limitation="10" />
+
+ <Chapitre nom="risques" orientation="portrait" organisation="evenement_redoutes,actifs_primordiaux,actif_support,menace,vulnerabilites,impacts,sources_menaces,scenario,evaluation,traitement,mesures" />
+ 
+ <Chapitre nom="actifs_primordiaux_risques" orientation="paysage" />
+
+ <Chapitre nom="risques_mesures" orientation="paysage" />
+
+ <Chapitre nom="actifs_primordiaux_mesures" orientation="paysage" />
+
+ <Chapitre nom="repartition_risques" orientation="portrait" />
+
+</RapportLoxense>

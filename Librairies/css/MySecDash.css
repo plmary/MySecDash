@@ -1,0 +1,76 @@
+body {
+	padding-top: 0px;
+	background-color: #ECECEC;
+/*    background: #ECECEC url('../../Images/fond_metal.jpeg') no-repeat center fixed; /* fond-papier.gif fond_metal.jpeg'); */
+/*    -webkit-background-size: cover;
+    background-size: cover; */
+}
+
+
+/* ====================================
+** Personalisation de la barre de menu
+*/
+footer {
+	color: grey;
+	font-family: tahoma;
+	font-size: 12px;
+	background-color: #FCFCFC;
+	border-top: 1px solid grey;
+	padding: 3px 6px;
+    margin-top: 10px;
+	width: 100%;
+    line-height: 22px;
+    position: static;
+    bottom: 0;
+}
+
+footer button {
+    float: right;
+    margin-left: 6px
+}
+
+/* Change la couleur des boutons par défaut */
+.btn-outline-secondary {
+    color: #8F58A2;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #8F58A2;
+}
+
+
+/* ===========================================
+** Personalisation des conteneurs spécifiques
+*/
+#principal-container {
+	width: 50%;
+	margin: 0 auto;
+    min-width: 502px;
+}
+
+#login-form {
+	width: 50%;
+	margin: 0 auto;
+}
+
+#screen-title {
+    padding: 0 15px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+div#screen-title .btn {
+    font-weight: bold;
+}
+
+.btn-group-vertical > .btn, .btn-group > .btn {
+    text-align: left;
+}
+
+.btn-group .open > ul.dropdown-menu {
+    width: 100%;
+}
+
+#login-form img {
+    margin-right: 6px;
+}

@@ -1,0 +1,30 @@
+{
+	"Items": [
+		{"NomItem": "MenuAdmin", "LibelleItem": "@L_Menu_Admin", "ListeDeroulante": true, "Items": [
+			{"LibelleItem": "@L_Referentiel_Interne", "Items" : [
+				{"LibelleItem": "@L_Parametres_Base", "Lien": "https://loxense1.local/Loxense-Parametres.php"},
+				{"LibelleItem": "@L_Referentiel_Conformite", "Lien": "https://loxense1.local/Loxense-ReferentielsConformite.php"}
+			]},
+			{"LibelleItem": "@L_Controle_Acces", "Items" : [
+				{"LibelleItem": "@L_Entites", "Lien": "https://loxense1.local/Loxense-Entites.php"},
+				{"LibelleItem": "@L_Civilites", "Lien": "https://loxense1.local/Loxense-Civilites.php"},
+				{"LibelleItem": "@L_Applications", "Lien": "https://loxense1.local/Loxense-Applications.php"},
+				{"LibelleItem": "@L_Profils", "Lien": "https://loxense1.local/Loxense-Profils.php"},
+				{"LibelleItem": "@L_Utilisateurs", "Lien": "https://loxense1.local/Loxense-Utilisateurs.php"},
+				{"LibelleItem": "@L_Gestionnaires", "Lien": "https://loxense1.local/Loxense-Gestionnaires.php"},
+				{"LibelleItem": "@L_Etiquettes", "Lien": "https://loxense1.local/Loxense-Etiquettes.php"}
+			]},
+			{"LibelleItem": "Historique des actions", "Lien" : "https://loxense1.local/Loxense-Entites.php"},
+			{"LibelleItem": "Export / Import de la base", "Lien" : "https://loxense1.local/Loxense-ImportExportBase.php"}
+		]},
+		{"NomItem": "MenuTest", "LibelleItem": "L_MenuTest", "ListeDeroulante": true, "Items": [
+			{"LibelleItem": "Référentiel interne", "Items" : [
+				{"LibelleItem": "Paramètres de base", "Lien": "https://loxense1.local/Loxense-Parametres.php"},
+				{"LibelleItem": "Référentiels de conformité", "Lien": "https://loxense1.local/Loxense-ReferentielsConformite.php"}
+			]},
+			{"LibelleItem": "Contrôle d'accès", "Items" : [
+				{"LibelleItem": "Entités", "Lien": "https://loxense1.local/Loxense-Entites.php"}
+			]}
+		]}
+	]
+}

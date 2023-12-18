@@ -1,0 +1,266 @@
+<!doctype html>
+
+<html lang="en">
+ <head>
+  <!-- Définition des métadonnées -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Type" content="text/html;" />
+  <meta name="description" content="Loxense, outil de gestion des actions de sécurité" />
+  <meta name="author" content="Pierre-Luc MARY" />
+  <meta name="copyright" content="Loxense" />
+  <title>Loxense - Gestion des actifs primordiaux</title>
+  <link type="image/png" href="Images/Icon-MySecDash-1.svg" rel="icon">
+  <!-- Chargement des feuilles de styles -->
+  <link href="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/css/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" media="screen">
+  <link href="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/bootstrap-dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link rel="stylesheet" type="text/css" href="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/css/MySecDash-1.css" media="screen">
+  <link rel="stylesheet" type="text/css" href="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/css/bootstrap-colorselector.css" />
+  <link rel="stylesheet" type="text/css" href="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/summernote-dist/summernote-bs4.css" />
+  <!-- Chargement de Jquery clé de voute -->
+  <script src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/js/jquery.min.js"></script>
+  <!-- Chargement de "moment" bibliothèque de gestion des Dates -->
+  <script src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/js/moment.min.js"></script>
+  <!-- Chargement des JavaScripts spécifiques -->
+  <script src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/js/Loxense-ActifsPrimordiaux/Lecture.js"></script>
+  <script src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/js/Loxense-ActifsPrimordiaux/Ajouter.js"></script>
+  <script src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/js/Loxense-ActifsPrimordiaux/Modifier.js"></script>
+  <script src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/js/Loxense-ActifsPrimordiaux/Supprimer.js"></script>
+  <script>
+   var Parameters = new Array(); // Paramètre global pour communiquer entre les Javascripts
+   Parameters['URL_BASE'] = 'file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/';
+
+   Parameters['URL_PICTURES'] = 'file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Images';
+
+   Parameters['SCRIPT'] = '/Loxense-ActifsPrimordiaux.php';
+
+   Parameters['TravailEnCours'] = 'Travail en cours';
+   Parameters['internal_timer_message']; // 'Timer' général pour l'affichage des messages.
+  </script>
+ </head>
+
+ <body>
+  <nav class="navbar navbar-expand-lg fixed-top">
+   <div class="container-fluid">
+    <a class="navbar-brand" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample"><img src="Images/Logo-MySecDash-4.svg" alt="Logo" height="25" /></a>
+    <button class="navbar-toggler btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavPrincipal" aria-controls="navbarNavPrincipal" aria-expanded="false" aria-label="Toggle navigation"><i class="bi-list"></i></button>
+    <div class="collapse navbar-collapse" id="navbarNavPrincipal">
+     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <li class="nav-item dropdown">
+       <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuAdmin" data-bs-toggle="dropdown" role="button" aria-expanded="false">Administration</a>
+       <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuAdmin">
+        <li class="dropdown-submenu">
+         <a href="#" class="dropdown-item">Référentiel interne</a>
+         <ul class="dropdown-menu">
+          <li><a href="https://loxense1.local/Loxense-Parametres.php" class="dropdown-item">Paramètres de base</a></li>
+          <li><a href="https://loxense1.local/Loxense-TypesActifSupport.php" class="dropdown-item">Types d'actif support</a></li>
+          <li><a href="https://loxense1.local/Loxense-ReferentielActifsPrimordiaux.php" class="dropdown-item">Référentiel des actifs primordiaux</a></li>
+          <li><a href="https://loxense1.local/Loxense-ReferentielActifsSupports.php" class="dropdown-item">Référentiel des actifs supports</a></li>
+          <li><a href="https://loxense1.local/Loxense-TypesMenaceGenerique.php" class="dropdown-item">Types de menace générique</a></li>
+          <li><a href="https://loxense1.local/Loxense-MenacesGeneriques.php" class="dropdown-item">Menaces génériques</a></li>
+          <li><a href="https://loxense1.local/Loxense-VulnerabilitesGeneriques.php" class="dropdown-item">Vulnérabilités génériques</a></li>
+          <li><a href="https://loxense1.local/Loxense-SourcesMenaces.php" class="dropdown-item">Sources de menaces</a></li>
+          <li><a href="https://loxense1.local/Loxense-RisquesGeneriques.php" class="dropdown-item">Risques génériques</a></li>
+          <li><a href="https://loxense1.local/Loxense-TypesTraitementRisques.php" class="dropdown-item">Types de traitement des risques</a></li>
+          <li><a href="https://loxense1.local/Loxense-ImpactsGeneriques.php" class="dropdown-item">Impacts génériques</a></li>
+          <li><a href="https://loxense1.local/Loxense-MesuresGeneriques.php" class="dropdown-item">Mesures génériques</a></li>
+          <li><a href="https://loxense1.local/Loxense-ReferentielsConformite.php" class="dropdown-item">Référentiels de conformité</a></li>
+         </ul>
+        </li>
+        <li class="dropdown-submenu">
+         <a href="https://loxense1.local/Loxense-Utilisateurs.php" class="dropdown-item">Contrôle d'accès</a>
+         <ul class="dropdown-menu">
+          <li><a href="https://loxense1.local/Loxense-Entites.php" class="dropdown-item">Entités</a></li>
+          <li><a href="https://loxense1.local/Loxense-Civilites.php" class="dropdown-item">Civilités</a></li>
+          <li><a href="https://loxense1.local/Loxense-Applications.php" class="dropdown-item">Applications</a></li>
+          <li><a href="https://loxense1.local/Loxense-Profils.php" class="dropdown-item">Profils</a></li>
+          <li><a href="https://loxense1.local/Loxense-Utilisateurs.php" class="dropdown-item">Utilisateurs</a></li>
+          <li><a href="https://loxense1.local/Loxense-Gestionnaires.php" class="dropdown-item">Gestionnaires techniques</a></li>
+          <li><a href="https://loxense1.local/Loxense-Etiquettes.php" class="dropdown-item">Étiquettes</a></li>
+         </ul>
+        </li>
+        <li role="separator" class="divider"></li>
+        <li><a href="https://loxense1.local/Loxense-Historiques.php" class="dropdown-item">Historique des actions</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="https://loxense1.local/Loxense-ExportBase.php" class="dropdown-item">Export / Import de la base</a></li>
+       </ul>
+      </li>
+      <li class="nav-item dropdown">
+       <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" id="navbarDropdownMenuCarto" aria-expanded="false">Gestion des risques</a>
+       <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuCarto">
+        <li><a href="https://loxense1.local/Loxense-CriteresValorisationActifs.php" class="dropdown-item">Critères de valorisation des actifs</a></li>
+        <li><a href="https://loxense1.local/Loxense-CriteresAppreciationAcceptationRisques.php" class="dropdown-item">Critères d'appréciation des risques</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a href="https://loxense1.local/Loxense-GrillesImpacts.php" class="dropdown-item">Grilles d'impact</a></li>
+        <li><a href="https://loxense1.local/Loxense-GrillesVraisemblances.php" class="dropdown-item">Grilles de vraisemblance</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a href="https://loxense1.local/Loxense-CartographiesRisques.php" class="dropdown-item">Cartographies des risques</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a href="https://loxense1.local/Loxense-ActifsPrimordiaux.php" class="dropdown-item">Actifs primordiaux</a></li>
+        <li><a href="https://loxense1.local/Loxense-ActifsSupports.php" class="dropdown-item">Actifs supports</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a href="https://loxense1.local/Loxense-EvenementsRedoutes.php" class="dropdown-item">Événements redoutés</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a href="https://loxense1.local/Loxense-AppreciationRisques.php" class="dropdown-item">Appréciation des risques</a></li>
+        <li><a href="https://loxense1.local/Loxense-TraitementRisques.php" class="dropdown-item">Traitement des risques</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a href="https://loxense1.local/Loxense-EditionsRisques.php" class="dropdown-item">Éditions des risques</a></li>
+        <li><a href="https://loxense1.local/Loxense-MatricesRisques.php" class="dropdown-item">Matrices des risques</a></li>
+       </ul>
+      </li>
+      <li class="nav-item dropdown">
+       <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuConfo" data-bs-toggle="dropdown" role="button" aria-expanded="false">Gestion de la conformité <span class="caret"></span></a>
+       <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuConfo">
+        <li><a href="https://loxense1.local/Loxense-Conformite.php" class="dropdown-item">Gérer la conformité</a></li>
+        <li><a href="https://loxense1.local/Loxense-EditionConformite.php" class="dropdown-item">Editer la conformité</a></li>
+       </ul>
+      </li>
+      <li class="nav-item dropdown">
+       <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuAction" data-bs-toggle="dropdown" role="button" aria-expanded="false">Gestion des actions <span class="caret"></span></a>
+       <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuAction">
+        <li><a href="https://loxense1.local/Loxense-Actions.php" class="dropdown-item">Gérer les actions</a></li>
+        <li><a href="https://loxense1.local/Loxense-EditionsActions.php" class="dropdown-item">Éditer les actions</a></li>
+       </ul>
+      </li>
+      <li class="nav-item dropdown">
+       <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuTags" data-bs-toggle="dropdown" role="button" aria-expanded="false">Vision consolidée <span class="caret"></span></a>
+       <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuTags">
+        <li><a href="https://loxense1.local/Loxense-ActifsPrimordiauxTags.php" class="dropdown-item">Actifs primordiaux</a></li>
+        <li><a href="https://loxense1.local/Loxense-ActifsSupportsTags.php" class="dropdown-item">Actifs supports</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a href="https://loxense1.local/Loxense-AppreciationRisquesTags.php" class="dropdown-item">Appréciation des risques</a></li>
+        <li><a href="https://loxense1.local/Loxense-TraitementRisquesTags.php" class="dropdown-item">Traitement des risques</a></li>
+       </ul>
+      </li>
+     </ul>
+     <form id="info_utilisateur" class="d-flex">
+      <span id="nom_utilisateur"><i class="bi-person-fill"></i>&nbsp;Administrateur Loxense</span>
+      <button id="code_utilisateur" tabindex="0" type="button" 
+class="btn btn-outline-secondary btn-sm"
+data-bs-toggle="offcanvas" 
+data-bs-target="#offcanvasRight" 
+aria-controls="offcanvasRight">root</button>
+      <span>Expire dans</span>
+      <button id="temps_session" type="button" class="btn btn-outline-secondary btn-sm">6000</button>
+      <span>mn</span>
+     </form>
+    </div><!-- /#navbarNavPrincipal -->
+   </div><!-- /.container-fluid -->
+  </nav>
+
+
+
+  <!-- === Zone : titre de l'écran === -->
+  <div class="container-fluid row" id="titre_ecran">
+   <div class="col-lg-6 mb-2">
+    <div class="input-group input-group-sm">
+     <span class="input-group-text">Société</span>
+     <select id="s_sct_id" class="form-select form-select-sm gris">
+      <option value="1">Loxense</option>
+      <option value="2">Nitros</option>
+     </select>
+    </div> <!-- input-group -->
+   </div> <!-- .col-lg-6 -->
+   <div id="titre-menu" class="col-lg-7">
+    <div class="input-group input-group-lg">
+     <span class="input-group-text libelle-titre-menu">Gestion des actifs primordiaux</span>
+     <button class="btn btn-outline-secondary bouton-titre-menu btn-ajouter" type="button" title="Ajouter"><i class="bi-plus-lg"></i></button>
+     <button class="btn btn-outline-secondary bouton-titre-menu btn-rechercher" type="button" title="Rechercher"><i class="bi-search"></i></button>
+    </div> <!-- input-group -->
+   </div> <!-- #titre-menu -->
+
+   <div id="option-titre-menu" class="col-lg-5 mt-1">
+    <div class="input-group col-lg-5">
+     <span class="input-group-text libelle-alternative-titre-menu">Cartographie</span>
+     <select id="s_crs_id" class="form-select">
+      <option value="3" data-ent_id="1">Loxense - Société Kancha - 01</option>
+      <option value="4" data-ent_id="1" selected="">Loxense - testouille - 07-28</option>
+     </select>
+    </div> <!-- .input-group -->
+   </div> <!-- #option-titre-menu -->
+  </div> <!-- /#titre_ecran -->
+
+
+
+  <!-- === Zone : entête du tableau central === -->
+  <div class="container-fluid" id="entete_tableau">
+   <div class="row">
+    <div class="col-lg-3 triable" data-sens-tri="nom">Libellé&nbsp;<i class="bi-chevron-down"></i> </div>
+    <div class="col-lg-2 triable" data-sens-tri="type">Type&nbsp;<i class="bi-chevron-down"></i> </div>
+    <div class="col-lg-2 triable active" data-sens-tri="code">Propriétaire&nbsp;<i class="bi-chevron-down"></i> </div>
+    <div class="col-lg-2" >Valorisation</div>
+    <div class="col-lg-2" >Associations</div>
+    <div class="btn-actions col-lg-1">Actions</div>
+   </div> <!-- /.row -->
+   <div class="row criteres_recherche pb-1 pt-1 d-none">
+    <div class="col-lg-3"><input id="rech_apr_nom" type="text" class="form-control"></div>
+    <div class="col-lg-2"><input id="rech_libelle_type" type="text" class="form-control"></div>
+    <div class="col-lg-2"><input id="rech_idn_id" type="text" class="form-control"></div>
+    <div class="col-lg-2"><input id="rech_valorisations" type="text" class="form-control"></div>
+    <div class="col-lg-2"><input id="rech_associations" type="text" class="form-control"></div>
+    <div class="btn-actions col-lg-1"><button class="btn btn-outline-secondary btn-sm lancer-recherche">Rechercher</button></div>
+   </div> <!-- /.row -->
+  </div> <!-- /#entete_tableau -->
+
+
+  <!-- === Zone : corps du tableau central === -->
+  <div class="container-fluid" id="corps_tableau">
+  </div>
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title fg_couleur_2" id="offcanvasRightLabel">Information utilisateur</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <p>Date de dernière connexion&nbsp;:<br/>
+      <b>2023-11-27 21:08:29</b></p>
+      <p>Date du dernier changement de mot de passe&nbsp;: <br/>
+      <b>2022-04-19 16:03:38.823014</b></p>
+      <p><span><button id="dcnx" type="button" class="btn btn-outline-secondary btn-sm">Déconnexion</button>
+      <button id="chgMdP" type="button" class="btn btn-outline-secondary btn-sm">Changer de mot de passe</button></span></p>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+   <div class="offcanvas-header">
+    <h5 class="offcanvas-title fg_couleur_2" id="offcanvasExampleLabel">Changement d'Univers</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+   </div>
+   <div class="offcanvas-body" id="corps_tableau_univers">
+    <div class="row liste mysecdash">
+     <div class="col-2 align-middle text-center"><img src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Images/Logo-MySecDash-4.svg" width="50" class="mx-auto"></div>
+     <div class="col gris">Mes tableaux de bord</div>
+    </div> <!-- /.row  -->
+    <div class="row liste mycontinuity">
+     <div class="col-2 align-middle text-center"><img src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Images/Logo-MyContinuity.svg" width="50"></div>
+     <div class="col gris">Gestion de la continuité</div>
+    </div>  <!-- /.row  -->
+    <div class="row liste myrisk">
+     <div class="col-2 align-middle text-center"><img src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Images/Logo-MyRisk.svg" width="50"></div>
+     <div class="col gris">Gestion des cartographies des risques</div>
+    </div>  <!-- /.row  -->
+   </div>  <!-- /.offcanvas-body -->
+  </div>  <!-- /.offcanvas -->
+
+  <!-- === Zone : pied du tableau central === -->
+  <div class="container-fluid" id="pied_tableau">
+   <div class="row">
+<h6 style="margin-top: 0.5rem;">Total : <span class="badge bg-secondary" id="totalOccurrences">000</span></h6>   </div>
+  </div>
+
+  <!-- Chargement des JavaScripts -->
+  <script src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/bootstrap-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/js/bootstrap-colorselector.js"></script>
+  <script src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/summernote-dist/summernote-bs4.js"></script>
+  <script src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Librairies/js/main.js"></script>
+
+<script>var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl);
+            })</script>  <footer>
+   Loxense <img src="file:///Applications/XAMPP/xamppfiles/htdocs/MySecDash/Images/copyleft.svg" width="12px" />, <span style="color: #717D11;">My</span><span style="color: #C34A36;">Sec</span><span style="color: #44808A;">Dash</span> v1.0-0
+  </footer>
+ </body>
+</html>

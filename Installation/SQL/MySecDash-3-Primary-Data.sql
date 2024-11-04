@@ -1,7 +1,7 @@
 ﻿--
 -- Auteur  : Pierre-Luc MARY
--- Date    : 2017-02-17
--- Package : Loxense
+-- Date    : 2024-04-07
+-- Package : MySecDash
 --
 -- Commentaire :
 -- Ce script insère les données de base utile au démarrage de l'application "loxense".
@@ -10,11 +10,11 @@
 
 INSERT INTO prs_parametres_systeme (prs_nom, prs_type, prs_valeur, prs_commentaire, prs_groupe, prs_super_admin) VALUES
 ('authentification_type', 2, 'D', 'Type authentification', 'connexion', FALSE),
-('expiration_time', 1, '60', 'Nombre de minutes avant expiration', 'connexion', FALSE),
-('default_password', 2, 'Coucou!', 'Mot de passe par défaut', 'connexion', FALSE),
+('expiration_time', 1, '10', 'Nombre de minutes avant expiration', 'connexion', FALSE),
+('default_password', 2, '1CouRouCouCou!', 'Mot de passe par défaut', 'connexion', FALSE),
 ('account_lifetime', 1, '6', 'Nombre de mois avant désactivation de l identité', 'connexion', FALSE),
 ('max_attempt', 1, '10', 'Nombre maximum de tentative de connexion', 'connexion', FALSE),
-('min_password_size', 1, '8', 'Taille minimum d''un mot de passe', 'connexion', FALSE),
+('min_password_size', 1, '12', 'Taille minimum d''un mot de passe', 'connexion', FALSE),
 ('password_complexity', 1, '3', 'Complexité demandée à la création d un mot de passe', 'connexion', FALSE),
 ('root_alternative_boot', 0, 'TRUE', 'authentification alternative au "root"', 'connexion', TRUE),
 ('ldap_ip_address', 2, 'localhost', 'Adresse IP du serveur LDAP', 'connexion', TRUE),
@@ -30,21 +30,21 @@ INSERT INTO prs_parametres_systeme (prs_nom, prs_type, prs_valeur, prs_commentai
 ('syslog_port', 1, '514', 'Serveur sur lequel on réplique le flux SYSLOG', 'alerte', TRUE),
 ('syslog_template', 2, 'template_syslog.tmpl', 'Fichier squelette d''un message SYSLOG', 'alerte', TRUE),
 ('mail_alert', 0, 'FALSE', 'Alerter par courriel', 'alerte', TRUE),
-('mail_title', 2, 'Loxense : événement', 'Standardisation du sujet des courriels d''alert', 'alerte', TRUE),
+('mail_title', 2, 'MySecDash : événement', 'Standardisation du sujet des courriels d''alert', 'alerte', TRUE),
 ('mail_body_type', 2, 'HTML', 'Format des courriels d''alert (HTML ou TEXT)', 'alerte', TRUE),
 ('mail_template', 2, 'template_mail.tmpl', 'Fichier squelette du corps du courriel d''alert', 'alerte', TRUE),
 ('mail_sender', 2, 'loxense@societe.com', 'Emetteur courriel', 'alerte', TRUE),
 ('mail_receiver', 2, 'supervision@societe.com', 'Destinataire courriel', 'alerte', TRUE),
 
-('limitation_entites', 1, '0', 'Nombre maximum d''Entités dans Loxense', 'limitations', TRUE),
-('limitation_civilites', 1, '0', 'Nombre maximum de Civilités dans Loxense', 'limitations', TRUE),
-('limitation_profils', 1, '9', 'Nombre maximum de Profils dans Loxense', 'limitations', TRUE),
-('limitation_utilisateurs', 1, '0', 'Nombre maximum d''Utilisateurs dans Loxense', 'limitations', TRUE),
+('limitation_entites', 1, '0', 'Nombre maximum d''Entités dans MySecDash', 'limitations', TRUE),
+('limitation_civilites', 1, '0', 'Nombre maximum de Civilités dans MySecDash', 'limitations', TRUE),
+('limitation_profils', 1, '9', 'Nombre maximum de Profils dans MySecDash', 'limitations', TRUE),
+('limitation_utilisateurs', 1, '0', 'Nombre maximum d''Utilisateurs dans MySecDash', 'limitations', TRUE),
 
-('limitation_cartographies', 1, '0', 'Nombre maximum de Cartographies dans Loxense', 'limitations', TRUE),
-('limitation_actifs_primordiaux', 1, '0', 'Nombre maximum d''Actifs Primodiaux dans Loxense', 'limitations', TRUE),
-('limitation_actifs_supports', 1, '0', 'Nombre maximum d''Actifs Supports dans Loxense', 'limitations', TRUE),
-('limitation_evenements_redoutes', 1, '0', 'Nombre maximum d''Evénements Redoutés dans Loxense', 'limitations', TRUE);
+('limitation_cartographies', 1, '0', 'Nombre maximum de Cartographies dans MySecDash', 'limitations', TRUE),
+('limitation_actifs_primordiaux', 1, '0', 'Nombre maximum d''Actifs Primodiaux dans MySecDash', 'limitations', TRUE),
+('limitation_actifs_supports', 1, '0', 'Nombre maximum d''Actifs Supports dans MySecDash', 'limitations', TRUE),
+('limitation_evenements_redoutes', 1, '0', 'Nombre maximum d''Evénements Redoutés dans MySecDash', 'limitations', TRUE);
 
 
 --
@@ -52,18 +52,29 @@ INSERT INTO prs_parametres_systeme (prs_nom, prs_type, prs_valeur, prs_commentai
 --
 
 INSERT INTO cvl_civilites (cvl_id, cvl_nom, cvl_prenom) VALUES
-(1, 'Loxense', 'Administrateur');
+(1, 'MySecDash', 'Administrateur');
 
 
 SELECT pg_catalog.setval('cvl_civilites_cvl_id_seq', 1, true);
 
 
 --
+-- Création de la Société de Base.
+--
+
+INSERT INTO sct_societes (sct_id, sct_nom, sct_description) VALUES
+(1, 'Loxense', 'Société par défaut');
+
+
+SELECT pg_catalog.setval('sct_societes_sct_id_seq', 1, true);
+
+
+--
 -- Contenu de l'Entité de Base.
 --
 
-INSERT INTO ent_entites (ent_id, ent_nom) VALUES
-(1, 'PLM');
+INSERT INTO ent_entites (ent_id, sct_id, ent_nom) VALUES
+(1, 1, 'PLM');
 
 
 SELECT pg_catalog.setval('ent_entites_ent_id_seq', 1, true);
@@ -74,7 +85,7 @@ SELECT pg_catalog.setval('ent_entites_ent_id_seq', 1, true);
 --
 
 INSERT INTO idn_identites (
-idn_id, ent_id, cvl_id, idn_login, idn_authentifiant, idn_grain_sel, idn_changer_authentifiant, idn_super_admin, idn_tentative, idn_desactiver, idn_derniere_connexion, idn_date_expiration, idn_date_modification_authentifiant) VALUES(
+idn_id, sct_id, cvl_id, idn_login, idn_authentifiant, idn_grain_sel, idn_changer_authentifiant, idn_super_admin, idn_tentative, idn_desactiver, idn_derniere_connexion, idn_date_expiration, idn_date_modification_authentifiant) VALUES(
 1, 1, 1, 'root', 'f6f3b63150785a187a6f425db0b07d34d46642b34a892d493b758bdefd2ceafa', 'Azdser23ddAAXx', false, true, 0, false, CURRENT_TIMESTAMP, '2030-01-01 00:00:00', CURRENT_TIMESTAMP);
 
 
@@ -86,13 +97,11 @@ SELECT pg_catalog.setval('idn_identites_idn_id_seq', 1, true);
 --
 
 INSERT INTO prf_profils (prf_id, prf_libelle) VALUES
-(1, 'Administrateur Système' ),
-(2, 'Admin. Risque'),
-(3, 'Gest. Risque'),
-(4, 'Gest. Technique');
+(1, 'Admin. Système' ),
+(2, 'Gest. BIA');
 
 
-SELECT pg_catalog.setval('prf_profils_prf_id_seq', 4, true);
+SELECT pg_catalog.setval('prf_profils_prf_id_seq', 2, true);
 
 
 --
@@ -134,75 +143,97 @@ SELECT pg_catalog.setval('tap_types_application_tap_id_seq', 2, true);
 --
 
 INSERT INTO ain_applications_internes (ain_id, tap_id, ain_libelle, ain_localisation) VALUES
-(1, 1, 'Gestion des Entités', 'Loxense-Entites.php'),
-(2, 1, 'Gestion des Civilités', 'Loxense-Civilites.php'),
-(3, 1, 'Gestion des Utilisateurs', 'Loxense-Utilisateurs.php'),
-(4, 1, 'Gestion des Profils', 'Loxense-Profils.php'),
-(5, 1, 'Gestion des Applications', 'Loxense-Applications.php'),
-(6, 1, 'Gestion des Privilèges', 'Loxense-Privileges.php'),
-(7, 1, 'Paramétrage interne de Loxense', 'Loxense-Parametres.php'),
+(1, 1, 'Ecran Principal MySecDash', 'MySecDash-Principal.php'),
+(2, 1, 'Consultation de l''historique', 'MySecDash-Historiques.php'),
 
-(8,  1, 'Consultation de l''historique', 'Loxense-Historiques.php'),
-(9,  1, 'Consultation des Matrices des Risques', 'Loxense-MatricesRisques.php'),
-(10, 1, 'Gestion de l''Appréciation des Risques', 'Loxense-AppreciationRisques.php'),
-(11, 1, 'Gestion des Actifs Primordiaux', 'Loxense-ActifsPrimordiaux.php'),
-(12, 1, 'Gestion des Actifs Supports', 'Loxense-ActifsSupports.php'),
-(13, 1, 'Gestion des Cartographies', 'Loxense-CartographiesRisques.php'),
-(14, 1, 'Gestion des Critères de Valorisation des Actifs', 'Loxense-CriteresValorisationActifs.php'),
-(15, 1, 'Gestion des Critères d''Appréciation et d''Acceptation des Risques', 'Loxense-CriteresAppreciationAcceptationRisques.php'),
-(16, 1, 'Gestion des Evénements Redoutés', 'Loxense-EvenementsRedoutes.php'),
-(17, 1, 'Gestion des Impacts Generiques', 'Loxense-ImpactsGeneriques.php'),
-(18, 1, 'Gestion des Menaces Génériques', 'Loxense-MenacesGeneriques.php'),
-(19, 1, 'Gestion des Mesures de Loxense', 'Loxense-MesuresGeneriques.php'),
-(20, 1, 'Gestion des Risques Generiques', 'Loxense-RisquesGeneriques.php'),
-(21, 1, 'Gestion des Référentiels de Conformité', 'Loxense-ReferentielsConformite.php'),
-(22, 1, 'Gestion des Sources de Menaces', 'Loxense-SourcesMenaces.php'),
-(23, 1, 'Gestion des Type d''Actif Support', 'Loxense-TypesActifSupport.php'),
-(24, 1, 'Gestion des Types de Menace Générique', 'Loxense-TypesMenaceGenerique.php'),
-(25, 1, 'Gestion des Types de Traitement des Risques', 'Loxense-TypesTraitementRisques.php'),
-(26, 1, 'Gestion des éditions des Risques', 'Loxense-EditionsRisques.php'),
-(27, 1, 'Gestion du Traitement des Risques', 'Loxense-TraitementRisques.php'),
-(28, 1, 'Gestion des Equipes de Gestionnaires', 'Loxense-Gestionnaires.php'),
-(29, 1, 'Gestion des Vulnérabilités Génériques', 'Loxense-VulnerabilitesGeneriques.php'),
-(30, 1, 'Gestion des Actions', 'Loxense-Actions.php'),
-(31, 1, 'Gestion des Editions des Actions', 'Loxense-EditionsActions.php'),
+-- *** Administration globales
+(3, 1, 'Gestion des Sociétés', 'MySecDash-Societes.php'),
+(4, 1, 'Gestion des Entités', 'MySecDash-Entites.php'),
+(5, 1, 'Gestion des Civilités', 'MySecDash-Civilites.php'),
+(6, 1, 'Gestion des Utilisateurs', 'MySecDash-Utilisateurs.php'),
+(7, 1, 'Gestion des Profils', 'MySecDash-Profils.php'),
+(8, 1, 'Gestion des Applications Internes', 'MySecDash-ApplicationsInternes.php'),
+(9, 1, 'Gestion des Privilèges', 'MySecDash-Privileges.php'),
+(10, 1, 'Paramétrage interne de MySecDash', 'MySecDash-Parametres.php'),
 
-(32, 1, 'Gestion des Actifs Primordiaux par Tags', 'Loxense-ActifsPrimordiauxTags.php'),
-(33, 1, 'Gestion des Actifs Supports par Tags', 'Loxense-ActifsSupportsTags.php'),
-(34, 1, 'Gestion de l''Appréciation des Risques par Tags', 'Loxense-AppreciationRisquesTags.php'),
-(35, 1, 'Gestion du Traitement des Risques par Tags', 'Loxense-TraitementRisquesTags.php'),
-(36, 1, 'Gestion des Etiquettes', 'Loxense-Etiquettes.php'),
-(37, 1, 'Gestion des Imports et Exports de Base', 'Loxense-ExportBase.php'),
-(38, 1, 'Gestion des Types de Critère de Valorisation des Risques', 'Loxense-TypesCritereValorisationRisques.php'),
+-- *** Gestion des BIA
+(11, 1, 'Gestion de la Matrice des Impacts', 'MyContinuity-MatriceImpacts.php'),
+(12, 1, 'Gestion des Echelles de Temps', 'MyContinuity-EchellesTemps.php'),
+(13, 1, 'Gestion des Sites', 'MyContinuity-Sites.php'),
+(14, 1, 'Gestion des Types de Fournisseur', 'MyContinuity-TypesFournisseur.php'),
+(15, 1, 'Gestion des Fournisseurs', 'MyContinuity-Fournisseurs.php'),
+(16, 1, 'Gestion des Rôles des Parties Prenantes', 'MyContinuity-RolesPartiesPrenantes.php'),
+(17, 1, 'Gestion des Parties Prenantes', 'MyContinuity-PartiesPrenantes.php'),
+(18, 1, 'Gestion des Applications', 'MyContinuity-Applications.php'),
+(19, 1, 'Gestion des Effectifs', 'MyContinuity-Effectifs.php'),
+(20, 1, 'Gestion des Campagnes', 'MyContinuity-Campagnes.php'),
+(21, 1, 'Gestion des Activités', 'MyContinuity-Activites.php'),
+(22, 1, 'Visualiser les BIA', 'MyContinuity-VisualiserBIA.php'),
+(23, 1, 'Editer les BIA', 'MyContinuity-EditionsBIA.php'),
+(24, 1, 'Validation des BIAs des Entités', 'MyContinuity-ValiderEntites.php'),
+(25, 1, 'Ecran Principal MyContinuity', 'MyContinuity-Principal.php'),
 
-(39, 1, 'Gestion des Grilles d''Impact', 'Loxense-GrillesImpacts.php'),
-(40, 1, 'Gestion des Grilles de Vraisemblances', 'Loxense-GrillesVraisemblances.php'),
-(41, 1, 'Gestion des Parties Prenantes', 'Loxense-PartiesPrenantes.php'),
-(42, 1, 'Gestion de la Conformité', 'Loxense-Conformite.php'),
-(43, 1, 'Gestion des éditions de Conformité', 'Loxense-EditionConformite.php'),
-(44, 1, 'Gestion des Objectifs Visés', 'Loxense-ObjectifsVises.php'),
-(45, 1, 'Gestion des Sources de Risque', 'Loxense-SourcesRisques.php'),
-
-(46, 1, 'Gestion du Référentiel des Actifs Supports', 'Loxense-ReferentielActifsSupports.php'),
-(47, 1, 'Gestion du Référentiel des Actifs Primordiaux', 'Loxense-ReferentielActifsPrimordiaux.php');
+-- *** Gestion transverse des TAGS, pas encore opérationnel
+(26, 1, 'Gestion des étiquettes (tags)', 'MySecDash-Etiquettes.php');
 
 
-SELECT pg_catalog.setval('ain_applications_internes_ain_id_seq', 47, true);
+SELECT pg_catalog.setval('ain_applications_internes_ain_id_seq', 24, true);
+
+--(9,  1, 'Consultation des Matrices des Risques', 'MySecDash-MatricesRisques.php'),
+--(10, 1, 'Gestion de l''Appréciation des Risques', 'MySecDash-AppreciationRisques.php'),
+--(11, 1, 'Gestion des Actifs Primordiaux', 'MySecDash-ActifsPrimordiaux.php'),
+--(12, 1, 'Gestion des Actifs Supports', 'MySecDash-ActifsSupports.php'),
+--(13, 1, 'Gestion des Cartographies', 'MySecDash-CartographiesRisques.php'),
+--(14, 1, 'Gestion des Critères de Valorisation des Actifs', 'MySecDash-CriteresValorisationActifs.php'),
+--(15, 1, 'Gestion des Critères d''Appréciation et d''Acceptation des Risques', 'MySecDash-CriteresAppreciationAcceptationRisques.php'),
+--(16, 1, 'Gestion des Evénements Redoutés', 'MySecDash-EvenementsRedoutes.php'),
+--(17, 1, 'Gestion des Impacts Generiques', 'MySecDash-ImpactsGeneriques.php'),
+--(18, 1, 'Gestion des Menaces Génériques', 'MySecDash-MenacesGeneriques.php'),
+--(19, 1, 'Gestion des Mesures de MySecDash', 'MySecDash-MesuresGeneriques.php'),
+--(20, 1, 'Gestion des Risques Generiques', 'MySecDash-RisquesGeneriques.php'),
+--(21, 1, 'Gestion des Référentiels de Conformité', 'MySecDash-ReferentielsConformite.php'),
+--(22, 1, 'Gestion des Sources de Menaces', 'MySecDash-SourcesMenaces.php'),
+--(23, 1, 'Gestion des Type d''Actif Support', 'MySecDash-TypesActifSupport.php'),
+--(24, 1, 'Gestion des Types de Menace Générique', 'MySecDash-TypesMenaceGenerique.php'),
+--(25, 1, 'Gestion des Types de Traitement des Risques', 'MySecDash-TypesTraitementRisques.php'),
+--(26, 1, 'Gestion des éditions des Risques', 'MySecDash-EditionsRisques.php'),
+--(27, 1, 'Gestion du Traitement des Risques', 'MySecDash-TraitementRisques.php'),
+--(28, 1, 'Gestion des Equipes de Gestionnaires', 'MySecDash-Gestionnaires.php'),
+--(29, 1, 'Gestion des Vulnérabilités Génériques', 'MySecDash-VulnerabilitesGeneriques.php'),
+--(30, 1, 'Gestion des Actions', 'MySecDash-Actions.php'),
+--(31, 1, 'Gestion des Editions des Actions', 'MySecDash-EditionsActions.php'),
+
+--(32, 1, 'Gestion des Actifs Primordiaux par Tags', 'MySecDash-ActifsPrimordiauxTags.php'),
+--(33, 1, 'Gestion des Actifs Supports par Tags', 'MySecDash-ActifsSupportsTags.php'),
+--(34, 1, 'Gestion de l''Appréciation des Risques par Tags', 'MySecDash-AppreciationRisquesTags.php'),
+--(35, 1, 'Gestion du Traitement des Risques par Tags', 'MySecDash-TraitementRisquesTags.php'),
+--(36, 1, 'Gestion des Etiquettes', 'MySecDash-Etiquettes.php'),
+--(37, 1, 'Gestion des Imports et Exports de Base', 'MySecDash-ExportBase.php'),
+--(38, 1, 'Gestion des Types de Critère de Valorisation des Risques', 'MySecDash-TypesCritereValorisationRisques.php'),
+
+--(39, 1, 'Gestion des Grilles d''Impact', 'MySecDash-GrillesImpacts.php'),
+--(40, 1, 'Gestion des Grilles de Vraisemblances', 'MySecDash-GrillesVraisemblances.php'),
+--(41, 1, 'Gestion de la Conformité', 'MySecDash-Conformite.php'),
+--(42, 1, 'Gestion des Editions de Conformité', 'MySecDash-EditionConformite.php'),
+--(43, 1, 'Gestion des Objectifs Visés', 'MySecDash-ObjectifsVises.php'),
+--(44, 1, 'Gestion des Sources de Risque', 'MySecDash-SourcesRisques.php'),
+
+--(45, 1, 'Gestion du Référentiel des Actifs Supports', 'MySecDash-ReferentielActifsSupports.php'),
+--(46, 1, 'Gestion du Référentiel des Actifs Primordiaux', 'MySecDash-ReferentielActifsPrimordiaux.php'),
+
 
 
 --
--- Création du lien entre le Profil de base (Administrateur système), les Applications et les Droits que le profil a sur les Applications.
+-- Création du lien entre les Ecrans et les Profil d'utilisateurs et leurs droits
 --
 
 INSERT INTO caa_controle_acces_application_interne (prf_id, ain_id, drt_id) VALUES
+-- Profil 1 = Admin. Système
 (1, 1, 1),
-(1, 1, 2),
-(1, 1, 3),
-(1, 1, 4),
 (1, 2, 1),
-(1, 2, 2),
-(1, 2, 3),
-(1, 2, 4),
+(2, 1, 1),
+(2, 2, 1),
+
 (1, 3, 1),
 (1, 3, 2),
 (1, 3, 3),
@@ -211,6 +242,10 @@ INSERT INTO caa_controle_acces_application_interne (prf_id, ain_id, drt_id) VALU
 (1, 4, 2),
 (1, 4, 3),
 (1, 4, 4),
+(1, 5, 1),
+(1, 5, 2),
+(1, 5, 3),
+(1, 5, 4),
 (1, 6, 1),
 (1, 6, 2),
 (1, 6, 3),
@@ -220,29 +255,45 @@ INSERT INTO caa_controle_acces_application_interne (prf_id, ain_id, drt_id) VALU
 (1, 7, 3),
 (1, 7, 4),
 (1, 8, 1),
-(2, 9, 1),
-(2, 10, 1),
-(2, 10, 2),
-(2, 10, 4),
-(2, 10, 3),
+(1, 8, 2),
+(1, 8, 3),
+(1, 8, 4),
+(1, 9, 1),
+(1, 9, 2),
+(1, 9, 3),
+(1, 9, 4),
+(1, 10, 1),
+(1, 10, 2),
+(1, 10, 3),
+(1, 10, 4),
+(1, 25, 1),
+(1, 25, 2),
+(1, 25, 3),
+(1, 25, 4),
+
+-- Profil 2 = Gest. BIA
+(2, 4, 1),
+(2, 4, 2),
+(2, 4, 3),
+(2, 4, 4),
 (2, 11, 1),
 (2, 11, 2),
-(2, 11, 4),
 (2, 11, 3),
+(2, 11, 4),
 (2, 12, 1),
 (2, 12, 2),
-(2, 12, 4),
 (2, 12, 3),
-(2, 13, 2),
+(2, 12, 4),
 (2, 13, 1),
+(2, 13, 2),
 (2, 13, 3),
 (2, 13, 4),
-(2, 14, 2),
 (2, 14, 1),
+(2, 14, 2),
 (2, 14, 3),
 (2, 14, 4),
-(2, 15, 2),
 (2, 15, 1),
+(2, 15, 2),
 (2, 15, 3),
 (2, 15, 4),
 (2, 16, 1),
@@ -251,115 +302,34 @@ INSERT INTO caa_controle_acces_application_interne (prf_id, ain_id, drt_id) VALU
 (2, 16, 4),
 (2, 17, 1),
 (2, 17, 2),
-(2, 17, 4),
 (2, 17, 3),
+(2, 17, 4),
 (2, 18, 1),
 (2, 18, 2),
-(2, 18, 4),
 (2, 18, 3),
+(2, 18, 4),
 (2, 19, 1),
 (2, 19, 2),
-(2, 19, 4),
 (2, 19, 3),
+(2, 19, 4),
 (2, 20, 1),
 (2, 20, 2),
-(2, 20, 4),
 (2, 20, 3),
+(2, 20, 4),
+(2, 21, 1),
+(2, 21, 2),
+(2, 21, 3),
+(2, 21, 4),
 (2, 22, 1),
 (2, 22, 2),
-(2, 22, 4),
 (2, 22, 3),
+(2, 22, 4),
 (2, 23, 1),
 (2, 23, 2),
-(2, 23, 4),
 (2, 23, 3),
+(2, 23, 4),
 (2, 24, 1),
-(2, 24, 2),
-(2, 24, 4),
-(2, 24, 3),
-(2, 25, 1),
-(2, 25, 2),
-(2, 25, 4),
-(2, 25, 3),
-(2, 26, 1),
-(2, 26, 2),
-(2, 26, 4),
-(2, 26, 3),
-(2, 27, 1),
-(2, 27, 2),
-(2, 27, 3),
-(2, 27, 4),
-(2, 28, 1),
-(2, 28, 2),
-(2, 28, 3),
-(2, 28, 4),
-(2, 33, 1),
-(2, 33, 2),
-(2, 33, 3),
-(2, 33, 4),
-(2, 8, 1),
-(3, 9, 1),
-(3, 10, 1),
-(3, 10, 2),
-(3, 10, 4),
-(3, 10, 3),
-(3, 11, 1),
-(3, 11, 2),
-(3, 11, 4),
-(3, 11, 3),
-(3, 12, 1),
-(3, 12, 2),
-(3, 12, 4),
-(3, 12, 3),
-(3, 13, 1),
-(3, 13, 2),
-(3, 13, 4),
-(3, 13, 3),
-(3, 14, 1),
-(3, 14, 2),
-(3, 14, 4),
-(3, 14, 3),
-(3, 15, 1),
-(3, 15, 2),
-(3, 15, 4),
-(3, 15, 3),
-(3, 16, 2),
-(3, 16, 1),
-(3, 16, 3),
-(3, 16, 4),
-(3, 26, 2),
-(3, 26, 1),
-(3, 26, 3),
-(3, 26, 4),
-(3, 27, 2),
-(3, 27, 1),
-(3, 27, 3),
-(3, 27, 4),
-(3, 8, 1),
-(3, 39, 1),
-(3, 39, 2),
-(3, 39, 3),
-(3, 39, 4),
-(3, 40, 1),
-(3, 40, 2),
-(3, 40, 3),
-(3, 40, 4),
-(4, 11, 1),
-(4, 12, 1),
-(4, 30, 1),
-(4, 30, 2),
-(4, 30, 3),
-(4, 30, 4),
-(4, 31, 1),
-(4, 31, 2),
-(4, 31, 3),
-(4, 31, 4),
-
-(1, 46, 1),
-(1, 46, 2),
-(1, 46, 3),
-(1, 46, 4);
-
+(2, 24, 3);
 
 
 --
@@ -375,8 +345,9 @@ INSERT INTO tpa_types_action (tpa_code_libelle) VALUES
 ('ATP_MODIFICATION'), --'Modification'
 ('ATP_SUPPRESSION'), --'Suppression'
 ('ATP_DUPLICATION'), --'Duplication'
-('ATP_GENERATION'); -- Génération
-
+('ATP_GENERATION'), -- Génération
+('ATP_ALERTE'), -- Alert
+('ATP_VALIDATION'); -- Validation
 
 --
 -- Création des Types d'Objet traçables dans l'outil.
@@ -400,18 +371,18 @@ INSERT INTO tpo_types_objet (tpo_code_libelle) VALUES
 ('OTP_VULNERABILITE_GENERIQUE'), -- Vulnérabilité Générique
 ('OTP_SOURCE_MENACE'), -- Source de Menace
 ('OTP_RISQUE_GENERIQUE'), -- Risque Générique
-('OTP_MESURE_GENERIQUE'), -- Mesure de Loxense
-('OTP_CARTOGRAPHIE_RISQUES'), -- Cartographie des risques de Loxense
-('OTP_CRITERE_VALORISATION'), -- Critere de valorisation des actifs de Loxense
-('OTP_CRITERE_APPRECIATION'), -- Critere d'appréciation et d'acceptaion des risques de Loxense
-('OTP_ACTIF_PRIMORDIAL'), -- Actif primordial de Loxense
-('OTP_ACTIF_SUPPORT'), -- Actif support de Loxense
-('OTP_EVENEMENT_REDOUTE'), -- Evénement redouté de Loxense
-('OTP_APPRECIATION_RISQUE'), -- Appréciation des risques de Loxense
-('OTP_TYPE_TRAITEMENT_RISQUE'), -- Type de traitement des risques de Loxense
-('OTP_TRAITEMENT_RISQUE'), -- Traitement des risques de Loxense
+('OTP_MESURE_GENERIQUE'), -- Mesure de MySecDash
+('OTP_CARTOGRAPHIE_RISQUES'), -- Cartographie des risques de MySecDash
+('OTP_CRITERE_VALORISATION'), -- Critere de valorisation des actifs de MySecDash
+('OTP_CRITERE_APPRECIATION'), -- Critere d'appréciation et d'acceptaion des risques de MySecDash
+('OTP_ACTIF_PRIMORDIAL'), -- Actif primordial de MySecDash
+('OTP_ACTIF_SUPPORT'), -- Actif support de MySecDash
+('OTP_EVENEMENT_REDOUTE'), -- Evénement redouté de MySecDash
+('OTP_APPRECIATION_RISQUE'), -- Appréciation des risques de MySecDash
+('OTP_TYPE_TRAITEMENT_RISQUE'), -- Type de traitement des risques de MySecDash
+('OTP_TRAITEMENT_RISQUE'), -- Traitement des risques de MySecDash
 ('OTP_GESTIONNAIRE'), -- Equipe des Gestionnaires
-('OTP_ACTION'), -- Action de sécurité de Loxense
+('OTP_ACTION'), -- Action de sécurité de MySecDash
 ('OTP_TAG'), -- Etiquette ou Tag
 ('OTP_INFORMATION_COMPLEMENTAIRE'),
 ('OTP_REFERENTIEL'),
@@ -421,4 +392,162 @@ INSERT INTO tpo_types_objet (tpo_code_libelle) VALUES
 ('OTP_MESURE_CONFORMITE'),
 ('OTP_SOURCE_RISQUE'),
 ('OTP_OBJECTIF_VISE'),
-('OTP_PARTIE_PRENANTE');
+('OTP_PARTIE_PRENANTE'),
+('OTP_SOCIETE'),
+('OTP_CAMPAGNE'),
+('OTP_NIVEAU_IMPACT'),
+('OTP_TYPE_IMPACT'),
+('OTP_MATRICE_IMPACT'),
+('OTP_DESCRIPTION_IMPACT'),
+('OTP_ACTIVITE'),
+('OTP_TACHE'),
+('OTP_FOURNISSEUR'),
+('OTP_ECHELLE_TEMPS'),
+('OTP_SITE'),
+('OTP_EFFECTIF'),
+('OTP_SECURITE');
+
+
+--
+-- Types de Fournisseur.
+--
+
+INSERT INTO tfr_types_fournisseur (tfr_nom_code) VALUES
+('Prestataire'),
+('Editeur de Solutions'),
+('On Premise'),
+('Infrastructure as a Service (IaaS)'),
+('Platform as a Service (PaaS)'),
+('Software as a Service (SaaS)');
+
+
+--
+-- Création d'une campagne par défaut
+--
+
+INSERT INTO cmp_campagnes (cmp_id, sct_id, idn_id, cmp_date) VALUES
+(1, 1, 1, '2024-02-15');
+
+SELECT pg_catalog.setval('cmp_campagnes_cmp_id_seq', 1, true);
+
+
+--
+-- Création des Types d'Impact pour la Campagne par défaut
+--
+
+INSERT INTO tim_types_impact (tim_id, cmp_id, tim_poids, tim_nom_code) VALUES
+(1, 1, 1, 'Financier'),
+(2, 1, 2, 'Organisationnel'),
+(3, 1, 3, 'Juridique / Règlementaire'),
+(4, 1, 4, 'Image');
+
+SELECT pg_catalog.setval('tim_types_impact_tim_id_seq', 4, true);
+
+
+--
+-- Création des Niveaux d'Impact pour la Campagne par défaut
+--
+
+INSERT INTO nim_niveaux_impact (nim_id, cmp_id, nim_numero, nim_poids, nim_nom_code, nim_couleur) VALUES
+(1, 1, 1, 1, 'Faible', '27AE60'),
+(2, 1, 2, 2, 'Notable', 'F1C40F'),
+(3, 1, 3, 3, 'Grave', 'E67E22'),
+(4, 1, 4, 4, 'Vital', 'C0392B');
+
+SELECT pg_catalog.setval('nim_niveaux_impact_nim_id_seq', 4, true);
+
+
+--
+-- Création de la Matrice d'Impact pour la Campagne par défaut
+--
+
+INSERT INTO mim_matrice_impacts (cmp_id, nim_id, tim_id, mim_description) VALUES
+(1, 1, 1, '<ul><li>Perte inférieure ou égale à 5% de CA</li></ul>
+<p>Les impacts financiers sont faibles et pourront être facilement rattrapés/compensés ? Oui</p>'),
+(1, 1, 2, '<ul><li>Faibles nuisances à l''activité sans impact sur tiers (clients, financeurs, prestataires, fournisseurs…) ni sur les autres service de l''Entreprise.</li></ul>
+<p>L''incident peut-il provoquer l''arrêt du service ? Non.</p>'),
+(1, 1, 3, '<ul><li>Absence d''éligibilité à une action civile ou pénale ou à une action réglementaire, mais recours amiable (Mise en demeure, acte extrajudiciaire etc…) de la part d''un cocontractant ou d''un tiers.</li></ul>
+<p>L''incident entraîne-t-il des conséquences juridiques ? Non</p>'),
+(1, 1, 4, '<ul><li>Pas de médiatisation mais mécontentement possible de parties prenantes internes.</li>
+<li>Faible atteinte (moins de 5%) à la satisfaction des tiers (clients, financeurs, prestataires, fournisseurs,  relations publiques…).</li></ul>
+<p>L''incident va-t-il circuler en interne ? Nécessite-t-il une communication interne spécifique ? Oui</p>'),
+
+(1, 2, 1, '<ul></li>Perte 5% et 10% de CA.</li></ul>
+<p>Les impacts financier sont significatifs mais n''entraîneront pas de conséquences sur le long terme ? Oui</p>'),
+(1, 2, 2, '<ul><li>Nuisances organisationnelles internes à l''activité entraînant la perturbation de service  pour une ou plusieurs catégories de tiers (clients, financeurs, prestataires, fournisseurs…) mais n''impactant pas d''autres services de l''Entreprise.</li></ul>
+<p>L''incident peut-il provoquer l''arrêt du service ? Oui</p>
+<p>Peut-il impacter d''autres services ? Non</p>'),
+(1, 2, 3, '<ul><li>Contravention ou Exposition à des poursuites civiles limitées.</li>
+<li>Recommandations des autorités de tutelle.</li></ul>
+<p>L''incident peut impliquer des conséquences juridiques limitées ? Oui</p>'),
+(1, 2, 4, '<ul><li>Exposition à un risque de mention négative ponctuelle sur un média ou réseau social à faible audience, ayant peu d’impact ou éloigné de notre cœur de métier.</li>
+<li>Atteinte (entre 6% et 20%) à la satisfaction des tiers (clients, financeurs, prestataires, fournisseurs, relations publiques…) avec une rémédiation rapide et satisfaisante.</li></ul>
+<p>L''incident dépasse-t-il la sphère interne ? Peut-il être relayé sur les réseaux sociaux ? Par la presse locale (faible audience) ? Oui</p>
+<p>A-t-il un impact au niveau de l''image vis-à-vis de ses partenaires, clients ? Non</p>'),
+
+(1, 3, 1, '<ul><li>Perte 10% et 20% de CA.</li></ul>
+<p>Les impacts financier sont importants et des conséquences sur le long terme sont à anticiper ? Oui</p>'),
+(1, 3, 2, '<ul><li>Nuisances organisationnelles internes à l''activité entraînant la perturbation de service pour une ou plusieurs catégories de tiers  (clients, financeurs, prestataires, fournisseurs…) - ces nuisances peuvent avoir des impacts et entraîner l''arrêt d''autres services de l''Entreprise.</li></ul>
+<p>L''incident peut-il provoquer l''arrêt du service ? Oui</p>
+<p>Peut-il impacter d''autres services ? Oui</p>'),
+(1, 3, 3, '<ul><li>Exposition à une condamnation civile significative, résiliation de contrat non stratégique.</li>
+<li>Délit ou manquement à une norme juridique faisant encourir des sanctions financière significative.</li>
+<li>Avertissement ou blâme des autorités de tutelle.</li></ul>
+<p>L''incident nécessite-t-il la convocation du représentant légal ? Oui</p>
+<p>L''impact juridique peut--il être important ? cf ci-dessous Oui</p>
+<p>La conséquence juridique de l''incident peut-elle amener à la fermeture de l''entité ou à la condamnation de ses dirigeants ? Non</p>'),
+(1, 3, 4, '<ul><li>Constatation de montée de réclamations via les réseaux légérement supérieure à la normale et exposition à un risque de mentions fréquentes ou récurrentes et dont le contenu ne valorise pas l''image de l''Entreprise, ou la dégrade peu,</li>
+<li>Exposition à un risque de mentions négatives dans la presse spécialisée dans notre coeur d''activité,</li>
+<li>Volume significatif de réclamations (plus de 20%) de la part de tiers  (clients, financeurs, prestataires, fournisseurs, …) et/ou réclamations récurrentes que l''on ne parvient pas à remédier.</li></ul>
+<p>L''incident peut êre relayé par la presse nationale ? Oui</p>
+<p>Entraîne-t-il des pertes clients importantes / réclamations importantes de clients ? Oui</p>
+<p>Nécessite-t-il la mise en place d''une cellule de communication ? Non</p>
+<p>Faut-il prévoir des sorties médiatiques des dirigeants ? La publication de communiqués de presse ? Non</p>'),
+
+(1, 4, 1, '<ul><li>Perte supérieure à 30% de CA</li></ul>
+<p>Les impacts financiers peuvent remettre en cause la pérennité de l''entité ? Oui</p>'),
+(1, 4, 2, '<ul><li>Arrêt total de l''activité.</li></ul>
+<p>L''incident peut-il provoquer l''arrêt total des activités de l''Entreprise ? Oui</p>'),
+(1, 4, 3, '<ul><li>Condamnation pénale de l''entreprise : exclusion des marchés publics, amendes pénales > 1M€</li>
+<li>Mise en jeu de la responsabilité pénale du Dirigeant avec interdiction d''exercer certaines activités ou peine d''emprisonnement</li>
+<li>Retrait d''agrément ou habilitation</li></ul>
+<p>La conséquence juridique de l''incident peut-elle amener à la fermeture de l''entité ou à la condamnation de ses dirigeants ? Oui</p>'),
+(1, 4, 4, '<ul><li>Crise médiatique relayée par l''ensemble des canaux de communication (réseaux sociaux compris) portant durablement atteinte à l''image ou la réputation de l''Entreprise.<li>
+<li>Défiance des tiers  (clients, financeurs, prestataires, fournisseurs…), impact sur un large public, au-delà des parties prenantes habituelles.</li></ul>
+<p>L''incident peut être relayé par la presse nationale ? Oui</p>
+<p>Entraîne-t-il des pertes lecteurs/clients importantes ? Oui</p>
+<p>Nécessite-t-il la mise en place d''une cellule de communication ? Oui</p>
+<p>Faut-il prévoir des sorties médiatiques des dirigeants ? La publication de communiqués de presse ? Oui</p>');
+
+
+--
+-- Chargement d'une échelle de temps type.
+--
+
+INSERT INTO ete_echelle_temps (cmp_id, ete_poids, ete_nom_code) VALUES
+(1, 1, '4 heures'),
+(1, 2, '1 jour'),
+(1, 3, '2 jours'),
+(1, 4, '3 jours'),
+(1, 5, '1 semaine'),
+(1, 6, '2 semaines'),
+(1, 7, '1 mois');
+
+
+--
+-- Chargement de quelques Type de Fournisseurs génériques
+--
+
+INSERT INTO frn_fournisseurs (tfr_id, frn_nom, frn_description) VALUES
+(2, 'Apple', ''),
+(2, 'Microsoft', '');
+
+
+--
+-- Chargement de quelques Applications génériques
+--
+
+INSERT INTO app_applications (frn_id, app_nom, app_hebergement, app_niveau_service, app_description) VALUES
+(2, 'Azure', 'Cloud', '', 'Solution de Cloud de Microsoft'),
+(2, 'Office 365', 'SaaS', '', 'Suite bureautique (messagerie, tableur, traitement de texte...)'),
+(NULL, 'Salesforce', 'SaaS', '', 'Outil de CRM');

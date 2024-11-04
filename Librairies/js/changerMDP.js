@@ -18,7 +18,7 @@ function changerMdP() {
     }
 
     $.ajax({
-        url: '../../../Loxense-Connexion.php?action=CMDP2X',
+        url: Parameters['URL_BASE'] + '/MySecDash-Connexion.php?action=CMDP2X',
         type: 'POST', // la méthode indiquée dans le formulaire (get ou post)
         data: $.param({'O_Password': $('#i_O_Password').val(), 'N_Password': $('#i_N_Password').val(), 'C_Password': $('#i_C_Password').val()}), // le nom du fichier indiqué dans le formulaire
         dataType: 'json', // le résultat est transmit dans un objet JSON

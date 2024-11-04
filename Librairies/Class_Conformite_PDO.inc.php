@@ -7,10 +7,9 @@ class Conformites extends HBL_Securite {
 /**
 * Cette classe gère les Actifs Supports.
 *
-* PHP version 7
-* @license Loxense
-* @author Pierre-Luc MARY
-* @version 1.0
+* \license Loxense
+* \author Pierre-Luc MARY
+* \version 1.0
 */ 
 
 	const ID_TYPE = PDO::PARAM_INT;
@@ -45,14 +44,14 @@ class Conformites extends HBL_Securite {
 
 	public function __construct() {
 	/**
-	* Connexion à la base de données via HBL_Connecteur_BD.
+	* Connexion à la base de données via HBL_Connexioneur_BD.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @version 1.0
-	* @date 2016-10-24
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \version 1.0
+	* \date 2016-10-24
 	*
-	* @return Renvoi un booléen sur le succès de la connexion à la base de données
+	* \return Renvoi un booléen sur le succès de la connexion à la base de données
 	*/
 		parent::__construct();
 
@@ -69,15 +68,15 @@ class Conformites extends HBL_Securite {
 		/**
 		 * Copier les Mesures de Conformité pour les associer à cette Cartographie
 		 *
-		 * @license Loxense
-		 * @author Pierre-Luc MARY
-		 * @version 1.0
-		 * @date 2019-08-11
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \version 1.0
+		 * \date 2019-08-11
 		 *
-		 * @param[in] $crs_id ID de la Cartographie
-		 * @param[in] $rfc_id ID du Référentiele
+		 * \param[in] $crs_id ID de la Cartographie
+		 * \param[in] $rfc_id ID du Référentiele
 		 *
-		 * @return Renvoi TRUE si les Mesures de conformité ont été copiées ou lève une exception en cas d'erreur
+		 * \return Renvoi TRUE si les Mesures de conformité ont été copiées ou lève une exception en cas d'erreur
 		 *
 		 */
 		
@@ -115,15 +114,15 @@ class Conformites extends HBL_Securite {
 		/**
 		 * Supprimer les Mesures de Conformité pour les dissocier de cette Cartographie
 		 *
-		 * @license Loxense
-		 * @author Pierre-Luc MARY
-		 * @version 1.0
-		 * @date 2019-08-11
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \version 1.0
+		 * \date 2019-08-11
 		 *
-		 * @param[in] $crs_id ID de la Cartographie
-		 * @param[in] $rfc_id ID du Référentiele
+		 * \param[in] $crs_id ID de la Cartographie
+		 * \param[in] $rfc_id ID du Référentiele
 		 *
-		 * @return Renvoi TRUE si les Mesures de conformité ont été supprimées ou lève une exception en cas d'erreur
+		 * \return Renvoi TRUE si les Mesures de conformité ont été supprimées ou lève une exception en cas d'erreur
 		 *
 		 */
 
@@ -143,17 +142,17 @@ class Conformites extends HBL_Securite {
 	/**
 	* Lister les Mesures de Conformité liées à une Cartographie
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @version 1.0
-	* @date 2019-08-10
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \version 1.0
+	* \date 2019-08-10
 	*
-	* @param[in] $crs_id ID de la cartographie
-	* @param[in] $trier Indique la colonne sur laquelle on trie le résultat
-	* @param[in] $langue ID de la langue pour afficher les libellés
-	* @param[in] $chercher Chaine de recherche dans le résultat
+	* \param[in] $crs_id ID de la cartographie
+	* \param[in] $trier Indique la colonne sur laquelle on trie le résultat
+	* \param[in] $langue ID de la langue pour afficher les libellés
+	* \param[in] $chercher Chaine de recherche dans le résultat
 	*
-	* @return Renvoi la liste des mesures de conformité ou lève une exception en cas d'erreur 
+	* \return Renvoi la liste des mesures de conformité ou lève une exception en cas d'erreur 
 	*			
 	*/
 		if ( $chercher != '' ) {
@@ -222,15 +221,15 @@ WHERE crrf.crs_id = :crs_id AND cnf_type = 1 ' . $SQL_Chercher . ' ';
 		/**
 		 * Lister les Regroupement de Mesures de Conformité liées à une Cartographie
 		 *
-		 * @license Loxense
-		 * @author Pierre-Luc MARY
-		 * @version 1.0
-		 * @date 2019-08-10
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \version 1.0
+		 * \date 2019-08-10
 		 *
-		 * @param[in] $crs_id ID de la cartographie
-		 * @param[in] $lng_id ID de la langue pour afficher les libellés
+		 * \param[in] $crs_id ID de la cartographie
+		 * \param[in] $lng_id ID de la langue pour afficher les libellés
 		 *
-		 * @return Renvoi la liste des regroupements de mesures de conformité ou lève une exception en cas d'erreur
+		 * \return Renvoi la liste des regroupements de mesures de conformité ou lève une exception en cas d'erreur
 		 *
 		 */
 		
@@ -264,15 +263,15 @@ ORDER BY lbr2.lbr_libelle, rfc_version, length(substring(cnf_code FROM \'[0-9]+\
 		/**
 		 * Recharger les Mesures de Conformité de cette Cartographie
 		 *
-		 * @license Loxense
-		 * @author Pierre-Luc MARY
-		 * @version 1.0
-		 * @date 2019-08-11
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \version 1.0
+		 * \date 2019-08-11
 		 *
-		 * @param[in] $crs_id ID de la Cartographie
-		 * @param[in] $rfc_id ID du Référentiele
+		 * \param[in] $crs_id ID de la Cartographie
+		 * \param[in] $rfc_id ID du Référentiele
 		 *
-		 * @return Renvoi TRUE si les Mesures de conformité ont été rechargées ou lève une exception en cas d'erreur
+		 * \return Renvoi TRUE si les Mesures de conformité ont été rechargées ou lève une exception en cas d'erreur
 		 *
 		 */
 
@@ -340,14 +339,14 @@ VALUES (:rfc_id, :crs_id, :cnf_code, :cnf_type, 1) ';
 		/**
 		 * Lister les Actions rattachées à une Mesure de Conformité
 		 *
-		 * @license Loxense
-		 * @author Pierre-Luc MARY
-		 * @version 1.0
-		 * @date 2019-08-11
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \version 1.0
+		 * \date 2019-08-11
 		 *
-		 * @param[in] $cnf_id ID de la Mesure de Conformité
+		 * \param[in] $cnf_id ID de la Mesure de Conformité
 		 *
-		 * @return Renvoi la liste des actions ou lève une exception en cas d'erreur
+		 * \return Renvoi la liste des actions ou lève une exception en cas d'erreur
 		 *
 		 */
 		
@@ -384,14 +383,14 @@ ORDER BY amc_date_debut_r, amc_date_debut_p, amc_libelle ';
 		/**
 		 * Lister les Statuts possibles d'une Mesure
 		 *
-		 * @license Loxense
-		 * @author Pierre-Luc MARY
-		 * @version 1.0
-		 * @date 2019-08-11
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \version 1.0
+		 * \date 2019-08-11
 		 *
-		 * @param[in] $lng_id ID de la Langue du libellé de la Mesure de Conformité
+		 * \param[in] $lng_id ID de la Langue du libellé de la Mesure de Conformité
 		 *
-		 * @return Renvoi la liste des statuts d'une mesure ou lève une exception en cas d'erreur
+		 * \return Renvoi la liste des statuts d'une mesure ou lève une exception en cas d'erreur
 		 *
 		 */
 		
@@ -409,12 +408,12 @@ AND lng_id = :lng_id ';
 		/**
 		 * Lister les Acteurs (Identités et Civilités) possibles à associer à une Action
 		 *
-		 * @license Loxense
-		 * @author Pierre-Luc MARY
-		 * @version 1.0
-		 * @date 2019-08-11
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \version 1.0
+		 * \date 2019-08-11
 		 *
-		 * @return Renvoi la liste des utilisateurs ou lève une exception en cas d'erreur
+		 * \return Renvoi la liste des utilisateurs ou lève une exception en cas d'erreur
 		 *
 		 */
 		
@@ -432,14 +431,14 @@ LEFT JOIN cvl_civilites AS "cvl" ON cvl.cvl_id = idn.cvl_id ';
 		/**
 		 * Lister les Statuts possibles d'une Action
 		 *
-		 * @license Loxense
-		 * @author Pierre-Luc MARY
-		 * @version 1.0
-		 * @date 2019-08-11
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \version 1.0
+		 * \date 2019-08-11
 		 *
-		 * @param[in] $lng_id ID de la Langue du libellé de l'Action
+		 * \param[in] $lng_id ID de la Langue du libellé de l'Action
 		 *
-		 * @return Renvoi la liste des statuts d'une action ou lève une exception en cas d'erreur
+		 * \return Renvoi la liste des statuts d'une action ou lève une exception en cas d'erreur
 		 *
 		 */
 		
@@ -457,14 +456,14 @@ AND lng_id = :lng_id ';
 		/**
 		 * Lister les Fréquences possibles d'une Action
 		 *
-		 * @license Loxense
-		 * @author Pierre-Luc MARY
-		 * @version 1.0
-		 * @date 2019-08-11
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \version 1.0
+		 * \date 2019-08-11
 		 *
-		 * @param[in] $lng_id ID de la Langue du libellé de l'Action
+		 * \param[in] $lng_id ID de la Langue du libellé de l'Action
 		 *
-		 * @return Renvoi la liste des fréquences d'une action ou lève une exception en cas d'erreur
+		 * \return Renvoi la liste des fréquences d'une action ou lève une exception en cas d'erreur
 		 *
 		 */
 		
@@ -484,24 +483,24 @@ AND lng_id = :lng_id ';
 		/**
 		 * Créer une Action à la Mesure de Conformité
 		 *
-		 * @license Loxense
-		 * @author Pierre-Luc MARY
-		 * @version 1.0
-		 * @date 2019-08-15
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \version 1.0
+		 * \date 2019-08-15
 		 *
-		 * @param[in] $idn_id Id de l'Acteur qui est affecté à cette Action
-		 * @param[in] $cnf_id Id de la Mesure de Conformité à laquelle est rattachée l'Action
-		 * @param[in] $amc_libelle Libellé de l'Action
-		 * @param[in] $amc_description Description de l'Action
-		 * @param[in] $amc_statut_code Code du Statut de l'Action
-		 * @param[in] $amc_frequence_code Code de la Fréquence de l'Action
-		 * @param[in] $amc_date_debut_p Date de début prévisionnelle de l'Action
-		 * @param[in] $amc_date_fin_p Date de fin prévisionnelle de l'Action
-		 * @param[in] $amc_date_debut_r Date de début réelle de l'Action
-		 * @param[in] $amc_date_fin_r Date de fin réelle de l'Action
-		 * @param[in] $amc_priorite Priorité de l'Action
+		 * \param[in] $idn_id Id de l'Acteur qui est affecté à cette Action
+		 * \param[in] $cnf_id Id de la Mesure de Conformité à laquelle est rattachée l'Action
+		 * \param[in] $amc_libelle Libellé de l'Action
+		 * \param[in] $amc_description Description de l'Action
+		 * \param[in] $amc_statut_code Code du Statut de l'Action
+		 * \param[in] $amc_frequence_code Code de la Fréquence de l'Action
+		 * \param[in] $amc_date_debut_p Date de début prévisionnelle de l'Action
+		 * \param[in] $amc_date_fin_p Date de fin prévisionnelle de l'Action
+		 * \param[in] $amc_date_debut_r Date de début réelle de l'Action
+		 * \param[in] $amc_date_fin_r Date de fin réelle de l'Action
+		 * \param[in] $amc_priorite Priorité de l'Action
 		 *
-		 * @return Renvoi TRUE si l'Action a été créée ou lève une exception en cas d'erreur
+		 * \return Renvoi TRUE si l'Action a été créée ou lève une exception en cas d'erreur
 		 *
 		 */
 			
@@ -566,14 +565,14 @@ VALUES
 			/**
 			 * Supprimer une Action à la Mesure de Conformité
 			 *
-			 * @license Loxense
-			 * @author Pierre-Luc MARY
-			 * @version 1.0
-			 * @date 2019-08-15
+			 * \license Loxense
+			 * \author Pierre-Luc MARY
+			 * \version 1.0
+			 * \date 2019-08-15
 			 *
-			 * @param[in] $amc_id Id de l'Action à supprimer
+			 * \param[in] $amc_id Id de l'Action à supprimer
 			 *
-			 * @return Renvoi TRUE si l'Action a été supprimée ou lève une exception en cas d'erreur
+			 * \return Renvoi TRUE si l'Action a été supprimée ou lève une exception en cas d'erreur
 			 *
 			 */
 			
@@ -595,25 +594,25 @@ VALUES
 			/**
 			 * Modifier une Action à la Mesure de Conformité
 			 *
-			 * @license Loxense
-			 * @author Pierre-Luc MARY
-			 * @version 1.0
-			 * @date 2019-08-15
+			 * \license Loxense
+			 * \author Pierre-Luc MARY
+			 * \version 1.0
+			 * \date 2019-08-15
 			 *
-			 * @param[in] $amc_id Id de l'Action à modifier
-			 * @param[in] $idn_id Id de l'Acteur qui est affecté à cette Action
-			 * @param[in] $cnf_id Id de la Mesure de Conformité à laquelle est rattachée l'Action
-			 * @param[in] $amc_libelle Libellé de l'Action
-			 * @param[in] $amc_description Description de l'Action
-			 * @param[in] $amc_statut_code Code du Statut de l'Action
-			 * @param[in] $amc_frequence_code Code de la Fréquence de l'Action
-			 * @param[in] $amc_date_debut_p Date de début prévisionnelle de l'Action
-			 * @param[in] $amc_date_fin_p Date de fin prévisionnelle de l'Action
-			 * @param[in] $amc_date_debut_r Date de début réelle de l'Action
-			 * @param[in] $amc_date_fin_r Date de fin réelle de l'Action
-			 * @param[in] $amc_priorite Priorité de l'Action
+			 * \param[in] $amc_id Id de l'Action à modifier
+			 * \param[in] $idn_id Id de l'Acteur qui est affecté à cette Action
+			 * \param[in] $cnf_id Id de la Mesure de Conformité à laquelle est rattachée l'Action
+			 * \param[in] $amc_libelle Libellé de l'Action
+			 * \param[in] $amc_description Description de l'Action
+			 * \param[in] $amc_statut_code Code du Statut de l'Action
+			 * \param[in] $amc_frequence_code Code de la Fréquence de l'Action
+			 * \param[in] $amc_date_debut_p Date de début prévisionnelle de l'Action
+			 * \param[in] $amc_date_fin_p Date de fin prévisionnelle de l'Action
+			 * \param[in] $amc_date_debut_r Date de début réelle de l'Action
+			 * \param[in] $amc_date_fin_r Date de fin réelle de l'Action
+			 * \param[in] $amc_priorite Priorité de l'Action
 			 *
-			 * @return Renvoi TRUE si l'Action a été créée ou lève une exception en cas d'erreur
+			 * \return Renvoi TRUE si l'Action a été créée ou lève une exception en cas d'erreur
 			 *
 			 */
 			
@@ -660,14 +659,14 @@ WHERE amc_id = :amc_id ';
 		/**
 		 * Récupérer les informations d'une Action de la Mesure de Conformité
 		 *
-		 * @license Loxense
-		 * @author Pierre-Luc MARY
-		 * @version 1.0
-		 * @date 2019-08-15
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \version 1.0
+		 * \date 2019-08-15
 		 *
-		 * @param[in] $amc_id Id de l'Action pour laquelle on récupère les informations
+		 * \param[in] $amc_id Id de l'Action pour laquelle on récupère les informations
 		 *
-		 * @return Renvoi les informations de l'Action ou lève une exception en cas d'erreur
+		 * \return Renvoi les informations de l'Action ou lève une exception en cas d'erreur
 		 *
 		 */
 		
@@ -687,16 +686,16 @@ WHERE amc_id = :amc_id ';
 		/**
 		 * Modifier la mise en oeuvre d'une Mesure de Conformité
 		 *
-		 * @license Loxense
-		 * @author Pierre-Luc MARY
-		 * @version 1.0
-		 * @date 2019-08-18
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \version 1.0
+		 * \date 2019-08-18
 		 *
-		 * @param[in] $cnf_id Id de la Mesure de Conformité à modifier
-		 * @param[in] $cnf_description Descpription de la Mesure de Conformité
-		 * @param[in] $cnf_etat_code Code de l'Etat de la Mesure de Conformité
+		 * \param[in] $cnf_id Id de la Mesure de Conformité à modifier
+		 * \param[in] $cnf_description Descpription de la Mesure de Conformité
+		 * \param[in] $cnf_etat_code Code de l'Etat de la Mesure de Conformité
 		 *
-		 * @return Renvoi TRUE si la Mesure de Conformites à été modifiée ou lève une exception en cas d'erreur
+		 * \return Renvoi TRUE si la Mesure de Conformites à été modifiée ou lève une exception en cas d'erreur
 		 *
 		 */
 		

@@ -9,35 +9,35 @@
 * @date 2017-03-05
 */
 
-	$L_List_Civilities = 'Liste des Civilités';
+	$L_Liste_Civilites = 'Liste des Civilités';
 
-	$L_Civility = 'Civilité';
+	$L_Civilite = 'Civilité';
 
-	$L_First_Name = 'Prénom' ;
-	$L_Last_Name = 'Nom' ;
+	$L_Prenom = 'Prénom' ;
+	$L_Nom_Famille = 'Nom' ;
 	$L_Sex = 'Sexe';
-	$L_Man = 'Homme';
-	$L_Woman = 'Femme';
+	$L_Homme = 'Homme';
+	$L_Femme = 'Femme';
 
-	$L_Birth_Date = 'Date de naissance';
-	$L_Birth_Town = 'Ville de naissance';
+	$L_Date_Naissance = 'Date de naissance';
+	$L_Ville_Naissance = 'Ville de naissance';
 
-	$L_Civility_Add = "Ajouter une civilité";
-	$L_Civility_Create = 'Créer une civilité';
-	$L_Civility_Modify = 'Modifier une civilité';
-	$L_Civility_Delete = 'Supprimer une civilité';
+	$L_Ajouter_Civilite = "Ajouter une civilité";
+	$L_Creer_Civilite = 'Créer une civilité';
+	$L_Modifier_Civilite = 'Modifier une civilité';
+	$L_Supprimer_Civilite = 'Supprimer une civilité';
 
-	$L_Civility_Confirm_Deleted = 'Voulez-vous vraiment supprimer la civilité "<span class="purple">%s</span>" ?';
-	$L_Civility_Confirm_Deleted_Associated = 'Attention, la civilité "<span class="purple">%s</span>" est associée avec :';
+	$L_Confirmer_Suppression_Civilite = 'Voulez-vous vraiment supprimer la civilité "<span class="fg_couleur_1">%s</span>" ?';
+	$L_Confirmer_Suppression_Civilite_Associee = 'Attention, la civilité "<span class="fg_couleur_1">%s</span>" est associée avec :';
 
-	$L_Civility_Created = 'Civilité créée' ;
-	$L_Civility_Modified = 'Civilité modifiée' ;
-	$L_Civility_Deleted = 'Civilité supprimée' ;
-	$L_Civility_Reactivated = 'Civilité réactivée';
+	$L_Civilite_Cree = 'Civilité créée' ;
+	$L_Civilite_Modifiee = 'Civilité modifiée' ;
+	$L_Civilite_Supprimee = 'Civilité supprimée' ;
+	$L_Civilite_Reactivee = 'Civilité réactivée';
 	
-	$L_ERR_CREA_Civility = 'Erreur durant la création de la civilité';
-	$L_ERR_MODI_Civility = 'Erreur durant la modification de la civilité';
-	$L_ERR_DELE_Civility = 'Erreur durant la suppression de la civilité';
-	$L_ERR_DUPL_Civility = 'Cette civilité existe déjà';
+	$L_ERR_CREA_Civilite = 'Erreur durant la création de la civilité';
+	$L_ERR_MODI_Civilite = 'Erreur durant la modification de la civilité';
+	$L_ERR_SUPP_Civilite = 'Erreur durant la suppression de la civilité';
+	$L_ERR_DUPL_Civilite = 'Cette civilité existe déjà';
 
 ?>

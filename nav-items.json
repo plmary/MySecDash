@@ -1,30 +1,43 @@
 {
-	"Items": [
-		{"NomItem": "MenuAdmin", "LibelleItem": "@L_Menu_Admin", "ListeDeroulante": true, "Items": [
-			{"LibelleItem": "@L_Referentiel_Interne", "Items" : [
-				{"LibelleItem": "@L_Parametres_Base", "Lien": "https://loxense1.local/Loxense-Parametres.php"},
-				{"LibelleItem": "@L_Referentiel_Conformite", "Lien": "https://loxense1.local/Loxense-ReferentielsConformite.php"}
+	"ItemsPrincipales": [
+		{"LibelleItemPrincipale": "L_Administration", "Items": [
+			{"LibelleItem": "L_Referentiel_Interne", "Type" : "sous-menu", "Items" : [
+				{"LibelleItem": "L_Parametres_Base", "Type" : "option", "Lien": "MySecDash-Parametres.php"},
+				{"LibelleItem": "L_Types_Fournisseur", "Type" : "option", "Lien" : "MyContinuity-TypesFournisseur.php"}
 			]},
-			{"LibelleItem": "@L_Controle_Acces", "Items" : [
-				{"LibelleItem": "@L_Entites", "Lien": "https://loxense1.local/Loxense-Entites.php"},
-				{"LibelleItem": "@L_Civilites", "Lien": "https://loxense1.local/Loxense-Civilites.php"},
-				{"LibelleItem": "@L_Applications", "Lien": "https://loxense1.local/Loxense-Applications.php"},
-				{"LibelleItem": "@L_Profils", "Lien": "https://loxense1.local/Loxense-Profils.php"},
-				{"LibelleItem": "@L_Utilisateurs", "Lien": "https://loxense1.local/Loxense-Utilisateurs.php"},
-				{"LibelleItem": "@L_Gestionnaires", "Lien": "https://loxense1.local/Loxense-Gestionnaires.php"},
-				{"LibelleItem": "@L_Etiquettes", "Lien": "https://loxense1.local/Loxense-Etiquettes.php"}
+			{"LibelleItem": "L_Controle_Acces", "Type" : "sous-menu", "Items" : [
+				{"LibelleItem": "L_Societes", "Type" : "option", "Lien": "MySecDash-Societes.php"},
+				{"LibelleItem": "L_Entites", "Type" : "option", "Lien": "MySecDash-Entites.php"},
+				{"LibelleItem": "L_Civilites", "Type" : "option", "Lien": "MySecDash-Civilites.php"},
+				{"LibelleItem": "L_ApplicationsInternes", "Type" : "option", "Lien": "MySecDash-ApplicationsInternes.php"},
+				{"LibelleItem": "L_Profils", "Type" : "option", "Lien": "MySecDash-Profils.php"},
+				{"LibelleItem": "L_Utilisateurs", "Type" : "option", "Lien": "MySecDash-Utilisateurs.php"},
+				{"LibelleItem": "L_Etiquettes", "Type" : "option", "Lien": "MySecDash-Etiquettes.php"}
 			]},
-			{"LibelleItem": "Historique des actions", "Lien" : "https://loxense1.local/Loxense-Entites.php"},
-			{"LibelleItem": "Export / Import de la base", "Lien" : "https://loxense1.local/Loxense-ImportExportBase.php"}
+			{"LibelleItem": "", "Type" : "separator"},
+			{"LibelleItem": "L_Historique", "Type" : "option", "Lien" : "MySecDash-Historiques.php"}
 		]},
-		{"NomItem": "MenuTest", "LibelleItem": "L_MenuTest", "ListeDeroulante": true, "Items": [
-			{"LibelleItem": "Référentiel interne", "Items" : [
-				{"LibelleItem": "Paramètres de base", "Lien": "https://loxense1.local/Loxense-Parametres.php"},
-				{"LibelleItem": "Référentiels de conformité", "Lien": "https://loxense1.local/Loxense-ReferentielsConformite.php"}
-			]},
-			{"LibelleItem": "Contrôle d'accès", "Items" : [
-				{"LibelleItem": "Entités", "Lien": "https://loxense1.local/Loxense-Entites.php"}
+		{"LibelleItemPrincipale": "L_Gestion", "Items": [
+			{"LibelleItem": "L_Continuite", "Type" : "sous-menu", "Items": [
+				{"LibelleItem": "L_Accueil", "Type" : "option", "Lien" : "MyContinuity-Principal.php"},
+				{"LibelleItem": "", "Type" : "separator"},
+				{"LibelleItem": "L_Campagnes", "Type" : "option", "Lien" : "MyContinuity-Campagnes.php"},
+				{"LibelleItem": "", "Type" : "separator"},
+				{"LibelleItem": "L_Activites", "Type" : "option", "Lien" : "MyContinuity-Activites.php"},
+				{"LibelleItem": "", "Type" : "separator"},
+				{"LibelleItem": "L_Valider_BIA", "Type" : "option", "Lien" : "MyContinuity-ValiderEntites.php"},
+				{"LibelleItem": "", "Type" : "separator"},
+				{"LibelleItem": "L_Sites", "Type" : "option", "Lien" : "MyContinuity-Sites.php"},
+				{"LibelleItem": "L_Applications", "Type" : "option", "Lien" : "MyContinuity-Applications.php"},
+				{"LibelleItem": "L_Fournisseurs", "Type" : "option", "Lien" : "MyContinuity-Fournisseurs.php"},
+				{"LibelleItem": "L_Parties_Prenantes", "Type" : "option", "Lien" : "MyContinuity-PartiesPrenantes.php"},
+				{"LibelleItem": "L_Echelles_Temps", "Type" : "option", "Lien" : "MyContinuity-EchellesTemps.php"},
+				{"LibelleItem": "L_Matrice_Impacts", "Type" : "option", "Lien" : "MyContinuity-MatriceImpacts.php"}
 			]}
+		]},
+		{"LibelleItemPrincipale": "L_Visualisation", "Items": [
+			{"LibelleItem": "L_Visualiser_BIA", "Type" : "option", "Lien": "MyContinuity-VisualiserBIA.php"},
+			{"LibelleItem": "L_Editer_BIAs", "Type" : "option", "Lien": "MyContinuity-EditionsBIA.php"}
 		]}
 	]
 }

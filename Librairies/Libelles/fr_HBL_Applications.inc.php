@@ -8,33 +8,33 @@
 * @author Pierre-Luc MARY
 * @date 2017-03-05
 */
-	$L_List_Applications = 'Liste des applications';
+	$L_Liste_Applications = 'Liste des applications';
 
 	$L_Nom_Application = 'Nom de l\'application';
 
 	$L_Application = 'Application';
-	$L_Localization = 'Emplacement'; // ex Localisation
+	$L_Localisation = 'Emplacement'; // ex Localisation
 	$L_Applications = 'Applications';
-	$L_Expiry_maximum_period = 'Validité maximale du compte avant expiration'; // 'Période maximum d\'expiration'
-	$L_Parameters = 'Paramètres';
+	$L_Validite_Maximale_Expiration = 'Validité maximale du compte avant expiration'; // 'Période maximum d\'expiration'
+	$L_Parametres = 'Paramètres';
 
-	$L_Application_Add = 'Ajouter une application';
-	$L_Application_Modify = 'Modifier une application';
-	$L_Application_Delete = 'Supprimer une application';
+	$L_Ajouter_Application = 'Ajouter une application';
+	$L_Modifier_Application = 'Modifier une application';
+	$L_Supprimer_Application = 'Supprimer une application';
 	
-	$L_Association_Profile_Applications = 'Associer des Applications à un Profil';
+	$L_Association_Profil_Applications = 'Associer des Applications à un Profil';
 
-	$L_Application_Created = 'Application ajoutée' ;
-	$L_Application_Modified = 'Application modifiée' ;
-	$L_Application_Deleted = 'Application supprimée' ;
-	$L_Application_Associated = 'Application associée' ;
-	$L_Applications_Associated = 'Applications associées' ;
+	$L_Application_Cree = 'Application ajoutée' ;
+	$L_Application_Modifiee = 'Application modifiée' ;
+	$L_Application_Supprimee = 'Application supprimée' ;
+	$L_Application_Associee = 'Application associée' ;
+	$L_Applications_Associees = 'Applications associées' ;
 
 	$L_ERR_CREA_Application = 'Erreur durant la création de l\'application';
 	$L_ERR_MODI_Application = 'Erreur durant la modification de l\'application';
-	$L_ERR_DELE_Application = 'Erreur durant la suppression de l\'application';
+	$L_ERR_SUPP_Application = 'Erreur durant la suppression de l\'application';
 	$L_ERR_DUPL_Application = '"Localisation" déjà utilisée';
 
-	$L_Application_Confirm_Deleted = 'Voulez-vous vraiment supprimer l\'application "<span class="purple">%s</span>" ?';
-	$L_Application_Confirm_Deleted_Associated = 'Attention, l\'application "<span class="purple">%s</span>" est associée avec :';
+	$L_Confirmer_Suppression_Application = 'Voulez-vous vraiment supprimer l\'application "<span class="fg_couleur_1">%s</span>" ?';
+	$L_Confirmer_Suppression_Application_Associee = 'Attention, l\'application "<span class="fg_couleur_1">%s</span>" est associée avec :';
 ?>

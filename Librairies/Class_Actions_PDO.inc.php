@@ -8,9 +8,9 @@ class Actions extends HBL_Parametres {
 * Cette classe gère les Actions.
 *
 * PHP version 5
-* @license Loxense
-* @author Pierre-Luc MARY
-* @version 1.0
+* \license Loxense
+* \author Pierre-Luc MARY
+* \version 1.0
 */ 
 
 	const ID_TYPE = PDO::PARAM_INT;
@@ -41,14 +41,14 @@ class Actions extends HBL_Parametres {
 
 	public function __construct() {
 	/**
-	* Connexion à la base de données via HBL_Connecteur_BD.
+	* Connexion à la base de données via HBL_Connexioneur_BD.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @version 1.0
-	* @date 2016-10-24
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \version 1.0
+	* \date 2016-10-24
 	*
-	* @return Renvoi un booléen sur le succès de la connexion à la base de données
+	* \return Renvoi un booléen sur le succès de la connexion à la base de données
 	*/
 		parent::__construct();
 
@@ -65,16 +65,16 @@ class Actions extends HBL_Parametres {
 	/**
 	* Lister les Actions
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @version 1.0
-	* @date 2017-04-24
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \version 1.0
+	* \date 2017-04-24
 	*
-	* @param[in] $crs_id ID de la cartographie
-	* @param[in] $trier Nom de la colonne sur laquelle on réalise le tri
-	* @param[in] $langue ID de la langue d'affichage
+	* \param[in] $crs_id ID de la cartographie
+	* \param[in] $trier Nom de la colonne sur laquelle on réalise le tri
+	* \param[in] $langue ID de la langue d'affichage
 	*
-	* @return Renvoi une liste d'action ou lève une erreur en cas d'erreur. 
+	* \return Renvoi une liste d'action ou lève une erreur en cas d'erreur. 
 	*			
 	*/
 		if ( $chercher != '' ) {
@@ -256,26 +256,26 @@ class Actions extends HBL_Parametres {
 	/**
 	* Insérer une Action
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-04-27
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-04-27
 	*
-	* @param[in] $mcr_id ID de la Mesure de rattachement
-	* @param[in] $act_libelle Libellé de l'Action
-	* @param[in] $act_statut_code Code du Statut de l'Action (Non fait | Fait | En cours | Supprimé)
-	* @param[in] $act_frequence_code Code de la Fréquence de l'Action (Aucune | Quotidien | Hebdomadaire | Mensuel | Semestriel | Annuel)
-	* @param[in] $act_date_debut_p Date de début prévisionnelle de l'Action
-	* @param[in] $act_date_fin_p Date de fin prévisionnelle de l'Action
-	* @param[in] $act_priorite Priorité de l'Action (pour gérer les priorités)
-	* @param[in] $idn_id ID de l'Utilisateur qui a pris en charge l'Action
-	* @param[in] $act_type_code [pas encore utilisé] Code du Type d'Action (Formation | Organisation | Investissement | ...)
-	* @param[in] $acg_id ID de l'Action Générique de rattachement (quand elle existe)
-	* @param[in] $act_description 
-	* @param[in] $gst_id 
-	* @param[in] $act_date_debut_r Date de début réelle de l'Action
-	* @param[in] $act_date_fin_r Date de début réelle de l'Action
+	* \param[in] $mcr_id ID de la Mesure de rattachement
+	* \param[in] $act_libelle Libellé de l'Action
+	* \param[in] $act_statut_code Code du Statut de l'Action (Non fait | Fait | En cours | Supprimé)
+	* \param[in] $act_frequence_code Code de la Fréquence de l'Action (Aucune | Quotidien | Hebdomadaire | Mensuel | Semestriel | Annuel)
+	* \param[in] $act_date_debut_p Date de début prévisionnelle de l'Action
+	* \param[in] $act_date_fin_p Date de fin prévisionnelle de l'Action
+	* \param[in] $act_priorite Priorité de l'Action (pour gérer les priorités)
+	* \param[in] $idn_id ID de l'Utilisateur qui a pris en charge l'Action
+	* \param[in] $act_type_code [pas encore utilisé] Code du Type d'Action (Formation | Organisation | Investissement | ...)
+	* \param[in] $acg_id ID de l'Action Générique de rattachement (quand elle existe)
+	* \param[in] $act_description 
+	* \param[in] $gst_id 
+	* \param[in] $act_date_debut_r Date de début réelle de l'Action
+	* \param[in] $act_date_fin_r Date de début réelle de l'Action
 	*
-	* @return Renvoi l'ID de l'Action créée ou lève une exception en cas d'erreur.
+	* \return Renvoi l'ID de l'Action créée ou lève une exception en cas d'erreur.
 	*			
 	*/
 
@@ -403,13 +403,13 @@ class Actions extends HBL_Parametres {
 	/**
 	* Supprimer une Action.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-04-27
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-04-27
 	*
-	* @param[in] $Id ID de l'Action à supprimer
+	* \param[in] $Id ID de l'Action à supprimer
 	*
-	* @return Renvoi "vrai" si l'occurrence a été supprimée, sinon, lève une exception. 
+	* \return Renvoi "vrai" si l'occurrence a été supprimée, sinon, lève une exception. 
 	*			
 	*/
 		$sql = 'DELETE FROM act_actions WHERE act_id = :act_id ';
@@ -428,25 +428,25 @@ class Actions extends HBL_Parametres {
 	/**
 	* Modifier une Action
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-04-27
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-04-27
 	*
-	* @param[in] $act_id ID de l'Action à modifier
-	* @param[in] $mcr_id ID de la Mesure de rattachement
-	* @param[in] $act_libelle Libellé de l'Action
-	* @param[in] $act_statut_code Code du Statut de l'Action (Non fait | Fait | En cours | Supprimé)
-	* @param[in] $act_frequence_code Code de la Fréquence de l'Action (Aucune | Quotidien | Hebdomadaire | Mensuel | Semestriel | Annuel)
-	* @param[in] $act_date_debut_p Date de début prévisionnelle de l'Action
-	* @param[in] $act_date_fin_p Date de fin prévisionnelle de l'Action
-	* @param[in] $act_priorite Poids de l'Action (pour gérer les priorités)
-	* @param[in] $idn_id ID de l'Utilisateur qui a pris en charge l'Action
-	* @param[in] $act_description Description ou commentaire sur l'action
-	* @param[in] $act_date_debut_r Date de début réelle de l'Action
-	* @param[in] $act_date_fin_r Date de début réelle de l'Action
-	* @param[in] $acg_id ID de l'Action Générique de rattachement (quand elle existe)
+	* \param[in] $act_id ID de l'Action à modifier
+	* \param[in] $mcr_id ID de la Mesure de rattachement
+	* \param[in] $act_libelle Libellé de l'Action
+	* \param[in] $act_statut_code Code du Statut de l'Action (Non fait | Fait | En cours | Supprimé)
+	* \param[in] $act_frequence_code Code de la Fréquence de l'Action (Aucune | Quotidien | Hebdomadaire | Mensuel | Semestriel | Annuel)
+	* \param[in] $act_date_debut_p Date de début prévisionnelle de l'Action
+	* \param[in] $act_date_fin_p Date de fin prévisionnelle de l'Action
+	* \param[in] $act_priorite Poids de l'Action (pour gérer les priorités)
+	* \param[in] $idn_id ID de l'Utilisateur qui a pris en charge l'Action
+	* \param[in] $act_description Description ou commentaire sur l'action
+	* \param[in] $act_date_debut_r Date de début réelle de l'Action
+	* \param[in] $act_date_fin_r Date de début réelle de l'Action
+	* \param[in] $acg_id ID de l'Action Générique de rattachement (quand elle existe)
 	*
-	* @return Renvoi l'ID de l'Actif Support créé ou lève une exception en cas d'erreur.
+	* \return Renvoi l'ID de l'Actif Support créé ou lève une exception en cas d'erreur.
 	*			
 	*/
 
@@ -519,15 +519,15 @@ class Actions extends HBL_Parametres {
 	/**
 	* Modifier une valeur d'une Action.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-04-27
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-04-27
 	*
-	* @param[in] $Id ID de l'Action
-	* @param[in] $Source Colonne de la table que l'on va modifier
-	* @param[in] $Valeur Valeur que l'on associe à la Colonne de la table
+	* \param[in] $Id ID de l'Action
+	* \param[in] $Source Colonne de la table que l'on va modifier
+	* \param[in] $Valeur Valeur que l'on associe à la Colonne de la table
 	*
-	* @return Renvoi "vrai" si l'occurrence a été modifiée, sinon, lève une exception. 
+	* \return Renvoi "vrai" si l'occurrence a été modifiée, sinon, lève une exception. 
 	*			
 	*/
 		$sql = 'UPDATE act_actions SET ' . $Source . ' = :valeur ' .
@@ -579,11 +579,11 @@ class Actions extends HBL_Parametres {
 	/**
 	* Total des Actions.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-04-27
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-04-27
 	*
-	* @return Renvoi les occurrences qui ont été trouvées, sinon, lève une exception. 
+	* \return Renvoi les occurrences qui ont été trouvées, sinon, lève une exception. 
 	*
 	*/
 		$sql = 'SELECT COUNT(act_id) as "total" ' .
@@ -599,14 +599,14 @@ class Actions extends HBL_Parametres {
 	/**
 	* Lister les Mesures qui sont associées à cette cartographie (si elle est précisée) et à l'Utilisateur en fonction de son appartenance.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-05-01
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-05-01
 	*
-	* @param[in] $crs_id ID. de la Cartographie qui a été sélectionnée
-	* @param[in] $Langue Langue pour afficher les libellés
+	* \param[in] $crs_id ID. de la Cartographie qui a été sélectionnée
+	* \param[in] $Langue Langue pour afficher les libellés
 	*
-	* @return Renvoi les occurrences qui ont été trouvées, sinon, lève une exception. 
+	* \return Renvoi les occurrences qui ont été trouvées, sinon, lève une exception. 
 	*
 	*/
 		$sql = 'SELECT ' .
@@ -664,14 +664,14 @@ class Actions extends HBL_Parametres {
 	/**
 	* Lister les Libellés d'une Mesure.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-05-04
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-05-04
 	*
-	* @param[in] $mcr_id ID. de la Mesure recherchée
-	* @param[in] $Langue Langue pour afficher les libellés
+	* \param[in] $mcr_id ID. de la Mesure recherchée
+	* \param[in] $Langue Langue pour afficher les libellés
 	*
-	* @return Renvoi l'occurrence qui a été trouvée, sinon, lève une exception. 
+	* \return Renvoi l'occurrence qui a été trouvée, sinon, lève une exception. 
 	*
 	*/
 		$sql = 'SELECT ' .
@@ -715,13 +715,13 @@ class Actions extends HBL_Parametres {
 	/**
 	* Lister les Statuts qui peuvent être associés à une Action.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-05-01
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-05-01
 	*
-	* @param[in] $Langue Langue pour afficher les libellés
+	* \param[in] $Langue Langue pour afficher les libellés
 	*
-	* @return Renvoi les occurrences qui ont été trouvées, sinon, lève une exception. 
+	* \return Renvoi les occurrences qui ont été trouvées, sinon, lève une exception. 
 	*
 	*/
 		$sql = 'SELECT ' .
@@ -741,13 +741,13 @@ class Actions extends HBL_Parametres {
 	/**
 	* Lister les Fréquences qui peuvent être associées à une Action.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-05-01
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-05-01
 	*
-	* @param[in] $Langue Langue pour afficher les libellés
+	* \param[in] $Langue Langue pour afficher les libellés
 	*
-	* @return Renvoi les occurrences qui ont été trouvées, sinon, lève une exception. 
+	* \return Renvoi les occurrences qui ont été trouvées, sinon, lève une exception. 
 	*
 	*/
 		$sql = 'SELECT ' .
@@ -768,14 +768,14 @@ class Actions extends HBL_Parametres {
 	/**
 	* Lister les utilisateurs gestionnaires de ce type d'actif support et autorisé à travailler sur cette mesure.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @version 1.0
-	* @date 2017-05-08
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \version 1.0
+	* \date 2017-05-08
 	*
-	* @param[in] $mcr_id ID. de la Mesure
+	* \param[in] $mcr_id ID. de la Mesure
 	*
-	* @return Renvoi les occurrences correspondantes ou lève une exception en cas d'erreur.
+	* \return Renvoi les occurrences correspondantes ou lève une exception en cas d'erreur.
 	*			
 	*/
 		$sql = 'SELECT mcr.mcr_id, idn.idn_id, idn.idn_login, cvl.cvl_prenom, cvl.cvl_nom 
@@ -803,13 +803,13 @@ WHERE mcr.mcr_id = :mcr_id ';
 	/**
 	* Lister les Preuves associées à une Action.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-05-13
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-05-13
 	*
-	* @param[in] $act_id ID. de l'Action de référence
+	* \param[in] $act_id ID. de l'Action de référence
 	*
-	* @return Renvoi les occurrences correspondantes ou lève une exception en cas d'erreur.
+	* \return Renvoi les occurrences correspondantes ou lève une exception en cas d'erreur.
 	*			
 	*/
 		$sql = 'SELECT prv_id, prv_libelle, prv_localisation, prv_date_creation
@@ -829,15 +829,15 @@ ORDER BY prv_libelle ';
 	/**
 	* Insère une nouvelle Preuve pour une Action.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-05-13
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-05-13
 	*
-	* @param[in] $act_id ID. de l'Action de rattachement
-	* @param[in] $prv_libelle Libellé de la Preuve
-	* @param[in] $prv_localisation Localisation de la Preuve
+	* \param[in] $act_id ID. de l'Action de rattachement
+	* \param[in] $prv_libelle Libellé de la Preuve
+	* \param[in] $prv_localisation Localisation de la Preuve
 	*
-	* @return Renvoi l'ID de la nouvelle occurrence qui a été crée ou lève une exception en cas d'erreur.
+	* \return Renvoi l'ID de la nouvelle occurrence qui a été crée ou lève une exception en cas d'erreur.
 	*			
 	*/
 		$sql = 'INSERT INTO prv_preuves 
@@ -870,13 +870,13 @@ ORDER BY prv_libelle ';
 	/**
 	* Lister les Preuves associées à une Action.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-05-13
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-05-13
 	*
-	* @param[in] $prv_id ID. de la Preuve à supprimer
+	* \param[in] $prv_id ID. de la Preuve à supprimer
 	*
-	* @return Renvoi "vrai" si l'occurrence a été supprimée ou lève une exception en cas d'erreur.
+	* \return Renvoi "vrai" si l'occurrence a été supprimée ou lève une exception en cas d'erreur.
 	*			
 	*/
 		$sql = 'DELETE FROM prv_preuves WHERE prv_id = :prv_id ';
@@ -894,10 +894,10 @@ ORDER BY prv_libelle ';
 	/**
 	* Télécharge la preuve.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-05-14
+	* \author Pierre-Luc MARY
+	* \date 2017-05-14
 	*
-	* @return Renvoi vrai si le fichier a bien été créé.
+	* \return Renvoi vrai si le fichier a bien été créé.
 	*			
 	*/
 		$NomCompletFichier = DIR_PREUVES . DIRECTORY_SEPARATOR . $NomFichier;
@@ -915,7 +915,6 @@ ORDER BY prv_libelle ';
 			flush();
 			readfile( $NomCompletFichier );
 		} else {
-//			header( 'Location: Loxense-Actions.php?PasDeFichier&crs_id='.$crs_id.'&NomFichier='.urlencode($NomFichier) );
 			exit( FALSE );
 		}
 
@@ -923,6 +922,5 @@ ORDER BY prv_libelle ';
 	}
 
 } // Fin class Actions
-
 
 ?>

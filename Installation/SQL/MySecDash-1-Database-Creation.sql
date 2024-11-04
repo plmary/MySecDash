@@ -13,6 +13,6 @@ CREATE DATABASE mysecdash
   WITH OWNER = mysecdash_u
        ENCODING = UTF8
        TABLESPACE = pg_default
-       LOCALE = 'fr_FR.UTF-8'
+       ICU_LOCALE = 'fr-FR'
 	   TEMPLATE = 'template0'
        CONNECTION LIMIT = -1;

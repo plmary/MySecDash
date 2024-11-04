@@ -10,11 +10,11 @@
 *
 */
 
-$_Host = 'localhost'; // loxensefwhur1.postgresql.db (chez OVH)
+$_Host = 'localhost';
 $_Port = '5432'; // Par défaut 5432 pour 14
 $_Driver = 'pgsql'; // mysql, pgsql, sqlite, sqlite2 
-$_Base = 'loxense'; // loxensefwhur1 (chez OVH)
-$_User = 'loxense_u'; // loxensefwhur1 (chez OVH)
-$_Password = 'AMoiToutSeul'; // 1SeulPapa (chez OVH)
+$_Base = 'mysecdash';
+$_User = 'mysecdash_u';
+$_Password = 'hNyxR4RNzo';
 
 ?>

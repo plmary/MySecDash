@@ -4,11 +4,11 @@
 * Ce script gère la connexion, la déconnexion et le changement de mot de passe
 * des utilisateurs.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @package MySecDash
-* @version 1.0
-* @date 2023-11-03
+* \license Copyleft Loxense
+* \author Pierre-Luc MARY
+* \package MySecDash
+* \version 1.0
+* \date 2023-11-03
 *
 */
 
@@ -89,10 +89,10 @@ switch( $Action ) {
 	$PageHTML->sauverTempsSession();
 
  	echo json_encode( array(
- 		'Titre' => $L_Modify_Your_Password,
- 		'MdP' => $L_Password,
- 		'Nouveau_MdP' => $L_New_Password,
- 		'Conf_MdP' => $L_Conf_Password,
+ 		'Titre' => $L_Modifier_Mot_Passe,
+ 		'MdP' => $L_Mot_Passe,
+ 		'Nouveau_MdP' => $L_Nouveau_Mot_Passe,
+ 		'Conf_MdP' => $L_Confirmation_Mot_Passe,
  		'Modifier' => $L_Modifier,
  		'Fermer' => $L_Fermer
  		) );
@@ -105,22 +105,22 @@ switch( $Action ) {
 	$Error = 0;
 
 	if ( $_POST[ 'N_Password' ] == '' or $_POST[ 'C_Password' ] == '' ) {
-		$Error_Message = $L_ERR_Mandatories_Fields;
+		$Error_Message = $L_ERR_Champs_Obligatoires;
 		$Error = 1;
 	}
 
 	
 	if (  $_POST[ 'N_Password' ] != $_POST[ 'C_Password' ] ) {
-		$Error_Message = $L_ERR_Password_Confirmation;
+		$Error_Message = $L_ERR_Confirmation_Mot_Passe;
 		$Error = 1;
 	}
 
 	
 	if ( strlen( $_POST[ 'N_Password' ] ) < ($PageHTML->recupererParametre( 'min_size_password' )) ) {
 		if ( $Error == 1 ) {
-			$Error_Message .= ', ' . $L_ERR_Min_Size;
+			$Error_Message .= ', ' . $L_ERR_Taille_Mot_Passe;
 		} else {
-			$Error_Message = $L_ERR_Min_Size;
+			$Error_Message = $L_ERR_Taille_Mot_Passe;
 			$Error = 1;
 		}
 	}
@@ -155,10 +155,10 @@ switch( $Action ) {
 			echo json_encode( array(
 				'statut' => 'error',
 				'titreMsg' => $L_Error,
-				'texteMsg' => $L_ERR_Modify_Password
+				'texteMsg' => $L_ERR_Modifier_Mot_Passe
 			) );
 
-			$PageHTML->ecrireEvenement( 'ATP_CHG_MDP', 'OTP_CTRL_ACCES', 'idn_login: "' . $_SESSION['idn_login'] . '", ' . $L_ERR_Modify_Password );
+			$PageHTML->ecrireEvenement( 'ATP_CHG_MDP', 'OTP_CTRL_ACCES', 'idn_login: "' . $_SESSION['idn_login'] . '", ' . $L_ERR_Modifier_Mot_Passe );
 
 			exit();
 		}
@@ -177,10 +177,10 @@ switch( $Action ) {
 	echo json_encode( array(
 		'statut' => 'success',
 		'titreMsg' => $L_Success,
-		'texteMsg' => $L_Password_Modified
+		'texteMsg' => $L_Mot_Passe_Modifie
 	) );
 
-	$PageHTML->ecrireEvenement( 'ATP_CHG_MDP', 'OTP_CTRL_ACCES', 'idn_login: "' . $_SESSION['idn_login'] . '", ' . $L_Password_Modified );
+	$PageHTML->ecrireEvenement( 'ATP_CHG_MDP', 'OTP_CTRL_ACCES', 'idn_login: "' . $_SESSION['idn_login'] . '", ' . $L_Mot_Passe_Modifie );
 
 	exit();
 
@@ -191,16 +191,15 @@ switch( $Action ) {
 		echo json_encode( array(
 			'statut' => 'error',
 			'titreMsg' => $L_Error,
-			'texteMsg' => $L_ERR_Mandatories_Fields
+			'texteMsg' => $L_ERR_Champs_Obligatoires
 		) );
 
-		$PageHTML->ecrireEvenement( 'ATP_CNX', 'OTP_CTRL_ACCES', $L_ERR_Mandatories_Fields );
+		$PageHTML->ecrireEvenement( 'ATP_CNX', 'OTP_CTRL_ACCES', $L_ERR_Champs_Obligatoires );
 
 		exit();
 	}
 	
 	$Authentication_Type = strtoupper( $PageHTML->recupererParametre( 'authentification_type' ) ) ;
-
 
 	try {
 		// Contrôle l'authentification à partir des éléments fournis.
@@ -209,10 +208,10 @@ switch( $Action ) {
 			echo json_encode( array(
 				'statut' => 'error',
 				'titreMsg' => $L_Error,
-				'texteMsg' => $L_Err_Auth
+				'texteMsg' => $L_Erreur_Authentification
 			) );
 
-			$PageHTML->ecrireEvenement( 'ATP_CNX', 'OTP_CTRL_ACCES', 'idn_login: "' . $_POST[ 'Code_Utilisateur' ] . '", ' . $L_Err_Auth );
+			$PageHTML->ecrireEvenement( 'ATP_CNX', 'OTP_CTRL_ACCES', 'idn_login: "' . $_POST[ 'Code_Utilisateur' ] . '", ' . $L_Erreur_Authentification );
 
 			exit();
 		}
@@ -239,6 +238,23 @@ switch( $Action ) {
 		exit();
 	}
 
+
+	// Calcule et stocke un Jeton de Connexion.
+	if ( $PageHTML->stockerJetonDeConnexion() != TRUE ) {
+		$Texte_Erreur = 'Interne : problème de calcul du jeton';
+		
+		echo json_encode( array(
+			'statut' => 'error',
+			'titreMsg' => $L_Error,
+			'texteMsg' => $Texte_Erreur
+		) );
+		
+		$PageHTML->ecrireEvenement( 'ATP_CNX', 'OTP_CTRL_ACCES', 'idn_login: "' . $_POST['Code_Utilisateur'] . '", ' . $Texte_Erreur );
+		
+		exit();
+	}
+
+
 	// Tout est normal, l'utilisateur peut arriver sur son tableau de bord.
 	echo json_encode( array(
 		'statut' => 'success',
@@ -247,7 +263,7 @@ switch( $Action ) {
 	) );
 
 	$PageHTML->ecrireEvenement( 'ATP_CNX', 'OTP_CTRL_ACCES', 'idn_login: "' . $_SESSION['idn_login'] . '"' );
-   
+
 	exit();
 
 
@@ -274,8 +290,8 @@ switch( $Action ) {
 		$Img_Langue_Active = $Img_Langue_en;
 	}
 
-	print( "  <p id=\"logo-img\" class=\"text-center\">" .
-		"<img src=\"Images/Logo-MySecDash.svg\" alt=\"Logo MySecDash\" />" );
+	print( "  <p id=\"logo-img\" class=\"text-center mt-3\">" .
+		"<img src=\"Images/Logo-MySecDash.svg\" alt=\"Logo MySecDash\" width=\"500\" />" );
 	
 	if ( file_exists( 'Images/Logo-Client.svg' ) ) {
 		print( "<img src=\"Images/Logo-Client.svg\" alt=\"Logo Client\" />" );
@@ -288,11 +304,11 @@ switch( $Action ) {
 		"   <h1 class=\"text-center\">" . $L_Accueil . "</h1>\n" .
 		"   <form id=\"login-form\" method=\"post\" action=\"#\" autocomplete=\"on\">\n" .
 		"    <div class=\"input-group mb-3\">\n" .
-		"     <input type=\"text\" name=\"Code_Utilisateur\" placeholder=\"" . $L_Username . "\" class=\"form-control\" autofocus required />\n" .
+		"     <input type=\"text\" name=\"Code_Utilisateur\" placeholder=\"" . $L_Nom_Utilisateur . "\" class=\"form-control\" autofocus required />\n" .
 		"     <span class=\"input-group-text\"><i class=\"bi-person-fill\"></i></span>\n" .
 		"    </div>\n" .
 		"    <div class=\"input-group mb-3\">\n" .
-		"     <input type=\"password\" name=\"Mot_Passe\" placeholder=\"" . $L_Password . "\" class=\"form-control\" required />\n" .
+		"     <input type=\"password\" name=\"Mot_Passe\" placeholder=\"" . $L_Mot_Passe . "\" class=\"form-control\" required />\n" .
 		"     <span class=\"input-group-text\"><i class=\"bi-unlock-fill\"></i></span>\n" .
 		"    </div>\n" .
 		"    <div class=\"dropdown mb-3\">\n" .
@@ -305,7 +321,7 @@ switch( $Action ) {
 		"     </ul>\n" .
 		"    </div>\n" .
 		"    <div class=\"form-group\">\n" .
-		"     <button type=\"submit\" class=\"btn btn-outline-secondary\" id=\"btn-connexion\">" . $L_Connect . "</button>\n" .
+		"     <button type=\"submit\" class=\"btn btn-outline-secondary\" id=\"btn-connexion\">" . $L_Connexion . "</button>\n" .
 		"    </div>\n" .
 		"   </form>\n" .
 		"  </div>\n" .
@@ -328,7 +344,7 @@ switch( $Action ) {
 	$PageHTML->ecrireEvenement( 'ATP_DCNX', 'OTP_CTRL_ACCES', 'idn_login: "' . $_SESSION['idn_login'] . '"');
 
 	$PageHTML->deconnecter();
-   
+
 	header( 'Location: ' . URL_BASE . $Script . $Signal );
 
 	break;

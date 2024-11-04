@@ -46,7 +46,11 @@ INSERT INTO lbr_libelles_referentiel (lbr_code, lng_id, lbr_libelle) VALUES
 ('ATP_DUPLICATION', 'fr', 'Duplication'),
 ('ATP_DUPLICATION', 'en', 'Duplicating'),
 ('ATP_GENERATION', 'fr', 'Génération'),
-('ATP_GENERATION', 'en', 'Generate');
+('ATP_GENERATION', 'en', 'Generate'),
+('ATP_ALERTE', 'fr', 'Alerte'),
+('ATP_ALERTE', 'en', 'Alert'),
+('ATP_VALIDATION', 'fr', 'Validation'),
+('ATP_VALIDATION', 'en', 'Validation');
 
 INSERT INTO lbr_libelles_referentiel (lbr_code, lng_id, lbr_libelle) VALUES
 ('LNG_fr', 'fr', 'Français'),
@@ -140,7 +144,32 @@ INSERT INTO lbr_libelles_referentiel (lbr_code, lng_id, lbr_libelle) VALUES
 ('OTP_SOURCE_RISQUE', 'fr', 'Source de risques'),
 ('OTP_SOURCE_RISQUE', 'en', 'Source of risks'),
 ('OTP_PARTIE_PRENANTE', 'fr', 'Partie prenante'),
-('OTP_PARTIE_PRENANTE', 'en', 'Stakeholder');
+('OTP_PARTIE_PRENANTE', 'en', 'Stakeholder'),
+('OTP_CAMPAGNE', 'fr', 'Campagne'),
+('OTP_CAMPAGNE', 'en', 'Campaign'),
+('OTP_NIVEAU_IMPACT', 'fr', 'Niveau d''impact'),
+('OTP_NIVEAU_IMPACT', 'en', 'Impact level'),
+('OTP_TYPE_IMPACT', 'fr', 'Type d''impact'),
+('OTP_TYPE_IMPACT', 'en', 'Impact type'),
+('OTP_MATRICE_IMPACT', 'fr', 'Matrice d''impact'),
+('OTP_MATRICE_IMPACT', 'en', 'Impact matrix'),
+('OTP_DESCRIPTION_IMPACT', 'fr', 'Description de l''impact'),
+('OTP_DESCRIPTION_IMPACT', 'en', 'Impact description'),
+('OTP_ACTIVITE', 'fr', 'Activité'),
+('OTP_ACTIVITE', 'en', 'Activity'),
+('OTP_TACHE', 'fr', 'Tâche'),
+('OTP_TACHE', 'en', 'Task'),
+('OTP_FOURNISSEUR', 'fr', 'Fournisseur'),
+('OTP_FOURNISSEUR', 'en', 'Supplier'),
+('OTP_ECHELLE_TEMPS', 'fr', 'Echelle de temps'),
+('OTP_ECHELLE_TEMPS', 'en', 'Time scale'),
+('OTP_SITE', 'fr', 'Site'),
+('OTP_SITE', 'en', 'Location'),
+('OTP_EFFECTIF', 'fr', 'Effectif'),
+('OTP_EFFECTIF', 'en', 'Staff'),
+('OTP_SECURITE', 'fr', 'Sécurité'),
+('OTP_SECURITE', 'en', 'Security');
+
 
 INSERT INTO lbr_libelles_referentiel (lbr_code, lng_id, lbr_libelle) VALUES
 ('RCS_ETAT_0', 'fr', 'Non Couvert'),

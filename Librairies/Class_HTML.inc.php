@@ -8,32 +8,36 @@ class HTML extends HBL_Authentifications {
 /**
 * Cette classe gère l'affichage de certaines parties des écrans.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @package MySecDash
-* @date 2023-12-04
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \package MySecDash
+* \date 2023-12-04
 *
 */
 
 public $Version_Outil; // Version de l'outil (précisé dans le constructeur)
 public $Nom_Outil;
 public $Nom_Outil_TXT;
+public $Nom_Societe;
+public $Nom_Outil_Continuity;
 
 
 public function __construct() {
 /**
 * Charge les variables d'environnements
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2015-07-22
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2015-07-22
 *
 */
 	$this->Version_Outil = '1.0-0'; // Version de l'outil
 	
 	$this->Nom_Outil = '<span style="color: #717D11;">My</span><span style="color: #C34A36;">Sec</span><span style="color: #44808A;">Dash</span>';
 	$this->Nom_Outil_TXT = 'MySecDash';
-
+	$this->Nom_Societe = 'Loxense';
+	$this->Nom_Outil_Continuity = '<span style="color: #44808A;">My</span><span style="color: #717D11;">Continuity</span>';
+	
 	try {
 		parent::__construct();
 	} catch( Exception $e ) {
@@ -57,17 +61,17 @@ public function construireEnteteHTML( $Titre_Page = "", $Fichiers_JavaScript = "
 /**
 * Standardisation de la construction des pages HTML et de l'affichage des hauts de page.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2023-12-18
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2023-12-18
 *
-* @param[in] $Titre_Page Titre à afficher dans la fenêtre des navigateurs.
-* @param[in] $Fichiers_JavaScript Script(s) Javascript spécifiques à appeler au démarrage de la page HTML.
-* @param[in] $CSS_Minimal Flag pour l'appel ou non de la feuille de styles minimaliste.
+* \param[in] $Titre_Page Titre à afficher dans la fenêtre des navigateurs.
+* \param[in] $Fichiers_JavaScript Script(s) Javascript spécifiques à appeler au démarrage de la page HTML.
+* \param[in] $CSS_Minimal Flag pour l'appel ou non de la feuille de styles minimaliste.
 * 
-* @param[out] $Entete Objet HTML à intégrer dans la page.
+* \param[out] $Entete Objet HTML à intégrer dans la page.
 *
-* @return Retourne la chaîne d'entête d'une page HTML.
+* \return Retourne la chaîne d'entête d'une page HTML.
 */
 	include( DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php" );
 	
@@ -83,9 +87,9 @@ public function construireEnteteHTML( $Titre_Page = "", $Fichiers_JavaScript = "
 	 "  <meta name=\"author\" content=\"Pierre-Luc MARY\" />\n" .
 	 "  <meta name=\"copyright\" content=\"" . $this->Nom_Outil_TXT . "\" />\n" .
 	 "  <title>" . $Titre_Page . "</title>\n" .
-	 "  <link type=\"image/png\" sizes=\"48x34\" href=\"favicon.png\" rel=\"icon\">\n" .
+	 "  <link type=\"image/svg+xml\" sizes=\"48x48\" href=\"favicon.svg\" rel=\"icon\">\n" .
 	 "  <!-- Chargement des feuilles de styles -->\n" .
-	 "  <link rel=\"stylesheet\" type=\"text/css\" href=\"" . URL_LIBRAIRIES . "/css/bootstrap-icons/bootstrap-icons.css\" media=\"screen\">\n" .
+	 "  <link rel=\"stylesheet\" type=\"text/css\" href=\"" . URL_LIBRAIRIES . "/css/bootstrap-icons/font/bootstrap-icons.css\" media=\"screen\">\n" .
 	 "  <link rel=\"stylesheet\" type=\"text/css\" href=\"" . URL_LIBRAIRIES . "/bootstrap-dist/css/bootstrap.min.css\" media=\"screen\">\n";
 	
 	switch ( $CSS_Minimal ) {
@@ -102,6 +106,13 @@ public function construireEnteteHTML( $Titre_Page = "", $Fichiers_JavaScript = "
 	 case 2:
 		$Entete .= "  <link rel=\"stylesheet\" type=\"text/css\" href=\"" . URL_LIBRAIRIES . "/css/MySecDash-1.css\" media=\"screen\">\n" .
 			"  <link rel=\"stylesheet\" type=\"text/css\" href=\"" . URL_LIBRAIRIES . "/css/plmTree.css\" media=\"screen\">\n";
+		break;
+		
+	 case 3:
+		$Entete .= "  <link rel=\"stylesheet\" type=\"text/css\" href=\"" . URL_LIBRAIRIES . "/css/MyContinuity.css\" media=\"screen\">\n" .
+			'  <link rel="stylesheet" type="text/css" href="' . URL_LIBRAIRIES . '/css/bootstrap-colorselector.css" />' . "\n" .
+			'  <link rel="stylesheet" type="text/css" href="' . URL_LIBRAIRIES . '/css/plmTree.css" media="screen">' . "\n" .
+			'  <link rel="stylesheet" type="text/css" href="' . URL_LIBRAIRIES . '/summernote-dist/summernote-bs4.css" />' . "\n";
 		break;
 	}
 
@@ -132,6 +143,7 @@ public function construireEnteteHTML( $Titre_Page = "", $Fichiers_JavaScript = "
 	 "   var Parameters = new Array(); // Paramètre global pour communiquer entre les Javascripts\n".
 	 "   Parameters['URL_BASE'] = '" . URL_BASE . "';\n\n" .
 	 "   Parameters['URL_PICTURES'] = '" . URL_IMAGES . "';\n\n" .
+	 "   Parameters['URL_CHARTJS'] = '" . URL_CHARTJS . "';\n\n" .
 	 "   Parameters['SCRIPT'] = '" . $_SERVER[ 'SCRIPT_NAME' ] . "';\n\n" .
 	 "   Parameters['TravailEnCours'] = '" . $L_Travail_En_Cours . "';\n" .
 	 "   Parameters['internal_timer_message']; // 'Timer' général pour l'affichage des messages.\n" .
@@ -144,20 +156,20 @@ public function construireEnteteHTML( $Titre_Page = "", $Fichiers_JavaScript = "
 
 
 
-public function construireNavbar( $Nom_Fichier_Logo ) {
+public function construireNavbar( $Nom_Fichier_Logo = '' ) {
 /**
 * Standardisation de la barre de menu (options de menu et information sur l'utilisateur).
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2023-12-18
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2023-12-18
 *
-* @param[in] $Nom_Fichier_Logo Nom du fichier image contenant le logo à utiliser.
+* \param[in] $Nom_Fichier_Logo Nom du fichier image contenant le logo à utiliser.
 *
-* @param[out] $Barre_Menu Objet HTML représentant la barre de menu est à intégrer dans sa page HTML
+* \param[out] $Barre_Menu Objet HTML représentant la barre de menu est à intégrer dans sa page HTML
 *
 *$Barre_Menu
-* @return Retourne la chaîne standardisant l'affichage du menu principal.
+* \return Retourne la chaîne standardisant l'affichage du menu principal.
 */
 	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
 
@@ -177,8 +189,8 @@ public function construireNavbar( $Nom_Fichier_Logo ) {
 		"      <ul class=\"navbar-nav me-auto mb-2 mb-lg-0\">\n";
 
 	// Contrôle si l'utilisateur a au moins accès à une option d'Admnisitration pour lui donner accès.
-	if ( isset( $Permissions['Loxense-Parametres.php'] )
-		or isset( $Permissions['Loxense-ReferentielsConformite.php'] ) ) {
+	if ( isset( $Permissions['MySecDash-Parametres.php'] )
+		or isset( $Permissions['MySecDash-ReferentielsConformite.php'] ) ) {
 		$Acces_Administration = TRUE;
 		$Referentiel_Interne = TRUE;
 	} else {
@@ -186,8 +198,8 @@ public function construireNavbar( $Nom_Fichier_Logo ) {
 		$Referentiel_Interne = FALSE;
 	}
 
-	if ( isset( $Permissions['Loxense-Historiques.php'] )
-		or isset( $Permissions['Loxense-ExportBase.php'] ) ) {
+	if ( isset( $Permissions['MySecDash-Historiques.php'] )
+		or isset( $Permissions['MySecDash-ExportBase.php'] ) ) {
 		$Acces_Administration = TRUE;
 	} else {
 		$Acces_Administration = FALSE;
@@ -205,8 +217,8 @@ public function construireNavbar( $Nom_Fichier_Logo ) {
 			"         <ul class=\"dropdown-menu\">\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-Parametres.php'] ) ) {
-		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/Loxense-Parametres.php\" class=\"dropdown-item\">" . $L_Parametres_Base . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Parametres.php'] ) ) {
+		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Parametres.php\" class=\"dropdown-item\">" . $L_Parametres_Base . "</a></li>\n";
 	}
 
 	if ( $_SESSION['idn_super_admin'] === TRUE or $Referentiel_Interne === TRUE ) {
@@ -216,36 +228,40 @@ public function construireNavbar( $Nom_Fichier_Logo ) {
 
 	if ( $_SESSION['idn_super_admin'] === TRUE or $Control_Acces === TRUE ) {
 		$Barre_Menu .= "        <li class=\"dropdown-submenu\">\n" .
-			"         <a href=\"" . URL_BASE . "/Loxense-Utilisateurs.php\" class=\"dropdown-item\">" . $L_Controle_Acces . "</a>\n" .
+			"         <a href=\"" . URL_BASE . "/MySecDash-Utilisateurs.php\" class=\"dropdown-item\">" . $L_Controle_Acces . "</a>\n" .
 			"         <ul class=\"dropdown-menu\">\n";
 	}
-
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-Entites.php'] ) ) {
-		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/Loxense-Entites.php\" class=\"dropdown-item\">" . $L_Entites . "</a></li>\n";
+	
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Societes.php'] ) ) {
+		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Societes.php\" class=\"dropdown-item\">" . $L_Societes . "</a></li>\n";
+	}
+	
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Entites.php'] ) ) {
+		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Entites.php\" class=\"dropdown-item\">" . $L_Entites . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-Civilites.php'] ) ) {
-		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/Loxense-Civilites.php\" class=\"dropdown-item\">" . $L_Civilites . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Civilites.php'] ) ) {
+		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Civilites.php\" class=\"dropdown-item\">" . $L_Civilites . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-Applications.php'] ) ) {
-		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/Loxense-Applications.php\" class=\"dropdown-item\">" . $L_Applications . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-ApplicationsInternes.php'] ) ) {
+		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-ApplicationsInternes.php\" class=\"dropdown-item\">" . $L_ApplicationsInternes . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-Profils.php'] ) ) {
-		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/Loxense-Profils.php\" class=\"dropdown-item\">" . $L_Profils . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Profils.php'] ) ) {
+		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Profils.php\" class=\"dropdown-item\">" . $L_Profils . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-Utilisateurs.php'] ) ) {
-		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/Loxense-Utilisateurs.php\" class=\"dropdown-item\">" . $L_Utilisateurs . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Utilisateurs.php'] ) ) {
+		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Utilisateurs.php\" class=\"dropdown-item\">" . $L_Utilisateurs . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-Gestionnaires.php'] ) ) {
-		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/Loxense-Gestionnaires.php\" class=\"dropdown-item\">" . $L_Gestionnaires . "</a></li>\n";
-	}
+/*	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Gestionnaires.php'] ) ) {
+		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Gestionnaires.php\" class=\"dropdown-item\">" . $L_Gestionnaires . "</a></li>\n";
+	} */
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-Etiquettes.php'] ) ) {
-		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/Loxense-Etiquettes.php\" class=\"dropdown-item\">" . $L_Etiquettes . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Etiquettes.php'] ) ) {
+		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Etiquettes.php\" class=\"dropdown-item\">" . $L_Etiquettes . "</a></li>\n";
 	}
 
 	if ( $_SESSION['idn_super_admin'] === TRUE or $Control_Acces === TRUE ) {
@@ -253,14 +269,14 @@ public function construireNavbar( $Nom_Fichier_Logo ) {
 			"        </li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-Historiques.php'] ) ) {
-		$Barre_Menu .= "        <li role=\"separator\" class=\"divider\"></li>\n" .
-			"        <li><a href=\"" . URL_BASE . "/Loxense-Historiques.php\" class=\"dropdown-item\">" . $L_Historique . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Historiques.php'] ) ) {
+		$Barre_Menu .= "        <li><hr class=\"dropdown-divider\"></li>\n" .
+			"        <li><a href=\"" . URL_BASE . "/MySecDash-Historiques.php\" class=\"dropdown-item\">" . $L_Historique . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-ExportBase.php'] ) ) {
-		$Barre_Menu .= "        <li role=\"separator\" class=\"divider\"></li>\n" .
-			"        <li><a href=\"" . URL_BASE . "/Loxense-ExportBase.php\" class=\"dropdown-item\">" . $L_Export_Base . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-ExportBase.php'] ) ) {
+		$Barre_Menu .= "        <li><hr class=\"dropdown-divider\"></li>\n" .
+			"        <li><a href=\"" . URL_BASE . "/MySecDash-ExportBase.php\" class=\"dropdown-item\">" . $L_Export_Base . "</a></li>\n";
 	}
 
 	if ( $_SESSION['idn_super_admin'] === TRUE or $Acces_Administration === TRUE ) {
@@ -273,9 +289,9 @@ public function construireNavbar( $Nom_Fichier_Logo ) {
 
 
 	if ( $_SESSION['idn_super_admin'] === TRUE
-		or isset( $Permissions['Loxense-Conformite.php']  )
-		or isset( $Permissions['Loxense-EditionConformite.php']  )
-		or isset( $Permissions['Loxense-MatriceConformite.php']  ) ) {
+		or isset( $Permissions['MySecDash-Conformite.php']  )
+		or isset( $Permissions['MySecDash-EditionConformite.php']  )
+		or isset( $Permissions['MySecDash-MatriceConformite.php']  ) ) {
 		$Option_Gestion_Conformite = TRUE;
 	} else {
 		$Option_Gestion_Conformite = FALSE;
@@ -288,16 +304,16 @@ public function construireNavbar( $Nom_Fichier_Logo ) {
 			"       <ul class=\"dropdown-menu\" aria-labelledby=\"navbarDropdownMenuConfo\">\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-Conformite.php'] ) ) {
-		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/Loxense-Conformite.php\" class=\"dropdown-item\">" . $L_Gerer_Conformite . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Conformite.php'] ) ) {
+		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-Conformite.php\" class=\"dropdown-item\">" . $L_Gerer_Conformite . "</a></li>\n";
 	}
 	
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-EditionConformite.php'] ) ) {
-		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/Loxense-EditionConformite.php\" class=\"dropdown-item\">" . $L_Editer_Conformite . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-EditionConformite.php'] ) ) {
+		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-EditionConformite.php\" class=\"dropdown-item\">" . $L_Editer_Conformite . "</a></li>\n";
 	}
 	
-/*	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-MatriceConformite.php'] ) ) {
-		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/Loxense-MatriceConformite.php\" class=\"dropdown-item\">" . $L_Matrice_Conformite . "</a></li>\n";
+/*	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-MatriceConformite.php'] ) ) {
+		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-MatriceConformite.php\" class=\"dropdown-item\">" . $L_Matrice_Conformite . "</a></li>\n";
 	} */
 
 	
@@ -311,8 +327,8 @@ public function construireNavbar( $Nom_Fichier_Logo ) {
 
 
 	if ( $_SESSION['idn_super_admin'] === TRUE
-		or isset( $Permissions['Loxense-Actions.php'] )
-		or isset( $Permissions['Loxense-EditionsActions.php'] )) {
+		or isset( $Permissions['MySecDash-Actions.php'] )
+		or isset( $Permissions['MySecDash-EditionsActions.php'] )) {
 		$Option_Gestion_Actions = TRUE;
 	} else {
 		$Option_Gestion_Actions = FALSE;
@@ -325,12 +341,12 @@ public function construireNavbar( $Nom_Fichier_Logo ) {
 			"       <ul class=\"dropdown-menu\" aria-labelledby=\"navbarDropdownMenuAction\">\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-Actions.php'] ) ) {
-		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/Loxense-Actions.php\" class=\"dropdown-item\">" . $L_Gerer_Actions . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Actions.php'] ) ) {
+		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-Actions.php\" class=\"dropdown-item\">" . $L_Gerer_Actions . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-EditionsActions.php'] ) ) {
-		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/Loxense-EditionsActions.php\" class=\"dropdown-item\">" . $L_Editer_Actions . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-EditionsActions.php'] ) ) {
+		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-EditionsActions.php\" class=\"dropdown-item\">" . $L_Editer_Actions . "</a></li>\n";
 	}
 
 	
@@ -344,10 +360,10 @@ public function construireNavbar( $Nom_Fichier_Logo ) {
 
 /*
 	if ( $_SESSION['idn_super_admin'] === TRUE
-		or isset( $Permissions['Loxense-ActifsPrimordiauxTags.php'] )
-		or isset( $Permissions['Loxense-ActifsSupportsTags.php'] )
-		or isset( $Permissions['Loxense-AppreciationRisquesTags.php'] )
-		or isset( $Permissions['Loxense-TraitementRisquesTags.php'] )
+		or isset( $Permissions['MySecDash-ActifsPrimordiauxTags.php'] )
+		or isset( $Permissions['MySecDash-ActifsSupportsTags.php'] )
+		or isset( $Permissions['MySecDash-AppreciationRisquesTags.php'] )
+		or isset( $Permissions['MySecDash-TraitementRisquesTags.php'] )
 		) {
 		$Option_Gestion_Tags = TRUE;
 	} else {
@@ -361,28 +377,28 @@ public function construireNavbar( $Nom_Fichier_Logo ) {
 			"       <ul class=\"dropdown-menu\" aria-labelledby=\"navbarDropdownMenuTags\">\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-ActifsPrimordiauxTags.php'] ) ) {
-		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/Loxense-ActifsPrimordiauxTags.php\" class=\"dropdown-item\">" . $L_Actifs_Primordiaux . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-ActifsPrimordiauxTags.php'] ) ) {
+		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-ActifsPrimordiauxTags.php\" class=\"dropdown-item\">" . $L_Actifs_Primordiaux . "</a></li>\n";
 
 		$Barre_Separation = TRUE;
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-ActifsSupportsTags.php'] ) ) {
-		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/Loxense-ActifsSupportsTags.php\" class=\"dropdown-item\">" . $L_Actifs_Supports . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-ActifsSupportsTags.php'] ) ) {
+		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-ActifsSupportsTags.php\" class=\"dropdown-item\">" . $L_Actifs_Supports . "</a></li>\n";
 
 		$Barre_Separation = TRUE;
 	}
 
 	if ( $Barre_Separation == TRUE ) $Barre_Menu .= "		<li><hr class=\"dropdown-divider\"></li>\n";
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-AppreciationRisquesTags.php'] ) ) {
-		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/Loxense-AppreciationRisquesTags.php\" class=\"dropdown-item\">" . $L_Appreciation_Risques . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-AppreciationRisquesTags.php'] ) ) {
+		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-AppreciationRisquesTags.php\" class=\"dropdown-item\">" . $L_Appreciation_Risques . "</a></li>\n";
 
 		$Barre_Separation = FALSE;
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['Loxense-TraitementRisquesTags.php'] ) ) {
-		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/Loxense-TraitementRisquesTags.php\" class=\"dropdown-item\">" . $L_Traitement_Risques . "</a></li>\n";
+	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-TraitementRisquesTags.php'] ) ) {
+		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-TraitementRisquesTags.php\" class=\"dropdown-item\">" . $L_Traitement_Risques . "</a></li>\n";
 
 		$Barre_Separation = FALSE;
 	}
@@ -409,7 +425,7 @@ aria-controls=\"offcanvasDetailUtilisateur\">" . $_SESSION[ 'idn_login' ] . "</b
 		"   </div><!-- /.container-fluid -->\n" .
 		"  </nav>\n\n" .
 
-		"  <div class=\"offcanvas offcanvas-end\" tabindex=\"-1\" id=\"offcanvasChangerUnivers\" aria-labelledby=\"offcanvasChangerUnivers\">\n" .
+		"  <div class=\"offcanvas offcanvas-end\" tabindex=\"-1\" id=\"offcanvasDetailUtilisateur\" aria-labelledby=\"offcanvasChangerUnivers\">\n" .
 		"   <div class=\"offcanvas-header\">\n" .
 		"    <h5 class=\"offcanvas-title fg_couleur_2\" id=\"offcanvasRightLabel\">" . stripslashes( $L_User_Informations ) . "</h5>" .
 		"    <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"offcanvas\" aria-label=\"Close\"></button>" .
@@ -420,7 +436,7 @@ aria-controls=\"offcanvasDetailUtilisateur\">" . $_SESSION[ 'idn_login' ] . "</b
 		"    <p>" . stripslashes( $L_Last_Password_Change ) . "&nbsp;: <br/>\n" .
 		"    <b>" . $_SESSION[ 'idn_date_modification_authentifiant' ] . "</b></p>\n" .
 		"    <p><span><button id=\"dcnx\" type=\"button\" class=\"btn btn-outline-secondary btn-sm\">" . $L_Deconnexion . "</button>\n" .
-		"    <button id=\"chgMdP\" type=\"button\" class=\"btn btn-outline-secondary btn-sm\">" . $L_Changer_Mot_Passe . "</button></span></p>\n" .
+		"    <button id=\"chgMdP\" type=\"button\" class=\"btn btn-outline-secondary btn-sm\">" . $L_Changer_Mot_Passe_Obligatoire . "</button></span></p>\n" .
 		"   </div> <!-- /.offcanvas-body -->\n" .
 		"  </div> <!-- /.offcanvas -->\n" .
 
@@ -431,7 +447,7 @@ aria-controls=\"offcanvasDetailUtilisateur\">" . $_SESSION[ 'idn_login' ] . "</b
 		"   </div> <!-- /.offcanvas-header -->\n" .
 		"   <div class=\"offcanvas-body\" id=\"corps_tableau_univers\">\n" .
 		"    <div class=\"row liste mysecdash\">\n" .
-		"     <div class=\"col-2 align-middle text-center\"><img src=\"" . URL_IMAGES . "/Logo-MySecDash-4.svg\" width=\"50\" class=\"mx-auto\"></div>\n" .
+		"     <div class=\"col-2 align-middle text-center\"><img src=\"" . URL_IMAGES . "/Logo-MySecDash.svg\" width=\"50\" class=\"mx-auto\"></div>\n" .
 		"     <div class=\"col gris\">" . $L_Mes_Tableaux_Bord . "</div>\n" .
 		"    </div> <!-- /.row  -->\n" .
 		"    <div class=\"row liste mycontinuity\">\n" .
@@ -451,55 +467,311 @@ aria-controls=\"offcanvasDetailUtilisateur\">" . $_SESSION[ 'idn_login' ] . "</b
 
 
 
-public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $Boutons_Alternatifs = [], $Options_Titre = '' ) {
+public function construireNavbarJson( $Nom_Fichier_Logo = '', $Nom_Fichier_Json = '' ) {
+	/**
+	 * Standardisation de la barre de menu (options de menu et information sur l'utilisateur) et utilisant
+	 * un fichier JSON.
+	 *
+	 * \license Copyleft
+	 * \author Pierre-Luc MARY
+	 * \date 2024-01-09
+	 *
+	 * \param[in] $Nom_Fichier_Logo Nom du fichier image contenant le logo à utiliser.
+	 * \param[in] $Nom_Fichier_Json Nom du fichier Json qui décrit les options de la barre de menu.
+	 *
+	 * \param[out] $Barre_Menu Objet HTML représentant la barre de menu est à intégrer dans sa page HTML
+	 *
+	 *$Barre_Menu
+	 * \return Retourne la chaîne standardisant l'affichage du menu principal.
+	 */
+	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
+	
+	$Permissions = $this->permissionsGroupees();
+	
+	$Barre_Menu = "  <nav class=\"navbar navbar-expand-lg fixed-top\">\n" .
+		"   <div class=\"container-fluid\">\n";
+	
+	if ( file_exists( DIR_IMAGES . '/' . $Nom_Fichier_Logo ) ) {
+		$Nom_Fichier_Logo = URL_IMAGES . '/' . $Nom_Fichier_Logo;
+	} else {
+		$Nom_Fichier_Logo = URL_IMAGES . '/Logo-MySecDash.svg';
+	}
+	
+	// Partie invariante de la barre de menu.
+	$Barre_Menu .= "    <a class=\"navbar-brand\" data-bs-toggle=\"offcanvas\" href=\"#offcanvasChangerUnivers\" role=\"button\" aria-controls=\"offcanvasChangerUnivers\"><img src=\"" . $Nom_Fichier_Logo . "\" alt=\"Logo\" height=\"25\" /></a>\n" .
+		"     <button class=\"navbar-toggler btn-outline-secondary\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#navbarNavPrincipal\" aria-controls=\"navbarNavPrincipal\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n" .
+		"      <i class=\"bi-list\"></i>\n" .
+		"     </button>\n" .
+		"     <div class=\"collapse navbar-collapse\" id=\"navbarNavPrincipal\">\n" .
+		"      <ul class=\"navbar-nav me-auto mb-2 mb-lg-0\">\n";
+	
+	// Contrôle si l'utilisateur a au moins accès à une option d'Admnisitration pour lui donner accès.
+//	if ( isset( $Permissions['MySecDash-Parametres.php'] )
+	$Flux_JSON = json_decode( file_get_contents( CHEMIN_APPLICATION . DIRECTORY_SEPARATOR . $Nom_Fichier_Json ) );
+	$Barre_Menu .= $this->construireBarreMenu( $Flux_JSON );
+	
+
+	// Partie invariante de la barre de menu.
+	$Barre_Menu .= "     </ul>\n" .
+		"     <form id=\"info_utilisateur\" class=\"d-flex\">\n" .
+		"      <span id=\"nom_utilisateur\"><i class=\"bi-person-fill\"></i>&nbsp;" . $_SESSION[ 'cvl_prenom' ] . " " . $_SESSION[ 'cvl_nom' ] . "</span>\n" .
+		"      <button id=\"code_utilisateur\" tabindex=\"0\" type=\"button\" class=\"btn btn-outline-secondary btn-sm\" data-bs-toggle=\"offcanvas\" data-bs-target=\"#offcanvasDetailUtilisateur\" aria-controls=\"offcanvasDetailUtilisateur\">" . $_SESSION[ 'idn_login' ] . "</button>\n" .
+		"      <span>" . $L_ExpireDans . "</span>\n" .
+		"      <button id=\"temps_session\" type=\"button\" class=\"btn btn-outline-secondary btn-sm\">" . $this->recupererParametre( 'expiration_time' ) . "</button>\n" .
+		"      <span>mn</span>\n" .
+		"     </form>\n" .
+		"    </div><!-- /#main-menu -->\n" .
+		"   </div><!-- /.container-fluid -->\n" .
+		"  </nav>\n\n" .
+
+		"  <div class=\"offcanvas offcanvas-end\" tabindex=\"-1\" id=\"offcanvasDetailUtilisateur\" aria-labelledby=\"offcanvasChangerUnivers\">\n" .
+		"   <div class=\"offcanvas-header\">\n" .
+		"    <h5 class=\"offcanvas-title fg_couleur_2\" id=\"offcanvasRightLabel\">" . stripslashes( $L_User_Informations ) . "</h5>" .
+		"    <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"offcanvas\" aria-label=\"Close\"></button>" .
+		"   </div> <!-- /.offcanvas-header -->\n" .
+		"   <div class=\"offcanvas-body\">\n" .
+		"    <p>" . stripslashes( $L_Last_Connection_Date ) . "&nbsp;:<br/>\n" .
+		"    <b>" . $_SESSION[ 'idn_derniere_connexion' ] . "</b></p>\n" .
+		"    <p>" . stripslashes( $L_Last_Password_Change ) . "&nbsp;: <br/>\n" .
+		"    <b>" . $_SESSION[ 'idn_date_modification_authentifiant' ] . "</b></p>\n" .
+		"    <p><span><button id=\"dcnx\" type=\"button\" class=\"btn btn-outline-secondary btn-sm\">" . $L_Deconnexion . "</button>\n" .
+		"    <button id=\"chgMdP\" type=\"button\" class=\"btn btn-outline-secondary btn-sm\">" . $L_Changer_Mot_Passe_Obligatoire . "</button></span></p>\n" .
+		"   </div> <!-- /.offcanvas-body -->\n" .
+		"  </div> <!-- /.offcanvas -->\n" .
+
+		"  <div class=\"offcanvas offcanvas-start\" tabindex=\"-1\" id=\"offcanvasChangerUnivers\" aria-labelledby=\"offcanvasChangerUnivers\">\n" .
+		"   <div class=\"offcanvas-header\">\n" .
+		"    <h5 class=\"offcanvas-title fg_couleur_2\" id=\"offcanvasExampleLabel\">" . $L_Changement_Univers . "</h5>\n" .
+		"    <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"offcanvas\" aria-label=\"Close\"></button>\n" .
+		"   </div> <!-- /.offcanvas-header -->\n" .
+		"   <div class=\"offcanvas-body\" id=\"corps_tableau_univers\">\n" .
+		"    <div class=\"row liste mysecdash\">\n" .
+		"     <div class=\"col-2 align-middle text-center\"><img src=\"" . URL_IMAGES . "/Logo-MySecDash.svg\" width=\"50\" class=\"mx-auto\"></div>\n" .
+		"     <div class=\"col gris\">" . $L_Mes_Tableaux_Bord . "</div>\n" .
+		"    </div> <!-- /.row  -->\n" .
+		"    <div class=\"row liste mycontinuity\">\n" .
+		"     <div class=\"col-2 align-middle text-center\"><img src=\"" . URL_IMAGES . "/Logo-MyContinuity.svg\" width=\"50\"></div>\n" .
+		"     <div class=\"col gris\">" . $L_Gestion_Continuite . "</div>\n" .
+		"    </div>  <!-- /.row  -->\n" .
+		"    <div class=\"row liste myrisk\">\n" .
+		"     <div class=\"col-2 align-middle text-center\"><img src=\"" . URL_IMAGES . "/Logo-MyRisk.svg\" width=\"50\"></div>\n" .
+		"     <div class=\"col gris\">" . $L_Gestion_Carto_Risques . "</div>\n" .
+		"    </div>  <!-- /.row  -->\n" .
+		"   </div> <!-- /.offcanvas-body -->\n" .
+		"  </div> <!-- /.offcanvas -->\n" ;
+
+
+		return $Barre_Menu;
+}
+
+
+
+public function traiterItemPrincipaleMenu($Item) {
+	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
+
+	$Barre_Menu = '';
+	
+	foreach($Item as $Objet => $Options) {
+		if ( isset(${$Options->LibelleItemPrincipale}) ) {
+			$Options->LibelleItemPrincipale = ${$Options->LibelleItemPrincipale};
+		}
+
+		$Barre_Menu .= "       <li class=\"nav-item dropdown\">\n" .
+			"        <a href=\"#\" class=\"nav-link dropdown-toggle\" id=\"navbarDropdownMenuAdmin\" data-bs-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">" . $Options->LibelleItemPrincipale . "</a>\n" .
+			"        <ul class=\"dropdown-menu\" aria-labelledby=\"navbarDropdownMenuAdmin\">\n";
+		
+		foreach($Options->Items as $Option) {
+			if ($Option->Type == 'option') {
+				$Barre_Menu .= $this->traiterOptionMenu($Option);
+			} elseif ($Option->Type == 'sous-menu') {
+				$Barre_Menu .= $this->traiterSousMenu($Option);
+			} elseif ($Option->Type == 'separator') {
+				$Barre_Menu .= "        <li><hr class=\"dropdown-divider\"></li>\n";
+			} else {
+				print('Erreur : type d\'option de menu iconnu ['.$Option->Type.']');
+				exit();
+			}
+		}
+
+		$Barre_Menu .= "        </ul>\n" .
+			"       </li>\n";
+	}
+	
+	return $Barre_Menu;
+}
+
+
+public function traiterOptionMenu($Option) {
+	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
+
+	if ( isset(${$Option->LibelleItem}) ) {
+		$Option->LibelleItem = ${$Option->LibelleItem};
+	}
+
+
+	if ( $this->controlerPermission($Option->Lien, 'RGH_1') === FALSE ) {
+		return "          <li><a class=\"dropdown-item disabled\" >" . $Option->LibelleItem . "</a></li>\n";
+	} else {
+		return "          <li><a href=\"" . URL_BASE . "/" . $Option->Lien . "\" class=\"dropdown-item\">" . $Option->LibelleItem . "</a></li>\n";
+	}
+}
+
+
+public function traiterSousMenu($Option) {
+	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
+
+	if ( isset(${$Option->LibelleItem}) ) {
+		$Option->LibelleItem = ${$Option->LibelleItem};
+	}
+
+	$Barre_Menu = "        <li class=\"dropdown-submenu\">\n" .
+		"         <a href=\"#\" class=\"dropdown-item\">" . $Option->LibelleItem . "</a>\n" .
+		"         <ul class=\"dropdown-menu\">\n";
+	
+	foreach($Option->Items as $Option_SM) {
+		if ($Option_SM->Type == 'option') {
+			$Barre_Menu .= $this->traiterOptionMenu($Option_SM);
+		} elseif ($Option_SM->Type == 'sous-menu') {
+			$Barre_Menu .= $this->traiterSousMenu($Option_SM);
+		} elseif ($Option_SM->Type == 'separator') {
+			$Barre_Menu .= "        <li><hr class=\"dropdown-divider\"></li>\n";
+		} else {
+			print('Erreur : type d\'option de menu iconnu ['.$Option_SM->Type.']');
+			exit();
+		}
+	}
+	
+	return $Barre_Menu .= "         </ul>\n" .
+		"        </li>\n";
+}
+
+public function construireBarreMenu( $Flux_JSON = '' ) {
+	// Recherche la bonne racine pour valider à minima que l'on traite le bon flux JSON.
+	if ($Flux_JSON == '') return 'JSON file unavailable';
+
+	foreach($Flux_JSON as $Objet => $Menu) {
+		if ($Objet == 'ItemsPrincipales') {
+			return $this->traiterItemPrincipaleMenu($Flux_JSON->$Objet);
+		} else {
+			return 'Objet "ItemsPrincipales" attendu ("' . $Objet . '" trouvé)';
+		}
+	}
+}
+
+
+
+public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $Boutons_Alternatifs = [], 
+	$Options_Titre_1 = '', $Onglets = '', $Options_Titre_2 = '' ) {
 /**
 * Standardisation du titre et des informations contextuelles des écrans.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2023-12-18
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2023-12-18
 *
-* @param[in] $Titre_Ecran Titre de l'écran courant.
-* @param[in] $Societes_Autorisees Liste des sociétés autorisées pour l'utilisateur (si plusieurs sociétés, on affiche une Dropdownlist pour pouvoir changer, sinon on affiche simplement l'information).
-* @param[in] $Boutons_Alternatifs Permet l'affichage de boutons alternatifs (juste à droite du titre).
-* @param[in] $Options_Titre Permet d'afficher une liste (en fonction du contexte).
+* \param[in] $Titre_Ecran Titre de l'écran courant.
+* \param[in] $Societes_Autorisees Liste des sociétés autorisées pour l'utilisateur (si plusieurs sociétés, on affiche une Dropdownlist pour pouvoir changer, sinon on affiche simplement l'information).
+* \param[in] $Boutons_Alternatifs Permet l'affichage de boutons alternatifs (juste à droite du titre).
+* \param[in] $Options_Titre Permet d'afficher une liste (en fonction du contexte).
 *
-* @param[out] $Objet_Titre_Ecran Objet HTML représentant la barre de titre et ses éventuelles options est à intégrer dans sa page HTML
+* \param[out] $Objet_Titre_Ecran Objet HTML représentant la barre de titre et ses éventuelles options est à intégrer dans sa page HTML
 *
-* @return Retourne la chaîne standardisant l'affichage du menu contextuel (sous forme de liste déroulante).
+* \return Retourne la chaîne standardisant l'affichage du menu contextuel (sous forme de liste déroulante).
 */
 	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
 
 
 	$Objet_Titre_Ecran = "  <!-- === Zone : titre de l'écran === -->\n" .
-		"  <div class=\"container-fluid row\" id=\"titre_ecran\">\n";
-	
-	if ( $Societes_Autorisees != [] ) {
+		"  <div class=\"container-fluid\" id=\"titre_ecran\">\n" .
+		"  <div class=\"row\">\n";
+
+
+	if ( $Societes_Autorisees != [] and $Societes_Autorisees != '' ) {
 		$Objet_Titre_Ecran .= "   <div class=\"col-lg-6 mb-2\">\n" .
 			"    <div class=\"input-group input-group-sm\">\n" .
 			"     <span class=\"input-group-text\">" . $L_Societe . "</span>\n";
-		
-		if ( count($Societes_Autorisees) > 1 ) {
+
+//var_dump($_SESSION);
+
+		if ( ! isset($_SESSION['s_sct_id']) || $_SESSION['s_sct_id'] == '' || $_SESSION['s_sct_id'] == '---' ) {
+			$_SESSION['s_sct_id'] = $Societes_Autorisees[0]->sct_id;
+		}
+
+		switch ( count($Societes_Autorisees) ) {
+		 default:
 			$Objet_Titre_Ecran .= "     <select id=\"s_sct_id\" class=\"form-select form-select-sm gris\">\n";
 			
 			foreach( $Societes_Autorisees as $Societe_Autorisee) {
-				$Objet_Titre_Ecran .= "      <option value=\"" . $Societe_Autorisee['Id'] . "\">" . $Societe_Autorisee['Nom'] . "</option>\n";
+				$Defaut = '';
+				if ( isset( $_SESSION['s_sct_id'] ) ) {
+					if ( $_SESSION['s_sct_id'] == $Societe_Autorisee->sct_id ) {
+						$Defaut = ' selected ';
+					}
+				}
+
+				$Objet_Titre_Ecran .= "      <option value=\"" . $Societe_Autorisee->sct_id . "\"" . $Defaut . ">" . $Societe_Autorisee->sct_nom . "</option>\n";
 			}
-			
+
 			$Objet_Titre_Ecran .= "     </select>\n";
-		} else {
-			$Objet_Titre_Ecran .= "     <input type=\"text\" id=\"s_sct_id\" class=\"form-control gris\" data-value=\"" . $Societes_Autorisees['Id'] . "\" value=\"" . $Societes_Autorisees['Nom'] . "\" disabled=\"\">\n";
+
+			break;
+
+		 case 1:
+			$Objet_Titre_Ecran .= "     <input type=\"text\" id=\"s_sct_id\" class=\"form-control gris\" data-value=\"" . $Societes_Autorisees[0]->sct_id . "\" value=\"" . $Societes_Autorisees[0]->sct_nom . "\" disabled>\n";
+			
+			break;
+
+		 case 0:
+			$Objet_Titre_Ecran .= "     <input type=\"text\" id=\"s_sct_id\" class=\"form-control gris\" data-value=\"\" value=\"---\" disabled>\n";
+			
+			break;
 		}
 
 		$Objet_Titre_Ecran .= "    </div> <!-- input-group -->\n" .
 			"   </div> <!-- .col-lg-6 -->\n\n";
 	}
-		
+
+	if ( $Options_Titre_1 != '' and $Options_Titre_1 != [] ) {
+		$Objet_Titre_Ecran .= "   <div class=\"col-lg-6\">\n" .
+			"    <div class=\"input-group  input-group-sm\">\n" .
+			"    <span class=\"input-group-text\">" . $Options_Titre_1['libelle'] . "</span>\n";
+
+		$tmpOptions = '';
+
+		$Objet_Titre_Ecran .= "     <select id=\"" . $Options_Titre_1['id'] . "\" class=\"form-select form-select-sm gris\">\n";
+		if ( isset($Options_Titre_1['options']) ) {
+			if (!isset($_SESSION[$Options_Titre_1['id']]) || $_SESSION[$Options_Titre_1['id']] == '---') {
+				$_SESSION[$Options_Titre_1['id']] = $Options_Titre_1['options'][0]['id'];
+			}
+			
+			foreach( $Options_Titre_1['options'] as $Options_Titre_1 ) {
+				$Infos_Complementaires = '';
+				
+				if ( array_key_exists('infos',$Options_Titre_1) ) {
+					foreach( $Options_Titre_1['infos'] as $Info ) {
+						$Infos_Complementaires .= " data-" . $Info['nom'] . "=\"" . $Info['valeur'] . "\"";
+					}
+				}
+				
+				$tmpOptions .= "      <option value=\"". $Options_Titre_1['id'] . "\"" . $Infos_Complementaires . ">". $Options_Titre_1['nom'] . "</option>\n";
+			}
+
+			$Objet_Titre_Ecran .= $tmpOptions;
+		} else {
+			$Objet_Titre_Ecran .= "     <option value=\"\">---</option>\n";
+		}
+
+		$Objet_Titre_Ecran .= "     </select>\n" .
+			"    </div> <!-- .input-group -->\n" .
+			"   </div> <!-- .col-lg-6 -->\n";
+	}
+
+
 	$Objet_Titre_Ecran .= "   <div id=\"titre-menu\" class=\"col-lg-7\">\n" .
 		"    <div class=\"input-group input-group-lg\">\n" .
 		"     <span class=\"input-group-text libelle-titre-menu\">" . $Titre_Ecran . "</span>\n";
 	
-	if ( $Boutons_Alternatifs != [] ) {
+	if ( $Boutons_Alternatifs != [] and $Boutons_Alternatifs != '' ) {
 		foreach ($Boutons_Alternatifs as $Bouton_Alternatif) {
 			$Objet_Titre_Ecran .= '     <button class="btn btn-outline-secondary ' . $Bouton_Alternatif['class'] . '" type="button" title="' . $Bouton_Alternatif['libelle'] . '">' .
 				'<i class="bi-' . $Bouton_Alternatif['glyph'] . '"></i>' .
@@ -510,31 +782,62 @@ public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $
 	$Objet_Titre_Ecran .= "    </div> <!-- input-group -->\n" .
 		"   </div> <!-- #titre-menu -->\n\n";
 
-
-	if ( $Options_Titre != '' ) {
+	$tmpOptions = '';
+	
+	if ( $Options_Titre_2 != '' and $Options_Titre_2 != [] ) {
 		$Objet_Titre_Ecran .= "   <div id=\"option-titre-menu\" class=\"col-lg-5 mt-1\">\n" .
 			"    <div class=\"input-group col-lg-5\">\n" .
-			"    <span class=\"input-group-text libelle-alternative-titre-menu\">" . $Options_Titre['Libelle'] . "</span>\n" .
-			"     <select id=\"" . $Options_Titre['Id'] . "\" class=\"form-select\">\n";
+			"    <span class=\"input-group-text libelle-alternative-titre-menu\">" . $Options_Titre_2['libelle'] . "</span>\n" .
+			"     <select id=\"" . $Options_Titre_2['id'] . "\" class=\"form-select\">\n";
 
-		foreach( $Options_Titre as $Option_Titre ) {
-			$Infos_Complementaires = '';
-			
-			if ( isset($Option_Titre['Infos']) ) {
-				foreach( $Option_Titre['Infos'] as $Info ) {
-					$Objet_Titre_Ecran .= " data-" . $Info['Nom'] . "\"\"=\"" . $Info['Valeur'] . "\"";
-				}
+		if (isset($Options_Titre_2['options'])) {
+			if (!isset($_SESSION[$Options_Titre_2['id']]) || $_SESSION[$Options_Titre_2['id']] == '---') {
+				$_SESSION[$Options_Titre_2['id']] = $Options_Titre_2['options'][0]['id'];
 			}
-			$Objet_Titre_Ecran .= "      <option value=\"". $Option_Titre['Id'] . "\"" . $Infos_Complementaires . ">". $Option_Titre['Nom'] . "</option>\n";
+
+			switch( count($Options_Titre_2['options']) ) {
+				default:
+					foreach( $Options_Titre_2['options'] as $Option_Titre_2 ) {
+						$Infos_Complementaires = '';//print_r($Option_Titre);print('<hr>');
+						
+						if ( array_key_exists('infos',$Option_Titre_2) ) {
+							foreach( $Option_Titre_2['infos'] as $Info ) {
+								$Infos_Complementaires .= " data-" . $Info['nom'] . "=\"" . $Info['valeur'] . "\"";
+							}
+						}
+						if ( isset($_SESSION[$Options_Titre_2['id']]) ) {
+							if ( $_SESSION[$Options_Titre_2['id']] == $Option_Titre_2['id'] ) {
+								$Opt_Defaut = ' selected';
+							} else {
+								$Opt_Defaut = '';
+							}
+						}
+						$tmpOptions .= "      <option value=\"". $Option_Titre_2['id'] . "\"" . $Infos_Complementaires . $Opt_Defaut . ">". $Option_Titre_2['nom'] . "</option>\n";
+					}
+
+					break;
+
+				case 0:
+					$tmpOptions .= "      <option value=\"\">---</option>\n";
+
+					break;
+			}
+		} else {
+			$tmpOptions .= "      <option value=\"\">---</option>\n";
 		}
 
-		$Objet_Titre_Ecran .= "     </select>\n" .
-		"    </div> <!-- .input-group -->\n" .
-		"   </div> <!-- #option-titre-menu -->\n";
+		$Objet_Titre_Ecran .= $tmpOptions .
+			"     </select>\n" .
+			"    </div> <!-- .input-group -->\n" .
+			"   </div> <!-- #option-titre-menu -->\n";
+	}
+	$Objet_Titre_Ecran .= "   </div> <!-- .row -->\n";
+	
+	if ( $Onglets != '' ) {
+		$Objet_Titre_Ecran .= $Onglets;
 	}
 	
 	$Objet_Titre_Ecran .= "  </div> <!-- /#titre_ecran -->\n";
-	
 
 	return $Objet_Titre_Ecran;
 }
@@ -545,11 +848,11 @@ public function construireDebutEnteteTableau() {
 /**
 * Standardisation du début de l'entête du tableau central.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2015-07-23
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2015-07-23
 *
-* @return Retourne la chaîne à afficher.
+* \return Retourne la chaîne à afficher.
 */
 
 	$Texte = "  <!-- === Zone : entête du tableau central === -->\n" .
@@ -564,11 +867,11 @@ public function construireDebutCorpsTableau() {
 /**
 * Standardisation du début du corps du tableau central.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2015-07-23
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2015-07-23
 *
-* @return Retourne la chaîne à afficher.
+* \return Retourne la chaîne à afficher.
 */
 
 	$Texte = "  <!-- === Zone : corps du tableau central === -->\n" .
@@ -583,11 +886,11 @@ public function construireDebutPiedTableau() {
 /**
 * Standardisation du début du pied du tableau central.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2015-07-23
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2015-07-23
 *
-* @return Retourne la chaîne à afficher.
+* \return Retourne la chaîne à afficher.
 */
 
 	$Texte = "  <!-- === Zone : pied du tableau central === -->\n" .
@@ -602,11 +905,11 @@ public function construireFinTableau() {
 /**
 * Standardisation des fins de partie du tableau central (utilisable pour l'entête, le corps et le pied du tableau).
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2015-07-23
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2015-07-23
 *
-* @return Retourne la chaîne à afficher.
+* \return Retourne la chaîne à afficher.
 */
 
 	$Texte = "  </div>\n\n";
@@ -620,13 +923,13 @@ public function construireEnteteTableau( $Colonnes ) {
 /**
 * Standardisation de l'entête du tableau central.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2015-08-04
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2015-08-04
 *
-* @param[in] $Colonnes_Entete Tableau matérialisant les colonnes composant l'entête.
+* \param[in] $Colonnes_Entete Tableau matérialisant les colonnes composant l'entête.
 *
-* @return Retourne la chaîne à afficher.
+* \return Retourne la chaîne à afficher.
 */
 	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
 	
@@ -782,206 +1085,31 @@ public function construireEnteteTableau( $Colonnes ) {
 
 
 
-public function construireCorpsTableau( $Format_Colonnes, $Occurrences ) {
+public function construirePiedTableau( $Total = 0, $Bouton_Alternatif = '' ) {
 /**
 * Standardisation de la création des occurrences dans les parties du tableau central.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2015-08-05
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2023-12-20
 *
-* @param[in] $Format_Colonnes Indique le format d'affichage des colonnes
-* @param[in] $Occurrences Valeur des colonnes à afficher.
+* \param[in] $Total Indique le nombre total dans le tableau (par défaut 0)
+* \param[in] $Bouton_Alternatif Permet d'afficher un bouton alertnatif en bas du tableau et à droite du compteur.
 *
-* @return Retourne la chaîne afficher.
+* \return Retourne la chaîne afficher.
 */
 	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
 
-	$Texte = $this->construireDebutCorpsTableau();
-
-	foreach( $Occurrences as $Occurrence ) { // Lit les occurrences une par une.
-		$Corps_Occurrence = ''; // Réinitialisation de la variable à chaque boucle.
-		$Data_Maximum = '';
-		$Data_Lignes = '';
-
-		foreach ( $Occurrence as $Nom => $Valeur ) { // Traite les colonnes une par une.
-			if ( $Format_Colonnes[ $Nom ][ 'type' ] == 'id' ) {
-				$ID = $Valeur;
-				$Entete_Occurrence = "   <div class=\"row liste\" id=\"" . $Format_Colonnes[ 'Prefixe' ] . '_' . $ID . "\">\n" ;
-				continue;
-			}
-
-			if ( isset( $Format_Colonnes[ $Nom ][ 'type' ] ) ) {
-				$Data_Type = ' data-type="' . $Format_Colonnes[ $Nom ][ 'type' ] . '"';
-			}
-
-			if ( isset( $Format_Colonnes[ $Nom ][ 'type_input' ] ) ) {
-				$Data_Maximum = ' data-type_input="' . $Format_Colonnes[ $Nom ][ 'type_input' ] . '"';
-			}
-
-			if ( isset( $Format_Colonnes[ $Nom ][ 'maximum' ] ) ) {
-				$Data_Maximum = ' data-maximum="' . $Format_Colonnes[ $Nom ][ 'maximum' ] . '"';
-			}
-
-			if ( isset( $Format_Colonnes[ $Nom ][ 'casse' ] ) ) {
-				$Data_Maximum = ' data-casse="' . $Format_Colonnes[ $Nom ][ 'casse' ] . '"';
-			}
-
-			if ( isset( $Format_Colonnes[ $Nom ][ 'lignes' ] ) ) {
-				$Data_Lignes = ' data-lignes="' . $Format_Colonnes[ $Nom ][ 'lignes' ] . '"';
-			}
-
-			if ( isset( $Format_Colonnes[ $Nom ][ 'modifiable' ] ) ) {
-				if ( strtolower( $Format_Colonnes[ $Nom ][ 'modifiable' ] ) == 'oui' ) {
-					$Class = 'modifiable';
-				}
-			}
-
-			$Corps_Occurrence .= '	<div class="col-lg-' . $Format_Colonnes[ $Nom ][ 'taille' ] . '"' . $Data_Type .
-				$Data_Maximum . $Data_Lignes . ' data-src="' . $Nom . '">' . "\n" .
-				'	 <span class="' . $Class . '" onClick="' . $Format_Colonnes['fonction_ouverture'] . '(event,' . $ID . ');">' .
-				$Valeur . "</span>\n" .
-				"	</div>\n";
-			
-		}
-
-		$Texte .= $Entete_Occurrence . $Corps_Occurrence;
-
-		// Traitement spécial de la colonne "Actions" (affichage des boutons): 'dupliquer', 'modifier', 'supprimer', 'supprimer_libelle', 'ignorer_risque'
-		$Boutons = '';
-
-		foreach( $Format_Colonnes[ 'Actions' ][ 'boutons' ] as $Bouton ) {
-			switch( $Bouton ) {
-				case 'historique':
-					$Libelle = $L_Consulter_Historique;
-					$Glyph = 'clock';
-					break;
-
-				case 'visualiser':
-					$Libelle = $L_Visualiser;
-					$Glyph = 'eye-fill';
-					break;
-
-				case 'dupliquer':
-					$Libelle = $L_Dupliquer;
-					$Glyph = 'files';
-					break;
-
-				case 'modifier':
-					$Libelle = $L_Modifier;
-					$Glyph = 'pencil';
-					break;
-
-				case 'supprimer':
-					$Libelle = $L_Supprimer;
-					$Glyph = 'x-circle';
-					break;
-
-				case 'supprimer_libelle':
-					$Libelle = $L_Supprimer_Libelle;
-					$Glyph = 'x-circle-fill';
-					break;
-
-				case 'ignorer_risque':
-					$Libelle = $L_Ignorer_Risque;
-					$Glyph = 'slash-circle';
-					break;
-
-				case 'generer':
-					$Libelle = $L_Generer_Impression;
-					$Glyph = 'arrow-repeat';
-					break;
-
-				case 'telecharger':
-					$Libelle = $L_Telecharger_Impression;
-					$Glyph = 'cloud-download'; // 'import'
-					break;
-
-				case 'telecharger_w':
-					$Libelle = $L_Telecharger_Word;
-					$Glyph = 'Word-2-icon.png';
-					break;
-
-				case 'telecharger_e':
-					$Libelle = $L_Telecharger_Excel;
-					$Glyph = 'Excel-2-icon.png';
-					break;
-
-				case 'exporter':
-					$Libelle = $L_Exporter_Base;
-					$Glyph = 'cloud-upload';
-					break;
-
-				case 'restaurer':
-					$Libelle = $L_Restaurer_Base;
-					$Glyph = 'cloud-arrow-down';
-					break;
-
-				case 'imprimer':
-					$Libelle = $L_Imprimer;
-					$Glyph = 'printer-fill';
-					break;
-			}
-
-			$Boutons .= '	 <button class="btn btn-outline-secondary btn-xs btn-' . $Bouton . '" type="button" title="' . $Libelle . '"' .
-			' data-id="' . $ID . '">' .
-				'<i class="bi-' . $Glyph . '"></i>' .
-				"</button>\n";
-		}
-
-		$tmpActionClass = '';
-
-		if ( isset($Format_Colonnes[ 'Actions' ][ 'affichage' ]) ) {
-			if ( $Format_Colonnes[ 'Actions' ][ 'affichage' ] == 'cacher' ) $tmpActionClass = ' hide';
-			if ( $Format_Colonnes[ 'Actions' ][ 'affichage' ] == 'invisible' ) $tmpActionClass = ' invisible';
-			if ( $Format_Colonnes[ 'Actions' ][ 'affichage' ] == 'invisible-droit' ) $tmpActionClass = ' invisible text-end';
-		}
-
-		$Texte .= "	<div class=\"btn-actions col-lg-" . $Format_Colonnes[ 'Actions' ][ 'taille' ] . $tmpActionClass ."\">\n" . $Boutons . "	</div>\n";
-
-		$Texte .= "   </div>\n";
-	}
-
-	$Texte .= $this->construireFinTableau();
-
-	return $Texte;
-}
-
-
-
-public function construirePiedTableau( $Total = '', $Bouton_Alternatif = '' ) {
-/**
-* Standardisation de la création des occurrences dans les parties du tableau central.
-*
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2015-08-05
-*
-* @param[in] $Format_Colonnes Indique le format d'affichage des colonnes
-* @param[in] $Occurrences Valeur des colonnes à afficher.
-* @param[in] $Bouton_Alternatif Permet d'afficher un bouton alertnatif en bas du tableau.
-*
-* @return Retourne la chaîne afficher.
-*/
-	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
-
-	$Texte = $this->construireDebutPiedTableau() . "   <div class=\"row\">\n";
-		//"	<div class=\"col-12\">";
-
-	if ( $Total !== '' ) {
-		$Texte .= '<h6 style="margin-top: 0.5rem;">' . $L_Total . ' : <span class="badge bg-secondary" id="totalOccurrences">' . sprintf( "%03d", $Total ) . "</span></h6>";
-	} else {
-		$Texte .= "&nbsp;";
-	}
+	$Texte = $this->construireDebutPiedTableau() . "   <div class=\"row\">\n" .
+		'<h6 style="margin-top: 0.5rem;">' . $L_Total . ' : <span class="badge bg-secondary" id="totalOccurrences">' . sprintf( "%03d", $Total ) . "</span></h6>";
 
 
 	if ( $Bouton_Alternatif != '' ) {
 		$Texte .= '<button class="btn btn-outline-secondary btn-sm ' . $Bouton_Alternatif['class'] . '">' . $Bouton_Alternatif['libelle'] . '</button>';
 	}
 
-	$Texte .= //"</div>\n" .
-		"   </div>\n" . 
-	$this->construireFinTableau();
+	$Texte .= "   </div>\n" . 
+		$this->construireFinTableau();
 
 	return $Texte;
 }
@@ -992,14 +1120,14 @@ public function contruireTableauVide( $Colonnes_Entete, $Bouton_Alternatif = '' 
 /**
 * Standardisation de la création d'un tableau central vide (il sera rempli par un appel AJAX ultérieur).
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2015-10-11
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2015-10-11
 *
-* @param[in] $Colonnes_Entete Indique le format des colonnes d'entête à afficher.
-* @param[in] $Bouton_Alternatif Permet d'afficher un bouton alertnatif en bas du tableau.
+* \param[in] $Colonnes_Entete Indique le format des colonnes d'entête à afficher.
+* \param[in] $Bouton_Alternatif Permet d'afficher un bouton alertnatif en bas du tableau.
 *
-* @return Retourne la chaîne afficher.
+* \return Retourne la chaîne afficher.
 */
 
 	$Codes_HTML = $this->construireEnteteTableau( $Colonnes_Entete ) .
@@ -1012,25 +1140,27 @@ public function contruireTableauVide( $Colonnes_Entete, $Bouton_Alternatif = '' 
 
 
 
-public function construireModal( $Id_Modal = 'plmModal', $Titre, $Corps, $Id_Bouton, $Libelle_Bouton, $Bouton_Fermer = TRUE ) {
+public function construireModal( $Id_Modal, $Titre, $Corps, $Id_Bouton, $Libelle_Bouton, $Bouton_Fermer = TRUE ) {
 /**
 * Standardisation des écrans de type "modal".
 * La standardisation définit une fenêtre complète.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2015-07-23
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2023-12-20
 *
-* @param[in] $Id_Modal ID de la "modal" dans le DOM de la page.
-* @param[in] $Titre Indique le titre à afficher en haut de la fenêtre "modal".
-* @param[in] $Corps Corps à afficher dans le corps de la fenêtre "modal".
-* @param[in] $Id_Bouton Indique l'ID associé au bouton de la fenêtre "modal".
-* @param[in] $Libelle_Bouton Indique le libellé à associer au bouton de la fenêtre "modal".
-* @param[in] $Bouton_Fermer Indicateur pour afficher le bouton "fermer" à la fenêtre "modal".
+* \param[in] $Id_Modal ID de la "modal" dans le DOM de la page.
+* \param[in] $Titre Indique le titre à afficher en haut de la fenêtre "modal".
+* \param[in] $Corps Corps à afficher dans le corps de la fenêtre "modal".
+* \param[in] $Id_Bouton Indique l'ID associé au bouton "action" de la fenêtre "modal".
+* \param[in] $Libelle_Bouton Indique le libellé à associer au bouton "action" de la fenêtre "modal".
+* \param[in] $Bouton_Fermer Indicateur pour afficher le bouton "fermer" à la fenêtre "modal".
 *
-* @return Retourne la chaîne à afficher.
+* \return Retourne la chaîne à afficher.
 */
 
+	if ( $Id_Modal == '' ) $Id_Modal = 'plmModal';
+	
 	$Texte = "<!-- Modal -->\n" .
 		"<div class=\"modal fade\" id=\"" . $Id_Modal . "\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"" . $Id_Modal . "Label\">\n" .
 		" <div class=\"modal-dialog\" role=\"document\">\n" .
@@ -1057,20 +1187,19 @@ public function construireModal( $Id_Modal = 'plmModal', $Titre, $Corps, $Id_Bou
 }
 
 
-public function construireFooter( $Flag_Connexion = TRUE ) {
+public function construireFooter() {
 /**
-* Standardisation de l'affichage des bas de page.
+* Standardisation de l'affichage des bas de page, ainsi que l'appel aux scripts JS standards
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2015-07-23
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2023-12-20
 *
-* @param[in] $Flag_Connexion Indique s'il s'agit de la page de connexion. Si c'est le cas, on n'affiche pas les boutons de déconnexion et de changement de mot de passe.
 *
-* @return Retourne une chaîne à afficher
+* \return Retourne l'objet HTML à afficher
 */
 	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
-	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_Loxense-Connexion.php");
+	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_MySecDash-Connexion.php");
 
 
 	$Texte = "  <!-- Chargement des JavaScripts -->\n" .
@@ -1088,14 +1217,8 @@ public function construireFooter( $Flag_Connexion = TRUE ) {
 	}
 
 	$Texte .= "  <footer>\n" .
-	 "   Loxense &copy;, " . $this->Nom_Outil . " v" . $this->Version_Outil . "\n";
-
-	if ( $Flag_Connexion === TRUE ) {
-		$Texte .= "   <span><button id=\"dcnx\" type=\"button\" class=\"btn btn-outline-secondary btn-sm\">" . $L_Deconnexion . "</button>\n" .
-			"	<button id=\"chgMdP\" type=\"button\" class=\"btn btn-outline-secondary btn-sm\">" . $L_Changer_Mot_Passe . "</button></span>\n";
-	}
-	
-	$Texte .= "  </footer>\n";
+	 "   Loxense <img src=\"" . URL_IMAGES . "/copyleft.svg\" alt=\"copyleft\" width=\"12px\">, " . $this->Nom_Outil . " v" . $this->Version_Outil . "\n" .
+		"  </footer>\n";
 
 	return $Texte;
 }
@@ -1106,11 +1229,11 @@ public function construirePiedHTML() {
 /**
 * Standardisation des fins de page HTML.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2015-07-23
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2015-07-23
 *
-* @return Retourne une chaîne à afficher
+* \return Retourne une chaîne à afficher
 */
 	return " </body>\n</html>\n" ;
 } 
@@ -1121,15 +1244,15 @@ public function afficherNotification( $Message, $Flag_Avertissement = FALSE ) {
 /**
 * Affiche une boîte d'information.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @version 1.0
-* @date 2016-04-23
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \version 1.0
+* \date 2016-04-23
 *
-* @param[in] $Message Message à afficher
-* @param[in] $Flag_Avertissement Permet d'afficher le message en mode "Avertissement"
+* \param[in] $Message Message à afficher
+* \param[in] $Flag_Avertissement Permet d'afficher le message en mode "Avertissement"
 *
-* @return Retourne une chaîne à afficher
+* \return Retourne une chaîne à afficher
 */
 	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
 	
@@ -1161,7 +1284,6 @@ public function afficherNotification( $Message, $Flag_Avertissement = FALSE ) {
 	if ( $IdMessage != '' ) $Texte .= "id=\"" . $IdMessage . "\" ";
 	
 	$Texte .= "style=\"position:absolute;top:175px;width:80%;left:10%;cursor:pointer;\" onClick=\"javascript:effacerMessage('" . $IdMessage . "');\">" .
-//		" <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"" . $L_Fermer . "\"><span aria-hidden=\"true\">&times;</span></button>" .
 		" <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"" . $L_Fermer . "\"></button>" .
 		" <span class=\"glyphicon glyphicon-" . $Icon . " aria-hidden=\"true\"></span> " . $Message .
 		"</div>";
@@ -1175,48 +1297,48 @@ public function construirePageAlerte( $Message, $Script = 'MySecDash-Principal.p
 /**
 * Affiche d'une page HTML invisible qui fait rediriger vers un script spécifique qui devra afficher le message envoyé dans le formulaire.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2023-12-18
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2023-12-18
 *
-* @param[in] $Message Message à afficher
-* @param[in] $Script Script à exécuter sur le clique du bouton retour
-* @param[in] $TypeMessage Précise quel type d'icône présenter (0 = information, 1 = Avertissement, 2 = Erreur).
+* \param[in] $Message Message à afficher
+* \param[in] $Script Script à exécuter sur le clique du bouton retour
+* \param[in] $TypeMessage Précise quel type d'icône présenter (0 = information, 1 = Avertissement, 2 = Erreur).
 *
-* @return Retourne une chaîne matérialisant l'affichage de cet écran d'information
+* \return Retourne une chaîne matérialisant l'affichage de cet écran d'information
 */
 	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
 	
 	switch( $Type_Message ) {
 		case 0:
 			$Titre_Page = $L_Information;
-			$Nom_Image = '<i class="bi-info-circle"></i>';
+			$Nom_Image = '<i class="bi-info-circle text-info"></i>';
 			$Couleur_Fond = 'panel-info';
 			break;
 		case 1:
 			$Titre_Page = $L_Warning;
-			$Nom_Image = '<i class="bi-exclamation-triangle"></i>';
+			$Nom_Image = '<i class="bi-exclamation-triangle text-warning"></i>';
 			$Couleur_Fond = 'panel-warning';
 			break;
 		case 2:
 			$Titre_Page = $L_Error;
-			$Nom_Image = '<i class="bi-dash-circle-fill"></i>';
+			$Nom_Image = '<i class="bi-dash-circle-fill text-danger"></i>';
 			$Couleur_Fond = 'panel-danger';
 			break;
 	}
 
 	if ( $Nom_Fichier_Logo == '' ) {
-		$Nom_Fichier_Logo = 'Logo-MySecDash-4.svg';
+		$Nom_Fichier_Logo = 'Logo-MySecDash.svg';
 	}
 	
 	return $this->construireEnteteHTML( $Titre_Page ) .
-	"  <p id=\"logo-img\" class=\"text-center\"><img src=\"" . URL_IMAGES . "/" . $Nom_Fichier_Logo . "\" alt=\"Logo Loxense\" height=\"50px\" /></p>\n\n" .
+	"  <p id=\"logo-img\" class=\"text-center\"><img src=\"" . URL_IMAGES . "/" . $Nom_Fichier_Logo . "\" alt=\"Logo MySecDash\" height=\"50px\" /></p>\n\n" .
 		"  <div id=\"principal-container\" class=\"container\">\n" .
-		"   <div class=\"panel " . $Couleur_Fond . "\">\n" .
-		"	<div class=\"panel-heading\">\n" .
-		"	 <h3 class=\"panel-title\">" . $Titre_Page . "</h3>\n" .
+		"   <div class=\"card " . $Couleur_Fond . "\">\n" .
+		"	<div class=\"card-header\">\n" .
+		"	 <h3 class=\"card-title text-center\">" . $Titre_Page . "</h3>\n" .
 		"	</div>\n" .
-		"	<div class=\"panel-body\">\n" .
+		"	<div class=\"card-body\">\n" .
 		"	 <h2 class=\"text-center\">" . $Nom_Image . "&nbsp;" . $Message . "</h2>\n" .
 		"	 <form method=\"post\" action=\"" . URL_BASE . '/' . $Script . "\">\n" .
 		"	  <div class=\"form-group text-center\">\n" .
@@ -1236,15 +1358,15 @@ public function routage( $Message, $Script, $TypeMessage = 0 ) {
 /**
 * Affiche une page HTML invisible qui fait rediriger vers un script spécifique qui devra afficher le message envoyé dans le formulaire.
 *
-* @license Copyleft
-* @author Pierre-Luc MARY
-* @date 2015-08-06
+* \license Copyleft
+* \author Pierre-Luc MARY
+* \date 2015-08-06
 *
-* @param[in] $Message Message à afficher
-* @param[in] $Script Script à exécuter sur le clique du bouton retour
-* @param[in] $TypeMessage Précise quel type d'icône présenter.
+* \param[in] $Message Message à afficher
+* \param[in] $Script Script à exécuter sur le clique du bouton retour
+* \param[in] $TypeMessage Précise quel type d'icône présenter.
 *
-* @return Retourne une chaîne matérialisant l'affichage de cet écran d'information
+* \return Retourne une chaîne matérialisant l'affichage de cet écran d'information
 */
 	if ( strpos( $Script, '?' ) === false ) {
 		$Script .= '?notification';
@@ -1270,13 +1392,22 @@ public function routage( $Message, $Script, $TypeMessage = 0 ) {
 }
 
 
-/*
- * Calcul la couleur du texte (blanc ou noir)
- */
-public static function calculCouleurCellule( $code_couleur ) {
-	$code_1 = substr( $code_couleur, 0, 2 );
-	$code_2 = substr( $code_couleur, 2, 2 );
-	$code_3 = substr( $code_couleur, 4, 2 );
+
+public static function calculCouleurCellule( $code_couleur_fond ) {
+	/**
+	 * Calcul la couleur du texte (blanc ou noir) en fonction de la couleur de fond.
+	 *
+	 * \license Copyleft
+	 * \author Pierre-Luc MARY
+	 * \since 2023-12-20
+	 *
+	 * \param[in] $code_couleur_fond Code couleur du fond
+	 * 
+	 * \return Retourne le mot codifié HTML associé à la couleur de fond
+	 */
+	$code_1 = substr( $code_couleur_fond, 0, 2 );
+	$code_2 = substr( $code_couleur_fond, 2, 2 );
+	$code_3 = substr( $code_couleur_fond, 4, 2 );
 
 	$calcul = (hexdec( $code_1 ) + hexdec( $code_2 ) + hexdec( $code_3)) / 3;
 
@@ -1285,10 +1416,22 @@ public static function calculCouleurCellule( $code_couleur ) {
 }
 
 
-public static function calculCouleurCelluleHexa( $code_couleur ) {
-	$code_1 = substr( $code_couleur, 0, 2 );
-	$code_2 = substr( $code_couleur, 2, 2 );
-	$code_3 = substr( $code_couleur, 4, 2 );
+public static function calculCouleurCelluleHexa( $code_couleur_fond ) {
+	/**
+	 * Calcul la couleur du texte (blanc ou noir) en fonction de la couleur de fond.
+	 * La valeur de retour est un nom standisé HTML.
+	 *
+	 * \license Copyleft
+	 * \author Pierre-Luc MARY
+	 * \since 2023-12-20
+	 *
+	 * \param[in] $code_couleur_fond Code couleur du fond
+	 *
+	 * \return Retourne le code hexadécimal de la couleur à utiliser
+	 */
+	$code_1 = substr( $code_couleur_fond, 0, 2 );
+	$code_2 = substr( $code_couleur_fond, 2, 2 );
+	$code_3 = substr( $code_couleur_fond, 4, 2 );
 
 	$calcul = (hexdec( $code_1 ) + hexdec( $code_2 ) + hexdec( $code_3)) / 3;
 
@@ -1297,923 +1440,20 @@ public static function calculCouleurCelluleHexa( $code_couleur ) {
 }
 
 
-public static function createComboBox($name, $val="", $class=array(), $colonneInfos=array()){
-	$class = implode(" ", $class);
-
-	$comboBox = '<select class="'.$class.' selectpicker" '.
-	((array_key_exists("title", $colonneInfos))? 'title="'.$colonneInfos["title"].'" ':"").
-	//' title="plop"'.
-	'name="'.$name.'" '.
-	(($colonneInfos["required"])?'required ':'').
-	(($colonneInfos["disabled"])?'disabled ':'').
-	(($colonneInfos["readonly"])?'readonly ':'').
-	' data-live-search="true" '.
-	' data-dropup-Auto="false" '.
-	(array_key_exists("size", $colonneInfos)?'size="'.$colonneInfos["size"].'" ':"").
-	'>';
-	$list = $colonneInfos["list"];
-
-	if(! is_array($list)){
-		$list = $list();
-	}
-	if(empty($list)) $list = array();
-
-	foreach ($list as $key => $valeur) {
-		$option = array();
-
-		if(is_array($valeur)){
-			$option = $valeur["option"];
-			$valeur = trim($valeur["valeur"]);
-		}
-		$class = array_key_exists("class", $option)? "class='".implode(" ", $option["class"])."' ":"";
-		$datas = array_key_exists("datas", $option)? implode(" ", $option["datas"]):"";
-
-		$selectOption = '<option '.$class.' '.$datas.' title="'.$valeur.'" value="'.$key.'"';
-		if($val == $key)
-			$selectOption .= ' selected';
-
-		$selectOption .= '>'. $valeur .'</option>';
-		$comboBox.= $selectOption;
-	}
-	$comboBox .= "</select>";
-	return $comboBox;
-}
-
-
-public static function createTextArea($name, $val, $class, $colonneInfos){
-	if($colonneInfos["required"]){
-		$class[] = "obligatoire";
-	}
-		
-
-	if(array_key_exists("case", $colonneInfos)){
-		switch ($colonneInfos["case"]) {
-			case 'upper':
-				$class[] = "upperCase";
-				break;
-			case 'lower':
-				$class[] = "lowerCase";
-				break;
-			case 'firstUpper':
-				$class[] = "firstLetterUpperCase";
-				break;
-		}
-	}
-
-	$maxlength = (array_key_exists("maxlength", $colonneInfos))? 
-		'maxlength='.$colonneInfos["maxlength"] : 
-		'';
-
-	$placeholder = (array_key_exists("placeholder", $colonneInfos))? 
-		'placeholder="'.$colonneInfos["placeholder"].'"' : 
-		'';	  
-
-	if(! array_key_exists("tabindex", $colonneInfos))	$colonneInfos["tabindex"] = "";
-
-
-	$class = implode(" ", $class);
-
-	return '<textArea '.
-		' class="'.$class.'" '.
-		' name="'.$name.'" '.
-		$colonneInfos["required"].' '.
-		$colonneInfos["disabled"].' '.
-		$colonneInfos["readonly"].' '.
-		$colonneInfos["tabindex"].' '.
-		$placeholder.' '.
-		$maxlength.' '.
-		(array_key_exists("size", $colonneInfos)? 'size="'.$colonneInfos["size"].'" ':"").
-		'>'.$val.'</textarea>';
-}
-
-
-
-public function prepareTitreMenuControleAcces( $Permissions, $Script ) {
-	/**
-	* Prépare le titre menu relatif à la gestion des Contrôles d'Accès.
-	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-10-12
-	*
-	* @param[in] $permissions Liste des permissions de l'utilisateur sur les scripts.
-	* @param[in] $script Nom du script courant.
-	*
-	* @return Renvoi un tableau formaté.
-	*/
-
-	// Récupère les libellés relatifs à la langue courante.
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-
-	// Ignore le '/' en début de chaîne.
-	$Script = mb_substr( $Script, 1 );
-
-	$Titres_Nav = array();
-
-	if ( isset( $Permissions[ 'Loxense-Entites.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-Entites.php';
-		$Options[ 'libelle' ] = $L_Gestion_Entites;
-
-		if ( $Script == 'Loxense-Entites.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-Civilites.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-Civilites.php';
-		$Options[ 'libelle' ] = $L_Gestion_Civilites;
-
-		if ( $Script == 'Loxense-Civilites.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-Applications.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-Applications.php';
-		$Options[ 'libelle' ] = $L_Gestion_Applications;
-
-		if ( $Script == 'Loxense-Applications.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-Profils.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-Profils.php';
-		$Options[ 'libelle' ] = $L_Gestion_Profils;
-
-		if ( $Script == 'Loxense-Profils.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-Utilisateurs.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-Utilisateurs.php';
-		$Options[ 'libelle' ] = $L_Gestion_Utilisateurs;
-
-		if ( $Script == 'Loxense-Utilisateurs.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-Gestionnaires.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-Gestionnaires.php';
-		$Options[ 'libelle' ] = $L_Gestion_Gestionnaires;
-
-		if ( $Script == 'Loxense-Gestionnaires.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-Etiquettes.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-Etiquettes.php';
-		$Options[ 'libelle' ] = $L_Gestion_Etiquettes;
-
-		if ( $Script == 'Loxense-Etiquettes.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-	return $Titres_Nav;
-}
-
-
-public function prepareTitreMenuHistorique( $Permissions, $Script ) {
-	/**
-	* Prépare le titre menu relatif à la gestion des Contrôles d'Accès.
-	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-10-12
-	*
-	* @param[in] $permissions Liste des permissions de l'utilisateur sur les scripts.
-	* @param[in] $script Nom du script courant.
-	*
-	* @return Renvoi un tableau formaté.
-	*/
-
-	// Récupère les libellés relatifs à la langue courante.
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-
-	// Ignore le '/' en début de chaîne.
-	$Script = mb_substr( $Script, 1 );
-
-	$Titres_Nav = array();
-
-	if ( isset( $Permissions[ 'Loxense-Historiques.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-Historiques.php';
-		$Options[ 'libelle' ] = $L_Consultation_Historique;
-
-		if ( $Script == 'Loxense-Historiques.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	return $Titres_Nav;
-}
-
-
-public function prepareTitreMenuReferencielInterne( $Permissions, $Script ) {
-	/**
-	* prépare la barre de menu relative à la gestion du Référentiel Interne.
-	*
-	* @license Loxense, 2013
-	* @author Pierre-Luc MARY
-	* @date 2016-11-19
-	*
-	* @param[in] $permissions Liste des permissions de l'utilisateur courant.
-	* @param[in] $script Nom du script courant.
-	*
-	* @return Renvoi un tableau formaté.
-	*/
-
-	// Récupère les libellés relatifs à la langue courante.
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-
-	// Ignore le '/' en début de chaîne.
-	$Script = mb_substr( $Script, 1 );
-
-	$Titres_Nav = array();
-
-	if ( isset( $Permissions[ 'Loxense-Parametres.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-Parametres.php';
-		$Options[ 'libelle' ] = $L_Gestion_Parametres_Base;
-
-		if ( $Script == 'Loxense-Parametres.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-TypesActifSupport.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-TypesActifSupport.php';
-		$Options[ 'libelle' ] = $L_Gestion_Types_Actif_Support;
-
-		if ( $Script == 'Loxense-TypesActifSupport.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-	
-	
-	if ( isset( $Permissions[ 'Loxense-ReferentielActifsSupports.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-ReferentielActifsSupports.php';
-		$Options[ 'libelle' ] = $L_Gestion_Referentiel_Actifs_Supports;
-		
-		if ( $Script == 'Loxense-ReferentielActifsSupports.php' ) $Options[ 'actif'] = 1;
-		
-		$Titres_Nav[] = $Options;
-	}
-	
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-	
-	
-	if ( isset( $Permissions[ 'Loxense-ReferentielActifsPrimordiaux.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-ReferentielActifsPrimordiaux.php';
-		$Options[ 'libelle' ] = $L_Gestion_Referentiel_Actifs_Primordiaux;
-		
-		if ( $Script == 'Loxense-ReferentielActifsPrimordiaux.php' ) $Options[ 'actif'] = 1;
-		
-		$Titres_Nav[] = $Options;
-	}
-	
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-	
-
-	if ( isset( $Permissions[ 'Loxense-TypesMenaceGenerique.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-TypesMenaceGenerique.php';
-		$Options[ 'libelle' ] = $L_Gestion_Types_Menace_Generique;
-
-		if ( $Script == 'Loxense-TypesMenaceGenerique.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-MenacesGeneriques.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-MenacesGeneriques.php';
-		$Options[ 'libelle' ] = $L_Gestion_Menaces_Generiques;
-
-		if ( $Script == 'Loxense-MenacesGeneriques.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-VulnerabilitesGeneriques.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-VulnerabilitesGeneriques.php';
-		$Options[ 'libelle' ] = $L_Gestion_Vulnerabilites_Generiques;
-
-		if ( $Script == 'Loxense-VulnerabilitesGeneriques.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-SourcesMenaces.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-SourcesMenaces.php';
-		$Options[ 'libelle' ] = $L_Gestion_Sources_Menaces;
-
-		if ( $Script == 'Loxense-SourcesMenaces.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-RisquesGeneriques.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-RisquesGeneriques.php';
-		$Options[ 'libelle' ] = $L_Gestion_Risques_Generiques;
-
-		if ( $Script == 'Loxense-RisquesGeneriques.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-	if ( isset( $Permissions[ 'Loxense-TypesTraitementRisques.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-TypesTraitementRisques.php';
-		$Options[ 'libelle' ] = $L_Gestion_Types_Traitement_Risques;
-
-		if ( $Script == 'Loxense-TypesTraitementRisques.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-ImpactsGeneriques.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-ImpactsGeneriques.php';
-		$Options[ 'libelle' ] = $L_Gestion_Impacts_Generiques;
-
-		if ( $Script == 'Loxense-ImpactsGeneriques.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-MesuresGeneriques.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-MesuresGeneriques.php';
-		$Options[ 'libelle' ] = $L_Gestion_Mesures_Generiques;
-
-		if ( $Script == 'Loxense-MesuresGeneriques.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-ReferentielsConformite.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-ReferentielsConformite.php';
-		$Options[ 'libelle' ] = $L_Gestion_Referentiels_Conformite;
-
-		if ( $Script == 'Loxense-ReferentielsConformite.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-	return $Titres_Nav;	
-}
-
-
-public function prepareTitreMenuCartographiesRisques( $Permissions, $Script ) {
-	/**
-	* prépare la barre de menu relative à la gestion des Cartographies des Risques.
-	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2016-07-20
-	*
-	* @param[in] $permissions Liste des permissions de l'utilisateur courant.
-	* @param[in] $script Nom du script courant.
-	*
-	* @return Renvoi un tableau formaté.
-	*/
-
-	// Récupère les libellés relatifs à la langue courante.
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_Loxense-CartographiesRisques.php' );
-
-	// Ignore le '/' en début de chaîne.
-	$Script = mb_substr( $Script, 1 );
-
-	$Titres_Nav = array();
-
-	if ( isset( $Permissions[ 'Loxense-CriteresValorisationActifs.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-CriteresValorisationActifs.php';
-		$Options[ 'libelle' ] = $L_Gestion_Criteres_Valorisation_Actifs;
-
-		if ( $Script == 'Loxense-CriteresValorisationActifs.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-CriteresAppreciationAcceptationRisques.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-CriteresAppreciationAcceptationRisques.php';
-		$Options[ 'libelle' ] = $L_Gestion_Criteres_Appreciation_Acceptation_Risques;
-
-		if ( $Script == 'Loxense-CriteresAppreciationAcceptationRisques.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-GrillesImpacts.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-GrillesImpacts.php';
-		$Options[ 'libelle' ] = $L_Gestion_Grilles_Impacts;
-
-		if ( $Script == 'Loxense-GrillesImpacts.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-GrillesVraisemblances.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-GrillesVraisemblances.php';
-		$Options[ 'libelle' ] = $L_Gestion_Grilles_Vraisemblances;
-
-		if ( $Script == 'Loxense-GrillesVraisemblances.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-CartographiesRisques.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-CartographiesRisques.php';
-		$Options[ 'libelle' ] = $L_Gestion_Cartographies_Risques;
-
-		if ( $Script == 'Loxense-CartographiesRisques.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-EditionsRisques.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-EditionsRisques.php';
-		$Options[ 'libelle' ] = $L_Gestion_Editions_Risques;
-
-		if ( $Script == 'Loxense-EditionsRisques.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-MatricesRisques.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-MatricesRisques.php';
-		$Options[ 'libelle' ] = $L_Visualisation_Matrices_Risques;
-
-		if ( $Script == 'Loxense-MatricesRisques.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	return $Titres_Nav;	
-}
-
-
-public function prepareTitreMenuActifs( $Permissions, $Script ) {
-	/**
-	* prépare la barre de menu relative à la gestion des Actifs.
-	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2016-07-20
-	*
-	* @param[in] $permissions Liste des permissions de l'utilisateur courant.
-	* @param[in] $script Nom du script courant.
-	*
-	* @return Renvoi un tableau formaté.
-	*/
-
-	// Récupère les libellés relatifs à la langue courante.
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_Loxense-CartographiesRisques.php' );
-
-	// Ignore le '/' en début de chaîne.
-	$Script = mb_substr( $Script, 1 );
-
-	$Titres_Nav = array();
-
-	if ( isset( $Permissions[ 'Loxense-ActifsPrimordiaux.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-ActifsPrimordiaux.php';
-		$Options[ 'libelle' ] = $L_Gestion_Actifs_Primordiaux;
-
-		if ( $Script == 'Loxense-ActifsPrimordiaux.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-ActifsSupports.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-ActifsSupports.php';
-		$Options[ 'libelle' ] = $L_Gestion_Actifs_Supports;
-
-		if ( $Script == 'Loxense-ActifsSupports.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-	
-	
-/*	if ( isset( $Permissions[ 'Loxense-ReferentielActifsSupports.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-ReferentielActifsSupports.php';
-		$Options[ 'libelle' ] = $L_Gestion_Referentiel_Actifs_Supports;
-		
-		if ( $Script == 'Loxense-ReferentielActifsSupports.php' ) $Options[ 'actif'] = 1;
-		
-		$Titres_Nav[] = $Options;
-	}*/
-	
-	return $Titres_Nav;	
-}
-
-
-public function prepareTitreMenuActifsTags( $Permissions, $Script ) {
-	/**
-	* prépare la barre de menu relative à la gestion des Actifs.
-	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2016-07-20
-	*
-	* @param[in] $permissions Liste des permissions de l'utilisateur courant.
-	* @param[in] $script Nom du script courant.
-	*
-	* @return Renvoi un tableau formaté.
-	*/
-
-	// Récupère les libellés relatifs à la langue courante.
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_Loxense-CartographiesRisques.php' );
-
-	// Ignore le '/' en début de chaîne.
-	$Script = mb_substr( $Script, 1 );
-
-	$Titres_Nav = array();
-
-	if ( isset( $Permissions[ 'Loxense-ActifsPrimordiauxTags.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-ActifsPrimordiauxTags.php';
-		$Options[ 'libelle' ] = $L_Gestion_Actifs_Primordiaux;
-
-		if ( $Script == 'Loxense-ActifsPrimordiauxTags.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-ActifsSupportsTags.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-ActifsSupportsTags.php';
-		$Options[ 'libelle' ] = $L_Gestion_Actifs_Supports;
-
-		if ( $Script == 'Loxense-ActifsSupportsTags.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-AppreciationRisquesTags.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-AppreciationRisquesTags.php';
-		$Options[ 'libelle' ] = $L_Gestion_Appreciation_Risques;
-
-		if ( $Script == 'Loxense-AppreciationRisquesTags.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-TraitementRisquesTags.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-TraitementRisquesTags.php';
-		$Options[ 'libelle' ] = $L_Gestion_Traitement_Risques;
-
-		if ( $Script == 'Loxense-TraitementRisquesTags.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	return $Titres_Nav;	
-}
-
-
-public function prepareTitreMenuEvenements( $Permissions, $Script ) {
-	/**
-	* prépare la barre de menu relative à la gestion des Evénements Redoutés.
-	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2016-07-20
-	*
-	* @param[in] $permissions Liste des permissions de l'utilisateur courant.
-	* @param[in] $script Nom du script courant.
-	*
-	* @return Renvoi un tableau formaté.
-	*/
-
-	// Récupère les libellés relatifs à la langue courante.
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_Loxense-EvenementsRedoutes.php' );
-
-	// Ignore le '/' en début de chaîne.
-	$Script = mb_substr( $Script, 1 );
-
-	$Titres_Nav = array();
-
-	if ( isset( $Permissions[ 'Loxense-EvenementsRedoutes.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-EvenementsRedoutes.php';
-		$Options[ 'libelle' ] = $L_Gestion_Evenements_Redoutes;
-
-		if ( $Script == 'Loxense-EvenementsRedoutes.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-	if ( isset( $Permissions[ 'Loxense-SourcesMenaces.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-SourcesMenaces.php';
-		$Options[ 'libelle' ] = $L_Gestion_Sources_Menaces;
-		
-		if ( $Script == 'Loxense-SourcesMenaces.php' ) $Options[ 'actif'] = 1;
-		
-		$Titres_Nav[] = $Options;
-	}
-	
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-	
-	/*
-	 if ( isset( $Permissions[ 'Loxense-PartiesPrenantes.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-PartiesPrenantes.php';
-		$Options[ 'libelle' ] = $L_Gestion_Parties_Prenantes;
-		
-		if ( $Script == 'Loxense-PartiesPrenantes.php' ) $Options[ 'actif'] = 1;
-		
-		$Titres_Nav[] = $Options;
-	}
-	
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-*/
-	
-	return $Titres_Nav;	
-}
-
-
-public function prepareTitreMenuImportExport( $Permissions, $Script ) {
-	/**
-	* prépare la barre de menu relative à la gestion des Evénements Redoutés.
-	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2016-07-20
-	*
-	* @param[in] $permissions Liste des permissions de l'utilisateur courant.
-	* @param[in] $script Nom du script courant.
-	*
-	* @return Renvoi un tableau formaté.
-	*/
-
-	// Récupère les libellés relatifs à la langue courante.
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-//	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_Loxense-EvenementsRedoutes.php' );
-
-	// Ignore le '/' en début de chaîne.
-	$Script = mb_substr( $Script, 1 );
-
-	$Titres_Nav = array();
-
-	if ( isset( $Permissions[ 'Loxense-ExportBase.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-ExportBase.php';
-		$Options[ 'libelle' ] = $L_Gestion_ImportExport_Base;
-
-		if ( $Script == 'Loxense-ExportBase.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	//if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	return $Titres_Nav;	
-}
-
-
-public function prepareTitreMenuRisque( $Permissions, $Script ) {
-	/**
-	* prépare la barre de menu relative à la gestion des Risques.
-	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2016-07-20
-	*
-	* @param[in] $permissions Liste des permissions de l'utilisateur courant.
-	* @param[in] $script Nom du script courant.
-	*
-	* @return Renvoi un tableau formaté.
-	*/
-
-	// Récupère les libellés relatifs à la langue courante.
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_Loxense-AppreciationRisques.php' );
-
-	// Ignore le '/' en début de chaîne.
-	$Script = mb_substr( $Script, 1 );
-
-	$Titres_Nav = array();
-
-	if ( isset( $Permissions[ 'Loxense-AppreciationRisques.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-AppreciationRisques.php';
-		$Options[ 'libelle' ] = $L_Gestion_Appreciation_Risques;
-
-		if ( $Script == 'Loxense-AppreciationRisques.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-TraitementRisques.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-TraitementRisques.php';
-		$Options[ 'libelle' ] = $L_Gestion_Traitement_Risques;
-
-		if ( $Script == 'Loxense-TraitementRisques.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	return $Titres_Nav;	
-}
-
-
-public function prepareTitreMenuAction( $Permissions, $Script ) {
-	/**
-	* prépare la barre de menu relative à la gestion des Actions.
-	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-04-29
-	*
-	* @param[in] $permissions Liste des permissions de l'utilisateur courant.
-	* @param[in] $script Nom du script courant.
-	*
-	* @return Renvoi un tableau formaté.
-	*/
-
-	// Récupère les libellés relatifs à la langue courante.
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_Loxense-Actions.php' );
-
-	// Ignore le '/' en début de chaîne.
-	$Script = mb_substr( $Script, 1 );
-
-	$Titres_Nav = array();
-
-	if ( isset( $Permissions[ 'Loxense-Actions.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-Actions.php';
-		$Options[ 'libelle' ] = $L_Gestion_Actions;
-
-		if ( $Script == 'Loxense-Actions.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-
-
-	if ( isset( $Permissions[ 'Loxense-EditionsActions.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-EditionsActions.php';
-		$Options[ 'libelle' ] = $L_Edition_Actions;
-
-		if ( $Script == 'Loxense-EditionsActions.php' ) $Options[ 'actif'] = 1;
-
-		$Titres_Nav[] = $Options;
-	}
-
-	return $Titres_Nav;	
-}
-
-
-public function prepareTitreMenuConformite( $Permissions, $Script ) {
-	/**
-	 * prépare la barre de menu relative à la gestion de la Conformite.
-	 *
-	 * @license Loxense
-	 * @author Pierre-Luc MARY
-	 * @date 2019-08-11
-	 *
-	 * @param[in] $permissions Liste des permissions de l'utilisateur courant.
-	 * @param[in] $script Nom du script courant.
-	 *
-	 * @return Renvoi un tableau formaté.
-	 */
-	
-	// Récupère les libellés relatifs à la langue courante.
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_Loxense-ReferentielsConformite.php' );
-	
-	// Ignore le '/' en début de chaîne.
-	$Script = mb_substr( $Script, 1 );
-	
-	$Titres_Nav = array();
-	
-	if ( isset( $Permissions[ 'Loxense-Conformite.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-Conformite.php';
-		$Options[ 'libelle' ] = $L_Gestion_Conformite;
-		
-		if ( $Script == 'Loxense-Conformite.php' ) $Options[ 'actif'] = 1;
-		
-		$Titres_Nav[] = $Options;
-	}
-	
-/*	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-	
-	
-	if ( isset( $Permissions[ 'Loxense-MatriceConformite.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-MatriceConformite.php';
-		$Options[ 'libelle' ] = $L_Matrice_Conformite;
-		
-		if ( $Script == 'Loxense-MatriceConformite.php' ) $Options[ 'actif'] = 1;
-		
-		$Titres_Nav[] = $Options;
-	} */
-	
-	if ( isset( $Options[ 'actif'] ) ) unset( $Options[ 'actif'] );
-	
-	
-	if ( isset( $Permissions[ 'Loxense-EditionConformite.php' ] ) ) {
-		$Options[ 'lien' ] = 'Loxense-EditionConformite.php';
-		$Options[ 'libelle' ] = $L_Edition_Conformite;
-		
-		if ( $Script == 'Loxense-EditionConformite.php' ) $Options[ 'actif'] = 1;
-		
-		$Titres_Nav[] = $Options;
-	}
-	
-	return $Titres_Nav;
-}
-
-
 function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
+	/**
+	 * Crée l'occurrence du tableau à afficher.
+	 *
+	 * \license Copyleft
+	 * \author Pierre-Luc MARY
+	 * \since 2023-12-20
+	 *
+	 * \param[in] Id Id de l'occurrence à dessiner
+	 * \param[in] $Valeurs Valeurs des cellules
+	 * \param[in] $Format_Colonnes_Corps Format de l'occurrence (à définir dans les programmes appelants)
+	 *
+	 * \return Retourne le code hexadécimal de la couleur à utiliser
+	 */
 	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_HBL_Generiques.inc.php' );
 	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
 
@@ -2273,6 +1513,10 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		if ( ! array_key_exists('imprimer', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
 			$Format_Colonnes_Corps['Actions']['boutons']['imprimer'] = FALSE;
+		}
+
+		if ( ! array_key_exists('valider', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
+			$Format_Colonnes_Corps['Actions']['boutons']['valider'] = FALSE;
 		}
 	}
 	
@@ -2347,7 +1591,9 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 		}
 
 		if ( $Affichage != 'img' ) {
-			$Valeur = htmlspecialchars( $Valeur, ENT_QUOTES | ENT_HTML5 );
+			if ($Valeur != NULL) {
+				$Valeur = htmlspecialchars( $Valeur, ENT_QUOTES | ENT_HTML5 );
+			}
 		}
 
 		if ( $Type != 'button' ) {
@@ -2480,6 +1726,14 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 			'</button>';
 		}
 
+		$Occurrence .= ' ';
+
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['valider'] === TRUE ) {
+			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-valider" data-id="' . $Id . '" title="' . $L_Valider . '" type="button">' .
+				'<i class="bi-clipboard-check"></i>' .
+				'</button>';
+		}
+
 		$Occurrence .= '</div>';
 	}
 
@@ -2490,7 +1744,19 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 }
 
 
+
 public function construitBoutonCompteur( $Valeur ) {
+	/**
+	 * Création d'un bouton compteur standardisé.
+	 *
+	 * \license Copyleft
+	 * \author Pierre-Luc MARY
+	 * \since 2023-12-20
+	 *
+	 * \param[in] $Valeur Valeur à afficher dans le bouton
+	 *
+	 * \return Retourne l'objet HTML à afficher
+	 */
 	if ( $Valeur > 0 ) {
 		$Icone = '<i class="bi-chevron-right"></i>';
 	} else {
@@ -2501,81 +1767,23 @@ public function construitBoutonCompteur( $Valeur ) {
 }
 
 
+
 public function construireCompteurListe( $Valeur ) {
+	/**
+	 * Création d'un bouton compteur de liste standardisé.
+	 *
+	 * \license Copyleft
+	 * \author Pierre-Luc MARY
+	 * \since 2023-12-20
+	 *
+	 * \param[in] $Valeur Valeur à afficher dans le bouton
+	 *
+	 * \return Retourne l'objet HTML à afficher
+	 */
 	if ( $Valeur == 0 ) $HTML = '<span class="badge bg-secondary align-middle">' . $Valeur . '</span>';
 	else $HTML = '<span class="badge bg-vert_normal align-middle">' . $Valeur . '</span>';
 
 	return $HTML;
-}
-
-
-public function construireListeCartographieUtilisateur( $idn_id = '' ) {
-	include_once( DIR_LIBRAIRIES . '/Class_CartographiesRisques_PDO.inc.php' );
-
-	$objCartographies = new CartographiesRisques();
-
-	if ( $idn_id == '' ) $idn_id = $_SESSION['idn_id'];
-
-	$Options = '';
-	$Compteur = 1;
-
-	foreach( $objCartographies->listerCartographiesRisquesUtilisateurs( $idn_id ) as $_Cartographie )	{
-		$Selection = '';
-
-		if ( isset( $_SESSION['CARTOGRAPHIE_SEL'] ) ) {
-			if ( $_Cartographie->crs_id == $_SESSION['CARTOGRAPHIE_SEL'] ) {
-				$Selection = ' selected';
-				$_SESSION['ENTITE_SEL'] = $_Cartographie->entite;
-			}
-		} elseif ( $Compteur == 1 ) {
-			$Selection = ' selected';
-			$_SESSION['CARTOGRAPHIE_SEL'] = $_Cartographie->crs_id;
-			$_SESSION['ENTITE_SEL'] = $_Cartographie->entite;
-		}
-
-		$Options .= '<option value="' . $_Cartographie->crs_id . '" data-ent_id="' . $_Cartographie->entite . '"' . $Selection . '>' . $_Cartographie->ent_libelle .
-			' - ' . $_Cartographie->crs_libelle . ' - ' . $_Cartographie->crs_version . '</option>';
-
-		$Compteur += 1;
-	}
-
-	return $Options;
-}
-
-
-public function construireListeEntites( $idn_id ) {
-	if ( $_SESSION['idn_super_admin'] ) {
-		include_once( DIR_LIBRAIRIES . '/Class_HBL_Entites_PDO.inc.php' );
-
-		$objEntites = new HBL_Entites();
-
-		$_Entites = $objEntites->rechercherEntites();
-	} else {
-		include_once( DIR_LIBRAIRIES . '/Class_HBL_Identites_Entites_PDO.inc.php' );
-
-		$objEntites = new HBL_Identites_Entites();
-
-		$_Entites = $objEntites->rechercherEntitesIdentite( $idn_id );
-	}
-
-	$Options = '';
-	$Ligne = 0;
-
-	foreach( $_Entites as $_Entite )	{
-		$Ligne += 1;
-		$Selection = '';
-
-		if ( isset( $_SESSION['ENTITE_SEL'] ) ) {
-			if ( $_SESSION['ENTITE_SEL'] == $_Entite->ent_id ) $Selection = ' selected';
-		} elseif ( $Ligne == 1 ) {
-			$Selection = ' selected';
-			$_SESSION['ENTITE_SEL'] = $_Entite->ent_id;
-		}
-
-		$Options .= '<option value="' . $_Entite->ent_id . '"' . $Selection . '>' . $_Entite->ent_libelle . '</option>';
-	}
-
-	return $Options;
 }
 
 } // Fin class HTML.

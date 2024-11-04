@@ -27,10 +27,10 @@ class Editions extends HBL_Parametres {
 * Cette classe gère les éditions des Cartographies.
 *
 * PHP version 5
-* @license Loxense
-* @author Pierre-Luc MARY
-* @package 1.6
-* @date 2014-11-26
+* \license Loxense
+* \author Pierre-Luc MARY
+* \package 1.6
+* \date 2014-11-26
 */ 
 
 	const ID_TYPE = PDO::PARAM_INT;
@@ -114,12 +114,12 @@ class Editions extends HBL_Parametres {
 	/**
 	* Connexion à la base de données via IICA_DB_Connector et instanciation d'un Objet Excel
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @param[in] $langue Langue dans laquelle il faudra produire les éditions (par défaut Français).
+	* \param[in] $langue Langue dans laquelle il faudra produire les éditions (par défaut Français).
 	*
-	* @return Renvoi vrai sur le succès de la connexion à la base de données et l'initialisation de l'objet Excel
+	* \return Renvoi vrai sur le succès de la connexion à la base de données et l'initialisation de l'objet Excel
 	*/
 		include_once( HBL_DIR_LIBRARIES . '/Class_HTML.inc.php' );
 
@@ -572,12 +572,12 @@ class Editions extends HBL_Parametres {
 	/**
 	* Change les numéro de Colonne en lettre et inversement.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @param[in] $strColumnIndex Valeur à convertir
+	* \param[in] $strColumnIndex Valeur à convertir
 	*
-	* @return Renvoi le résultat de la conversion chiffre en lettre ou lettre en chiffre, sinon FAUX en cas d'erreur.
+	* \return Renvoi le résultat de la conversion chiffre en lettre ou lettre en chiffre, sinon FAUX en cas d'erreur.
 	*			
 	*/
 	    $strColumnIndex = strtoupper($strColumnIndex);
@@ -627,12 +627,12 @@ class Editions extends HBL_Parametres {
 	/**
 	* Récupère les informations relatives à la Cartographie à imprimer.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @param[in] $crs_id ID de la Cartographie à imprimer
+	* \param[in] $crs_id ID de la Cartographie à imprimer
 	*
-	* @return Renvoi vrai si l'initialisation a réussi.
+	* \return Renvoi vrai si l'initialisation a réussi.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_HBL_Securite.inc.php' );
@@ -710,10 +710,10 @@ class Editions extends HBL_Parametres {
 	/**
 	* Sauvegarde l'objet Excel généré par l'objet dans un fichier.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @return Renvoi vrai si le fichier a bien été créé.
+	* \return Renvoi vrai si le fichier a bien été créé.
 	*			
 	*/
 		$objWriterExcel = PHPExcel_IOFactory::createWriter( $this->objPHPExcel, 'Excel2007' );
@@ -727,13 +727,13 @@ class Editions extends HBL_Parametres {
 	/**
 	* Génère les différents chapitres du fichier Word.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-30
+	* \author Pierre-Luc MARY
+	* \date 2017-08-30
 	*
-	* @param[in] $crs_id ID. de la Cartographie à traiter.
-	* @param[in] $Flag_Chapitres Indicateurs sur les chapitres à imprimer.
+	* \param[in] $crs_id ID. de la Cartographie à traiter.
+	* \param[in] $Flag_Chapitres Indicateurs sur les chapitres à imprimer.
 	*
-	* @return Renvoi vrai si les chapitres ont été créés.
+	* \return Renvoi vrai si les chapitres ont été créés.
 	*
 	*/
 		ini_set('memory_limit', '1024M');
@@ -777,10 +777,10 @@ class Editions extends HBL_Parametres {
 	/**
 	* Sauvegarde l'objet Word généré par l'objet dans un fichier.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @return Renvoi vrai si le fichier a bien été créé.
+	* \return Renvoi vrai si le fichier a bien été créé.
 	*			
 	*/
 		$objWriterWord = PHPWord_IOFactory::createWriter($this->objPHPWord, 'Word2007');
@@ -795,10 +795,10 @@ class Editions extends HBL_Parametres {
 	/**
 	* Imprime le fichier Excel qui a été généré.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @return Renvoi vrai si le fichier a bien été créé.
+	* \return Renvoi vrai si le fichier a bien été créé.
 	*			
 	*/
 		// Récupère les informations utiles pour récupérer le nom du fichier
@@ -833,10 +833,10 @@ class Editions extends HBL_Parametres {
 	/**
 	* Imprime le fichier Word qui a été généré.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @return Renvoi vrai si le fichier a bien été créé.
+	* \return Renvoi vrai si le fichier a bien été créé.
 	*			
 	*/
 		// Récupère les informations utiles pour récupérer le nom du fichier
@@ -870,12 +870,12 @@ class Editions extends HBL_Parametres {
 	/**
 	* Initialise les informations à placer en haut et bas de l'onglet courant.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @param[in] $Titre_Onglet Titre à appliquer à l'onglet courant.
+	* \param[in] $Titre_Onglet Titre à appliquer à l'onglet courant.
 	*
-	* @return Renvoi vrai si les informations ont bien été mises à jour.
+	* \return Renvoi vrai si les informations ont bien été mises à jour.
 	*			
 	*/
 		// Met en place les informations en haut de l'onglet courant.
@@ -900,12 +900,12 @@ class Editions extends HBL_Parametres {
 	/**
 	* Edite les Actifs Primordiaux ainsi que leur répartition sur les Actifs Supports.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $crs_id ID de la Cartographie à utiliser
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		$Titre_Onglet = $GLOBALS['L_Primordiaux_Supports'];
@@ -1192,12 +1192,12 @@ print('<hr>');*/
 	/**
 	* Edite la classification des Actifs Primordiaux.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-28
+	* \author Pierre-Luc MARY
+	* \date 2014-11-28
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $crs_id ID de la Cartographie à utiliser
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include( DIR_LIBELLES . '/' . $_SESSION['Language'] . '_Loxense-ActifsPrimordiaux.php' );
@@ -1418,12 +1418,12 @@ print('<hr>');*/
 	/**
 	* Edite les Actifs Supports.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-11-17
+	* \author Pierre-Luc MARY
+	* \date 2017-11-17
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $crs_id ID de la Cartographie à utiliser
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include( DIR_LIBELLES . '/' . $_SESSION['Language'] . '_libelles_generiques.php' );
@@ -1536,12 +1536,12 @@ ORDER BY spp_type, spp_nom '
 	/**
 	* Edite l'Appréciation des Risques.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-28
+	* \author Pierre-Luc MARY
+	* \date 2014-11-28
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $crs_id ID de la Cartographie à utiliser
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -1968,12 +1968,12 @@ WHERE spcr.crs_id = :crs_id ';
 	/**
 	* Edite le Traitement des Risques.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-28
+	* \author Pierre-Luc MARY
+	* \date 2014-11-28
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $crs_id ID de la Cartographie à utiliser
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -2648,12 +2648,12 @@ WHERE spcr.crs_id = :crs_id ';
 	/**
 	* Edite les Actions associées à une Cartographie.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-05-15
+	* \author Pierre-Luc MARY
+	* \date 2017-05-15
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $crs_id ID de la Cartographie à utiliser
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -3485,12 +3485,12 @@ ORDER BY rcs.rcs_id, mgn_libelle, rcs.rcs_scenario, spp.spp_nom ';
 	/**
 	* Edite les Actions associées à une Cartographie (en revanche pas d'inforation sur les Risques).
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-05-15
+	* \author Pierre-Luc MARY
+	* \date 2017-05-15
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $crs_id ID de la Cartographie à utiliser
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -4050,12 +4050,12 @@ ORDER BY rcs.rcs_id, mgn_libelle, rcs.rcs_scenario, spp.spp_nom ';
 		/**
 		 * Edite les Mesures de Conformité associées à une Cartographie (en revanche pas d'inforation sur les Risques).
 		 *
-		 * @author Pierre-Luc MARY
-		 * @date 2019-11-26
+		 * \author Pierre-Luc MARY
+		 * \date 2019-11-26
 		 *
-		 * @param[in] $crs_id ID de la Cartographie à utiliser
+		 * \param[in] $crs_id ID de la Cartographie à utiliser
 		 *
-		 * @return Renvoi vrai si les informations ont bien été éditées.
+		 * \return Renvoi vrai si les informations ont bien été éditées.
 		 *
 		 */
 		include_once( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -4568,12 +4568,12 @@ ORDER BY rfc_code, rfc_version, lbr3.lbr_libelle, lbr1.lbr_libelle ';
 	/**
 	* Edite les Evénements Redoutés.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $crs_id ID de la Cartographie à utiliser
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		// ==========================================================
@@ -4846,12 +4846,12 @@ ORDER BY rfc_code, rfc_version, lbr3.lbr_libelle, lbr1.lbr_libelle ';
 	/**
 	* Edite les Actifs Primordiaux ainsi que leur répartition sur les Risques.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $crs_id ID de la Cartographie à utiliser
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		$Titre_Onglet = 'Actifs-Risques';
@@ -5185,12 +5185,12 @@ ORDER BY rfc_code, rfc_version, lbr3.lbr_libelle, lbr1.lbr_libelle ';
 	/**
 	* Edite les Mesures ainsi que leur répartition sur les Risques.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $crs_id ID de la Cartographie à utiliser
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_CartographiesRisques_PDO.inc.php' );
@@ -5417,12 +5417,12 @@ ORDER BY rfc_code, rfc_version, lbr3.lbr_libelle, lbr1.lbr_libelle ';
 	/**
 	* Edite les Actifs Primordiaux ainsi que leur répartition sur les Risques.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $crs_id ID de la Cartographie à utiliser
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		$Titre_Onglet = 'Actifs-Mesures';
@@ -5661,12 +5661,12 @@ WHERE apr.crs_id = :crs_id AND rcs.rcs_a_verifier = FALSE '
 	/**
 	* Edite les Actifs Primordiaux ainsi que leur répartition sur les Risques.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2014-11-26
+	* \author Pierre-Luc MARY
+	* \date 2014-11-26
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $crs_id ID de la Cartographie à utiliser
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -5971,17 +5971,17 @@ WHERE apr.crs_id = :crs_id AND rcs.rcs_a_verifier = FALSE '
 	/**
 	* Fabrique la page de garde du document Word
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -6017,17 +6017,17 @@ WHERE apr.crs_id = :crs_id AND rcs.rcs_a_verifier = FALSE '
 	/**
 	* Fabrique la table des matières du document Word
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -6051,17 +6051,17 @@ WHERE apr.crs_id = :crs_id AND rcs.rcs_a_verifier = FALSE '
 	/**
 	* Fabrique le titre qui matérialise le périmètre de la cartographie du document Word
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -6081,17 +6081,17 @@ WHERE apr.crs_id = :crs_id AND rcs.rcs_a_verifier = FALSE '
 	/**
 	* Fabrique le titre et le texte qui présente la cartographie du document Word
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -6119,17 +6119,17 @@ WHERE apr.crs_id = :crs_id AND rcs.rcs_a_verifier = FALSE '
 	/**
 	* Fabrique le titre du chapitre et appelle toutes les sous-fonctions (voir feuille Excel)
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		if ( !isset($Flag_Chapitres['flag_apr']) or $Flag_Chapitres['flag_apr'] != 'o' ) return TRUE;
@@ -6154,17 +6154,17 @@ WHERE apr.crs_id = :crs_id AND rcs.rcs_a_verifier = FALSE '
 	/**
 	* Fabrique le sous-chapitre lié à la valorisation des actifs primordiaux de type "Information".
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		if ( !isset($Flag_Chapitres['flag_apr']) or $Flag_Chapitres['flag_apr'] != 'o' ) return;
@@ -6237,17 +6237,17 @@ ORDER BY apr_nom, cva_ordre ';
 	/**
 	* Fabrique le sous-chapitre lié à la valorisation des actifs primordiaux de type "Fonction".
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		if ( !isset($Flag_Chapitres['flag_apr']) or $Flag_Chapitres['flag_apr'] != 'o' ) return;
@@ -6319,17 +6319,17 @@ ORDER BY apr_nom, cva_ordre ';
 	/**
 	* Fabrique le sous-chapitre lié au tableau de synthèse.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -6531,17 +6531,17 @@ ORDER BY cva_ordre ';
 	/**
 	* Fabrique le chapitre qui identifie sur quels actifs supports sont les actifs primordiaux
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		if ( !isset($Flag_Chapitres['flag_apr_spp']) or $Flag_Chapitres['flag_apr_spp'] != 'o' ) return;
@@ -6672,17 +6672,17 @@ ORDER BY apr_type,apr_nom,spp_type,spp_nom ';
 	/**
 	* Fabrique le chapitre qui affiche juste le titre du paragraphe
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -6704,17 +6704,17 @@ ORDER BY apr_type,apr_nom,spp_type,spp_nom ';
 	/**
 	* Fabrique le chapitre qui rappelle l'ensemble des risques
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		include_once( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -7258,17 +7258,17 @@ WHERE :poids >= rnr_debut_poids AND :poids <= rnr_fin_poids ' );
 	/**
 	* Fabrique le chapitre qui liste tous les actifs primordiaux avec leurs risques associés
 	*
-	* @author Pierre-Luc MARY
-	* @date 2018-03-26
+	* \author Pierre-Luc MARY
+	* \date 2018-03-26
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		if ( !isset($Flag_Chapitres['flag_actifs_risques']) or $Flag_Chapitres['flag_actifs_risques'] != 'o' ) return TRUE;
@@ -7360,17 +7360,17 @@ GROUP BY apr_code, apr_nom, apr_type '
 	/**
 	* Fabrique le chapitre qui liste tous les risques avec leurs mesures associées
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		if ( !isset($Flag_Chapitres['flag_risques_mesures']) or $Flag_Chapitres['flag_risques_mesures'] != 'o' ) return TRUE;
@@ -7469,17 +7469,17 @@ ORDER BY rcs_code '
 	/**
 	* Fabrique le chapitre qui liste tous les actifs primordiaux et leurs mesures associées
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		if ( !isset($Flag_Chapitres['flag_actifs_mesures']) or $Flag_Chapitres['flag_actifs_mesures'] != 'o' ) return TRUE;
@@ -7579,17 +7579,17 @@ ORDER BY apr_code '
 	/**
 	* Fabrique le chapitre qui affiche les matrices de répartition des risques.
 	*
-	* @author Pierre-Luc MARY
-	* @date 2017-08-22
+	* \author Pierre-Luc MARY
+	* \date 2017-08-22
 	*
-	* @param[in] $crs_id ID de la Cartographie à utiliser
-	* @param[in] $Niveau Donne la profondeur du titre (si besoin)
-	* @param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
-	* @param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
-	* @param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
-	* @param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
+	* \param[in] $crs_id ID de la Cartographie à utiliser
+	* \param[in] $Niveau Donne la profondeur du titre (si besoin)
+	* \param[in] $Orientation Indique l'orientation du document (portrait ou paysage)
+	* \param[in] $Limitation Indique une limitation à l'affichage (si nécessaire)
+	* \param[in] $Organisation Indique s'il y a des sous-chapitres à gérer dans ce chapitre
+	* \param[in] $Flag_Chapitres Indicateur pour déterminer si l'utilisateur a sélectionné les chapitres dans son rapport.
 	*
-	* @return Renvoi vrai si les informations ont bien été éditées.
+	* \return Renvoi vrai si les informations ont bien été éditées.
 	*			
 	*/
 		if ( !isset($Flag_Chapitres['flag_repartition_risques']) or $Flag_Chapitres['flag_repartition_risques'] != 'o' ) return TRUE;

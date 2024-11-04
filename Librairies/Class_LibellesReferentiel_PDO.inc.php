@@ -7,10 +7,9 @@ class LibellesReferentiel extends HBL_Securite {
 /**
 * Cette classe gère les Libellés du Référentiel.
 *
-* PHP version 5
-* @license Loxense
-* @author Pierre-Luc MARY
-* @version 1.0
+* \license Loxense
+* \author Pierre-Luc MARY
+* \version 1.0
 */
 
 	const CODE_TYPE = PDO::PARAM_STR;
@@ -27,12 +26,12 @@ class LibellesReferentiel extends HBL_Securite {
 	/**
 	* Connexion à la base de données via IICA_DB_Connector.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @version 1.0
-	* @date 2016-10-24
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \version 1.0
+	* \date 2016-10-24
 	*
-	* @return Renvoi un booléen sur le succès de la connexion à la base de données
+	* \return Renvoi un booléen sur le succès de la connexion à la base de données
 	*/
 		parent::__construct();
 
@@ -47,16 +46,16 @@ class LibellesReferentiel extends HBL_Securite {
 	/**
 	* Met à jour les libellés du Référentiel
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @version 1.0
-	* @date 2015-11-20
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \version 1.0
+	* \date 2015-11-20
 	*
-	* @param[in] $Code le code du libellé du référenciel
-	* @param[in] $Langue la langue du libellé à ajouter
-	* @param[in] $Libelle le libellé à ajouter
+	* \param[in] $Code le code du libellé du référenciel
+	* \param[in] $Langue la langue du libellé à ajouter
+	* \param[in] $Libelle le libellé à ajouter
 	*
-	* @return Renvoi vrai si le libellé a été créé, sinon lève une Exception 
+	* \return Renvoi vrai si le libellé a été créé, sinon lève une Exception 
 	*/
 		$Code   = mb_strtoupper( trim( $Code ) );
 		$Langue = mb_strtolower( trim( $Langue ) );
@@ -113,15 +112,15 @@ class LibellesReferentiel extends HBL_Securite {
 		/**
 		 * Met à jour le Libellé associé à un code du Référentiel
 		 *
-		 * @license Loxense
-		 * @author Pierre-Luc MARY
-		 * @date 2020-03-23
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2020-03-23
 		 *
-		 * @param[in] $Code Code à rechercher dans la base des libellés
-		 * @param[in] $Langue Langue associée au code
-		 * @param[in] $Libelle Libellé à associer au Code et à la Langue
+		 * \param[in] $Code Code à rechercher dans la base des libellés
+		 * \param[in] $Langue Langue associée au code
+		 * \param[in] $Libelle Libellé à associer au Code et à la Langue
 		 *
-		 * @return Renvoi vrai si le libellé a été modifié, sinon lève une Exception
+		 * \return Renvoi vrai si le libellé a été modifié, sinon lève une Exception
 		 */
 		$Sql = 'UPDATE lbr_libelles_referentiel '.
 			'SET lbr_libelle = :Libelle ' .
@@ -147,14 +146,14 @@ class LibellesReferentiel extends HBL_Securite {
 	/**
 	* Met à jour le Code d'un Libellé du Référentiel
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2022-11-30
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2022-11-30
 	*
-	* @param[in] $Ancien_Code Code à rechercher
-	* @param[in] $Nouveau_Code Code à remplacer
+	* \param[in] $Ancien_Code Code à rechercher
+	* \param[in] $Nouveau_Code Code à remplacer
 	*
-	* @return Renvoi vrai si le libellé a été modifié, sinon lève une Exception 
+	* \return Renvoi vrai si le libellé a été modifié, sinon lève une Exception 
 	*/
 		$SQL = 'UPDATE lbr_libelles_referentiel '.
 			'SET lbr_code = :Nouveau_Code ' .
@@ -178,16 +177,16 @@ class LibellesReferentiel extends HBL_Securite {
 	/**
 	* Lister les libellés du référentiel
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @version 1.0
-	* @date 2015-11-20
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \version 1.0
+	* \date 2015-11-20
 	*
-	* @param[in] $Code le code du libellé du référenciel à rechercher
-	* @param[in] $Langue la langue du libellé qui est recherhée (si $Langue = *, alors toutes les langues sont recherchées)
-	* @param[in] $TypeRecherche le type de recherche ('D':débute par, 'T':termine par, 'C':contient, 'S':strict)
+	* \param[in] $Code le code du libellé du référenciel à rechercher
+	* \param[in] $Langue la langue du libellé qui est recherhée (si $Langue = *, alors toutes les langues sont recherchées)
+	* \param[in] $TypeRecherche le type de recherche ('D':débute par, 'T':termine par, 'C':contient, 'S':strict)
 	*
-	* @return Renvoi les libellés trouvés ou une liste vide si aucune correspondance. Lève une Exception en cas d'erreur.
+	* \return Renvoi les libellés trouvés ou une liste vide si aucune correspondance. Lève une Exception en cas d'erreur.
 	*/
 		if ( $Code == '' ) return array();
 
@@ -236,16 +235,16 @@ class LibellesReferentiel extends HBL_Securite {
 	/**
 	* Supprime des libellés du référentiel
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @version 1.0
-	* @date 2015-11-20
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \version 1.0
+	* \date 2015-11-20
 	*
-	* @param[in] $Code le code du libellé du référenciel à supprimer
-	* @param[in] $Langue la langue du libellé qui est supprimée (si $Langue = '*', alors toutes les langues sont supprimées)
-	* @param[in] $TypeRecherche le type de recherche ('D':débute par, 'T':termine par, 'C':contient, 'S':strict)
+	* \param[in] $Code le code du libellé du référenciel à supprimer
+	* \param[in] $Langue la langue du libellé qui est supprimée (si $Langue = '*', alors toutes les langues sont supprimées)
+	* \param[in] $TypeRecherche le type de recherche ('D':débute par, 'T':termine par, 'C':contient, 'S':strict)
 	*
-	* @return Renvoi vrai si le libellé a été créée, sinon lève une Exception 
+	* \return Renvoi vrai si le libellé a été créée, sinon lève une Exception 
 	*/
 		if ( $TypeRecherche == 'S' ) $OperateurRecherche = '=';
 		else $OperateurRecherche = 'LIKE';
@@ -311,16 +310,16 @@ class LibellesReferentiel extends HBL_Securite {
 	/**
 	* Compte le nombre de libellés
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @version 1.0
-	* @date 2015-11-20
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \version 1.0
+	* \date 2015-11-20
 	*
-	* @param[in] $Code le code du libellé du référenciel à rechercher
-	* @param[in] $Langue la langue du libellé qui est supprimée (si $Langue = *, alors toutes les langues sont recherchées)
-	* @param[in] $TypeRecherche le type de recherche ('D':débute par, 'T':termine par, 'C':contient, 'S':strict)
+	* \param[in] $Code le code du libellé du référenciel à rechercher
+	* \param[in] $Langue la langue du libellé qui est supprimée (si $Langue = *, alors toutes les langues sont recherchées)
+	* \param[in] $TypeRecherche le type de recherche ('D':débute par, 'T':termine par, 'C':contient, 'S':strict)
 	*
-	* @return Renvoi le nombre de libellés trouvés, sinon lève une Exception 
+	* \return Renvoi le nombre de libellés trouvés, sinon lève une Exception 
 	*/
 		if ( $Code == '' ) return 0;
 

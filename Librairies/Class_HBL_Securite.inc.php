@@ -8,10 +8,9 @@ include_once( HBL_DIR_LIBRARIES . '/Class_HBL_Parametres_PDO.inc.php' );
 * entrées, en sortie (notamment pour l'affichage à l'écran) ou calcule des grains de sel,
 * etc.
 *
-* PHP version 5
-* @license Copyright Loxense
-* @author Pierre-Luc MARY
-* @date 2015-06-01
+* \license Copyright Loxense
+* \author Pierre-Luc MARY
+* \date 2015-06-01
 *
 */
 
@@ -33,16 +32,17 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Anti-injection XSS (à utiliser avant l'affichage d'une variable).
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-01
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-01
 	*
-	* @param[in] $value Chaine de caractère à contrôler
-	* @param[in] $type Type de la valeur à protéger
+	* \param[in] $value Chaine de caractère à contrôler
+	* \param[in] $type Type de la valeur à protéger
 	*
-	* @return Retourne le résultat protégé (prêt à l'affichage) ou faux
+	* \return Retourne le résultat protégé (prêt à l'affichage) ou faux
 	*/
-
+		if ( $value == '' ) return '';
+		
 		switch( strtoupper( $type ) ) {
 		 case 'NUMERIC' :
 			if ( $numeric = ctype_digit( $value ) ) {
@@ -89,58 +89,73 @@ class HBL_Securite extends HBL_Parametres {
 	* Contrôle et prépare les variables avant un stockage.
 	* A utiliser avant l'affichage d'une variable.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-01
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-01
 	*
-	* @param[in] $value Chaine de caractère à contrôler
+	* \param[in] $value Chaine de caractère à contrôler
 	*
-	* @return Retourne le résultat protégé ou faux
+	* \return Retourne le résultat protégé ou faux
 	*/
 		switch( strtoupper( $type ) ) {
 		 case 'NUMERIC' :
-			if ( $numeric = ctype_digit( $value ) ) {
+		 case 'NUMBER' :
+			if ( $value == '' ) return $value;
+
+			if ( is_numeric( $value ) ) {
 				return $value;
-			} else return -1 ;
+			} else {
+				return -1;
+			}
 			break;
 
 		 case 'ALPHA' :
+			if ( $value == '' ) return $value;
+
 			if ( $alpha = ctype_alpha( $value ) ) {
-				if ( mb_detect_encoding( $value ) != 'UTF-8' ) $value = utf8_encode( $value );
+				if ( mb_detect_encoding( $value ) != 'UTF-8' ) $value = mb_convert_encoding( $value, 'UTF-8' );
 				$value = addslashes( $value );
 				return $value;
 			} else return -1 ;
 			break;
 	  	
 		 case 'ALPHA-NUMERIC' :
+			if ( $value == '' ) return $value;
+
 			if ( $alnum = ctype_alnum( $value ) ) {
-				if ( mb_detect_encoding( $value ) != 'UTF-8' ) $value = utf8_encode( $value );
+				if ( mb_detect_encoding( $value ) != 'UTF-8' ) $value = mb_convert_encoding( $value, 'UTF-8' );
 				$value = addslashes( $value );
 				return $value;
 			} else return -1 ;
 			break;
 
 		 case 'PRINTABLE' :
+			if ( $value == '' ) return $value;
+
 			if ( $alnum = ctype_print( $value ) ) {
-				if ( mb_detect_encoding( $value ) != 'UTF-8' ) $value = utf8_encode( $value );
+				if ( mb_detect_encoding( $value ) != 'UTF-8' ) $value = mb_convert_encoding( $value, 'UTF-8' );
 				$value = addslashes( $value );
 				return $value;
 			} else return -1 ;
 			break;
 
 		 case 'BOOLEAN' :
+			if ( $value == '' ) return $value;
+
 			if ( strtoupper( $value ) == 'FALSE' or strtoupper( $value ) == 'TRUE'
 			 or $value === FALSE or $value === TRUE or $value === false or $value === true
 			 or $value === 0 or $value === 1 ) {
-				if ( strtoupper( $value ) == 'FALSE' or $value === FALSE or $value === false or $value === 0 ) return FALSE;
-				if ( strtoupper( $value ) == 'TRUE' or $value === TRUE or $value === true or $value === 1 ) return TRUE;
+				if ( strtoupper( $value ) == 'FALSE' or $value === FALSE or $value === false or $value == 0 ) return FALSE;
+				if ( strtoupper( $value ) == 'TRUE' or $value === TRUE or $value === true or $value == 1 ) return TRUE;
 			} else return -1 ;
 			break;
-		  
+
 		 default:
 		 case 'ASCII':
+			if ( $value == '' ) return $value;
+
 			//$value = addslashes( $value );
-			if ( mb_detect_encoding( $value ) != 'UTF-8' ) $value = utf8_encode( $value );
+			if ( mb_detect_encoding( $value ) != 'UTF-8' ) $value = mb_convert_encoding( $value, 'UTF-8' );
 			return $value;
 			break;
 		}
@@ -151,13 +166,13 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Anti-injection SQL dans MySQL.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-01
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-01
 	*
-	* @param[in] $value Chaine de caractère à protéger
+	* \param[in] $value Chaine de caractère à protéger
 	*
-	* @return Retourne le résultat protégé.
+	* \return Retourne le résultat protégé.
 	*/
 		return @mysql_real_escape_string( $value );
 	}
@@ -168,13 +183,13 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Supprime les caractères accentués d'une chaîne.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-01
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-01
 	*
-	* @param[in] $value Chaine de caractère à protéger
+	* \param[in] $value Chaine de caractère à protéger
 	*
-	* @return Retourne le résultat protégé.
+	* \return Retourne le résultat protégé.
 	*/
 		return strtr( utf8_decode( $Value ),
 		 utf8_decode( 'ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÒÓÔÕÖÙÚÛÜÝàáâãäåçèéêëìíîïðòóôõöùúûüýÿ' ),
@@ -186,14 +201,14 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Générateur de mot de passe ou de grain de sel.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-01
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-01
 	*
-	* @param[in] $size Longeur du mot de passe à générer (par défaut 10 caractères)
-	* @param[in] $complexity Complexité du mot de passe (constitution du mot de passe) (par défaut complexité à 4, soit le mot de passe doit être constitué de "minuscule", "majuscule", "numérique", "accentué" et caractères "spéciaux").
+	* \param[in] $size Longeur du mot de passe à générer (par défaut 10 caractères)
+	* \param[in] $complexity Complexité du mot de passe (constitution du mot de passe) (par défaut complexité à 4, soit le mot de passe doit être constitué de "minuscule", "majuscule", "numérique", "accentué" et caractères "spéciaux").
 	*
-	* @return Retourne la chaîne générée
+	* \return Retourne la chaîne générée
 	*/
 		$accentuations = 'àçèéêëîïôöùûüÿ';
 		$lowercase_letters = 'abcdefghijklmnopqrstuvwxyz';
@@ -234,14 +249,14 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Vérifie si le mot de passe ou le grain de sel respecte la complexité spécifiée.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-02
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-02
 	*
-	* @param[in] $Password Mot de passe à contrôler
-	* @param[in] $complexity Complexité du mot de passe (constitution du mot de passe) (par défaut complexité à 3, soit le mot de passe doit être constitué de "minuscules", "majuscules", "numériques" et caractères "spéciaux").
+	* \param[in] $Password Mot de passe à contrôler
+	* \param[in] $complexity Complexité du mot de passe (constitution du mot de passe) (par défaut complexité à 3, soit le mot de passe doit être constitué de "minuscules", "majuscules", "numériques" et caractères "spéciaux").
 	*
-	* @return Retourne vrai si la complexité est respectée et faux dans le cas contraire
+	* \return Retourne vrai si la complexité est respectée et faux dans le cas contraire
 	*/
 		$Accentuation = 0;
 		$Lowercase = 0;
@@ -300,13 +315,13 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Vérifie si la chaîne contient un accent.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-02
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-02
 	*
-	* @param[in] $String Chaine à contrôler
+	* \param[in] $String Chaine à contrôler
 	*
-	* @return Retourne vrai si un accent est trouvé, sinon faux
+	* \return Retourne vrai si un accent est trouvé, sinon faux
 	*/
 		$Status = false;
 		
@@ -325,13 +340,13 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Vérifie si la chaîne contient une minuscule.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-02
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-02
 	*
-	* @param[in] $String Chaine à contrôler
+	* \param[in] $String Chaine à contrôler
 	*
-	* @return Retourne vrai si une minuscule est trouvée, sinon faux
+	* \return Retourne vrai si une minuscule est trouvée, sinon faux
 	*/
 		$Status = false;
 		
@@ -350,13 +365,13 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Vérifie si la chaîne contient une minuscule.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-02
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-02
 	*
-	* @param[in] $String Chaine à contrôler
+	* \param[in] $String Chaine à contrôler
 	*
-	* @return Retourne vrai si une majuscule est trouvée, sinon faux
+	* \return Retourne vrai si une majuscule est trouvée, sinon faux
 	*/
 		$Status = false;
 		
@@ -375,13 +390,13 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Vérifie si la chaîne contient un nombre.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-02
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-02
 	*
-	* @param[in] $String Chaine à contrôler
+	* \param[in] $String Chaine à contrôler
 	*
-	* @return Retourne vrai si un nombre est trouvé, sinon faux
+	* \return Retourne vrai si un nombre est trouvé, sinon faux
 	*/
 		$Status = false;
 		
@@ -400,13 +415,13 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Vérifie si la chaîne contient un caractère spécial.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-02
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-02
 	*
-	* @param[in] $String Chaine à contrôler
+	* \param[in] $String Chaine à contrôler
 	*
-	* @return Retourne vrai si un caractère spécial est trouvé, sinon faux
+	* \return Retourne vrai si un caractère spécial est trouvé, sinon faux
 	*/
 		$Status = false;
 		
@@ -432,15 +447,15 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Chiffrement d'une donnée.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-02
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-02
 	*
-	* @param[in] $encrypt Données à chiffrer.
-	* @param[in] $mc_key Clé de chiffrement.
-	* @param[in] $salt Diversifiant pour qu'une clé fasse toujours 32 caractères
+	* \param[in] $encrypt Données à chiffrer.
+	* \param[in] $mc_key Clé de chiffrement.
+	* \param[in] $salt Diversifiant pour qu'une clé fasse toujours 32 caractères
 	*
-	* @return string Retourne la chaine de données chiffrée.
+	* \return string Retourne la chaine de données chiffrée.
 	*/
 
 		if ( $salt == '' ) {
@@ -470,14 +485,14 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Déchiffrement d'une donnée.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-02
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-02
 	*
-	* @param[in] $decrypt Données à déchiffrer.
-	* @param[in] $mc_key Clé de déchiffrement.
+	* \param[in] $decrypt Données à déchiffrer.
+	* \param[in] $mc_key Clé de déchiffrement.
 	*
-	* @return string Retourne la chaine de données déchiffrée.
+	* \return string Retourne la chaine de données déchiffrée.
 	*/
 
 		if ( $salt == '' ) {
@@ -510,11 +525,11 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Mise en place du fichier de confiuguration de l'environnement de chiffrement.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-12-17
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-12-17
 	*
-	* @return chaine|TRUE Retourne TRUE pour une fin normale sinon remonte une erreur.
+	* \return chaine|TRUE Retourne TRUE pour une fin normale sinon remonte une erreur.
 	*/
 		if ( ! file_exists( CHF_CLES ) ) $Nom_Fichier = CHF_CLES;
 		else $Nom_Fichier = CHF_CLES . '.new';
@@ -523,8 +538,8 @@ class HBL_Securite extends HBL_Parametres {
 
 		fwrite( $pFichier, '<?php' . "\n\n" );
 		fwrite( $pFichier, '/** ' . "\n" );
-		fwrite( $pFichier, '* @author Pierre-Luc MARY' . "\n" );
-		fwrite( $pFichier, '* @date ' . date('Y-m-d') . "\n" );
+		fwrite( $pFichier, '* \author Pierre-Luc MARY' . "\n" );
+		fwrite( $pFichier, '* \date ' . date('Y-m-d') . "\n" );
 		fwrite( $pFichier, '*/ ' . "\n\n" );
 		fwrite( $pFichier, '	define( \'CLE_1\', \'' . base64_encode( openssl_random_pseudo_bytes( 32 ) ) . '\');' . "\n" );
 		fwrite( $pFichier, '	define( \'CLE_2\', \'' . base64_encode( openssl_random_pseudo_bytes( 64 ) ) . '\');' . "\n\n" );
@@ -543,13 +558,13 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Chiffrement d'une donnée par deux clés (avec les clés initialisées par le système).
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-12-17
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-12-17
 	*
-	* @param[in] $Donnee Chaine à chiffrer.
+	* \param[in] $Donnee Chaine à chiffrer.
 	*
-	* @return chaine Retourne la donnée chiffrée.
+	* \return chaine Retourne la donnée chiffrée.
 	*/
 		include_once( CHF_CLES );
 
@@ -572,13 +587,13 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Déchiffrement d'une donnée par deux clés (avec les clés initialisées par le système).
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-12-17
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-12-17
 	*
-	* @param[in] $Donnee_Chiffree Chaine à déchiffrer.
+	* \param[in] $Donnee_Chiffree Chaine à déchiffrer.
 	*
-	* @return chaine Retourne la donnée déchiffrée.
+	* \return chaine Retourne la donnée déchiffrée.
 	*/
 		include_once( CHF_CLES );
 
@@ -605,14 +620,14 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Chiffrement d'une donnée avec la clé de l'utilisateur.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-12-17
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-12-17
 	*
-	* @param[in] $Cle Clé à utiliser pour chiffrer.
-	* @param[in] $Donnee Chaine à chiffrer.
+	* \param[in] $Cle Clé à utiliser pour chiffrer.
+	* \param[in] $Donnee Chaine à chiffrer.
 	*
-	* @return chaine Retourne la donnée chiffrée.
+	* \return chaine Retourne la donnée chiffrée.
 	*/
 		include_once( CHF_CLES );
 
@@ -633,14 +648,14 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Déchiffrement d'une donnée avec la clé de l'utilisateur.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-12-17
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-12-17
 	*
-	* @param[in] $Cle Clé à utiliser pour chiffrer.
-	* @param[in] $Donnee_Chiffree Chaine à déchiffrer.
+	* \param[in] $Cle Clé à utiliser pour chiffrer.
+	* \param[in] $Donnee_Chiffree Chaine à déchiffrer.
 	*
-	* @return chaine Retourne la donnée déchiffrée.
+	* \return chaine Retourne la donnée déchiffrée.
 	*/
 		include_once( CHF_CLES );
 
@@ -662,14 +677,14 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Chiffrement d'une donnée avec la clé de l'utilisateur.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-12-17
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-12-17
 	*
-	* @param[in] $Cle Clé à utiliser pour chiffrer.
-	* @param[in] $Donnee Chaine à chiffrer.
+	* \param[in] $Cle Clé à utiliser pour chiffrer.
+	* \param[in] $Donnee Chaine à chiffrer.
 	*
-	* @return chaine Retourne la donnée chiffrée.
+	* \return chaine Retourne la donnée chiffrée.
 	*/
 		include_once( CHF_CLES );
 
@@ -690,14 +705,14 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Déchiffrement d'une donnée avec la clé de l'utilisateur.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-12-17
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-12-17
 	*
-	* @param[in] $Cle Clé à utiliser pour chiffrer.
-	* @param[in] $Donnee_Chiffree Chaine à déchiffrer.
+	* \param[in] $Cle Clé à utiliser pour chiffrer.
+	* \param[in] $Donnee_Chiffree Chaine à déchiffrer.
 	*
-	* @return chaine Retourne la donnée déchiffrée.
+	* \return chaine Retourne la donnée déchiffrée.
 	*/
 		include_once( CHF_CLES );
 
@@ -719,13 +734,13 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Chiffre le fichier (avec les clés initialisées par le système)
 	* 
-	* @param[in] $Fichier_Source Nom et localisation du fichier qui va être chiffré
-	* @param[in] $Fichier_Destination Nom et localisation du fichier qui contient le résultat du chiffrement
+	* \param[in] $Fichier_Source Nom et localisation du fichier qui va être chiffré
+	* \param[in] $Fichier_Destination Nom et localisation du fichier qui contient le résultat du chiffrement
 	*			(par défaut le nom du de départ est utilisé avec le suffixe ".enc")
-	* @param[in] $Supprimer_Source Si "1", alors le fichier source sera supprimé en fin normale de traitement.
+	* \param[in] $Supprimer_Source Si "1", alors le fichier source sera supprimé en fin normale de traitement.
 	* 			Si "0", alors il n'y aura pas de suppression.
 	*
-	* @return string|false  Retourne le nom du fichier de destination qui a été créé ou FALSE si une erreur a été rencontrée
+	* \return string|false  Retourne le nom du fichier de destination qui a été créé ou FALSE si une erreur a été rencontrée
 	*/
 		include_once( CHF_CLES );
 
@@ -766,13 +781,13 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Déchiffre le fichier (avec les clés initialisées par le système)
 	* 
-	* @param[in] $Fichier_Source Nom et localisation du fichier qui va être déchiffré
-	* @param[in] $Fichier_Destination Nom et localisation du fichier qui contient le résultat du déchiffrement
+	* \param[in] $Fichier_Source Nom et localisation du fichier qui va être déchiffré
+	* \param[in] $Fichier_Destination Nom et localisation du fichier qui contient le résultat du déchiffrement
 	*			(par défaut le nom du de départ est utilisé et on supprime le suffixe ".enc")
-	* @param[in] $Supprimer_Source Si "1", alors le fichier source sera supprimé en fin normale de traitement.
+	* \param[in] $Supprimer_Source Si "1", alors le fichier source sera supprimé en fin normale de traitement.
 	* 			Si "0", alors il n'y aura pas de suppression.
 	*
-	* @return string|false  Retourne le nom du fichier de destination qui a été créé ou FALSE si une erreur a été rencontrée
+	* \return string|false  Retourne le nom du fichier de destination qui a été créé ou FALSE si une erreur a été rencontrée
 	*/
 		include_once( CHF_CLES );
 
@@ -821,14 +836,14 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Chiffre le fichier avec la clé précisé par l'utilisateur.
 	* 
-	* @param[in] $Cle Clé de l'utilisateur à utiliser pour chiffrer le fichier.
-	* @param[in] $Fichier_Source Nom et localisation du fichier qui va être déchiffré.
-	* @param[in] $Fichier_Destination Nom et localisation du fichier qui contient le résultat du déchiffrement
+	* \param[in] $Cle Clé de l'utilisateur à utiliser pour chiffrer le fichier.
+	* \param[in] $Fichier_Source Nom et localisation du fichier qui va être déchiffré.
+	* \param[in] $Fichier_Destination Nom et localisation du fichier qui contient le résultat du déchiffrement
 	*			(par défaut le nom du de départ est utilisé et on supprime le suffixe ".enc").
-	* @param[in] $Supprimer_Source Si "1", alors le fichier source sera supprimé en fin normale de traitement.
+	* \param[in] $Supprimer_Source Si "1", alors le fichier source sera supprimé en fin normale de traitement.
 	* 			Si "0", alors il n'y aura pas de suppression.
 	*
-	* @return string|false  Retourne le nom du fichier de destination qui a été créé ou FALSE si une erreur a été rencontrée.
+	* \return string|false  Retourne le nom du fichier de destination qui a été créé ou FALSE si une erreur a été rencontrée.
 	*/
 		include_once( CHF_CLES );
 
@@ -869,14 +884,14 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Déchiffre le fichier avec la clé précisé par l'utilisateur.
 	* 
-	* @param[in] $Cle Clé de l'utilisateur à utiliser pour déchiffrer le fichier.
-	* @param[in] $Fichier_Source Nom et localisation du fichier qui va être déchiffré
-	* @param[in] $Fichier_Destination Nom et localisation du fichier qui contient le résultat du déchiffrement
+	* \param[in] $Cle Clé de l'utilisateur à utiliser pour déchiffrer le fichier.
+	* \param[in] $Fichier_Source Nom et localisation du fichier qui va être déchiffré
+	* \param[in] $Fichier_Destination Nom et localisation du fichier qui contient le résultat du déchiffrement
 	*			(par défaut le nom du de départ est utilisé et on supprime le suffixe ".enc")
-	* @param[in] $Supprimer_Source Si "1", alors le fichier source sera supprimé en fin normale de traitement.
+	* \param[in] $Supprimer_Source Si "1", alors le fichier source sera supprimé en fin normale de traitement.
 	* 			Si "0", alors il n'y aura pas de suppression.
 	*
-	* @return string|false  Retourne le nom du fichier de destination qui a été créé ou FALSE si une erreur a été rencontrée
+	* \return string|false  Retourne le nom du fichier de destination qui a été créé ou FALSE si une erreur a été rencontrée
 	*/
 		include_once( CHF_CLES );
 
@@ -938,17 +953,17 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Met à jour l'historique interne des actions des utiilsateurs dans l'outil.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-08-19
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-08-19
 	*
-	* @param[in] $Action_Date (date) Code de l'action qui vient d'être réalisée
-	* @param[in] $Action_Type (string) Code de l'action qui vient d'être réalisée
-	* @param[in] $Object_Type (string) Code du type d'objet qui vient d'être accédé
-	* @param[in] $Message (string) Code de l'action qui vient d'être réalisée
-	* @param[in] $crs_id (int) Id de la Cartographie auquel l'événement est rattaché
+	* \param[in] $Action_Date (date) Code de l'action qui vient d'être réalisée
+	* \param[in] $Action_Type (string) Code de l'action qui vient d'être réalisée
+	* \param[in] $Object_Type (string) Code du type d'objet qui vient d'être accédé
+	* \param[in] $Message (string) Code de l'action qui vient d'être réalisée
+	* \param[in] $crs_id (int) Id de la Cartographie auquel l'événement est rattaché
 	*
-	* @return Renvoi vrai sur le succès de la mise à jour du Groupe, sinon lève une Exception
+	* \return Renvoi vrai sur le succès de la mise à jour du Groupe, sinon lève une Exception
 	*/
 
 		// Récupère l'ID associé au code action.
@@ -1046,14 +1061,14 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Formate le message à remonter dans l'historique.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-08-17
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-08-17
 	*
-	* @param[in] $action Action à tracer.
-	* @param[in] $pObject Pointeur sur le Secret manipulé
+	* \param[in] $action Action à tracer.
+	* \param[in] $pObject Pointeur sur le Secret manipulé
 	*
-	* @return Retourne la chaîne formatée ou lève une exception en cas d'erreur.
+	* \return Retourne la chaîne formatée ou lève une exception en cas d'erreur.
 	*/
 		include( HBL_DIR_LABELS . '/' . $this->recupererParametre( 'language_alert' ) . '_libelles_referentiels.php' );
 
@@ -1085,12 +1100,12 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Envoi le message dans le flux "Syslog"
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2014-06-08
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2014-06-08
 	*
-	* @param[in] $action Action à tracer.
-	* @param[in] $priority Type de priorité dans le "Syslog" (par défaut LOG_WARNING)
+	* \param[in] $action Action à tracer.
+	* \param[in] $priority Type de priorité dans le "Syslog" (par défaut LOG_WARNING)
 	*
 	* Les autres valeurs de "priority" sont :
 	*   LOG_EMERG	système inutilisable
@@ -1102,7 +1117,7 @@ class HBL_Securite extends HBL_Parametres {
 	*   LOG_INFO	message d'information
 	*   LOG_DEBUG	message de déboguage
 	*
-	* @return Retourne vrai si le message a été envoyé dans Syslog, sinon retrouve faux
+	* \return Retourne vrai si le message a été envoyé dans Syslog, sinon retrouve faux
 	*/
 		$message = $this->formaterMessagePourSyslog( $Action_Date, $Action_Type, $Object_Type, $Message );
 
@@ -1138,14 +1153,14 @@ class HBL_Securite extends HBL_Parametres {
 	/**
 	* Envoi le message par courriel
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2014-06-08
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2014-06-08
 	*
-	* @param[in] $Action Type d'action qui l'on vient de réaliser sur un Secret et que l'on souhaite notifier.
-	* @param[in] $pSecret Objet de type Secret qui vient d'être accédé
+	* \param[in] $Action Type d'action qui l'on vient de réaliser sur un Secret et que l'on souhaite notifier.
+	* \param[in] $pSecret Objet de type Secret qui vient d'être accédé
 	*
-	* @return Retourne vrai si le message a été envoyé au serveur de messagerie, sinon retrouve faux (attention, envoyé au serveur de messagerie, ne signifie pas bien arrivé auprès des destinataires)
+	* \return Retourne vrai si le message a été envoyé au serveur de messagerie, sinon retrouve faux (attention, envoyé au serveur de messagerie, ne signifie pas bien arrivé auprès des destinataires)
 	*/
 
 		$Sender = $this->recupererParametre('mail_sender');
@@ -1199,14 +1214,14 @@ class HBL_Securite extends HBL_Parametres {
 		/**
 		* Récupère un libellé dans la table des libellés de l'outil.
 		*
-		* @license Loxense, 2015
-		* @author Pierre-Luc MARY
-		* @date 2015-08-21
+		* \license Loxense, 2015
+		* \author Pierre-Luc MARY
+		* \date 2015-08-21
 		*
-		* @param[in] $Label_Code Code du libellé à récupérer dans la base
-		* @param[in] $Language_Code Code de la langue dans lequel on souhaite le libellé (par défaut "fr - France")
+		* \param[in] $Label_Code Code du libellé à récupérer dans la base
+		* \param[in] $Language_Code Code de la langue dans lequel on souhaite le libellé (par défaut "fr - France")
 		*
-		* @return Renvoi le libellé ou chaine vide quand le libellé n'existe pas.
+		* \return Renvoi le libellé ou chaine vide quand le libellé n'existe pas.
 		*/
 
 			// ===================================
@@ -1236,15 +1251,15 @@ class HBL_Securite extends HBL_Parametres {
 		/**
 		* Ajoute un nouveau libellé.
 		*
-		* @license Loxense
-		* @author Pierre-Luc MARY
-		* @date 2018-04-05
+		* \license Loxense
+		* \author Pierre-Luc MARY
+		* \date 2018-04-05
 		*
-		* @param[in] $Code Code du libellé à ajouter dans la base
-		* @param[in] $Libelle Libellé à associer au code et à ajouter dans la base
-		* @param[in] $Language Code de la langue dans lequel on souhaite le libellé (par défaut "fr - France")
+		* \param[in] $Code Code du libellé à ajouter dans la base
+		* \param[in] $Libelle Libellé à associer au code et à ajouter dans la base
+		* \param[in] $Language Code de la langue dans lequel on souhaite le libellé (par défaut "fr - France")
 		*
-		* @return Renvoi "TRUE" en cas de succes, sinon lève une exception.
+		* \return Renvoi "TRUE" en cas de succes, sinon lève une exception.
 		*/
 
 			// ===================================
@@ -1267,15 +1282,15 @@ VALUES ( :Code, :Libelle, :Langue ) ' ;
 		/**
 		* Modifie un nouveau libellé.
 		*
-		* @license Loxense
-		* @author Pierre-Luc MARY
-		* @date 2018-04-05
+		* \license Loxense
+		* \author Pierre-Luc MARY
+		* \date 2018-04-05
 		*
-		* @param[in] $Code Code du libellé à modifier dans la base
-		* @param[in] $Libelle Libellé à associer au code et à modifier dans la base
-		* @param[in] $Language Code de la langue dans lequel on souhaite le libellé (par défaut "fr - France")
+		* \param[in] $Code Code du libellé à modifier dans la base
+		* \param[in] $Libelle Libellé à associer au code et à modifier dans la base
+		* \param[in] $Language Code de la langue dans lequel on souhaite le libellé (par défaut "fr - France")
 		*
-		* @return Renvoi "TRUE" en cas de succes, sinon lève une exception.
+		* \return Renvoi "TRUE" en cas de succes, sinon lève une exception.
 		*/
 
 			// ===================================
@@ -1299,14 +1314,14 @@ WHERE lbr_code = :Code AND lng_id = :Langue ' ;
 	/**
 	* Ecrit un événement (message) dans les LOG de l'outil.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-08-19
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-08-19
 	*
-	* @param[in] $Action_Type Type d'action qui vient d'être réalisé.
-	* @param[in] $Object_Type Type de l'objet qui vient d'être accédé.
-	* @param[in] $Message Alerte de sécurité à envoyer dans le courriel.
-	* @param[in] $Priority Priorité de notification du message dans les SYSLOG.
+	* \param[in] $Action_Type Type d'action qui vient d'être réalisé.
+	* \param[in] $Object_Type Type de l'objet qui vient d'être accédé.
+	* \param[in] $Message Alerte de sécurité à envoyer dans le courriel.
+	* \param[in] $Priority Priorité de notification du message dans les SYSLOG.
 	* Les valeurs possibles de "Priority" sont :
 	*   LOG_EMERG	système inutilisable
 	*   LOG_ALERT	une décision doit être prise immédiatement
@@ -1316,9 +1331,9 @@ WHERE lbr_code = :Code AND lng_id = :Langue ' ;
 	*   LOG_NOTICE	condition normale, mais significative
 	*   LOG_INFO	message d'information
 	*   LOG_DEBUG	message de déboguage
-	* @param[in] $crs_id Id de la Cartographie de rattachement.
+	* \param[in] $crs_id Id de la Cartographie de rattachement.
 	*
-	* @return Retourne vrai si le message a été envoyé au serveur de messagerie, sinon retrouve faux (attention, envoyé au serveur de messagerie, ne signifie pas bien arrivé auprès des destinataires)
+	* \return Retourne vrai si le message a été envoyé au serveur de messagerie, sinon retrouve faux (attention, envoyé au serveur de messagerie, ne signifie pas bien arrivé auprès des destinataires)
 	*/
 		$Action_Date = date( "Y-m-d H:i:s" );
 
@@ -1350,13 +1365,13 @@ WHERE lbr_code = :Code AND lng_id = :Langue ' ;
 	/**
 	* Vérifie si une Cartographie est modifiable (statut de la cartographie supérieur à 2).
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-08-19
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-08-19
 	*
-	* @param[in] $crs_id ID de la Cartographie à contrôler
+	* \param[in] $crs_id ID de la Cartographie à contrôler
 	*
-	* @return Retourne "vrai" si la Cartographie est modifiable, "faux" si non
+	* \return Retourne "vrai" si la Cartographie est modifiable, "faux" si non
 	*/
 		if ( $crs_id == '' ) {
 			unset($_SESSION['CARTOGRAPHIE_SEL']);

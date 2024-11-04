@@ -3,29 +3,29 @@
 include_once( 'Constants.inc.php' );
 include_once( HBL_DIR_LIBRARIES . '/Class_HBL_Connecteur_BD_PDO.inc.php' );
 
-define( 'L_CVL_LAST_NAME',  35);
-define( 'L_CVL_FIRST_NAME', 25);
+
+if ( ! defined( 'L_CVL_LAST_NAME' ) ) define( 'L_CVL_LAST_NAME',  35);
+if ( ! defined( 'L_CVL_FIRST_NAME' ) ) define( 'L_CVL_FIRST_NAME', 25);
 
 
-class HBL_Civilites extends HBL_Connecteur_BD {
+class HBL_Civilites extends HBL_Connexioneur_BD {
 /**
 * Cette classe gère les civilités.
 *
-* PHP version 5
-* @license Copyright Loxense
-* @author Pierre-Luc MARY
-* @date 2015-05-20
+* \license Copyright Loxense
+* \author Pierre-Luc MARY
+* \date 2015-05-20
 */
 
 	public function __construct() {
 	/**
 	* Connexion à la base de données.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-20
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-20
 	*
-	* @return Renvoi un booléen sur le succès de la connexion à la base de données
+	* \return Renvoi un booléen sur le succès de la connexion à la base de données
 	*/
 		parent::__construct();
 		
@@ -41,15 +41,15 @@ class HBL_Civilites extends HBL_Connecteur_BD {
 	/**
 	* Créé ou actualise une Civilité.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-20
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-20
 	*
-	* @param[in] $cvl_id Identifiant de la civilité (à préciser si modification)
-	* @param[in] $LastName Nom de famille de l'utilisateur
-	* @param[in] $FirstName Prénom de l'utilisateur
+	* \param[in] $cvl_id Identifiant de la civilité (à préciser si modification)
+	* \param[in] $LastName Nom de famille de l'utilisateur
+	* \param[in] $FirstName Prénom de l'utilisateur
 	*
-	* @return Renvoi TRUE si la civilité a été créée ou mise à jour, FALSE si l'entité n'existe pas. Lève une Exception en cas d'erreur.
+	* \return Renvoi TRUE si la civilité a été créée ou mise à jour, FALSE si l'entité n'existe pas. Lève une Exception en cas d'erreur.
 	*/
 
 		if ( $cvl_id == '' ) {
@@ -98,15 +98,15 @@ class HBL_Civilites extends HBL_Connecteur_BD {
 	/**
 	* Créé ou actualise une Civilité.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-20
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-20
 	*
-	* @param[in] $ID Identifiant de la civilité (à préciser si modification)
-	* @param[in] $Source Nom du champ à modifier
-	* @param[in] $Valeur Valeur à affecter au champ.
+	* \param[in] $ID Identifiant de la civilité (à préciser si modification)
+	* \param[in] $Source Nom du champ à modifier
+	* \param[in] $Valeur Valeur à affecter au champ.
 	*
-	* @return Renvoi TRUE si la civilité a été créée ou mise à jour, FALSE si l'entité n'existe pas. Lève une Exception en cas d'erreur.
+	* \return Renvoi TRUE si la civilité a été créée ou mise à jour, FALSE si l'entité n'existe pas. Lève une Exception en cas d'erreur.
 	*/
 		if ( $cvl_id == '' ) return FALSE;
 
@@ -166,14 +166,14 @@ class HBL_Civilites extends HBL_Connecteur_BD {
 	/**
 	* Lister les Civilités.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-20
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-20
 	*
-	* @param[in] $Order Permet de gérer l'ordre d'affichage
-	* @param[in] $Search Chaîne à rechercher dans les colonnes constituants une Civilité
+	* \param[in] $Order Permet de gérer l'ordre d'affichage
+	* \param[in] $Search Chaîne à rechercher dans les colonnes constituants une Civilité
 	*
-	* @return Renvoi une liste de civilité ou une liste vide. Lève une exception en cas d'erreur.
+	* \return Renvoi une liste de civilité ou une liste vide. Lève une exception en cas d'erreur.
 	*/
 		$Request = 'SELECT ' .
 		 '* ' .
@@ -223,13 +223,13 @@ class HBL_Civilites extends HBL_Connecteur_BD {
 	/**
 	* Récupère les informations d'une Civilité.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-20
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-20
 	*
-	* @param[in] $cvl_id Identifiant de la civilité à afficher
+	* \param[in] $cvl_id Identifiant de la civilité à afficher
 	*
-	* @return Renvoi l'occurrence de la civilité ou renvoi FALSE si la civilité n'existe pas. Lève une Exception en cas d'erreur.
+	* \return Renvoi l'occurrence de la civilité ou renvoi FALSE si la civilité n'existe pas. Lève une Exception en cas d'erreur.
 	*/
 		$Request = 'SELECT ' .
 		 '* ' .
@@ -254,13 +254,13 @@ class HBL_Civilites extends HBL_Connecteur_BD {
 	/**
 	* Supprime une Civilité.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-21
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-21
 	*
-	* @param[in] $cvl_id Identifiant de la civilité à supprimer
+	* \param[in] $cvl_id Identifiant de la civilité à supprimer
 	*
-	* @return Renvoi TRUE si l'occurrence a été supprimée, FALSE si la civilité n'existe pas. Lève une Exception en cas d'erreur.
+	* \return Renvoi TRUE si l'occurrence a été supprimée, FALSE si la civilité n'existe pas. Lève une Exception en cas d'erreur.
 	*/
 		$Query = $this->prepareSQL( 'DELETE ' .
 			 'FROM cvl_civilites ' .
@@ -282,11 +282,11 @@ class HBL_Civilites extends HBL_Connecteur_BD {
 	/**
 	* Calcul le nombre total de Civilités.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-21
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-21
 	*
-	* @return Renvoi le total d es occurrences trouvé. Lève une Exception en cas d'erreur.
+	* \return Renvoi le total d es occurrences trouvé. Lève une Exception en cas d'erreur.
 	*/
 		$Request = 'SELECT ' .
 		 'count(*) AS total ' .
@@ -306,13 +306,13 @@ class HBL_Civilites extends HBL_Connecteur_BD {
 	/**
 	* Vérifie si cette Civilité est associé à un autre objet.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-15
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-15
 	*
-	* @param[in] $cvl_id Identifiant de la Civilité à contrôler
+	* \param[in] $cvl_id Identifiant de la Civilité à contrôler
 	*
-	* @return Renvoi l'occurrence listant les association de l'Entité ou FALSE si pas d'entité. Lève une Exception en cas d'erreur.
+	* \return Renvoi l'occurrence listant les association de l'Entité ou FALSE si pas d'entité. Lève une Exception en cas d'erreur.
 	*/
 		$Request = 'SELECT ' .
 		 'COUNT(DISTINCT idn_id) AS total_idn ' .

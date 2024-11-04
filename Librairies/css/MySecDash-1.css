@@ -441,6 +441,20 @@ ul.dropdown-menu li.dropdown-submenu ul.dropdown-menu li a:hover {
 	margin-right: 6px;
 }
 
+#entete-tableau-matrice {
+	border-top: 1px solid #480D5D;
+	border-bottom: 1px solid #480D5D;
+	line-height: 32px;
+/*	position: fixed;
+	top: 127px;*/
+	width: 100%;
+	z-index: 1010;
+	background-color: gray;
+	color: white;
+	cursor: default;
+}
+
+
 /* ===========================
 ** Gestion du tableau central
 */
@@ -624,10 +638,12 @@ ul.dropdown-menu li.dropdown-submenu ul.dropdown-menu li a:hover {
 
 .modal-body .row {
 	margin-bottom: 9px;
+	margin-left: 0;
+	margin-right: 0;
 }
 
 #corps_tableau .row.liste:hover, #corps_tableau .occ:hover {
-	background-color: #DCAFDD;
+	background-color: #79b5bf; /* 44808A 717D11 DCAFDD; */
 }
 
 #corps_tableau_univers .row.liste {
@@ -668,8 +684,8 @@ div.vraisemblance.modifiable {
 }
 
 #pied_tableau {
-	border-top: 1px solid #480D5D;
-	border-bottom: 1px solid #480D5D;
+	border-top: 1px solid grey;
+	border-bottom: 1px solid grey;
 	line-height: 28px;
 }
 
@@ -702,6 +718,7 @@ div.vraisemblance.modifiable {
 
 /* Stantardisation du titre de l'écran et de son contenu */
 #titre_ecran {
+	border-bottom: 1px solid grey;
 	padding: 20px 15px 10px 15px;
 	width: 100%;
 	position: fixed;
@@ -813,7 +830,7 @@ div#onglets_utilisateur {
 }
 
 .modal-title {
-	color: #8f58a2;
+	color: #44808A;
 }
 
 .modal-footer {
@@ -895,7 +912,7 @@ div#onglets_utilisateur {
 }
 
 input[required], select[required], textarea[required] {
-	border: 1px solid #DCAFDD;
+	border: 1px solid #C34A36;
 }
 
 .btn-primary[disabled], .btn-primary[disabled]:hover {
@@ -930,6 +947,8 @@ label.disabled {
 ** Ergonomie des tableaux de synthèses.
 */
 div.tableau_synthese {
+	border-bottom-left-radius: 10px;
+	border-top-right-radius: 10px;
 	border-width: 1px;
 	border-style: solid;
 	border-top-color: #AFAFAF;
@@ -944,6 +963,7 @@ div.tableau_synthese {
 }
 
 div.tableau_synthese p {
+	border-top-right-radius: 10px;
 	padding-top: 3px;
 	padding-bottom: 3px;
 }
@@ -954,7 +974,7 @@ div.tableau_synthese p:last-child {
 
 div.tableau_synthese p.titre {
 	background-color: #ECECEC;
-	color: #8f58a2;
+	color: #C34A36;
 	font-size: 15px;
 	font-weight: bold;
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -1228,4 +1248,8 @@ div[data-src="associations"] .btn-row {
 .btn-outline-button {
 	color: #6c757d;
 	border-color: #6c757d;	
+}
+
+.btn-espace {
+	margin-right: 3px;
 }

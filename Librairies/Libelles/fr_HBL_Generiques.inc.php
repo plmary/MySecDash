@@ -9,14 +9,14 @@
 * @date 2017-03-05
 */
 
-	$FLAG_ERROR = 0;
-	$FLAG_SUCCESS = 1;
+	$FLAG_ERREUR = 0;
+	$FLAG_SUCCES = 1;
 
 	// Simple libellé.
 	$L_Action = 'Action';
 	$L_Actions = 'Actions';
-	$L_Alert = 'Alerte';
-	$L_Administrator = 'Administrateur';
+	$L_Alerte = 'Alerte';
+	$L_Administrateur = 'Administrateur';
 	$L_Begin = 'Début';
 	$L_Code = "Code";
 	$L_Comment = 'Commentaire';
@@ -40,7 +40,7 @@
 	$L_IP_Source = 'IP source';
 	$L_Langue = "Langue";
 	$L_Label = "Libellé";
-	$L_Localization = 'Localisation';
+	$L_Localisation = 'Localisation';
 	$L_Message = 'Message';
 	$L_Name = "Nom";
 	$L_Neither = 'Aucun';

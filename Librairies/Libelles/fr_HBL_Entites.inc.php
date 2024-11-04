@@ -9,27 +9,27 @@
 * @date 2017-03-05
 */
 
-	$L_Entity_Confirm_Deleted = 'Voulez-vous vraiment supprimer l\'entité "<span class="purple">%s</span>" ?';
-	$L_Entity_Confirm_Deleted_Associated = 'Attention, l\'entité "<span class="purple">%s</span>" est associée avec :';
+	$L_Confirmer_Suppression_Civilite = 'Voulez-vous vraiment supprimer l\'entité "<span class="fg_couleur_3">%s</span>" ?';
+	$L_Confirmer_Suppression_Civilite_Associee = 'Attention, l\'entité "<span class="fg_couleur_3">%s</span>" est associée avec :';
 
-	$L_List_Entities = 'Liste des Entités';
+	$L_Liste_Entites = 'Liste des Entités';
 
-	$L_Entity = 'Entité';
-	$L_Entities = 'Entités';
+	$L_Entite = 'Entité';
+	$L_Entites = 'Entités';
 	
-	$L_Entity_Add = "Ajouter une entité";
-	$L_Entity_Create = 'Créer une entité';
-	$L_Entity_Modify = 'Modifier une entité';
-	$L_Entity_Delete = 'Supprimer une entité';
+	$L_Ajouter_Entite = "Ajouter une entité";
+	$L_Creer_Entite = 'Créer une entité';
+	$L_Modifier_Entite = 'Modifier une entité';
+	$L_Supprimer_Entite = 'Supprimer une entité';
 	
-	$L_Entity_Added = "Entité ajoutée";
-	$L_Entity_Created = 'Entité créée' ;
-	$L_Entity_Modified = 'Entité modifiée' ;
-	$L_Entity_Deleted = 'Entité supprimée' ;
+	$L_Entite_Ajoutee = "Entité ajoutée";
+	$L_Entite_Cree = 'Entité créée' ;
+	$L_Entite_Modifiee = 'Entité modifiée' ;
+	$L_Entite_Supprimee = 'Entité supprimée' ;
 	
-	$L_ERR_CREA_Entity = 'Erreur durant la création de l\'entité';
-	$L_ERR_MODI_Entity = 'Erreur durant la modification de l\'entité';
-	$L_ERR_DELE_Entity = 'Erreur durant la suppression de l\'entité';
-	$L_ERR_DUPL_Entity = 'Cette entité existe déjà';
+	$L_ERR_CREA_Entite = 'Erreur durant la création de l\'entité';
+	$L_ERR_MODI_Entite = 'Erreur durant la modification de l\'entité';
+	$L_ERR_SUPP_Entite = 'Erreur durant la suppression de l\'entité';
+	$L_ERR_DUPL_Entite = 'Cette entité existe déjà';
 
 ?>

@@ -1,0 +1,1418 @@
+body {
+	padding-top: 159px;
+	background-color: #FAFAFA;
+}
+
+
+/* ========================
+** Personalisation globale
+*/
+footer {
+	color: grey;
+	font-family: tahoma;
+	font-size: 12px;
+	background-color: #FCFCFC;
+	border-top: 1px solid grey;
+	padding: 3px 6px;
+	margin-top: 10px;
+	width: 100%;
+	line-height: 22px;
+	bottom: 0;
+}
+
+footer button.btn {
+	float: right;
+	margin-left: 6px;
+	font-size: 12px;
+	margin-bottom: 3px;
+}
+
+h1 {
+	color: #2f4858;
+}
+
+h2 {
+	color: #717D11;
+}
+
+input[type="file"], .statut_transfert {
+	border: 1px solid silver;
+	width: 100%;
+	padding: 6px;
+}
+
+.tooltip {
+	z-index: 4000;
+}
+
+
+/* ====================================
+** Personalisation de la barre de menu
+*/
+
+nav {
+	border-bottom: 1px solid grey;
+	background-color: #FAFAFA;
+	margin-bottom: 0;
+}
+
+.nav-link {
+	color: grey;
+	font-size: 15px;
+}
+
+.nav-link:hover, .dropdown-toggle.show {
+	color: #c34a36;
+}
+
+.navbar-nav .nav-link.show {
+	color: #c34a36;
+}
+
+#info_utilisateur {
+	color: grey;
+	font-size: 15px;
+}
+
+#info_utilisateur span {
+	padding-top: 3px;
+}
+
+#info_utilisateur button {
+	background-color: white;
+	color: #c34a36;
+	margin: 0 3px;
+}
+
+#info_utilisateur button:hover {
+	background-color: #c34a36;
+	color: white;
+	margin: 0 3px;
+}
+
+/* =======================
+** Gestion des sous-menus
+*/
+.dropdown-submenu {
+	position:relative;
+}
+.dropdown-submenu>.dropdown-menu {
+	top:0;
+	left:100%;
+	margin-top:-6px;
+	margin-left:-1px;
+	-webkit-border-radius:0 6px 6px 6px;
+	-moz-border-radius:0 6px 6px 6px;
+	border-radius:0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu{
+	display:block;
+}
+.dropdown-submenu > a:after {
+	display:block;
+	content:" ";
+	float:right;
+	width:0;
+	height:0;
+	border-color:transparent;
+	border-style:solid;
+	border-width:5px 0 5px 5px;
+	border-left-color:#cccccc;
+	margin-top:5px;
+	margin-right:-10px;
+}
+.dropdown-submenu:hover>a:after {
+	border-left-color:#ffffff
+}
+.dropdown-submenu.pull-left {
+	float:none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu{
+	left:-100%;
+	margin-left:10px;
+	-webkit-border-radius:6px 0 6px 6px;
+	-moz-border-radius:6px 0 6px 6px;
+	border-radius:6px 0 6px 6px;
+}
+
+.dropdown-menu > li > a:hover {
+	background-color: #44808A;
+	color: white;
+}
+
+div#main-menu.navbar-collapse.collapse.in ul.nav.navbar-nav li.open ul.dropdown-menu li.dropdown-submenu a:hover,
+ div#main-menu.navbar-collapse.collapse.in ul.nav.navbar-nav li.open ul.dropdown-menu li a:hover {
+	background-color: #DCAFDD;
+ }
+
+div#main-menu.navbar-collapse.collapse.in ul.nav.navbar-nav li.open ul.dropdown-menu li.dropdown-submenu ul.dropdown-menu li a {
+	margin-left: 20px;
+}
+
+ul.dropdown-menu li.dropdown-submenu ul.dropdown-menu li a:hover {
+	background-color: #FFCC00;
+	color: white;
+}
+
+
+/* ========================
+** Définition des couleurs
+*/
+
+.fg_couleur_1 {
+	color: #717D11;
+}
+
+.bg_couleur_1 {
+	color: white;
+	background-color: #717D11;
+}
+
+
+.fg_couleur_2 {
+	color: #44808A;
+}
+
+.bg_couleur_2 {
+	color: white;
+	background-color: #44808A;
+}
+
+
+.fg_couleur_3 {
+	color: #C34A36;
+}
+
+.bg_couleur_3 {
+	color: white;
+	background-color: #C34A36;
+}
+
+
+.purple_5, .bleu-fonce {
+	color: #2f4858;
+}
+
+.purple_4 {
+	color: #480D5D;
+}
+
+.purple_3 {
+	color: #5E1F74;
+}
+
+.bg-purple_3 {
+	background-color: #5E1F74;
+	color: white;
+}
+
+.purple_2 {
+	color: #723488;
+}
+
+.purple_1 {
+	color: #c34a36;
+}
+
+.purple {
+	color: #A166A3;
+}
+
+.yellow {
+	color: #FFCC00;
+}
+
+.gris {
+	color: grey;
+}
+
+.gris-clair {
+	color: silver;
+}
+
+.bg-gris-clair {
+	background-color: #f5f5f5;	
+}
+
+.orange_normal {
+	color: #f0ad4e;
+}
+
+.bg-orange_normal {
+	background-color: #f0ad4e;
+}
+
+.orange_moyen {
+	color: #ef971f;
+}
+
+.bg-orange_moyen {
+	background-color: #ef971f;
+}
+
+.vert_normal {
+	color: #5cb85c;
+}
+
+.bg-vert_normal, .badge.bg-vert_normal {
+	background-color: #5cb85c;
+}
+
+.vert_moyen {
+	color: #449d44;
+}
+
+.bg-vert_moyen {
+	background-color: #449d44;
+}
+
+.rouge_normal {
+	color: #d9534f;
+}
+
+.bg-rouge_normal {
+	background-color: #d9534f;
+}
+
+.rouge_moyen {
+	color: #c9302c;
+}
+
+.bg-rouge_moyen {
+	background-color: #c9302c;
+}
+
+.bg-gris-normal {
+	background-color: silver;
+}
+
+
+/* =====================
+** Bordures et variante
+*/
+.bloc_texte_gris {
+	background-color: #e9ecef;
+	height: 120px;
+	padding: 6px 12px;
+	cursor: not-allowed;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.bordure, .bordure_arrondie {
+	border: 1px solid #ccc;
+	padding: 3px 9px;
+	min-height: 28px;
+}
+
+.bordure_arrondie {
+	border-radius: 3px;
+}
+
+.mesures select {
+	border: 1px solid #CCC;
+	border-radius: 4px;
+	padding: 3px 6px;
+	margin-top: 6px;
+}
+
+/* --- */
+
+.libelle {
+	margin-top: 7px;
+	font-weight: bold;
+}
+
+.desactive, .mesures select[disabled] {
+	background-color: #eee;
+	opacity: 1;
+	cursor: not-allowed;
+}
+
+.mesures input[type="checkbox"] {
+	height: 24px;
+}
+
+.sources_menaces, .scenario, textarea.scenario, textarea.cartographie, .vulnerabilites, .impacts, .mesures {
+	height: 200px;
+}
+
+.sources_menaces, .vulnerabilites, .impacts, .mesures, .liste_actions, .texte_gris {
+	overflow-x: scroll;
+}
+
+.offcanvas.offcanvas-start {
+	width: 600px;
+}
+
+.liste_actions {
+	width: 100%;
+	max-height: 200px;
+}
+
+.roulant {
+	min-height: 150px;
+	max-height: 250px;
+	overflow-y: auto;
+	margin-left: -15px;
+	margin-right: -15px;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+
+/* =========================================
+** Gestion des objets sur la ligne de titre
+*/
+.libelle-titre-menu {
+	color: #C34A36;
+	border-color: grey;
+	font-weight: bold;
+}
+
+.input-group-lg > .libelle-alternative-titre-menu, .libelle-alternative-titre-menu {
+	color: #44808A;
+	border-color: grey;
+	font-size: 15px;
+}
+
+.input-group-lg > .libelle-selection-titre-menu, .libelle-selection-titre-menu {
+	color: grey;
+	border-color: grey;
+	font-size: 15px;
+}
+
+.bouton-titre-menu, #option-titre-menu select {
+	border-color: grey;
+}
+
+
+/* =========================================
+** Change la couleur des boutons par défaut
+*/
+.btn-outline-secondary {
+	color: #c34a36;
+}
+
+/* Change la couleur des boutons par défaut */
+.btn-outline-secondary {
+    color: #c34a36;
+    background-color: white;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #c34a36;
+    color: white;
+}
+
+.btn-outline-secondary:hover, .btn-admin:hover {
+	border-color: #c34a36;
+}
+
+
+/* =======================================
+** Couleurs et aspects des autres boutons
+*/
+.btn-admin {
+	color: #6c757d;
+	background-color: #fff;
+	border-color: #ccc;
+}
+
+.btn-admin:hover {
+	background-color: #e6e6e6;
+}
+
+.btn-principal {
+	text-align: left;
+    white-space: normal;
+}
+
+.btn-ajouter.disabled, .btn-ajouter[disabled] {
+	color: silver;
+}
+
+.btn-row {
+	padding-top: 3px;
+	padding-bottom: 3px;
+	margin-bottom: 3px;
+}
+
+.btn-round {
+	border-radius: 30px;
+}
+
+.form-check.btn .form-check-input {
+	margin-left: 0;
+}
+
+.form-check.btn .form-check-label {
+	margin-left: 6px;
+}
+
+.form-check.btn {
+	margin-right: 6px;
+}
+
+
+#entete-tableau-matrice {
+	border-top: 1px solid grey;
+	border-bottom: 1px solid grey;
+	line-height: 32px;
+/*	position: fixed;
+	top: 127px;*/
+	width: 100%;
+	z-index: 1010;
+	background-color: gray;
+	color: white;
+	cursor: default;
+	font-weight: bold;
+}
+
+.col-titre-tableau-matrice {
+	background-color: silver;
+	font-weight: bold;
+}
+
+/* ===========================
+** Gestion du tableau central
+*/
+
+/* Gestion de l'entête */
+#entete_tableau {
+	border-top: 1px solid grey;
+	border-bottom: 1px solid grey;
+	line-height: 32px;
+	position: fixed;
+	top: 127px;
+	width: 100%;
+	z-index: 1010;
+}
+
+#entete_tableau .row div {
+	-webkit-hyphens: auto;
+	-moz-hyphens: auto;
+	-ms-hyphens: auto;
+	-o-hyphens: auto;
+	hyphens: auto;
+}
+
+#entete_tableau .row, #corps_tableau .titre-impact, .modal-body .titre {
+	background-color: gray;
+	color: white;
+	cursor: default;
+}
+
+.mesures .row a.btn-outline-secondary {
+	margin: 6px;
+}
+
+.modal-xxl {
+	max-width: 90%;
+}
+
+.modal-xxxl {
+	max-width: 97%;
+}
+
+.modal-body .titre {
+ 	padding: 3px 9px;
+}
+
+#entete_tableau .triable {
+	cursor: pointer;
+}
+
+#entete_tableau .active {
+	background-color: #2f4858;
+}
+
+#entete_tableau .triable:hover {
+	background-color: #2f4858;
+}
+
+
+/* Gestion du corps */
+#corps_tableau {
+	overflow-y: auto;
+}
+
+.form-horizontal .checkbox {
+	padding-bottom: 7px;
+	padding-left: 3px;
+	padding-right: 3px;
+	min-height: 34px;
+}
+
+.my-row, .my-row-1, .occ {
+	padding-top: 9px;
+	padding-bottom: 9px;
+	margin-left: -15px;
+	margin-right: -15px;
+}
+
+.occ {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+.occ td {
+	padding-top: 6px;
+	padding-bottom: 6px;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+.my-separator {
+	border-top: 2px solid silver;
+}
+
+.my-row-1 span, .my-row-1 input[type="text"], .my-row-1 input[type="number"], .my-row-1 select, .my-row-1 button {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.my-row-1 div > input[type="radio"], .my-row-1 div > input[type="checkbox"] {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.my-row-1 span, .my-row-1 input[type="text"], .my-row-1 select {
+	display: block;
+	position: relative;
+	border-radius: 3px;
+	padding: 6px 6px;
+}
+
+.my-row-1 label {
+	font-weight: normal;
+}
+
+.my-row::after, .my-row::before, .my-row-1::after, .my-row-1::before {
+	content: " ";
+	display: table;
+}
+
+.my-row::after, .my-row-1::after {
+	clear: both;
+}
+
+.my-row:nth-child(odd), .my-row-1:nth-child(odd), .occ:nth-child(odd) {
+	background-color: white;
+}
+
+.my-row:nth-child(even), .my-row-1:nth-child(even), .occ:nth-child(even) {
+	background-color: #FBEFFC;
+}
+
+
+.liste:nth-child(odd) {
+	background-color: white;
+}
+
+.liste:nth-child(even) {
+	background-color: #F4F4F4;
+}
+
+.form-check.liste {
+	padding-left: 1.9em;
+	padding: 3px 33px;
+}
+
+#corps_tableau .critere button, #corps_tableau .critere select, #corps_tableau .titre-impact button {
+	margin: 6px 9px;
+}
+
+#corps_tableau .row.impact {
+	margin: 2px -15px;
+}
+
+#corps_tableau .row.risque {
+	line-height: 24px;
+}
+
+#corps_tableau .row.risque p {
+	margin: 0;
+}
+
+#corps_tableau .critere button {
+	padding: 18px 54px;
+}
+
+#corps_tableau .inserer-critere {
+	width: 90px;
+	margin: 17px 20px;
+}
+
+#corps_tableau .titre-impact button {
+	margin: 18px 9px;
+}
+
+#liste-entites .row, #liste-profils .row, #liste-gestionnaires .row, #liste-etiquettes .row {
+	padding: 0 6px;
+}
+
+.modal-body > #CRS-SUPPR > .row:nth-child(even) {
+	background-color: white;
+}
+
+.modal-body .row {
+	margin-bottom: 9px;
+	margin-left: 0;
+	margin-right: 0;
+}
+
+#corps_tableau .row.liste:hover, #corps_tableau .occ:hover {
+	background-color: #79b5bf; /* 44808A 717D11 DCAFDD; */
+}
+
+#corps_tableau_univers .row.liste {
+	padding: 3px 0;
+	cursor: pointer;
+}
+
+#corps_tableau_univers .row.liste:hover {
+	background-color: #ffd8d2;
+}
+
+#corps_tableau .row.liste {
+	padding: 3px 0;
+}
+
+#corps_tableau .modifiable, #corps_onglet .modifiable, div.vraisemblance.modifiable {
+	border: 1px solid #CCC;
+	padding: 0 6px;
+	cursor: pointer;
+	display: block;
+	min-height: 32px;
+}
+
+div.vraisemblance.modifiable {
+	margin: 14px 2px 10px;
+}
+
+#corps_tableau .modifiable:hover {
+	border: 1px solid white;
+	color: white;
+}
+
+
+/* Gestion du pied */
+#pied_tableau .row {
+	background-color: silver;
+	color: white;
+}
+
+#pied_tableau {
+	border-top: 1px solid grey;
+	border-bottom: 1px solid grey;
+	line-height: 28px;
+}
+
+#pied_tableau button {
+	margin: 0 6px;
+}
+
+#pied_tableau .btn-group button {
+	margin: 7px 0;
+}
+
+.btn-group button.btn-light:hover {
+	background-color: #79b5bf; /*DCAFDD;*/
+	color: white;
+}
+
+.btn-espace {
+	margin-right: 3px;
+	min-width: 27px;
+}
+
+/* ===========================================
+** Personalisation des conteneurs spécifiques
+*/
+#conteneur_principal {
+	width: 50%;
+	margin: 0 auto;
+}
+
+#formulaire_connexion {
+	width: 50%;
+	margin: 0 auto;
+}
+
+
+/* Stantardisation du titre de l'écran et de son contenu */
+#titre_ecran {
+	border-bottom: 1px solid grey;
+	padding: 20px 15px 10px 15px;
+	width: 100%;
+	position: fixed;
+	top: 51px;
+	background-color: white;
+	z-index: 1020;
+	--bs-gutter-x: 0;
+}
+
+div#titre_ecran .btn {
+	font-weight: bold;
+}
+
+.btn-group-vertical > .btn, .btn-group > .btn {
+	text-align: left;
+}
+
+.btn-group .open > ul.dropdown-menu {
+	width: 100%;
+}
+
+#principal-container img {
+	margin-right: 6px;
+}
+
+#corps_alert {
+	position: fixed;
+	/* z-index: 000; */
+}
+
+.loxense-alert {
+	position: fixed;
+	z-index: 2000;
+/*	top: 65px; */
+	margin-bottom: 9px;
+	right: 20px;
+	width: 65%;
+	cursor: pointer;
+}
+
+.rotation {
+	transform: rotate(90deg);
+}
+
+.rotation-10 {
+	text-align: center;
+	transform: rotate(10deg);
+}
+
+.rotation-10 hr {
+	margin: 0;
+}
+
+.titre {
+	font-weight: bold;
+	background-color: black;
+}
+
+.row.titre {
+	color: white;
+	background: #44808A;
+	padding: 6px;
+}
+
+.row.pied {
+	color: white;
+	background: #f5f5f5;
+	/*padding: 6px 0 6px 0;*/
+}
+
+div#entete_tableau div.vraisemblance button, div#entete_tableau div.btn-vraisemblance button, div#entete_tableau div.rotation-10.representation {
+	 margin: 15px 0;
+}
+
+div.profils div.col-sm-1 {
+	padding: 0 5px;
+}
+
+div.cellule .btn-sm {
+	margin: 3px;
+}
+
+div.profils .btn-sm {
+	margin-left: 5px;
+}
+
+div.row.profils a.modifiable {
+	color: white;
+}
+
+div.cellule .btn-sm.desactive {
+	color: white;
+	background-color: silver;
+	border-color: #2f4858;
+	cursor: pointer;
+}
+
+div.profils div[data-id] {
+	border-right: 1px solid silver;
+}
+
+div#onglets_utilisateur {
+	height: 280px; /* 175px; */
+	margin-top: 15px;
+	overflow-y: auto;
+}
+
+.modal {
+	z-index: 1051;
+}
+
+.modal-header {
+	background-color: #f5f5f5;
+	border-radius: 6px 6px 0 0;
+}
+
+.modal-title {
+	color: #44808A;
+}
+
+.modal-footer {
+	background-color: #f5f5f5;
+	border-radius: 0 0 6px 6px;
+}
+
+.btn-primary {
+	background-color: #c34a36;
+	border-color: #2f4858;
+}
+
+.btn-vulnerabilites, .btn-menaces, .btn-referentiels {
+	padding-left: 9px;
+	padding-right: 9px;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+	background-color: #a36767;
+}
+
+.modal-body .nav-tabs {
+	margin: 0px 0 12px 0;
+}
+
+.nav-tabs > li > a {
+	color: #c34a36;
+}
+
+.zone_ajout_contextuel {
+	width: 88%;
+	height: 100%;
+	padding: 15px;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	background-color: white;
+	z-index: 1;
+	border: 1px solid #CCC;
+}
+
+.zone_ajout_contextuel_action {
+	width: 88%;
+	height: 222px;
+	padding: 15px;
+	position: absolute;
+	top: 350px;
+	left: 6%;
+	background-color: white;
+	z-index: 1;
+	border: 1px solid #CCC;
+}
+
+.zone_ajout_contextuel_action_2 {
+	width: 64%;
+	padding: 15px;
+	position: absolute;
+	top: 353px;
+	left: 18%;
+	background-color: white;
+	z-index: 1;
+	border: 1px solid #CCC;
+}
+
+.zone_actions {
+	width: 88%;
+	padding: 15px;
+	position: absolute;
+	top: 92px;
+	left: 85px;
+	background-color: white;
+	z-index: 1;
+	border: 1px solid #CCC;
+}
+
+.titre_contextuel {
+	color: #8f58a2;
+	margin: 0 0 15px 0;
+}
+
+input[required], select[required], textarea[required] {
+	border: 1px solid #C34A36;
+}
+
+.btn-primary[disabled], .btn-primary[disabled]:hover {
+	background-color: #CCC;
+	border-color: silver;
+}
+
+label.disabled {
+	color: silver;
+}
+
+.liste-interne {
+	overflow: auto;
+	height: 100%;
+}
+
+.badge-s {
+	border-radius: 10px;
+	padding: 3px 7px;
+	text-align: center;
+	vertical-align: middle;
+	display: inline-block;
+	color: black;
+}
+
+#liste-actions .row {
+	margin-bottom: 6px;
+}
+
+
+/*
+** Ergonomie des tableaux de synthèses.
+*/
+div.tableau_synthese {
+	border-bottom-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border-width: 1px;
+	border-style: solid;
+	border-top-color: #AFAFAF;
+	border-left-color: #AFAFAF;
+	border-right-color: #AFAFAF;
+	border-bottom-color: #AFAFAF;
+	width: 98%;
+	float: left;
+	width: 30%;
+	margin: 6px 3px 6px 12px;
+	background-color: white;
+}
+
+div.tableau_synthese p {
+	border-top-right-radius: 10px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+div.tableau_synthese p:last-child {
+	padding-bottom: 6px;
+}
+
+div.tableau_synthese p.titre {
+	background-color: #ECECEC;
+	color: #C34A36;
+	font-size: 15px;
+	font-weight: bold;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+	margin: 0;
+	padding: 5px 8px;
+	min-width: 90px;
+	cursor: pointer;
+}
+
+div.tableau_synthese div.corps {
+   padding: 0 8px 8px 8px;
+}
+
+div.tableau_synthese div.corps a, div.tableau_synthese div.corps a:hover {
+	margin: 6px auto 0;
+	width: 100%;
+}
+
+div.tableau_synthese div.corps a:hover {
+	-moz-border-radius: 6px 6px 0 0;
+	-khtml-border-radius: 6px 6px 0 0;
+	-webkit-border-radius: 6px 6px 0 0;
+	border-radius: 10px;
+	border-color: #afafaf;
+}
+
+div.tableau_synthese table {
+	margin-bottom: 6px;
+}
+
+.badge-t {
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	color: #fff;
+	display: inline-block;
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 1;
+	min-width: 10px;
+	padding-bottom: 3px;
+	padding-left: 7px;
+	padding-right: 7px;
+	padding-top: 3px;
+	text-align: center;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+.btn-compteur {
+	font-weight: bold;
+}
+
+div.modal-body .form-group {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+div#onglet-association, .onglet-association {
+	min-height: 150px;
+	max-height: 250px;
+	overflow-y: auto;
+}
+
+div#onglet-association label {
+	font-weight: normal;
+}
+
+#onglet-association .row:hover {
+	background-color: #DCAFDD;
+}
+
+span.label-column {
+	font-weight: bold;
+	text-align: right;
+}
+
+div.panel.panel-default.cartogaphie {
+	width: auto;
+	min-width: 25%;
+	margin: 6px 6px;
+	float: left;
+}
+
+.well {
+	padding-top: 10px;
+	padding-bottom: 6px;
+}
+
+#corps_tableau .panel {
+	margin-top: 20px;
+}
+
+ul.dropdown-menu span.disabled {
+	padding-left: 20px;
+    padding-right: 20px;
+    color: silver;
+    cursor: not-allowed;
+}
+
+div.row div span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+div.row div button span {
+	overflow: unset;
+}
+
+.matrice-risques {
+	border: 1px solid white;
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+#entete_tableau .matrice-risques {
+	height: 66px;
+}
+
+#entete_tableau th {
+	background-color: gray;
+	color: white;
+	padding-left: 6px;
+	padding-right: 6px;
+}
+
+.criteres_valorisation_actifs, .corps_onglet {
+	overflow-x: scroll;
+	max-height: 260px;
+	padding: 4px 0;
+}
+
+#z_niveaux_risques {
+	margin-top: 12px;
+}
+
+.btn-tag {
+	margin: 0 6px 6px 0;
+}
+
+#onglet-tags .checkbox {
+	margin: 0 6px 6px 0;
+	display: inline-block;
+	padding-left: 12px;
+	padding-right: 12px;
+}
+
+#onglet-tags .rechercher-tags {
+	background-color: #F5F5F5;
+	padding: 6px 0;
+}
+
+#onglet-tags .rechercher-tags button {
+	margin-right: 6px;
+}
+
+#liste_tags .rechercher-tags {
+	padding: 3px 20px;
+	width: 100%;
+}
+
+ul#liste_tags li a {
+	padding: 0 9px 0 27px;
+	color: #212529;
+}
+
+ul#liste_tags li a:hover {
+	color: white;
+}
+
+.spec_scroll {
+	display: block;
+	overflow: hidden;
+	overflow-x: hidden;
+	overflow-y: auto;
+	overflow : -moz-scrollbars-vertical;
+}
+
+.popover {
+	max-width: 60%;
+}
+
+.niveau-critere {
+	font-weight: bold;
+	color: #c34a36;
+}
+
+.type-critere {
+	font-style: italic;
+}
+
+.libelle-critere {
+	font-weight: bold;
+}
+
+.libelle-parametre {
+	margin-top: 12px;
+}
+
+.bloc-parametre {
+	margin-top: 10px;
+	font-weight: bold;
+}
+
+.corps_onglet > div.radio > label {
+	padding-left: 24px;
+}
+
+.col-plm-1, .col-plm-2 {
+	float: left;
+	position: relative;
+	min-height: 1px;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+#entete_tableau .col-plm-1 {
+	margin: 15px 0;
+}
+
+.col-plm-2 {
+	width: 15%;
+}
+
+.col-plm-1 {
+	width: 10%;
+}
+
+.assembled-group .field {
+	display: inline;
+}
+
+.assembled-group .field:first-child {
+	width: 60%;
+	border-radius: 4px 0 0 4px;
+}
+
+.assembled-group .field:last-child {
+	width: 40%;
+	border-radius: 0 4px 4px 0;
+}
+
+.nav-tabs li .btn-ajouter-amc {
+	margin-top: 4px;
+	margin-left: 5px;
+}
+
+#page-actions-2.corps_onglet, #page-maj-action.corps_onglet {
+	overflow-x: scroll;
+	max-height: 170px;
+}
+
+div[data-src="associations"] .btn-row {
+	min-width: 42px;
+}
+
+.btn-niveau_menace {
+	width: 70px;
+	color: white;
+	background-color: orange;
+}
+
+.btn-outline-title {
+	color: #6c757d;
+	border-color: #6c757d;	
+}
+
+.btn-outline-title:hover {
+	color: white;
+	background-color: silver;	
+}
+
+
+.btn-outline-button {
+	color: #6c757d;
+	border-color: #6c757d;	
+}
+
+.dropdown-colorselector {
+	border: 1px solid #C34A36;
+	border-radius : 3px;
+	padding: 6px 9px;
+	width: 55px;
+}
+
+.niveau-appreciation {
+	padding: 6px;
+}
+
+.niveau-appreciation button {
+	text-align: left;
+}
+
+
+.btn-maj {
+	position: absolute;
+	bottom: 3px;
+	right: 6px;
+}
+
+/*
+.btn-modifier-cell, .btn-supprimer-cell {
+	position: absolute;
+	bottom: 3px;
+	color: white;
+	padding: 2px 2px;
+	background-color: silver;
+}
+
+.btn-modifier-cell {
+	right: 6px;
+}
+
+.btn-supprimer-cell {
+	right: 35px;
+}
+
+.btn-modifier-cell:hover, .btn-supprimer-cell:hover {
+	background-color: grey;
+}
+*/
+
+.table-100 {
+	width: 100%;
+}
+
+.table-border-100 {
+	width: 100%;
+	border: 1px solid;
+}
+
+.titre-fond-bleu-fonce {
+	background-color: #2f4858;
+	color: white;
+}
+
+.titre-fond-bleu {
+	background-color: #44808A;
+	color: white;
+}
+
+.cellule-echelle, .cellule-impact {
+	cursor: pointer;
+}
+
+
+.cellule-echelle:hover, .cellule-echelle.active {
+	background-color: #ACACAC;
+}
+
+.cellule-impact:hover
+ {
+	border: 3px solid #797979;
+}
+
+.cellule-impact.active {
+	border: 3px solid black;
+}
+
+/*
+** Gestion des listes d'occurrences dans la modale de gestion des Activités.
+*/
+.modal-body [id^="zone-personnes_cles"] .liste, .modal-body [id^="zone-applications"] .liste,
+ .modal-body [id^="zone-fournisseurs"] .liste {
+	padding: 3px 0 3px 0;
+}
+
+.modal-body [id^="zone-"] .liste:hover {
+	background-color: #79b5bf;
+}
+
+
+/*
+** Gestion des tableaux de l'écran de Visualisation des BIA
+*/
+.table-visu-cartouche, .table-visu {
+	background-color: white;
+	width: 100%;
+	margin-top: 20px;
+	margin-bottom: 12px;
+	border-color: silver;
+}
+
+.table-visu-cartouche {
+	margin-top: 40px;
+}
+
+.titre-visu-cartouche {
+	font-size: 1.75rem;
+	color: white;
+	background-color: #44808A;
+	font-weight: 500;
+	line-height: 1.2;
+}
+
+.table-visu-cartouche > :not(caption) > * > *, .table-visu > :not(caption) > * > * {
+	padding: .5rem .5rem;
+}
+
+/*
+.table-visu th {
+	background-color: silver;
+}
+*/

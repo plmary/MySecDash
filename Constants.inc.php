@@ -10,9 +10,9 @@
 *
 */
 
-// ==========================================
-// Définition des chemins internes à Loxense.
-define( 'SERVEUR', 'mysecdash.local' );
+// =============================================
+// Définition des chemins internes à MySecDash.
+define( 'SERVEUR', 'mysecdash1.local' );
 define( 'CHEMIN_APPLICATION', realpath( dirname( __FILE__ ) ) );
 
 define( 'URL_BASE',         'https://' . SERVEUR );
@@ -31,13 +31,17 @@ define( 'DIR_INFORMATIONS', CHEMIN_APPLICATION . DIRECTORY_SEPARATOR . 'Informat
 define( 'DIR_LIBELLES',     DIR_LIBRAIRIES . DIRECTORY_SEPARATOR . 'Libelles' );
 define( 'DIR_RESTREINT',    DIR_LIBRAIRIES . DIRECTORY_SEPARATOR . 'Restreint' );
 define( 'DIR_SAUVEGARDES',  CHEMIN_APPLICATION . DIRECTORY_SEPARATOR . 'Sauvegardes' );
-define( 'DIR_REFERENTIELS',  DIR_LIBRAIRIES . DIRECTORY_SEPARATOR . 'Referentiels' );
+define( 'DIR_REFERENTIELS', DIR_LIBRAIRIES . DIRECTORY_SEPARATOR . 'Referentiels' );
+define( 'DIR_RAPPORTS',     CHEMIN_APPLICATION . DIRECTORY_SEPARATOR . 'Rapports');
+define( 'DIR_TEMPLATES',    DIR_LIBRAIRIES . DIRECTORY_SEPARATOR . 'Templates' );
+
 
 
 // ===============================
 // Ressources externes à Loxense.
-define( 'DIR_PHPEXCEL',     DIR_LIBRAIRIES . DIRECTORY_SEPARATOR . 'PHPExcel' . DIRECTORY_SEPARATOR . 'Classes');
-define( 'DIR_PHPWORD',      DIR_LIBRAIRIES . DIRECTORY_SEPARATOR . 'PHPWord');
+define( 'URL_CHARTJS',      URL_BASE . '/node_modules/chart.js/dist' );
+define( 'DIR_CHARTJS',      CHEMIN_APPLICATION . DIRECTORY_SEPARATOR . 'node_modules' . DIRECTORY_SEPARATOR . 'chart.js' .
+	DIRECTORY_SEPARATOR . 'dist' );
 define( 'DIR_BIN_PG',       '/Users/pierre-lucmary/PostgreSQL/pg11/bin/' ); // Mac OS (Version 11)
 //define( 'DIR_BIN_PG',       '/usr/bin/' ); // Debian (dernière version)
 

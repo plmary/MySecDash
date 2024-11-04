@@ -14,9 +14,9 @@ class HBL_Authentifications extends HBL_Autorisations {
 /**
 * Cette classe gère l'authentification des utilisateurs.
 *
-* @license Copyright Loxense
-* @author Pierre-Luc MARY
-* @date 2015-05-31
+* \license Copyright Loxense
+* \author Pierre-Luc MARY
+* \date 2015-05-31
 *
 */
 
@@ -24,11 +24,11 @@ class HBL_Authentifications extends HBL_Autorisations {
 	/**
 	* Connexion à la base de données.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @return Renvoi un booléen sur le succès de la connexion à la base de données
+	* \return Renvoi un booléen sur le succès de la connexion à la base de données
 	*/
 		parent::__construct();
 		
@@ -40,32 +40,33 @@ class HBL_Authentifications extends HBL_Autorisations {
 	/**
 	* Contrôle les éléments d'authentification
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @param[in] $Login Nom de connexion de l'utilisateur
-	* @param[in] $Authenticator Authentifiant de l'utilisageur.
-	* @param[in] $Type Type d'authentification (par défaut : 'D = database', 'R = Radius')
-	* @param[in] $Salt Grain de sel à utiliser pour calculer le hash du mot de passe
+	* \param[in] $Login Nom de connexion de l'utilisateur
+	* \param[in] $Authenticator Authentifiant de l'utilisageur.
+	* \param[in] $Type Type d'authentification (par défaut : 'D = database', 'R = Radius')
+	* \param[in] $Salt Grain de sel à utiliser pour calculer le hash du mot de passe
 	*
-	* @param[out] $_SESSION['idn_id'] Identifiant de l'utilisateur connecté
-	* @param[out] $_SESSION['ent_id'] Identifiant de l'entité d'appartenance de l'utilisateur
-	* @param[out] $_SESSION['cvl_id'] Identifiant de la civilité de l'utilisateur
-	* @param[out] $_SESSION['idn_login'] Nom de connexion de l'utilisateur
-	* @param[out] $_SESSION['idn_changer_authentifiant'] Flag sur la nécessité de changer de mot de passe
-	* @param[out] $_SESSION['idn_tentative'] Nombre de tentative de connexion
-	* @param[out] $_SESSION['idn_date_modification_authentifiant'] Date de mise à jour du mot de passe
-	* @param[out] $_SESSION['idn_derniere_connexion'] Date de dernière connexion
-	* @param[out] $_SESSION['idn_super_admin'] Flag sur le droit Super Administrateur
-	* @param[out] $_SESSION['cvl_nom'] Nom usuel de l'utilisateur
-	* @param[out] $_SESSION['cvl_prenom'] Prénom de l'utilisateur
-	* @param[out] $_SESSION['ent_libelle'] Libellé de l'entité d'appartenance de l'utilisateur
-	* @param[out] $_SESSION['Expired'] Temps d'expiration
+	* \param[out] $_SESSION['idn_id'] Identifiant de l'utilisateur connecté
+	* \param[out] $_SESSION['sct_id'] Identifiant de la société d'appartenance de l'utilisateur
+	* \param[out] $_SESSION['ent_id'] Identifiant de l'entité d'appartenance de l'utilisateur
+	* \param[out] $_SESSION['cvl_id'] Identifiant de la civilité de l'utilisateur
+	* \param[out] $_SESSION['idn_login'] Nom de connexion de l'utilisateur
+	* \param[out] $_SESSION['idn_changer_authentifiant'] Flag sur la nécessité de changer de mot de passe
+	* \param[out] $_SESSION['idn_tentative'] Nombre de tentative de connexion
+	* \param[out] $_SESSION['idn_date_modification_authentifiant'] Date de mise à jour du mot de passe
+	* \param[out] $_SESSION['idn_derniere_connexion'] Date de dernière connexion
+	* \param[out] $_SESSION['idn_super_admin'] Flag sur le droit Super Administrateur
+	* \param[out] $_SESSION['cvl_nom'] Nom usuel de l'utilisateur
+	* \param[out] $_SESSION['cvl_prenom'] Prénom de l'utilisateur
+	* \param[out] $_SESSION['ent_nom'] Libellé de l'entité d'appartenance de l'utilisateur
+	* \param[out] $_SESSION['Expired'] Temps d'expiration
 	*
-	* @exception Exception Exception standard. Le message retourné étant applicatif dans la majorité des cas
+	* \exception Exception Exception standard. Le message retourné étant applicatif dans la majorité des cas
 	*
-	* @return Renvoi vrai en cas de succès ou génère une exception en cas d'erreur.
+	* \return Renvoi vrai en cas de succès ou génère une exception en cas d'erreur.
 	*/
 		include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Autorisations.inc.php' );
 
@@ -74,8 +75,7 @@ class HBL_Authentifications extends HBL_Autorisations {
 		// Récupère les données de l'identité.
 		$Request = 'SELECT ' .
 		 'T1.idn_id, ' .
-		 'T1.ent_id, ' .
-		 'T1.cvl_id, ' .
+		 'T1.sct_id, ' .
 		 'T1.idn_login, ' .
 		 'T1.idn_grain_sel, ' .
 		 'T1.idn_authentifiant, ' .
@@ -86,12 +86,13 @@ class HBL_Authentifications extends HBL_Autorisations {
 		 'T1.idn_super_admin, ' .
 		 'T1.idn_desactiver, ' .
 		 'T1.idn_date_expiration, ' .
+		 'T2.cvl_id, ' .
 		 'T2.cvl_nom, ' .
 		 'T2.cvl_prenom,' .
-		 'T3.ent_libelle ' .
+		 'T3.sct_nom ' .
 		 'FROM idn_identites AS T1 ' .
 		 'LEFT JOIN cvl_civilites AS T2 ON T1.cvl_id = T2.cvl_id ' .
-		 'LEFT JOIN ent_entites AS T3 ON T1.ent_id = T3.ent_id ' .
+		 'LEFT JOIN sct_societes AS T3 ON T1.sct_id = T3.sct_id ' .
 		 'WHERE LOWER(T1.idn_login) = :Login ' ;
 		
 		$Query = $this->prepareSQL( $Request );		
@@ -196,7 +197,7 @@ class HBL_Authentifications extends HBL_Autorisations {
 		** Vérifie si l'utilisateur n'est pas désactivé.
 		*/
 		if ( $Occurrence->idn_desactiver == 1 ) {
-			throw new Exception( $L_User_Disabled, -1 );
+			throw new Exception( $L_Utilisateur_Desactive, -1 );
 		}
 
 
@@ -206,8 +207,8 @@ class HBL_Authentifications extends HBL_Autorisations {
 		*/
 		if ( $Occurrence->idn_date_expiration != '0000-00-00 00:00:00' && $Type != 'L' ) {
 			if ( $Occurrence->idn_date_expiration < date( 'Y-m-d' ) ) {
-				throw new Exception( $L_User_Expired . '<br/>' .
-				 $L_Expiration_Date_Exceeded, -1 );
+				throw new Exception( $L_Utilisateur_Expire . '<br/>' .
+				 $L_Date_Expiration_Atteinte, -1 );
 			}
 		}
 		
@@ -219,7 +220,7 @@ class HBL_Authentifications extends HBL_Autorisations {
 		if ( $Nombre_Tentative == '' ) $Nombre_Tentative = 3;
 
 		if ( $Occurrence->idn_tentative > $Nombre_Tentative ) {
-			throw new Exception( $L_Attempt_Exceeded, -1 );
+			throw new Exception( $L_Nombre_Connexion_Atteinte, -1 );
 		}
 
 
@@ -236,7 +237,8 @@ class HBL_Authentifications extends HBL_Autorisations {
 
 
 		$_SESSION[ 'idn_id' ] = $Occurrence->idn_id ;
-		$_SESSION[ 'ent_id' ] = $Occurrence->ent_id ;
+		$_SESSION[ 'sct_id' ] = $Occurrence->sct_id ;
+//		$_SESSION[ 'ent_id' ] = $Occurrence->ent_id ;
 		$_SESSION[ 'cvl_id' ] = $Occurrence->cvl_id ;
 		$_SESSION[ 'idn_login' ] = $Occurrence->idn_login ;
 		$_SESSION[ 'idn_changer_authentifiant' ] = $Occurrence->idn_changer_authentifiant ;
@@ -251,7 +253,7 @@ class HBL_Authentifications extends HBL_Autorisations {
 		$_SESSION[ 'cvl_prenom' ] = $this->protection_XSS( 
 			$Occurrence->cvl_prenom );
 
-		$_SESSION[ 'ent_libelle' ] = $this->protection_XSS( $Occurrence->ent_libelle );
+		$_SESSION[ 'sct_nom' ] = $this->protection_XSS( $Occurrence->sct_nom );
 
 		include_once( HBL_DIR_LIBRARIES . '/Class_HBL_Autorisations_PDO.inc.php' );
 		$Authorizations = new HBL_Autorisations();
@@ -265,11 +267,11 @@ class HBL_Authentifications extends HBL_Autorisations {
 	/** -----------------------------
 	* Contrôle si l'utilisateur est déjà connecté.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @return Retourne vrai si l'utilisateur est connecté. Sinon, retourne faux.
+	* \return Retourne vrai si l'utilisateur est connecté. Sinon, retourne faux.
 	*/
 		if ( isset( $_SESSION[ 'idn_id' ] ) ) {
 			return TRUE;
@@ -283,19 +285,13 @@ class HBL_Authentifications extends HBL_Autorisations {
 	/** -----------------------------
 	* Détruit les variables de la session.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @return Retourne toujours vrai
+	* \return Retourne toujours vrai
 	*/
-		unset( $_SESSION[ 'idn_id' ] );
-		unset( $_SESSION[ 'ent_id' ] );
-		unset( $_SESSION[ 'cvl_id' ] );
-		unset( $_SESSION[ 'cvl_nom' ] );
-		unset( $_SESSION[ 'cvl_prenom' ] );
-		unset( $_SESSION[ 'Expired' ] );
-		unset( $_SESSION[ 'idn_login' ] );
+		$_SESSION = array();
 
 		return TRUE;
 	}
@@ -305,11 +301,11 @@ class HBL_Authentifications extends HBL_Autorisations {
 	/** -----------------------------
 	* Contrôle si l'utilisateur connecté est un administrateur.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @return Retourne vrai si l'utilisateur est un administrateur, sinon retourne faux
+	* \return Retourne vrai si l'utilisateur est un administrateur, sinon retourne faux
 	*/
 		if ( $_SESSION[ 'idn_super_admin' ] == TRUE ) {
 			return TRUE;
@@ -323,15 +319,15 @@ class HBL_Authentifications extends HBL_Autorisations {
 	/** -----------------------------
 	* Ecrase le mot de passe de l'utilisateur par celui par défaut.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @param[in] $idn_id Identifiant de l'utilisateur
+	* \param[in] $idn_id Identifiant de l'utilisateur
 	*
-	* @return Retourne vrai en cas de succès, sinon lève une exception en cas d'erreur
+	* \return Retourne vrai en cas de succès, sinon lève une exception en cas d'erreur
 	*/
-		include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_Loxense-Utilisateurs.php' );
+		include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_MySecDash-Utilisateurs.php' );
 		
 		// ===========================================================
 		// Calcule un nouveau grain de sel spécifique à l'utilisateur.
@@ -377,15 +373,15 @@ class HBL_Authentifications extends HBL_Autorisations {
 	/** -----------------------------
 	* Change le mot de passe de l'utilisateur
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-01
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-01
 	*
-	* @param[in] $idn_id Identifiant de l'utilisateur
-	* @param[in] $O_Password Ancien mot de passe
-	* @param[in] $N_Password Nouveau mot de passe
+	* \param[in] $idn_id Identifiant de l'utilisateur
+	* \param[in] $O_Password Ancien mot de passe
+	* \param[in] $N_Password Nouveau mot de passe
 	*
-	* @return Retourne vrai en cas de succès, sinon lève une exception en cas d'erreur
+	* \return Retourne vrai en cas de succès, sinon lève une exception en cas d'erreur
 	*/
 		// ===========================================================
 		// Calcule un nouveau grain de sel spécifique à l'utilisateur.
@@ -438,13 +434,13 @@ class HBL_Authentifications extends HBL_Autorisations {
 	/** -----------------------------
 	* Remet à zéro le nombre de tentative de connexion.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-01
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-01
 	*
-	* @param[in] $idn_id Identifiant de l'utilisateur
+	* \param[in] $idn_id Identifiant de l'utilisateur
 	*
-	* @return Retourne vrai en cas de succès, sinon lève une exception en cas d'erreur
+	* \return Retourne vrai en cas de succès, sinon lève une exception en cas d'erreur
 	*/
 
 		// ===================================
@@ -470,13 +466,13 @@ class HBL_Authentifications extends HBL_Autorisations {
 	/** -----------------------------
 	* Réactualise la date d'expiration de l'utilisateur.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-01
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-01
 	*
-	* @param[in] $idn_id Identifiant de l'utilisateur
+	* \param[in] $idn_id Identifiant de l'utilisateur
 	*
-	* @return Retourne vrai en cas de succès, sinon lève une exception en cas d'erreur
+	* \return Retourne vrai en cas de succès, sinon lève une exception en cas d'erreur
 	*/
 		// ===================================
 		// Récupère les données de l'identité.
@@ -489,8 +485,8 @@ class HBL_Authentifications extends HBL_Autorisations {
 		$Account_Lifetime = $this->recupererParametre('account_lifetime');
 		if ( $Account_Lifetime == '' ) $Account_Lifetime = 6;
 		
-		$NextDate  = strftime( "%Y-%m-%d",
-		 mktime( 0, 0, 0, date("m") + $Account_Lifetime, date("d"), date("Y") ) );
+		$NextDate  = date( "Y-m-d",
+			mktime( 0, 0, 0, date("m") + $Account_Lifetime, date("d"), date("Y") ) );
 
 		$this->bindSQL( $Query, ':idn_date_expiration', $NextDate,
 		 PDO::PARAM_STR, L_DATE_TIME );
@@ -512,14 +508,14 @@ class HBL_Authentifications extends HBL_Autorisations {
 	/** -----------------------------
 	* Active ou désactive un utilisateur
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-01
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-01
 	*
-	* @param[in] $idn_id Identifiant de l'utilisateur
-	* @param[in] $Status Statut d'activation de l'utilisateur (0 = active, 1 = désactive)
+	* \param[in] $idn_id Identifiant de l'utilisateur
+	* \param[in] $Status Statut d'activation de l'utilisateur (0 = active, 1 = désactive)
 	*
-	* @return Retourne vrai en cas de succès, sinon lève une exception en cas d'erreur
+	* \return Retourne vrai en cas de succès, sinon lève une exception en cas d'erreur
 	*/
 		// ===================================
 		// Récupère les données de l'identité.
@@ -545,13 +541,13 @@ class HBL_Authentifications extends HBL_Autorisations {
 	/** -----------------------------
 	* Incrémente le compteur de tentative de connexion (suite à une erreur de connexion).
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-01
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-01
 	*
-	* @param[in] $Login Nom de l'utilisateur à traiter
+	* \param[in] $Login Nom de l'utilisateur à traiter
 	*
-	* @return Retourne la nouvelle valeur du nombre de tentative ou lève une exception en cas d'erreur.
+	* \return Retourne la nouvelle valeur du nombre de tentative ou lève une exception en cas d'erreur.
 	*/
 		// ===================================
 		// Récupère la dernière valeur de tentative de connexion.
@@ -592,13 +588,13 @@ class HBL_Authentifications extends HBL_Autorisations {
 	/** -----------------------------
 	** Récupère le grain de sel de l'utilisateur
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-06-01
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-06-01
 	*
-	* @param[in] $idn_login Nom de l'utilisateur à traiter
+	* \param[in] $idn_login Nom de l'utilisateur à traiter
 	*
-	* @return Retourne le grain de sel ou lève une exception en cas d'erreur.
+	* \return Retourne le grain de sel ou lève une exception en cas d'erreur.
 	*/
 
 		// ===================================

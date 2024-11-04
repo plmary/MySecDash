@@ -9,17 +9,17 @@ define( 'L_APP_LABEL', 50 );
 define( 'L_RGH_LABEL', 30 );
 
 
-class HBL_Profils_Controles_Acces extends HBL_Connecteur_BD {
+class HBL_Profils_Controles_Acces extends HBL_Connexioneur_BD {
 
 	function __construct() {
 	/**
 	* Connexion à la base de données.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @return Renvoi un booléen sur le succès de la connexion à la base de données
+	* \return Renvoi un booléen sur le succès de la connexion à la base de données
 	*/
 		parent::__construct();
 		
@@ -30,15 +30,15 @@ class HBL_Profils_Controles_Acces extends HBL_Connecteur_BD {
 	/**
 	* Ajoute une Application à un Profil.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @param[in] $Id_Profil Identifiant du Profil à associer
-	* @param[in] $Id_Application Identifiant de l'Application à associer
-	* @param[in] $Id_Right Identifiant du Droit sur cette association
+	* \param[in] $Id_Profil Identifiant du Profil à associer
+	* \param[in] $Id_Application Identifiant de l'Application à associer
+	* \param[in] $Id_Right Identifiant du Droit sur cette association
 	*
-	* @return Renvoi TRUE si l'association entre le Profil et l'Application a été créée, FALSE sinon. Lève une Exception en cas d'erreur.
+	* \return Renvoi TRUE si l'association entre le Profil et l'Application a été créée, FALSE sinon. Lève une Exception en cas d'erreur.
 	*/
 		$this->prepareSQL( 'INSERT ' .
 		 'INTO prac_profiles_access_control ' .
@@ -63,14 +63,14 @@ class HBL_Profils_Controles_Acces extends HBL_Connecteur_BD {
 	/**
 	* Supprime une Application à un Profil.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @param[in] $Id_Profil Identifiant du Profil à dissocier
-	* @param[in] $Id_Application Identifiant de l'Application à dissocier
+	* \param[in] $Id_Profil Identifiant du Profil à dissocier
+	* \param[in] $Id_Application Identifiant de l'Application à dissocier
 	*
-	* @return Renvoi TRUE si l'association entre le Profil et l'Application a été supprimée, FALSE sinon. Lève une Exception en cas d'erreur.
+	* \return Renvoi TRUE si l'association entre le Profil et l'Application a été supprimée, FALSE sinon. Lève une Exception en cas d'erreur.
 	*/
 		$Query = $this->prepareSQL( 'DELETE ' .
 		 'FROM prac_profiles_access_control ' .
@@ -93,13 +93,13 @@ class HBL_Profils_Controles_Acces extends HBL_Connecteur_BD {
 	/**
 	* Supprime les Applications associées à un Profil.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @param[in] $Id_Profil Identifiant du Profil à dissocier
+	* \param[in] $Id_Profil Identifiant du Profil à dissocier
 	*
-	* @return Renvoi TRUE si les associations entre le Profil et les Applications ont été supprimées, FALSE sinon. Lève une Exception en cas d'erreur.
+	* \return Renvoi TRUE si les associations entre le Profil et les Applications ont été supprimées, FALSE sinon. Lève une Exception en cas d'erreur.
 	*/
 		$Query = $this->prepareSQL( 'DELETE ' .
 		 'FROM prac_profiles_access_control ' .
@@ -121,13 +121,13 @@ class HBL_Profils_Controles_Acces extends HBL_Connecteur_BD {
 	/**
 	* Liste les Applications d'un Profil.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @param[in] $Id_Profil Identifiant du Profil de référence
+	* \param[in] $Id_Profil Identifiant du Profil de référence
 	*
-	* @return Renvoi un tableau d'occurrences d'Applications associées au Profil,
+	* \return Renvoi un tableau d'occurrences d'Applications associées au Profil,
 	*  sinon retourne un tableau vide
 	*/
 		$Query = $this->prepareSQL( 'SELECT ' .
@@ -149,16 +149,16 @@ class HBL_Profils_Controles_Acces extends HBL_Connecteur_BD {
 	/**
 	* Lister les Contrôles d'Accès.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @param[in] $prf_id Recherche les contrôles d'accès liés à un Profil.
-	* @param[in] $app_id Recherche les contrôles d'accès liés à une Application.
-	* @param[in] $drt_id Recherche les contrôles d'accès liés à un Droit.
-	* @param[in] $order Permet de trier le résultat selon un nom de colonne.
+	* \param[in] $prf_id Recherche les contrôles d'accès liés à un Profil.
+	* \param[in] $app_id Recherche les contrôles d'accès liés à une Application.
+	* \param[in] $drt_id Recherche les contrôles d'accès liés à un Droit.
+	* \param[in] $order Permet de trier le résultat selon un nom de colonne.
 	*
-	* @return Renvoi un tableau des Contrôles d'Accès trouvés, sinon un tableau vide
+	* \return Renvoi un tableau des Contrôles d'Accès trouvés, sinon un tableau vide
 	*/
 		$Request = 'SELECT ' .
 		 't1.prf_id, t2.prf_libelle, t1.app_id, t3.app_libelle, t1.drt_id, t4.drt_code_libelle ' .
@@ -237,16 +237,16 @@ class HBL_Profils_Controles_Acces extends HBL_Connecteur_BD {
 	/**
 	* Lister les Contrôles d'Accès par les libellés.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @param[in] $prf_libelle Recherche les contrôles d'accès liés à un Profil.
-	* @param[in] $app_libelle Recherche les contrôles d'accès liés à une Application.
-	* @param[in] $drt_code_libelle Recherche les contrôles d'accès liés à un Droit.
-	* @param[in] $order Permet de trier le résultat selon un nom de colonne.
+	* \param[in] $prf_libelle Recherche les contrôles d'accès liés à un Profil.
+	* \param[in] $app_libelle Recherche les contrôles d'accès liés à une Application.
+	* \param[in] $drt_code_libelle Recherche les contrôles d'accès liés à un Droit.
+	* \param[in] $order Permet de trier le résultat selon un nom de colonne.
 	*
-	* @return Renvoi un tableau des Contrôles d'Accès trouvés, sinon un tableau vide
+	* \return Renvoi un tableau des Contrôles d'Accès trouvés, sinon un tableau vide
 	*/
 		$Request = 'SELECT ' .
 		 't1.prf_id, t2.prf_libelle, t1.app_id, t3.app_libelle, t1.drt_id, t4.drt_code_libelle ' .

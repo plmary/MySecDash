@@ -1,0 +1,117 @@
+	if ( isset($_POST['cmp_id']) && $_POST['cmp_id'] != '' ) {
+		// Mise en place des Types d'Impact par défaut
+		$objMatriceImpacts->MaJTypeImpact( '', 1, 'Financier');
+		$TypesImpact[1] = $objMatriceImpacts->LastInsertId;
+	
+		$objMatriceImpacts->MaJTypeImpact( '', 2, 'Organisationnel');
+		$TypesImpact[2] = $objMatriceImpacts->LastInsertId;
+	
+		$objMatriceImpacts->MaJTypeImpact( '', 3, 'Juridique / Réglementaire');
+		$TypesImpact[3] = $objMatriceImpacts->LastInsertId;
+	
+		$objMatriceImpacts->MaJTypeImpact( '', 4, 'Image de marque');
+		$TypesImpact[4] = $objMatriceImpacts->LastInsertId;
+
+
+		// Mise en place des Niveaux d'Impact par défaut
+		$objMatriceImpacts->MaJNiveauImpact('', 1, 1, 'Faible', '2ecc71');
+		$NiveauxImpact[1] = $objMatriceImpacts->LastInsertId;
+		$objMatriceImpacts->MaJNiveauImpact('', 2, 2, 'Notable', 'f1c40f');
+		$NiveauxImpact[2] = $objMatriceImpacts->LastInsertId;
+		$objMatriceImpacts->MaJNiveauImpact('', 3, 3, 'Grave', 'e67e22');
+		$NiveauxImpact[3] = $objMatriceImpacts->LastInsertId;
+		$objMatriceImpacts->MaJNiveauImpact('', 4, 4, 'Vitale', 'c0392b');
+		$NiveauxImpact[4] = $objMatriceImpacts->LastInsertId;
+
+
+		// Mise en place de la Grille d'Impact par défaut
+		// Mise à jour de la colonne "Organisationnel"
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[1], $TypesImpact[1],
+			'<p>- Perte inférieure ou égale à 5% de CA</p>
+			<p>Les impacts financiers sont faibles et pourront être facilement rattrapés/compensés ? Oui</p>');
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[2], $TypesImpact[1],
+			'<p>- Perte 5% et 10% de CA</p>
+			<p>Les impacts financier sont significatifs mais n\'entraîneront pas de conséquences sur le long terme ? Oui</p>');
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[3], $TypesImpact[1],
+			'<p>- Perte 10% et 20% de CA</p>
+			<p>Les impacts financier sont importants et des conséquences sur le long terme sont à anticiper ? Oui</p>');
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[4], $TypesImpact[1],
+			'<p>- Perte supérieure à 30% de CA</p>
+			<p>Les impacts financiers peuvent remettre en cause la pérennité de l\'entité ? Oui</p>');
+
+		// Mise à jour de la colonne "Financier"
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[1], $TypesImpact[2],
+			'<p>- Faibles nuisances à l\'activité sans impact sur tiers ( clients, financeurs, prestataires, fournisseurs…) ni sur les autres service de l\'Entreprise</p>
+			<p>L\'incident peut-il provoquer l\'arrêt du service ? Non</p>');
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[2], $TypesImpact[2],
+			'<p>- Nuisances organisationnelles internes à l\'activité "Titre" entraînant la perturbation de service  pour une ou plusieurs catégories de tiers  ( clients, financeurs, prestataires, fournisseurs…) mais n\'impactant pas d\'autres services de l\'Entreprise.</p> 
+			<p>L\'incident peut-il provoquer l\'arrêt du service ? Oui</p>
+			<p>Peut-il impacter d\'autres services ? Non</p>');
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[3], $TypesImpact[2],
+			'<p>- Nuisances organisationnelles internes à l\'activité entraînant la perturbation de service pour une ou plusieurs catégories de tiers  (clients, financeurs, prestataires, fournisseurs…). Ces nuisances peuvent entraîner l\'arrêt d\'autres services de l\'Entreprise.</p>
+			<p>L\'incident peut-il provoquer l\'arrêt du service ? Oui</p>
+			<p>Peut-il impacter d\'autres services ? Oui</p>');
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[4], $TypesImpact[2],
+			'<p>- Arrêt total de l\'activité</p>
+			<p>L\'incident peut-il provoquer l\'arrêt total des activités de l\'Entreprise ? Oui</p>');
+
+		// Mise à jour de la colonne "Juridique / Réglementaire"
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[1], $TypesImpact[3],
+			'<p>- Absence d\'éligibilité à une action civile ou pénale ou à une action réglementaire, mais recours amiable (mise en demeure, acte extrajudiciaire etc…) de la part d\'un cocontractant ou d\'un tiers</p>
+			<p>L\'incident entraîne-t-il des conséquences juridiques ? Non</p>');
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[2], $TypesImpact[3],
+			'<p>- Contravention ou Exposition à des poursuites civiles limitées</p>
+			<p>- Recommandations des autorités de tutelle</p>
+			<p>L\'incident peut impliquer des conséquences juridiques limitées ? Oui</p>');
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[3], $TypesImpact[3],
+			'<p>- Exposition à une condamnation civile significative, résiliation de contrat non stratégique</p>
+			<p>-  Délit ou manquement à une norme juridique faisant encourir des sanctions financière significative</p>
+			<p>- Avertissement ou blâme des autorités de tutelle</p>
+			<p>L\'incident nécessite-t-il la convocation du représentant légal ? Oui</p>
+			<p>La conséquence juridique de l\'incident peut-elle amener à la fermeture de l\'entité ou à la condamnation de ses dirigeants ? Non</p>');
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[4], $TypesImpact[3],
+			'<p>- Condamnation pénale de l\'entreprise : exclusion des marchés publics, amendes pénales > 1M€</p>
+			<p>- Mise en jeu de la responsabilité pénale du Dirigeant avec interdiction d\'exercer certaines activités ou peine d\'emprisonnement<p>
+			<p>- Retrait d\'agrément ou habilitation</p>
+			<p>La conséquence juridique de l\'incident peut-elle amener à la fermeture de l\'entité ou à la condamnation de ses dirigeants ? Oui</p>');
+
+		// Mise à jour de la colonne "Image de marque"
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[1], $TypesImpact[4],
+			'<p>- Pas de médiatisation mais mécontentement possible de parties prenantes internes</p>
+			<p>- Pas d\'atteinte à la satisfaction des tiers  ( clients, financeurs, prestataires, fournisseurs,  relations publiques…)</p>
+			<p>L\'incident va-t-il circuler en interne ? Nécessite-t-il une communication interne spécifique ? Oui</p>');
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[2], $TypesImpact[4],
+			'<p>- Exposition à un risque de mention négative ponctuelle sur un média ou réseau social à faible audience, ayant peu d’impact ou éloigné de notre cœur de métier</p>
+			<p>- Faible atteinte à la satisfaction des tiers (clients, financeurs, prestataires, fournisseurs, relations publiques…) avec une remédiation rapide et satisfaisante</p>
+			<p>L\'incident dépasse-t-il la sphère interne ? Peut-il être relayé sur les réseaux sociaux ? Par la presse locale (faible audience) ? Oui</p>
+			<p>A-t-il un impact au niveau de l\'image vis-à-vis de ses partenaires, clients ? Non</p>');
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[3], $TypesImpact[4],
+			'<p>- Constatation de montée de réclamations  via les réseaux légérement supérieure à la normale et exposition à un risque de mentions fréquentes ou récurrentes et dont le contenu ne valorise pas l\'image de l\'Entreprise, ou le dégrade peu</p>
+			<p>- Exposition à un risque de mentions négatives dans la presse spécialisée dans notre coeur d\'activité</p>
+			<p>- Volume significatif de réclamations de la part de tiers  (clients, financeurs, prestataires, fournisseurs, …) et/ou réclamations récurrentes que l\'on ne parvient pas à remédier</p>');
+		$objMatriceImpacts->MaJDescriptionImpact('', $NiveauxImpact[4], $TypesImpact[4],
+			'<p>- Crise médiatique relayée par l\'ensemble des canaux de communication (réseaux sociaux compris) portant durablement atteinte à l\'image ou la réputation de l\'Entreprise</p>
+			<p>- Défiance des tiers  (clients, financeurs, prestataires, fournisseurs…), impact sur un large public, au-delà des parties prenantes habituelles</p>
+			<p>L\'incident peut êre relayé par la presse nationale ? Oui</p>
+			<p>Entraîne-t-il des pertes lecteurs/clients importantes ? Oui</p>
+			<p>Nécessite-t-il la mise en place d\'une cellule de communication ? Oui</p>
+			<p>Faut-il prévoir des sorties médiatiques des dirigeants ? La publication de communiqués de presse ? Oui</p>');
+
+{
+	"ItemsPrincipales": [
+		// Mise en place des Types d'Impact par défaut
+		{"Table": "tim_types_impact", "Occurrences": [
+			{"tim_poids": "1", "tim_nom_code" : "Financier"},
+			{"tim_poids": "2", "tim_nom_code" : "Organisationnel"},
+			{"tim_poids": "3", "tim_nom_code" : "Juridique / Réglementaire"},
+			{"tim_poids": "4", "tim_nom_code" : "Image de marque"},
+		]},
+		// Mise en place des Niveaux d'Impact par défaut
+		{"Table": "nim_niveaux_impact", "Occurrences": [
+			{"nim_numero": "1", "nim_poids": "1", "nim_nom_code" : "Faible", "nim_couleur" : "2ecc71"},
+			{"nim_numero": "2", "nim_poids": "2", "nim_nom_code" : "Notable", "nim_couleur" : "f1c40f"},
+			{"nim_numero": "3", "nim_poids": "3", "nim_nom_code" : "Grave", "nim_couleur" : "e67e22"},
+			{"nim_numero": "4", "nim_poids": "4", "nim_nom_code" : "Vitale", "nim_couleur" : "c0392b"},
+		]},
+	]
+}

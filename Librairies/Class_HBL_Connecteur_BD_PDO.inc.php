@@ -2,15 +2,14 @@
 
 include_once( 'Constants.inc.php' );
 
-class HBL_Connecteur_BD extends PDO {
+class HBL_Connexioneur_BD extends PDO {
 /**
 * Cette classe gère les connexions à la base de données tout en offrant une couche d'abastraction.
 * Effectivement, seule cette classe connait la localisation du fichier de paramètre externe.
 *
-* PHP version 5
-* @license Copyright Loxense
-* @author Pierre-Luc MARY
-* @date 2015-05-14
+* \license Copyright Loxense
+* \author Pierre-Luc MARY
+* \date 2015-05-14
 */
 
 	public $LastInsertId; // Dernier ID créé
@@ -24,21 +23,22 @@ class HBL_Connecteur_BD extends PDO {
 	/**
 	* Connexion à la base de données via le constructeur de PDO.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-14
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-14
 	*
-	* @return Renvoi "true" en cas de succès de connexion à la base de données, sinon lève une exception.
+	* \return Renvoi "true" en cas de succès de connexion à la base de données, sinon lève une exception.
 	*/
 		// Charge les différentes variables utiles à la connexion à la base de données.
 		include( HBL_CONFIG_BD );
-
+		
 		$DSN = $_Driver . ':host=' . $_Host . ';port=' . $_Port . ';dbname=' . $_Base ;
 
 		try {
-			return PDO::__construct( $DSN, $_User, $_Password );
+			return PDO::__construct( $DSN, $_User, $_Password, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION] );
 		} catch( PDOException $e ) {
-			throw new Exception( $e->getMessage(), $e->getCode() );
+			//throw new Exception( $e->getMessage(), $e->getCode() );
+			die( $e->getMessage()." ".$e->getCode() );
 			return FALSE;
 		}
 	}
@@ -51,11 +51,11 @@ class HBL_Connecteur_BD extends PDO {
 	/**
 	* Mise en place d'une Transaction (permettant l'exécution de plusieurs requêtes SQL et de valider cet ensemble)
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-10-15
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-10-15
 	*
-	* @return Passe l'objet en mode Transaction
+	* \return Passe l'objet en mode Transaction
 	*/
 		//$this->transactionBegin = TRUE;
 		$this->transactionBegin = TRUE;
@@ -69,11 +69,11 @@ class HBL_Connecteur_BD extends PDO {
 	/**
 	* Valide l'ensemble des requêtes de mise à jour de la Transaction.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-10-15
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-10-15
 	*
-	* @return Passe l'objet en mode "autocommit"
+	* \return Passe l'objet en mode "autocommit"
 	*/
 		if ( ! $this->transactionBegin ) return;
 
@@ -90,11 +90,11 @@ class HBL_Connecteur_BD extends PDO {
 	/**
 	* Annule l'ensemble des requêtes de mise à jour de la Transaction.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-10-15
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-10-15
 	*
-	* @return Conserve l'objet en mode Transaction
+	* \return Conserve l'objet en mode Transaction
 	*/
 		if ( ! $this->transactionBegin ) return;
 
@@ -111,13 +111,13 @@ class HBL_Connecteur_BD extends PDO {
 	/**
 	* Automatise la préparation d'une requète en ajoutant la gestion des exceptions
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2016-10-24
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2016-10-24
 	*
-	* @param[in] $sql La requète à préparer
+	* \param[in] $sql La requète à préparer
 	*
-	* @return Renvoi la requète préparée
+	* \return Renvoi la requète préparée
 	*/
 		// évite les espaces insécables dans la chaîne de caractère :s
 		$sql = str_replace(" ", " ", $sql);
@@ -138,15 +138,15 @@ class HBL_Connecteur_BD extends PDO {
 	/**
 	* Automatise l'association des paramètres sur une requète SQL.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2016-10-24
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2016-10-24
 	*
-	* @param[in] $Query La requète modifier, passé en référence
-	* @param[in] $Reference la chaine de caractère référence à remplacer dans la requête
-	* @param[in] $Value la valeur à mettre à la place de la référence
-	* @param[in] $Type le type de variable à remplacer. Pour l'instant ne sont géré que les entiers et les chaines de caractères
-	* @param[in] $Length la longueur maximal de la chaine de caractère à remplacer
+	* \param[in] $Query La requète modifier, passé en référence
+	* \param[in] $Reference la chaine de caractère référence à remplacer dans la requête
+	* \param[in] $Value la valeur à mettre à la place de la référence
+	* \param[in] $Type le type de variable à remplacer. Pour l'instant ne sont géré que les entiers et les chaines de caractères
+	* \param[in] $Length la longueur maximal de la chaine de caractère à remplacer
 	*
 	*/
 		// Si le type est un "Numérique".
@@ -184,11 +184,11 @@ class HBL_Connecteur_BD extends PDO {
 	/**
 	* Automatise l'exécution d'une requète
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2016-10-24
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2016-10-24
 	*
-	* @param[in] $Query La requète à executer, passé en référence
+	* \param[in] $Query La requète à executer, passé en référence
 	*
 	*/	
 		$Status = $Query->execute();

@@ -22,6 +22,7 @@ if ( ! array_key_exists( 'HTTPS', $_SERVER ) )
 	
 // Charge les libellés en fonction de la langue sélectionnée.
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
+include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Generiques.inc.php' );
 
 // Charge les classes utiles à cet écran.
 include( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
@@ -30,11 +31,18 @@ include( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
 $PageHTML = new HTML();
 
 
+// Vérifie que le Client reste celui qui a initialisé la Session.
+if ( $PageHTML->comparerJetonDeConnexion() == FALSE ) {
+	print( $PageHTML->construirePageAlerte( 'ALERTE DE SECURITE&nbsp;: tentative de vol de session', '/MySecDash-Connexion.php' ) );
+	exit();
+}
+
+
 // Vérifie si la session de l'utilisateur n'a pas expiré.
 if ( $PageHTML->validerTempsSession() ) {
 	$PageHTML->sauverTempsSession();
 } else {
-	print( $PageHTML->construirePageAlerte( $L_Session_Expired, '/Loxense-Connexion.php' ) );
+	print( $PageHTML->construirePageAlerte( $L_Session_Expired, '/MySecDash-Connexion.php' ) );
 	exit();
 }
 
@@ -46,7 +54,7 @@ $Permissions = $PageHTML->permissionsGroupees( $Script );
 // Vérifie que l'utilisateur est habilité en lecture sur ce script.
 if ( $PageHTML->permission( $Script ) === false ) {
 	include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Autorisations.inc.php' );
-	print( $PageHTML->construirePageAlerte( $L_No_Authorize_Script, '/Loxense-Principal.php' ) );
+	print( $PageHTML->construirePageAlerte( $L_No_Authorize_Script, '/MySecDash-Principal.php' ) );
 	exit();
 }
 
@@ -68,24 +76,27 @@ $Droit_Supprimer = FALSE;
 $Path_Parts = pathinfo( $Script );
 $Fichiers_JavaScript = [];
 
-foreach ($Permissions[ basename( $Script ) ]["rights"] as $Droit) {
-	switch ($Droit) {
-		case 'RGH_1':
-			$Droit_Lecture = TRUE;
-			$Fichiers_JavaScript[] = $Path_Parts[ 'filename' ] . '/Lecture.js';
-			break;
-		case 'RGH_2':
-			$Droit_Ajouter = TRUE;
-			$Fichiers_JavaScript[] = $Path_Parts[ 'filename' ] . '/Ajouter.js';
-			break;
-		case 'RGH_3':
-			$Droit_Modifier = TRUE;
-			$Fichiers_JavaScript[] = $Path_Parts[ 'filename' ] . '/Modifier.js';
-			break;
-		case 'RGH_4':
-			$Droit_Supprimer = TRUE;
-			$Fichiers_JavaScript[] = $Path_Parts[ 'filename' ] . '/Supprimer.js';
-			break;
+
+if ( isset($Permissions[ basename( $Script ) ]["rights"]) ) {
+	foreach ($Permissions[ basename( $Script ) ]["rights"] as $Droit) {
+		switch ($Droit) {
+			case 'RGH_1':
+				$Droit_Lecture = TRUE;
+				$Fichiers_JavaScript[] = $Path_Parts[ 'filename' ] . '/Lecture.js';
+				break;
+			case 'RGH_2':
+				$Droit_Ajouter = TRUE;
+				$Fichiers_JavaScript[] = $Path_Parts[ 'filename' ] . '/Ajouter.js';
+				break;
+			case 'RGH_3':
+				$Droit_Modifier = TRUE;
+				$Fichiers_JavaScript[] = $Path_Parts[ 'filename' ] . '/Modifier.js';
+				break;
+			case 'RGH_4':
+				$Droit_Supprimer = TRUE;
+				$Fichiers_JavaScript[] = $Path_Parts[ 'filename' ] . '/Supprimer.js';
+				break;
+		}
 	}
 }
 
@@ -93,5 +104,39 @@ foreach ($Permissions[ basename( $Script ) ]["rights"] as $Droit) {
 // Récupère les droits de l'utilisateur sur tous les scripts.
 $Permissions = $PageHTML->permissionsGroupees();
 
+// Vérifie que l'utilisateur est habilité en lecture sur ce script.
+if ( $PageHTML->permission( $Script ) === false ) {
+	include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Autorisations.inc.php' );
+	print( $PageHTML->construirePageAlerte( $L_No_Authorize_Script, '/MySecDash-Principal.php' ) );
+	exit();
+}
+
+
+function changerSociete( $sct_id, $objCampagnes ) {
+	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
+	
+	if ( $sct_id != '' ) {
+		$_SESSION['s_sct_id'] = $sct_id;
+		
+		$Liste_Campagnes = $objCampagnes->rechercherCampagnes($sct_id, 'cmp_date-desc');
+		if ($Liste_Campagnes != []) {
+			$_SESSION['s_cmp_id'] = $Liste_Campagnes[0]->cmp_id;
+		} else {
+			$_SESSION['s_cmp_id'] = '';
+		}
+		
+		$Resultat = array( 'statut' => 'success',
+			'texteMsg' => $L_Societe_Change,
+			'sct_id' => $_SESSION['s_sct_id'],
+			'cmp_id' => $_SESSION['s_cmp_id'],
+			'Liste_Campagnes' => $Liste_Campagnes
+		);
+	} else {
+		$Resultat = array( 'statut' => 'error',
+			'texteMsg' => $L_ERR_Champs_Obligatoires . ' (sct_id)' );
+	}
+	
+	return $Resultat;
+}
 
 ?>

@@ -4,25 +4,24 @@ include_once( 'Constants.inc.php' );
 include_once( HBL_DIR_LIBRARIES . '/Class_HBL_Connecteur_BD_PDO.inc.php' );
 
 
-class HBL_Historiques extends HBL_Connecteur_BD {
+class HBL_Historiques extends HBL_Connexioneur_BD {
 /**
 * Cette classe gère les accès en consultation à l'historique des événements réalisées dans Loxense.
 *
-* PHP version 5
-* @license Copyright Loxense
-* @author Pierre-Luc MARY
-* @date 2015-05-20
+* \license Copyright Loxense
+* \author Pierre-Luc MARY
+* \date 2015-05-20
 */
 
 	public function __construct() {
 	/**
 	* Connexion à la base de données.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-20
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-20
 	*
-	* @return Renvoi un booléen sur le succès de la connexion à la base de données
+	* \return Renvoi un booléen sur le succès de la connexion à la base de données
 	*/
 		parent::__construct();
 		
@@ -35,14 +34,14 @@ class HBL_Historiques extends HBL_Connecteur_BD {
 	/**
 	* Lister les événements contenu dans l'historique.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-20
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-20
 	*
-	* @param[in] $Order Permet de gérer l'ordre d'affichage
-	* @param[in] $Search Chaîne à rechercher dans les colonnes constituants une Civilité
+	* \param[in] $Order Permet de gérer l'ordre d'affichage
+	* \param[in] $Search Chaîne à rechercher dans les colonnes constituants une Civilité
 	*
-	* @return Renvoi une liste de civilité ou une liste vide. Lève une exception en cas d'erreur.
+	* \return Renvoi une liste de civilité ou une liste vide. Lève une exception en cas d'erreur.
 	*/
 		$Request = 'SELECT ' .
 			'hac.*, tpa.tpa_code_libelle, rlb_tpa.lbr_libelle AS libelle_tpa, tpo.tpo_code_libelle, rlb_tpo.lbr_libelle AS libelle_tpo ' .
@@ -185,13 +184,13 @@ class HBL_Historiques extends HBL_Connecteur_BD {
 	/**
 	* Récupère les informations d'une Civilité.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-20
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-20
 	*
-	* @param[in] $cvl_id Identifiant de la civilité à afficher
+	* \param[in] $cvl_id Identifiant de la civilité à afficher
 	*
-	* @return Renvoi l'occurrence de la civilité ou renvoi FALSE si la civilité n'existe pas. Lève une Exception en cas d'erreur.
+	* \return Renvoi l'occurrence de la civilité ou renvoi FALSE si la civilité n'existe pas. Lève une Exception en cas d'erreur.
 	*/
 /*		$Request = 'SELECT ' .
 		 '* ' .
@@ -216,13 +215,13 @@ class HBL_Historiques extends HBL_Connecteur_BD {
 	/**
 	* Supprime une Civilité.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-21
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-21
 	*
-	* @param[in] $cvl_id Identifiant de la civilité à supprimer
+	* \param[in] $cvl_id Identifiant de la civilité à supprimer
 	*
-	* @return Renvoi TRUE si l'occurrence a été supprimée, FALSE si la civilité n'existe pas. Lève une Exception en cas d'erreur.
+	* \return Renvoi TRUE si l'occurrence a été supprimée, FALSE si la civilité n'existe pas. Lève une Exception en cas d'erreur.
 	*/
 /*		$Query = $this->prepareSQL( 'DELETE ' .
 			 'FROM cvl_civilites ' .
@@ -244,11 +243,11 @@ class HBL_Historiques extends HBL_Connecteur_BD {
 	/**
 	* Calcul le nombre total d'événements dans l'Historique.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-21
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-21
 	*
-	* @return Renvoi le total d es occurrences trouvé. Lève une Exception en cas d'erreur.
+	* \return Renvoi le total d es occurrences trouvé. Lève une Exception en cas d'erreur.
 	*/
 		$Request = 'SELECT ' .
 		 'count(*) AS total ' .

@@ -4,25 +4,24 @@ include_once( 'Constants.inc.php' );
 include_once( HBL_DIR_LIBRARIES . '/Class_HBL_Connecteur_BD_PDO.inc.php' );
 
 
-class HBL_Identites_Profiles extends HBL_Connecteur_BD {
+class HBL_Identites_Profils extends HBL_Connexioneur_BD {
 /**
 * Cette classe gère la relation entre les Identités et les Entités.
 *
-* PHP version 5
-* @license Copyright Loxense
-* @author Pierre-Luc MARY
-* @date 2015-05-28
+* \license Copyright Loxense
+* \author Pierre-Luc MARY
+* \date 2015-05-28
 */
 
 	public function __construct() {
 	/**
 	* Connexion à la base de données.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-28
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-28
 	*
-	* @return Renvoi un booléen sur le succès de la connexion à la base de données
+	* \return Renvoi un booléen sur le succès de la connexion à la base de données
 	*/
 		parent::__construct();
 		
@@ -30,25 +29,24 @@ class HBL_Identites_Profiles extends HBL_Connecteur_BD {
 	}
 
 
-	public function rechercherProfilsIdentite( $Id_Identity, $In_Array = FALSE, $Detailed_Obj = FALSE ) {
+	public function rechercherProfilsIdentite( $idn_id, $In_Array = FALSE, $Detailed_Obj = FALSE ) {
 	/**
 	* Lister les Profils d'une Identité.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-28
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-28
 	*
-	* @param[in] $Id_Identity Identifiant de l'Identité
+	* \param[in] $idn_id Identifiant de l'Identité
 	*
-	* @return Renvoi la liste des Profiles rattachés à l'Identité, sinon une liste vide
+	* \return Renvoi la liste des Profiles rattachés à l'Identité, sinon une liste vide
 	*/
-		$Query = $this->prepareSQL( 'SELECT ' .
-		 't1.prf_id, t2.prf_libelle ' .
-		 'FROM idpr_idn_prf AS t1 ' .
-		 'LEFT JOIN prf_profils AS t2 ON t1.prf_id = t2.prf_id ' .
-		 'WHERE t1.idn_id = :Idn_id ' );
+		$Query = $this->prepareSQL( 'SELECT prf.*, idpr.idn_id AS "autorise"
+			FROM prf_profils AS "prf"
+			LEFT JOIN (SELECT prf_id, idn_id FROM idpr_idn_prf WHERE idn_id = :idn_id) AS "idpr" ON idpr.prf_id = prf.prf_id
+			ORDER BY prf_libelle' ) ;
 		
-		$this->bindSQL( $Query, ':Idn_id', $Id_Identity, PDO::PARAM_INT ) ;
+		$this->bindSQL( $Query, ':idn_id', $idn_id, PDO::PARAM_INT ) ;
 		
 		$this->executeSQL( $Query );
 		
@@ -72,14 +70,14 @@ class HBL_Identites_Profiles extends HBL_Connecteur_BD {
 	/**
 	* Ajouter un Profil à une Identité.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-28
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-28
 	*
-	* @param[in] $Id_Identity Identifiant de l'Identité
-	* @param[in] $Id_Profile Identifiant du Profil
+	* \param[in] $Id_Identity Identifiant de l'Identité
+	* \param[in] $Id_Profile Identifiant du Profil
 	*
-	* @return Renvoi TRUE si l'association entre l'Identité et le Profile a été créée, sinon FALSE. Lève une Exception en cas d'erreur.
+	* \return Renvoi TRUE si l'association entre l'Identité et le Profile a été créée, sinon FALSE. Lève une Exception en cas d'erreur.
 	*/
 		$Query = $this->prepareSQL( 'INSERT ' .
 		 'INTO idpr_idn_prf ' .
@@ -104,14 +102,14 @@ class HBL_Identites_Profiles extends HBL_Connecteur_BD {
 	/**
 	* Détruire un Profil rattaché à une Identité.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-28
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-28
 	*
-	* @param[in] $Id_Identity Identifiant de l'Identité
-	* @param[in] $Id_Profile Identifiant du Profil
+	* \param[in] $Id_Identity Identifiant de l'Identité
+	* \param[in] $Id_Profile Identifiant du Profil
 	*
-	* @return Renvoi TRUE si l'association entre l'Identité et le Profile a été supprimée, sinon FALSE. Lève une Exception en cas d'erreur.
+	* \return Renvoi TRUE si l'association entre l'Identité et le Profile a été supprimée, sinon FALSE. Lève une Exception en cas d'erreur.
 	*/
 		$Query = $this->prepareSQL( 'DELETE ' .
 		 'FROM idpr_idn_prf ' .
@@ -135,13 +133,13 @@ class HBL_Identites_Profiles extends HBL_Connecteur_BD {
 	/**
 	* Détruire les Profiles rattaché à une Identité.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-28
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-28
 	*
-	* @param[in] $Id_Identity Identifiant de l'Identité
+	* \param[in] $Id_Identity Identifiant de l'Identité
 	*
-	* @return Renvoi vrai si l'association entre l'Identité et tous ses Profiles ont été supprimées, sinon lève une exception
+	* \return Renvoi vrai si l'association entre l'Identité et tous ses Profiles ont été supprimées, sinon lève une exception
 	*/
 		$Query = $this->prepareSQL( 'DELETE ' .
 		 'FROM idpr_idn_prf ' .

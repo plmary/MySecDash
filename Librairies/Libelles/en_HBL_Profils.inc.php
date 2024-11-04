@@ -9,31 +9,31 @@
 * @date 2017-03-05
 */
 
-	$L_List_Profiles = 'Profile List';
+	$L_Liste_Profils = 'Profile List';
 	
-	$L_Profile_Add = "Add Profile";
-	$L_Profile_Create = 'Create profile';
-	$L_Profile_Modify = 'Modify profile';
-	$L_Profile_Delete = 'Remove profile';
+	$L_Ajouter_Profil = "Add Profile";
+	$L_Creer_Profil = 'Create profile';
+	$L_Modifier_Profil = 'Modify profile';
+	$L_Supprimer_Profil = 'Remove profile';
 	
-	$L_Profile_Added = 'Profile added' ;
-	$L_Profile_Created = 'Profile created' ;
-	$L_Profile_Modified = 'Profile modified';
-	$L_Profile_Deleted = 'Profile deleted';
+	$L_Profil_Ajoute = 'Profile added' ;
+	$L_Profil_Cree = 'Profile created' ;
+	$L_Profil_Modifie = 'Profile modified';
+	$L_Profil_Supprime = 'Profile deleted';
 
-	$L_Right_Added = 'Right added';
-	$L_Right_Deleted = 'Right deleted';
+	$L_Droit_Ajoute = 'Right added';
+	$L_Droit_Supprime = 'Right deleted';
 
-	$L_ERR_CREA_Profile = 'An error occurred during profile creation';
-	$L_ERR_MODI_Profile = 'An error occurred during profile modification';
-	$L_ERR_DELE_Profile = 'An error occurred during profile removal';
-	$L_ERR_DUPL_Profile  = 'Profile is already in use';
-	$L_ERR_ASSO_Identity = 'An error occurred while linking profiles to an identity'; // Erreur durant l\'association des profils à l\'identité
+	$L_ERR_CREA_Profil = 'An error occurred during profile creation';
+	$L_ERR_MODI_Profil = 'An error occurred during profile modification';
+	$L_ERR_SUPP_Profil = 'An error occurred during profile removal';
+	$L_ERR_DUPL_Profil  = 'Profile is already in use';
+	$L_ERR_ASSO_Identite = 'An error occurred while linking profiles to an identity'; // Erreur durant l\'association des profils à l\'identité
 
-	$L_Users_Profiles = 'Association between profiles and identities';
-	$L_Profiles_Management = "Profile Management";
-	$L_Associated_Profiles = "Association Pending Profiles";
+	$L_Association_Utilisateurs_Profils = 'Association between profiles and identities';
+	$L_Gestion_Profils = "Profile Management";
+	$L_Profils_A_Associer = "Association Pending Profiles";
 
-	$L_Profile_Confirm_Deleted = 'Do you really want to delete the profile "<span class="purple">%s</span>"?';
-	$L_Profile_Confirm_Deleted_Associated = 'Warning, this profile "<span class="purple">%s</span>" is associated with:';
+	$L_Confirmation_Suppression_Profil = 'Do you really want to delete the profile "<span class="fg_couleur_1">%s</span>"?';
+	$L_Confirmation_Suppression_Profil_Associe = 'Warning, this profile "<span class="fg_couleur_1">%s</span>" is associated with:';
 ?>

@@ -6,9 +6,8 @@ class Gestionnaires  extends HBL_Parametres {
 /**
 * Cette classe gère les équipes de Gestionnaires.
 *
-* PHP version 5
-* @license Loxense
-* @author Pierre-Luc MARY
+* \license Loxense
+* \author Pierre-Luc MARY
 */
 
 	const PREFIXE = "GST_";
@@ -28,12 +27,12 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Connexion à la base de données via IICA_DB_Connector.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @version 1.0
-	* @date 2016-10-24
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \version 1.0
+	* \date 2016-10-24
 	*
-	* @return Renvoi un booléen sur le succès de la connexion à la base de données
+	* \return Renvoi un booléen sur le succès de la connexion à la base de données
 	*/
 		parent::__construct();
 		
@@ -45,14 +44,14 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Lister les gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-18
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-18
 	*
-	* @param[in] $Trier Permet de définir un ordre d'affichage.
-	* @param[in] $Recherche Permet de réaliser une recherche particulière.
+	* \param[in] $Trier Permet de définir un ordre d'affichage.
+	* \param[in] $Recherche Permet de réaliser une recherche particulière.
 	*
-	* @return Renvoi une liste de mances génériques ou une liste vide. Lève une Exception en cas d'erreur.
+	* \return Renvoi une liste de mances génériques ou une liste vide. Lève une Exception en cas d'erreur.
 	*/
 		$Sql = 'SELECT gst.gst_id, gst.gst_libelle, ' .
 			'COUNT(DISTINCT gsts.tsp_id) AS total_tsp, ' .
@@ -112,13 +111,13 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Ajouter une nouvelle équipe de Gestionnaire
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-18
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-18
 	*
-	* @param[in] $Libelle le libellé de la nouvelle équipe de Gestionnaires
+	* \param[in] $Libelle le libellé de la nouvelle équipe de Gestionnaires
 	*
-	* @return Renvoi vrai si la nouvelle équipe de Gestionnaires a été créée. Sinon, lève une exception.
+	* \return Renvoi vrai si la nouvelle équipe de Gestionnaires a été créée. Sinon, lève une exception.
 	*			
 	*/
 		$Requete = 'INSERT INTO gst_gestionnaires ( gst_libelle ) VALUES ( :libelle )';
@@ -148,13 +147,13 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Supprimer une équipe de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-18
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-18
 	*
-	* @param[in] $Id ID de l'équipe de Gestionnaires à supprimer
+	* \param[in] $Id ID de l'équipe de Gestionnaires à supprimer
 	*
-	* @return Renvoi vrai si l'équipe de Gestionnaires a été supprimée. Sinon, lève une exception.
+	* \return Renvoi vrai si l'équipe de Gestionnaires a été supprimée. Sinon, lève une exception.
 	*			
 	*/
 		$Requete = 'DELETE FROM gst_gestionnaires WHERE gst_id = :id ';
@@ -172,13 +171,13 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Vérifie si l'équipe de Gestionnaires est associée à des Types de Support et des Identités.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-18
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-18
 	*
-	* @param[in] $Id l'Id de la Mesure Générique à vérifier
+	* \param[in] $Id l'Id de la Mesure Générique à vérifier
 	*
-	* @return Renvoi une occurrence contenant le compteurs. Sinon, lève une exception.
+	* \return Renvoi une occurrence contenant le compteurs. Sinon, lève une exception.
 	*			
 	*/
 		$Request = 'SELECT ' .
@@ -226,13 +225,13 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Récupérer une équipe de Gestionnaire.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-18
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-18
 	*
-	* @param[in] $Id Id de l'équipe de Gestionnaire à récupérer
+	* \param[in] $Id Id de l'équipe de Gestionnaire à récupérer
 	*
-	* @return Renvoi une Mesure Générique ou une liste vide. Lève une Exception en cas d'erreur.
+	* \return Renvoi une Mesure Générique ou une liste vide. Lève une Exception en cas d'erreur.
 	*/
 		$Sql = 'SELECT gst.gst_id, gst.gst_libelle, ' .
 			'COUNT(DISTINCT gsts.tsp_id) AS total_tsp, ' .
@@ -257,14 +256,14 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Modifier une équipe de Gestionnaire
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-18
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-18
 	*
-	* @param[in] $Id l'ID de l'équipe de Gestionnaire à modifier
-	* @param[in] $Libelle le libelle à prendre en compte
+	* \param[in] $Id l'ID de l'équipe de Gestionnaire à modifier
+	* \param[in] $Libelle le libelle à prendre en compte
 	*
-	* @return Renvoi vrai si l'équipe de Gestionnaire a été modifiée. Lève une Exception en cas d'erreur.
+	* \return Renvoi vrai si l'équipe de Gestionnaire a été modifiée. Lève une Exception en cas d'erreur.
 	*			
 	*/
 		$SQL = 'UPDATE gst_gestionnaires '.
@@ -285,15 +284,15 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Modifier le champ d'une équipe de Gestionnaire
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-21
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-21
 	*
-	* @param[in] $Id l'ID de l'équipe de Gestionnaire à modifier
-	* @param[in] $Source Nom du champ à modifier
-	* @param[in] $Valeur Valeur à affecter au champ à modifier
+	* \param[in] $Id l'ID de l'équipe de Gestionnaire à modifier
+	* \param[in] $Source Nom du champ à modifier
+	* \param[in] $Valeur Valeur à affecter au champ à modifier
 	*
-	* @return Renvoi vrai si l'équipe de Gestionnaire a été modifiée. Lève une Exception en cas d'erreur.
+	* \return Renvoi vrai si l'équipe de Gestionnaire a été modifiée. Lève une Exception en cas d'erreur.
 	*			
 	*/
 		$SQL = 'UPDATE gst_gestionnaires '.
@@ -321,15 +320,15 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Lister les Types de Support qui sont associées à cette Equipe de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-19
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-19
 	*
-	* @param[in] $ID Id de l'équipe de Gestionnaires à contrôler
-	* @param[in] $Toutes Si ce flag est à TRUE, on liste toutes les actions, sinon seulement celles associées
-	* @param[in] $Langue Langue dans laquelle on remonte les libellés
+	* \param[in] $ID Id de l'équipe de Gestionnaires à contrôler
+	* \param[in] $Toutes Si ce flag est à TRUE, on liste toutes les actions, sinon seulement celles associées
+	* \param[in] $Langue Langue dans laquelle on remonte les libellés
 	*
-	* @return Renvoi une liste Types de Type de Support. Lève une Exception en cas d'erreur.
+	* \return Renvoi une liste Types de Type de Support. Lève une Exception en cas d'erreur.
 	*
 	*/
 
@@ -370,14 +369,14 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Lister les Utilisateurs qui sont associés à cette Equipe de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-20
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-20
 	*
-	* @param[in] $ID Id de l'Equipe de Gestionnaires
-	* @param[in] $Toutes Si ce flag est à TRUE, on liste tous les Utilisateurs, sinon seulement ceux associées (par défaut Toutes)
+	* \param[in] $ID Id de l'Equipe de Gestionnaires
+	* \param[in] $Toutes Si ce flag est à TRUE, on liste tous les Utilisateurs, sinon seulement ceux associées (par défaut Toutes)
 	*
-	* @return Renvoi une liste des Utilisateurs. Lève une Exception en cas d'erreur.
+	* \return Renvoi une liste des Utilisateurs. Lève une Exception en cas d'erreur.
 	*
 	*/
 
@@ -416,11 +415,11 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Récupère le nombre total d'équipes de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-18
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-18
 	*
-	* @return Renvoi le nombre total d'équipes de Gestionnaires
+	* \return Renvoi le nombre total d'équipes de Gestionnaires
 	*/
 		$Query = $this->prepareSQL( 'SELECT ' .
 		 'count(*) as total ' .
@@ -438,14 +437,14 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Ajoute une association entre un Type d'Actif Support et une Equipe de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-20
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-20
 	*
-	* @param[in] $tsp_id ID du Type Actif de Support à associer
-	* @param[in] $gst_id ID du Gestionnaire à associer
+	* \param[in] $tsp_id ID du Type Actif de Support à associer
+	* \param[in] $gst_id ID du Gestionnaire à associer
 	*
-	* @return Renvoi vrai si l'ajout à réussi ou lève une exception en cas d'erreur
+	* \return Renvoi vrai si l'ajout à réussi ou lève une exception en cas d'erreur
 	*/
 		$Query = $this->prepareSQL( 'INSERT INTO gsts_gst_tsp ' .
 		 '(tsp_id, gst_id) ' .
@@ -464,14 +463,14 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Ajoute une association entre un Utilisateur et une Equipe de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-20
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-20
 	*
-	* @param[in] $idn_id ID de l'Identité à associer
-	* @param[in] $gst_id ID du Gestionnaire à associer
+	* \param[in] $idn_id ID de l'Identité à associer
+	* \param[in] $gst_id ID du Gestionnaire à associer
 	*
-	* @return Renvoi vrai si l'ajout à réussi ou lève une exception en cas d'erreur
+	* \return Renvoi vrai si l'ajout à réussi ou lève une exception en cas d'erreur
 	*/
 		$Query = $this->prepareSQL( 'INSERT INTO idgs_idn_gst ' .
 		 '(idn_id, gst_id) ' .
@@ -490,14 +489,14 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Supprime l'association entre un Type d'Actif Support et une Equipe de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-20
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-20
 	*
-	* @param[in] $tsp_id ID du Type Actif de Support à associer
-	* @param[in] $gst_id ID du Gestionnaire à associer
+	* \param[in] $tsp_id ID du Type Actif de Support à associer
+	* \param[in] $gst_id ID du Gestionnaire à associer
 	*
-	* @return Renvoi vrai si l'ajout à réussi ou lève une exception en cas d'erreur
+	* \return Renvoi vrai si l'ajout à réussi ou lève une exception en cas d'erreur
 	*/
 		$Query = $this->prepareSQL( 'DELETE FROM gsts_gst_tsp ' .
 			'WHERE tsp_id = :tsp_id AND gst_id = :gst_id ' );
@@ -514,14 +513,14 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Supprime l'association entre un Utilisateur et une Equipe de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-20
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-20
 	*
-	* @param[in] $idn_id ID de l'Identité à associer
-	* @param[in] $gst_id ID du Gestionnaire à associer
+	* \param[in] $idn_id ID de l'Identité à associer
+	* \param[in] $gst_id ID du Gestionnaire à associer
 	*
-	* @return Renvoi vrai si l'ajout à réussi ou lève une exception en cas d'erreur
+	* \return Renvoi vrai si l'ajout à réussi ou lève une exception en cas d'erreur
 	*/
 		$Query = $this->prepareSQL( 'DELETE FROM idgs_idn_gst ' .
 			'WHERE idn_id = :idn_id AND gst_id = :gst_id ' );
@@ -538,13 +537,13 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Lister les associations entre un Type de Support et les Equipes de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-21
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-21
 	*
-	* @param[in] $ID Id de l'équipe de Gestionnaires à contrôler
+	* \param[in] $ID Id de l'équipe de Gestionnaires à contrôler
 	*
-	* @return Renvoi une liste de Gestionnaires. Lève une Exception en cas d'erreur.
+	* \return Renvoi une liste de Gestionnaires. Lève une Exception en cas d'erreur.
 	*
 	*/
 
@@ -573,14 +572,14 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Ajoute une association entre un Type de Support et une Equipe de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-21
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-21
 	*
-	* @param[in] $ID Id du Type d'Actif Support à associer
-	* @param[in] $Gestionnaire Id de l'Equipe de Gestionnaires à associer
+	* \param[in] $ID Id du Type d'Actif Support à associer
+	* \param[in] $Gestionnaire Id de l'Equipe de Gestionnaires à associer
 	*
-	* @return Renvoi une liste de Gestionnaires. Lève une Exception en cas d'erreur.
+	* \return Renvoi une liste de Gestionnaires. Lève une Exception en cas d'erreur.
 	*
 	*/
 
@@ -601,14 +600,14 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Supprime une association entre un Type de Support et une Equipe de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-21
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-21
 	*
-	* @param[in] $ID Id du Type d'Actif Support à associer
-	* @param[in] $Gestionnaire Id de l'Equipe de Gestionnaires à associer
+	* \param[in] $ID Id du Type d'Actif Support à associer
+	* \param[in] $Gestionnaire Id de l'Equipe de Gestionnaires à associer
 	*
-	* @return Renvoi une liste de Gestionnaires. Lève une Exception en cas d'erreur.
+	* \return Renvoi une liste de Gestionnaires. Lève une Exception en cas d'erreur.
 	*
 	*/
 
@@ -627,13 +626,13 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Compte le nombre d'association entre un Type de Support et ses Equipes de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-21
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-21
 	*
-	* @param[in] $ID Id du Type d'Actif Support à associer
+	* \param[in] $ID Id du Type d'Actif Support à associer
 	*
-	* @return Renvoi le nombre d'association. Lève une Exception en cas d'erreur.
+	* \return Renvoi le nombre d'association. Lève une Exception en cas d'erreur.
 	*
 	*/
 
@@ -654,13 +653,13 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Lister les associations entre un Utilisateur et les Equipes de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-22
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-22
 	*
-	* @param[in] $ID Id de l'équipe de Gestionnaires à contrôler
+	* \param[in] $ID Id de l'équipe de Gestionnaires à contrôler
 	*
-	* @return Renvoi une liste de Gestionnaires. Lève une Exception en cas d'erreur.
+	* \return Renvoi une liste de Gestionnaires. Lève une Exception en cas d'erreur.
 	*
 	*/
 		if ( $ID == '' or $ID == NULL ) $InternalID = 'NULL';
@@ -684,14 +683,14 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Ajoute une association entre un Utilisateur et une Equipe de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-22
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-22
 	*
-	* @param[in] $ID Id de l'Utilisateur à associer
-	* @param[in] $Gestionnaire Id de l'Equipe de Gestionnaires à associer
+	* \param[in] $ID Id de l'Utilisateur à associer
+	* \param[in] $Gestionnaire Id de l'Equipe de Gestionnaires à associer
 	*
-	* @return Renvoi une liste de Gestionnaires. Lève une Exception en cas d'erreur.
+	* \return Renvoi une liste de Gestionnaires. Lève une Exception en cas d'erreur.
 	*
 	*/
 
@@ -712,14 +711,14 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Supprime une association entre un Utilisateur et une Equipe de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-22
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-22
 	*
-	* @param[in] $ID Id de l'Utilisateur à associer
-	* @param[in] $Gestionnaire Id de l'Equipe de Gestionnaires à associer
+	* \param[in] $ID Id de l'Utilisateur à associer
+	* \param[in] $Gestionnaire Id de l'Equipe de Gestionnaires à associer
 	*
-	* @return Renvoi une liste de Gestionnaires. Lève une Exception en cas d'erreur.
+	* \return Renvoi une liste de Gestionnaires. Lève une Exception en cas d'erreur.
 	*
 	*/
 
@@ -738,13 +737,13 @@ class Gestionnaires  extends HBL_Parametres {
 	/**
 	* Compte le nombre d'association entre un Type de Support et ses Equipes de Gestionnaires.
 	*
-	* @license Loxense
-	* @author Pierre-Luc MARY
-	* @date 2017-01-21
+	* \license Loxense
+	* \author Pierre-Luc MARY
+	* \date 2017-01-21
 	*
-	* @param[in] $ID Id de l'Utilisateur à utiliser
+	* \param[in] $ID Id de l'Utilisateur à utiliser
 	*
-	* @return Renvoi le nombre d'association. Lève une Exception en cas d'erreur.
+	* \return Renvoi le nombre d'association. Lève une Exception en cas d'erreur.
 	*
 	*/
 

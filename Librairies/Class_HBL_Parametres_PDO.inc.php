@@ -7,10 +7,9 @@ include_once( HBL_DIR_LIBRARIES . '/Class_HBL_Connecteur_BD_PDO.inc.php' );
 /**
 * Cette classe gère les paramètres internes de l'application.
 *
-* PHP version 5
-* @license Copyright Loxense
-* @author Pierre-Luc MARY
-* @date 2015-05-31
+* \license Copyright Loxense
+* \author Pierre-Luc MARY
+* \date 2015-05-31
 *
 */
 
@@ -18,17 +17,17 @@ define( 'L_SPR_NAME', 30 );
 define( 'L_SPR_VALUE', 60 );
 
 
-class HBL_Parametres extends HBL_Connecteur_BD {
+class HBL_Parametres extends HBL_Connexioneur_BD {
 
 	public function __construct() {
 	/**
 	* Connexion à la base de données.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @return Renvoi un booléen sur le succès de la connexion à la base de données
+	* \return Renvoi un booléen sur le succès de la connexion à la base de données
 	*/
 		parent::__construct();
 		
@@ -44,27 +43,27 @@ class HBL_Parametres extends HBL_Connecteur_BD {
 	/**
 	* Récupère la valeur d'un paramètre.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @param[in] $Name Nom du paramètre recherché
+	* \param[in] $Name Nom du paramètre recherché
 	*
-	* @return Renvoi une chaîne contenant la valeur du paramètre ou une chaîne vide si le paramètre n'existe pas.
+	* \return Renvoi une chaîne contenant la valeur du paramètre ou une chaîne vide si le paramètre n'existe pas.
 	*/
 		// -----------------------------------
 		// Récupère la valeur d'un paramètre.
 		$Request = 'SELECT ' .
 		 'prs_valeur ' .
 		 'FROM prs_parametres_systeme ' .
- 		 'WHERE prs_nom = :Name ';
+		 'WHERE prs_nom = :Name ';
 		 
 		$Query = $this->prepareSQL( $Request );
 		
 		$this->bindSQL( $Query, ':Name', $Name, PDO::PARAM_STR, L_SPR_NAME );
 
 		$Result = $this->executeSQL( $Query );
-      
+
 		if ( $this->RowCount == 0 ) {
 			return '';
 		}
@@ -74,7 +73,7 @@ class HBL_Parametres extends HBL_Connecteur_BD {
 		if ( $Occurrence == '' ) $Value = '';
 		else $Value = $Occurrence->prs_valeur;
 
- 		return $Value;
+		return $Value;
 	}
 
 	
@@ -82,13 +81,13 @@ class HBL_Parametres extends HBL_Connecteur_BD {
 	/**
 	* Récupère les valeurs d'un paramètre par son Id.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2018-04-16
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2018-04-16
 	*
-	* @param[in] $ID Id. du paramètre à rechercher
+	* \param[in] $ID Id. du paramètre à rechercher
 	*
-	* @return Renvoi un objet contenant les valeurs du paramètre ou "FALSE" si le paramètre n'existe pas.
+	* \return Renvoi un objet contenant les valeurs du paramètre ou "FALSE" si le paramètre n'existe pas.
 	*/
 		// -----------------------------------
 		// Récupère la valeur d'un paramètre.
@@ -120,14 +119,14 @@ class HBL_Parametres extends HBL_Connecteur_BD {
 	/**
 	* Crée ou met à jour la valeur d'un paramètre.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-31
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-31
 	*
-	* @param[in] $Name Nom du paramètre à créer ou mettre à jour
-	* @param[in] $Value Valeur du paramètre à créer ou mettre à jour
+	* \param[in] $Name Nom du paramètre à créer ou mettre à jour
+	* \param[in] $Value Valeur du paramètre à créer ou mettre à jour
 	*
-	* @return Renvoi vrai si le paramêtre a été mis à jour, sinon renvoi une exception
+	* \return Renvoi vrai si le paramêtre a été mis à jour, sinon renvoi une exception
 	*/
 
 		if ( $this->recupererParametre( $Name ) == '' ) {
@@ -154,14 +153,14 @@ class HBL_Parametres extends HBL_Connecteur_BD {
 	/**
 	* Met à jour la valeur d'un paramètre pointé par son ID.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-10-13
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-10-13
 	*
-	* @param[in] $ID Id. du paramètre à mettre à jour
-	* @param[in] $Value Valeur du paramètre à créer ou mettre à jour
+	* \param[in] $ID Id. du paramètre à mettre à jour
+	* \param[in] $Value Valeur du paramètre à créer ou mettre à jour
 	*
-	* @return Renvoi vrai si le paramêtre a été mis à jour, sinon renvoi une exception
+	* \return Renvoi vrai si le paramêtre a été mis à jour, sinon renvoi une exception
 	*/
 
 		$Query = $this->prepareSQL( 'UPDATE prs_parametres_systeme SET ' .
@@ -182,16 +181,16 @@ class HBL_Parametres extends HBL_Connecteur_BD {
 	/**
 	* Lister les différents paramètres internes de Loxense.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-15
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-15
 	*
-	* @param[in] $orderBy Permet de gérer l'ordre d'affichage.
-	* @param[in] $search Permet de recherchrer des Entités contenant une partie de cette chaîne.
-	* @param[in] $specificColumns Permet de récupérer des colonnes spécifiques et non pas toutes les colonnes.
-	* @param[in] $regroupement Permet de limiter la recherche à un groupe de Paramètres.
+	* \param[in] $orderBy Permet de gérer l'ordre d'affichage.
+	* \param[in] $search Permet de recherchrer des Entités contenant une partie de cette chaîne.
+	* \param[in] $specificColumns Permet de récupérer des colonnes spécifiques et non pas toutes les colonnes.
+	* \param[in] $regroupement Permet de limiter la recherche à un groupe de Paramètres.
 	*
-	* @return Renvoi un tableau d'objet ou un tableau vide si pas de données trouvées. Lève une exception en cas d'erreur.
+	* \return Renvoi un tableau d'objet ou un tableau vide si pas de données trouvées. Lève une exception en cas d'erreur.
 	*/
 		$Request = 'SELECT ' .
 			$specificColumns . ' ' .
@@ -260,11 +259,11 @@ class HBL_Parametres extends HBL_Connecteur_BD {
 	/**
 	* Lister les différents Groupes de Paramètres.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-15
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-15
 	*
-	* @return Renvoi un tableau d'objet ou un tableau vide si pas de données trouvées. Lève une exception en cas d'erreur.
+	* \return Renvoi un tableau d'objet ou un tableau vide si pas de données trouvées. Lève une exception en cas d'erreur.
 	*/
 
 		if ( $_SESSION['idn_super_admin'] !== TRUE ) {
@@ -291,11 +290,11 @@ class HBL_Parametres extends HBL_Connecteur_BD {
 	/**
 	* Récupère le nombre total de Paramètres.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-11-24
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-11-24
 	*
-	* @return Renvoi le nombre total d'Identités
+	* \return Renvoi le nombre total d'Identités
 	*/
 		$Query = $this->prepareSQL( 'SELECT ' .
 		 'count(*) as total ' .
@@ -313,10 +312,10 @@ class HBL_Parametres extends HBL_Connecteur_BD {
 		/**
 		 * Récupère toutes les langues gérées par l'outil.
 		 *
-		 * @license Copyright Loxense
-		 * @author Pierre-Luc MARY
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
 		 *
-		 * @return Renvoi un tableau d'objet ou un tableau vide si pas de données trouvées. Lève une exception en cas d'erreur.
+		 * \return Renvoi un tableau d'objet ou un tableau vide si pas de données trouvées. Lève une exception en cas d'erreur.
 		 */
 		
 		$Request = 'SELECT ' .

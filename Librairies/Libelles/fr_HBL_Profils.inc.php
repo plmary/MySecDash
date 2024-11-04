@@ -9,31 +9,31 @@
 * @date 2017-03-05
 */
 
-	$L_List_Profiles = 'Liste des Profils';
+	$L_Liste_Profils = 'Liste des Profils';
 	
-	$L_Profile_Add = "Ajouter un profil";
-	$L_Profile_Create = 'Créer un profil';
-	$L_Profile_Modify = 'Modifier un profil';
-	$L_Profile_Delete = 'Supprimer un profil';
+	$L_Ajouter_Profil = "Ajouter un profil";
+	$L_Creer_Profil = 'Créer un profil';
+	$L_Modifier_Profil = 'Modifier un profil';
+	$L_Supprimer_Profil = 'Supprimer un profil';
 	
-	$L_Profile_Added = 'Profil ajouté' ;
-	$L_Profile_Created = 'Profil créé' ;
-	$L_Profile_Modified = 'Profil modifié' ;
-	$L_Profile_Deleted = 'Profil supprimé' ;
+	$L_Profil_Ajoute = 'Profil ajouté' ;
+	$L_Profil_Cree = 'Profil créé' ;
+	$L_Profil_Modifie = 'Profil modifié' ;
+	$L_Profil_Supprime = 'Profil supprimé' ;
 
-	$L_Right_Added = 'Droit ajouté';
-	$L_Right_Deleted = 'Droit supprimé';
+	$L_Droit_Ajoute = 'Droit ajouté';
+	$L_Droit_Supprime = 'Droit supprimé';
 
-	$L_ERR_CREA_Profile = 'Erreur durant la création du profil';
-	$L_ERR_MODI_Profile = 'Erreur durant la modification du profil';
-	$L_ERR_DELE_Profile = 'Erreur durant la suppression du profil';
-	$L_ERR_DUPL_Profile = 'Profil déjà utilisé';
-	$L_ERR_ASSO_Identity = 'Erreur durant l\'association des profils à l\'identité';
+	$L_ERR_CREA_Profil = 'Erreur durant la création du profil';
+	$L_ERR_MODI_Profil = 'Erreur durant la modification du profil';
+	$L_ERR_SUPP_Profil = 'Erreur durant la suppression du profil';
+	$L_ERR_DUPL_Profil = 'Profil déjà utilisé';
+	$L_ERR_ASSO_Identite = 'Erreur durant l\'association des profils à l\'identité';
 
-	$L_Users_Profiles = 'Association des Profils à une Identité';
-	$L_Profiles_Management = "Gestion des Profils";
-	$L_Associated_Profiles = "Profils à associer";
+	$L_Association_Utilisateurs_Profils = 'Association des Profils à une Identité';
+	$L_Gestion_Profils = "Gestion des Profils";
+	$L_Profils_A_Associer = "Profils à associer";
 
-	$L_Profile_Confirm_Deleted = 'Voulez-vous vraiment supprimer le profil "<span class="purple">%s</span>" ?';
-	$L_Profile_Confirm_Deleted_Associated = 'Attention, le profil "<span class="purple">%s</span>" est associée avec :';
+	$L_Confirmation_Suppression_Profil = 'Voulez-vous vraiment supprimer le profil "<span class="fg_couleur_1">%s</span>" ?';
+	$L_Confirmation_Suppression_Profil_Associe = 'Attention, le profil "<span class="fg_couleur_1">%s</span>" est associé avec :';
 ?>

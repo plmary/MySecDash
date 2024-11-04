@@ -14,7 +14,7 @@ var Pile_Messages = [];
 $(document).ready(function(){
 	// Gestion du "click" sur le bouton de "Déconnexion".
 	$("#dcnx").click( function() {
-		window.location = Parameters['URL_BASE'] + '/Loxense-Connexion.php?action=DCNX';
+		window.location = Parameters['URL_BASE'] + '/MySecDash-Connexion.php?action=DCNX';
 	});
 
 
@@ -35,7 +35,7 @@ $(document).ready(function(){
 
 
 	// Si le script courant n'est pas le script de connexion, alors on déclenche la supervision de l'expiration de la session de l'utilisateur.
-	if ( /*document.URL.search(/MySecDash-Connexion/) == -1 */document.URL.search(/MySecDash-Maquette/) == -1 ) {
+	if ( document.URL.search(/MySecDash-Connexion/) == -1 ) {
 		function controlerTempsSession() {
 			$.ajax({
 				url: Parameters['URL_BASE'] + '/MySecDash-Connexion.php?action=AJAX_CTRL_TEMPS_SESSION',
@@ -65,9 +65,7 @@ $(document).ready(function(){
 		var myVar=setInterval(controlerTempsSession, 1000 * 60); // Déclenche la fonction toutes les 60 secondes.
 	}
 
-
-	// Gestion du "click" sur le bouton de réinitialisation du temps de session.
-	$('#temps_session').on('click', function() {
+	function sauverTempsSession() {
 		$.ajax({
 			url: Parameters['URL_BASE'] + '/MySecDash-Connexion.php?action=AJAX_SAUVER_TEMPS_SESSION',
 			type: 'POST',
@@ -78,8 +76,31 @@ $(document).ready(function(){
 				return;
 			}
 		});
+	}
+
+	// Gestion du "click" sur le bouton de réinitialisation du temps de session.
+	$('#temps_session').on('click', function() {
+		sauverTempsSession();
 	});
 
+
+/*
+	$('#titre_ecran').on('click', function() {
+		sauverTempsSession();
+	});
+
+	$('#entete_tableau').on('click', function() {
+		sauverTempsSession();
+	});
+
+	$('#corps_tableau').on('click', function() {
+		sauverTempsSession();
+	});
+
+	$('#pied_tableau').on('click', function() {
+		sauverTempsSession();
+	});
+*/
 
 	// Gère l'affichage d'une fenêtre d'attente durant un traitement Ajax.
 	$(document).ajaxStart(function(){
@@ -170,6 +191,17 @@ $(document).ready(function(){
 		});
 	}
 
+	$('#corps_tableau_univers .mysecdash').on('click', function() {
+		window.location = Parameters['URL_BASE'] + '/MySecDash-Principal.php';
+	});
+
+	$('#corps_tableau_univers .mycontinuity').on('click', function() {
+		window.location = Parameters['URL_BASE'] + '/MyContinuity-Principal.php';
+	});
+
+	$('#corps_tableau_univers .myrisk').on('click', function() {
+		alert('myrisk');
+	});
 });
 
 
@@ -388,7 +420,7 @@ function afficherMessage( texteMsg, statut, elementSpecifique, delai, message_in
 	var Top_Depart = 65;
 	var Hauteur_Message;
 	var Position_Message;
-	var maClass, monImage, monLibelle;
+	var maClass, monImage;
 	
 	Pile_Messages.push( Id_Message );
 
@@ -397,13 +429,11 @@ function afficherMessage( texteMsg, statut, elementSpecifique, delai, message_in
 	if (statut == 'success') {
 		// Déclenche la fonction après l'attente "delai".
 		Parameters['internal_timer_message'] = setTimeout('effacerMessage()', 1000 * delai);
-		maClass = 'alert-success';
-		monImage = 's_okay.png';
-		monLibelle = 'success';
+		maClass = 'alert-success text-success';
+		monImage = 'check2-circle';
 	} else {
-		maClass = 'alert-warning';
-		monImage = 's_error.png';
-		monLibelle = 'error';
+		maClass = 'alert-danger text-danger';
+		monImage = 'x-circle';
 	}
 
 	if ( texteMsg != '' ) {
@@ -413,7 +443,7 @@ function afficherMessage( texteMsg, statut, elementSpecifique, delai, message_in
 
 		code_HTML += '" role="alert" onClick="effacerMessage( ' + Id_Message + ' );">' +
 		 ' <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-		 ' <img alt="' + monLibelle + '" src="' + Parameters['URL_PICTURES'] + '/' + monImage + '"> ' + texteMsg +
+		 ' <i class="bi-' + monImage + ' ' + maClass + '"></i>&nbsp;&nbsp;&nbsp;' + texteMsg +
 		 '</div>\n';
 
 		$( elementSpecifique ).append( code_HTML );
@@ -427,8 +457,8 @@ function afficherMessage( texteMsg, statut, elementSpecifique, delai, message_in
 
 
 // Affiche une fenêtre modale pouvant inclure un formulaire.
-function construireModal( Id_Modal, Titre, Corps, Id_Bouton, Libelle_Bouton, Bouton_Fermer, Libelle_Bouton_Fermer, Nom_Formulaire,
-	Taille_Modal, Id_Bouton_Alternatif, Libelle_Bouton_Alternatif ) {
+function construireModal( Id_Modal, Titre, Corps, Id_Bouton, Libelle_Bouton, Bouton_Fermer, 
+	Libelle_Bouton_Fermer, Nom_Formulaire, Taille_Modal, Id_Bouton_Alternatif, Libelle_Bouton_Alternatif ) {
 /**
 * Standardisation des écrans de type "modal".
 * La standardisation définit une fenêtre complète.
@@ -505,7 +535,7 @@ function changerMdP( script_suivant ) {
 	script_suivant = script_suivant || '';
 
 	$.ajax({
-		url: Parameters['URL_BASE'] + '/Loxense-Connexion.php?action=AJAX_LBL_CHG_MDP',
+		url: Parameters['URL_BASE'] + '/MySecDash-Connexion.php?action=AJAX_LBL_CHG_MDP',
 		async: false,
 		type: 'POST',
 		dataType: 'json',
@@ -542,7 +572,7 @@ function changerMdP( script_suivant ) {
 				var C_Password = $('#C_Password').val();
 
 				$.ajax({
-					url: Parameters['URL_BASE'] + '/Loxense-Connexion.php?action=AJAX_CHG_MDP',
+					url: Parameters['URL_BASE'] + '/MySecDash-Connexion.php?action=AJAX_CHG_MDP',
 					type: 'POST',
 					data: $.param({'O_Password': O_Password, 'N_Password': N_Password, 'C_Password': C_Password}),
 					dataType: 'json',
@@ -572,7 +602,7 @@ function changerMdP( script_suivant ) {
 		},
 		error: function(reponse) {
 			var undef;
-			if ( reponse === undef ) window.location = Parameters['URL_BASE'] + '/Loxense-Connexion.php?action=DCNX&bizarre';
+			if ( reponse === undef ) window.location = Parameters['URL_BASE'] + '/MySecDash-Connexion.php?action=DCNX&bizarre';
 
 			afficherErreurSysteme(reponse); // Fonction dans main.js
 		}
@@ -1088,4 +1118,31 @@ function lancerRecherche() {
 			}
 		});
 	});
+}
+
+
+function chercherXObjet(element) {
+	var rec = document.getElementById(element).getBoundingClientRect();
+	return rec.left + window.scrollX;
+}
+
+function chercherYObjet(element) {
+	var rec = document.getElementById(element).getBoundingClientRect();
+	return rec.top + window.scrollY;
+}
+
+function transformePrenom( prenom ) {
+	prenom = prenom
+		.toLowerCase()
+		.split(' ')
+		.map((word) => word[0].toUpperCase() + word.slice(1))
+		.join(' ');
+
+	prenom = prenom
+		.toLowerCase()
+		.split('-')
+		.map((word) => word[0].toUpperCase() + word.slice(1))
+		.join('-');
+
+	return prenom
 }

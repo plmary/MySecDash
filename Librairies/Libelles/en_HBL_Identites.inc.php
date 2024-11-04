@@ -14,55 +14,55 @@
 	
 	$L_Super_Admin = "Superadmin";
 	$L_Admin = "Admin";
-	$L_Administrator = 'Administrator';
-	$L_Assignment = "Member"; // // ex "assignation" apparait ds creation utilisateur pour le lier à 1 ou xx entités
-	$L_Employer_Entity = "Employer's entity";
-	$L_Email = 'Email';
+	$L_Administrateur = 'Administrator';
+	$L_Assignement = "Member"; // // ex "assignation" apparait ds creation utilisateur pour le lier à 1 ou xx entités
+	$L_Entite_Employeur = "Employer's entity";
+	$L_Courriel = 'Email';
 
-	$L_User_Add = 'Add user';
-	$L_User_Create = 'Create user';
-	$L_User_Delete = 'Remove user';
-	$L_User_Modify = 'Modify user';
-	$L_User_View = 'Display user\'s information';
+	$L_Ajouter_Utilisateur = 'Add user';
+	$L_Creer_Utilisateur = 'Create user';
+	$L_Supprimer_Utilisateur = 'Remove user';
+	$L_Modifier_Utilisateur = 'Modify user';
+	$L_Visualiser_Utilisateur = 'Display user\'s information';
 
-	$L_User_Added = 'User added' ;
-	$L_User_Created = 'User created' ; // pas redondant avec added ?
-	$L_User_Modified = 'User modified' ;
-	$L_User_Deleted = 'User removed' ;
+	$L_Utilisateur_Ajoute = 'User added' ;
+	$L_Utilisateur_Cree = 'User created' ; // pas redondant avec added ?
+	$L_Utilisateur_Modifie = 'User modified' ;
+	$L_Utilisateur_Supprime = 'User removed' ;
 
-	$L_Change_Authenticator_Flag = 'Change your credentials';
-	$L_Attempt = 'Attempt';
-	$L_Disabled = 'Disable';
-	$L_Enabled = 'Enable';
-	$L_Last_Connection = 'Previous connection';
-	$L_Expiration_Date = 'Expiration date';
-	$L_Updated_Authentication = 'Last credential modification'; // on parle bien de la derniere date de modif des authentifiants ?
-	$L_Users_List_Return = 'Return to User list';
-	$L_Never_Connected = 'Never logged';
-	$L_To_Activate_User = 'Enable user';
-	$L_To_Deactivate_User = 'Disable user';
+	$L_Flag_Changement_Authentifiant = 'Change your credentials';
+	$L_Tentative = 'Attempt';
+	$L_Desactiver = 'Disable';
+	$L_Activer = 'Enable';
+	$L_Derniere_Connexion = 'Previous connection';
+	$L_Date_Expiration = 'Expiration date';
+	$L_Date_Changement_Authentifiant = 'Last credential modification'; // on parle bien de la derniere date de modif des authentifiants ?
+	$L_Retour_Liste_Utilisateurs = 'Return to User list';
+	$L_Jamais_Connecte = 'Never logged';
+	$L_Activer_Utilisateur = 'Enable user';
+	$L_Desactiver_Utilisateur = 'Disable user';
 
-	$L_Authenticator_Reset = 'Reset the password';
-	$L_Password_Reseted = 'The password has been reset';
-	$L_Attempt_Reset = 'Reset the login attempt counter';
-	$L_Attempt_Reseted = 'The login attempt counter has been reset';
-	$L_Expiration_Date_Reset = 'Reset the expiration date';
-	$L_Expiration_Date_Reseted = 'The expiration date has been reset';
+	$L_Reinitialiser_Mot_Passe = 'Reset the password';
+	$L_Mot_Passe_Reinitialise = 'The password has been reset';
+	$L_Reinitialiser_Tentative = 'Reset the login attempt counter';
+	$L_Tentative_Reinitialise = 'The login attempt counter has been reset';
+	$L_Reinitialiser_Date_Expiration = 'Reset the expiration date';
+	$L_Date_Expiration_Reinitialisee = 'The expiration date has been reset';
 
-	$L_ERR_CREA_Identity = 'An error occurred while creating the identity';
-	$L_ERR_MODI_Identity = 'An error occurred while editing the identity';
-	$L_ERR_DELE_Identity = 'An error occurred while deleting the identity';
-	$L_ERR_DUPL_Identity = "'Username' already used";
+	$L_ERR_CREA_Identite = 'An error occurred while creating the identity';
+	$L_ERR_MODI_Identite = 'An error occurred while editing the identity';
+	$L_ERR_SUPP_Identite = 'An error occurred while deleting the identity';
+	$L_ERR_DUPL_Identite = "'Username' already used";
 	
-	$L_ERR_RST_Password = 'An error occurred while resetting password'; // ou "during the reset password process".
-	$L_ERR_RST_Attempt = 'An error occurred while resetting the login attempt counter';
-	$L_ERR_RST_Expiration = 'An error occurred wile changing the expiration date';
-	$L_ERR_RST_Disable = 'An error occurred while enabling or disabling the user';
+	$L_ERR_RMZ_Mot_Passe = 'An error occurred while resetting password'; // ou "during the reset password process".
+	$L_ERR_RMZ_Tentative = 'An error occurred while resetting the login attempt counter';
+	$L_ERR_RMZ_Date_Expiration = 'An error occurred wile changing the expiration date';
+	$L_ERR_RMZ_Activer_Desactiver_Utilisateur = 'An error occurred while enabling or disabling the user';
 
-	$L_User_Enabled = 'The user has been enabled';
-	$L_User_Disabled = 'The user has been disabled';
-	$L_Users_Associate = 'Join users'; // associate, bind, link ? selon contexte d'utilisation
+	$L_Utilisateur_Active = 'The user has been enabled';
+	$L_Utilisateur_Desactive = 'The user has been disabled';
+	$L_Associer_Utilisateur = 'Join users'; // associate, bind, link ? selon contexte d'utilisation
 
-	$L_User_Confirm_Deleted = 'Do you really want to delete the user "<span class="purple">%idn</span>" (<span class="purple">%cvl</span>)?';
+	$L_Confirmer_Suppression_Utilisateur = 'Do you really want to delete the user "<span class="fg_couleur_1">%idn</span>" (<span class="fg_couleur_1">%cvl</span>)?';
 
 ?>

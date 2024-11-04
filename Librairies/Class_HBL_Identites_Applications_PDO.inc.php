@@ -4,27 +4,26 @@ include_once( 'Constants.inc.php' );
 include_once( HBL_DIR_LIBRARIES . '/Class_HBL_Connecteur_BD_PDO.inc.php' );
 
 
-class HBL_Identites_Applications extends HBL_Connecteur_BD {
+class HBL_Identites_Applications extends HBL_Connexioneur_BD {
 /**
 * Cette classe gère la relation entre les Identités et les Applications.
 *
-* PHP version 5
-* @license Copyright Loxense
-* @author Pierre-Luc MARY
-* @date 2015-05-29
+* \license Copyright Loxense
+* \author Pierre-Luc MARY
+* \date 2015-05-29
 */
 
 	public function rechercherApplicationsIdentite( $Id_Identity ) {
 	/**
 	* Lister les Applications d'une Identité.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-29
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-29
 	*
-	* @param[in] $Id_Identity Identifiant de l'Identité
+	* \param[in] $Id_Identity Identifiant de l'Identité
 	*
-	* @return Renvoi la liste des Applications associé à l'Identité, sinon renvoi une liste vide. Lève une Exception en cas d'erreur.
+	* \return Renvoi la liste des Applications associé à l'Identité, sinon renvoi une liste vide. Lève une Exception en cas d'erreur.
 	*/
 		$Query = $this->prepareSQL( 'SELECT ' .
 		 't2.app_id, app_code, app_libelle, app_localisation, t4.drt_code_libelle ' .
@@ -46,14 +45,14 @@ class HBL_Identites_Applications extends HBL_Connecteur_BD {
 	/**
 	* Ajouter une Application à une Identité.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-29
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-29
 	*
-	* @param[in] $Id_Identity Identifiant de l'Identité
-	* @param[in] $Id_Application Identifiant de l'Application
+	* \param[in] $Id_Identity Identifiant de l'Identité
+	* \param[in] $Id_Application Identifiant de l'Application
 	*
-	* @return Renvoi TRUE si l'association entre l'Identité et une Application a été créée, sinon FALSE. Lève une exception en cas d'erreur.
+	* \return Renvoi TRUE si l'association entre l'Identité et une Application a été créée, sinon FALSE. Lève une exception en cas d'erreur.
 	*/
 		$Query = $this->prepareSQL( 'INSERT ' .
 		 'INTO idap_identities_applications ' .
@@ -78,14 +77,14 @@ class HBL_Identites_Applications extends HBL_Connecteur_BD {
 	/**
 	* Détruire une Application rattachée à une Identité.
 	*
-	* @license Copyright Loxense
-	* @author Pierre-Luc MARY
-	* @date 2015-05-29
+	* \license Copyright Loxense
+	* \author Pierre-Luc MARY
+	* \date 2015-05-29
 	*
-	* @param[in] $Id_Identity Identifiant de l'Identité
-	* @param[in] $Id_Application Identifiant de l'Application
+	* \param[in] $Id_Identity Identifiant de l'Identité
+	* \param[in] $Id_Application Identifiant de l'Application
 	*
-	* @return Renvoi TRUE si l'association entre l'Identité et une Application a été supprimée, sinon FALSE. Lève une Exception en cas d'erreur.
+	* \return Renvoi TRUE si l'association entre l'Identité et une Application a été supprimée, sinon FALSE. Lève une Exception en cas d'erreur.
 	*/
 
 		$Query = $this->prepareSQL( 'DELETE ' .

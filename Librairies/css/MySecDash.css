@@ -29,13 +29,28 @@ footer button {
     margin-left: 6px
 }
 
+
+.fg_couleur_1 {
+	color: #C34A36;
+}
+
+.fg_couleur_2 {
+	color: #44808A;
+}
+
+.fg_couleur_3 {
+	color: #717D11;
+}
+
+
+
 /* Change la couleur des boutons par défaut */
 .btn-outline-secondary {
-    color: #8F58A2;
+    color: #44808A;
 }
 
 .btn-outline-secondary:hover {
-    background-color: #8F58A2;
+    background-color: #44808A;
 }
 
 

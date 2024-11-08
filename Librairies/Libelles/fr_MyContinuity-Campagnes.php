@@ -22,4 +22,7 @@ $L_Go_Matrice_Impacts = 'Quitter cet écran pour aller sur l\'écran de Gestion 
 
 $L_A_Partir_Precedente_Campagne = 'A partir d\'une précédente Campagne';
 
+$L_Creer_Campagne_Avant_Echelle = 'Vous devez d\'abord créer cette Campagne avant de créer une Echelle de Temps';
+$L_Creer_Campagne_Avant_Matrice = 'Vous devez d\'abord créer cette Campagne avant de créer une Matrice des Impacts';
+
 ?>

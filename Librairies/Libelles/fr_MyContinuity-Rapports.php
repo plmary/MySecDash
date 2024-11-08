@@ -150,4 +150,6 @@ $L_Liste_Fournisseurs_Utiles_Par_Periode = 'Liste des fournisseurs utiles par p�
 $L_BIA_Entite = 'BIA de l\'entité';
 $L_BIAs_Societe = 'BIAs de la société';
 
+$L_Comparateur_DMIA_Activites = 'Comparateur de DMIA sur Activités';
+
 ?>

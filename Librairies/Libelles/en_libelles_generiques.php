@@ -544,4 +544,6 @@ $L_Accueil = 'Homepage';
 
 $L_Ecran_Synthese = 'Overview screen';
 
+$L_M_Comparateur_DMIA_Activites = 'RTO Comparator (Activities)';
+
 ?>

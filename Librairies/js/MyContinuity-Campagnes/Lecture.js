@@ -210,7 +210,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 				'<li><a id="lister_chk_sites" class="nav-link" href="#">' + reponse[ 'L_Sites'] + '</a></li>' +
 				//'<li><a id="lister_chk_applications" class="nav-link" href="#">' + reponse[ 'L_Applications'] + '</a></li>' +
 				//'<li><a id="lister_chk_fournisseurs" class="nav-link" href="#">' + reponse[ 'L_Fournisseurs'] + '</a></li>' +
-				'<li><a id="lister_chk_echelle_temps" class="nav-link" href="#">' + reponse[ 'L_Echelles_Temps'] + '</a></li>' +
+				'<li><a id="lister_chk_echelle_temps" class="nav-link" href="#">' + reponse[ 'L_Echelle_Temps'] + '</a></li>' +
 				'<li><a id="lister_chk_matrice_impacts" class="nav-link" href="#">' + reponse[ 'L_Matrice_Impacts'] + '</a></li>' +
 				'</ul>' +
 				'<div id="zone_action">' +
@@ -376,8 +376,14 @@ function ModalMAJCampagne( cmp_id = '' ){
 							'</div> <!-- .row -->';
 					}
 				}
-				Corps += '<button id="go-echelle-temps" class="btn btn-primary">'+reponse['L_Go_Echelle_Temps']+'</button>' +
-				'</div> <!-- #zone-x-select-echelles -->' +
+
+				if ( reponse['Liste_Echelle_Temps'] != undefined ) {
+					Corps += '<button id="go-echelle-temps" class="btn btn-primary">'+reponse['L_Go_Echelle_Temps']+'</button>';
+				} else {
+					Corps += '<h3 class="mt-3 text-center">' + reponse['L_Creer_Campagne_Avant_Echelle'] + '</h3>';
+				}
+
+				Corps += '</div> <!-- #zone-x-select-echelles -->' +
 
 
 				'<div id="zone-x-select-matrices" class="d-none">';
@@ -385,10 +391,14 @@ function ModalMAJCampagne( cmp_id = '' ){
 					Corps += chargerSimpleMatrice(reponse['Liste_Niveaux_Impact'], reponse['Liste_Types_Impact'], reponse['Liste_Matrice_Impacts'], reponse['L_Type'], reponse['L_Niveau']);
 				}
 
-				Corps += '<button id="go-matrices" class="btn btn-primary mt-2">'+reponse['L_Go_Matrice_Impacts']+'</button>' +
-				'</div> <!-- #zone-x-select-matrices -->' +
+				if ( reponse['Liste_Niveaux_Impact'] != undefined ) {
+					Corps += '<button id="go-matrices" class="btn btn-primary mt-2">'+reponse['L_Go_Matrice_Impacts']+'</button>';
+				} else {
+					Corps += '<h3 class="mt-3 text-center">' + reponse['L_Creer_Campagne_Avant_Matrice'] + '</h3>';
+				}
 
-				'</div> <!-- #onglets_utilisateur -->';
+				Corps += '</div> <!-- #zone-x-select-matrices -->' +
+					'</div> <!-- #onglets_utilisateur -->';
 
 
 			construireModal( 'idModalCampagne',

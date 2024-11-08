@@ -22,4 +22,7 @@ $L_Go_Matrice_Impacts = 'Leave this screen to go to the Impacts Matrix Managemen
 
 $L_A_Partir_Precedente_Campagne = 'From a previous Campaign';
 
+$L_Creer_Campagne_Avant_Echelle = 'You must created this Campaign before create a Time Scale';
+$L_Creer_Campagne_Avant_Matrice = 'You must created this Campaign before create an Impacts Matrix';
+
 ?>

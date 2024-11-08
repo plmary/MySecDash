@@ -599,4 +599,6 @@ $L_Accueil = 'Accueil';
 
 $L_Ecran_Synthese = 'Ecran de synthèse';
 
+$L_M_Comparateur_DMIA_Activites = 'Comparateur DMIA (Activités)';
+
 ?>

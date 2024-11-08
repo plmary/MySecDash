@@ -635,26 +635,28 @@ switch( $Action ) {
 
 		$tmp_ete_poids = 0;
 		foreach($Liste_Activites as $Activite) {
-			if ($tmp_ete_poids != $Activite->ete_poids) {
-				$tmp_ete_poids = $Activite->ete_poids;
-
-				$section->addTitle($L_Activites_A_Redemarrer.' '.$Liste_Echelles_Temps_Poids[$Activite->ete_poids]->ete_nom_code, 2);
-
-				$table = $section->addTable(['borderSize' => 6, 'borderColor' => '006699',
-					'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 'cellMargin' => 160, 'afterSpace' => 160]);
-
-				$table->addRow(null, ['tblHeader' => true]);
-				$table->addCell(7000)->addText($L_Activite, $fontTitreTableau, $styleParagrapheTableau);
-				$table->addCell(5000)->addText($L_Entite, $fontTitreTableau, $styleParagrapheTableau);
-				$table->addCell(3000)->addText($L_Niveau_Impact, $fontTitreTableau, $styleParagrapheTableau);
+			if ($Activite->ete_poids > 2) {
+				if ( isset($Liste_Echelles_Temps_Poids[$Activite->ete_poids]->ete_nom_code) ) {
+					$tmp_ete_poids = $Activite->ete_poids;
+	
+					$section->addTitle($L_Activites_A_Redemarrer.' '.$Liste_Echelles_Temps_Poids[$Activite->ete_poids]->ete_nom_code, 2);
+	
+					$table = $section->addTable(['borderSize' => 6, 'borderColor' => '006699',
+						'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 'cellMargin' => 160, 'afterSpace' => 160]);
+	
+					$table->addRow(null, ['tblHeader' => true]);
+					$table->addCell(7000)->addText($L_Activite, $fontTitreTableau, $styleParagrapheTableau);
+					$table->addCell(5000)->addText($L_Entite, $fontTitreTableau, $styleParagrapheTableau);
+					$table->addCell(3000)->addText($L_Niveau_Impact, $fontTitreTableau, $styleParagrapheTableau);
+				}
+	
+				$table->addRow();
+				$table->addCell(7000)->addText($Activite->act_nom, $fontTexteTableau, $styleParagrapheTableau);
+				$table->addCell(5000)->addText(($Activite->ent_description != '' ? $Activite->ent_description : $Activite->ent_nom), $fontTexteTableau, $styleParagrapheTableau);
+				$table->addCell(3000, ['bgColor' => $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur])
+				->addText($Activite->nim_poids . ' - ' . $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code, ['size' => 10, 'bold' => true, 'color' => 'ffffff'],
+						array_merge($styleParagrapheTableau, ['alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER]));
 			}
-
-			$table->addRow();
-			$table->addCell(7000)->addText($Activite->act_nom, $fontTexteTableau, $styleParagrapheTableau);
-			$table->addCell(5000)->addText(($Activite->ent_description != '' ? $Activite->ent_description : $Activite->ent_nom), $fontTexteTableau, $styleParagrapheTableau);
-			$table->addCell(3000, ['bgColor' => $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur])
-			->addText($Activite->nim_poids . ' - ' . $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code, ['size' => 10, 'bold' => true, 'color' => 'ffffff'],
-					array_merge($styleParagrapheTableau, ['alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER]));
 		}
 	}
 

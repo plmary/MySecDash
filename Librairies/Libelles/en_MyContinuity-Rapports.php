@@ -150,4 +150,6 @@ $L_Liste_Fournisseurs_Utiles_Par_Periode = 'List of useful suppliers by period';
 $L_BIA_Entite = 'Entity BIA';
 $L_BIAs_Societe = 'Company\'s BIAs';
 
+$L_Comparateur_DMIA_Activites = 'Activities MTPD/RTO Comparator';
+
 ?>

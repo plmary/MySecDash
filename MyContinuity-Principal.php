@@ -55,6 +55,8 @@ $objApplications = new Applications();
 $objFournisseurs = new Fournisseurs();
 
 
+$Nombre_Max_Campagnes_Par_Societe = 2;
+
 // Exécute l'action identifiée
 switch( $Action ) {
  default:
@@ -213,18 +215,24 @@ switch( $Action ) {
 
 
  case 'AJAX_Tableau_Bord_Utilisateur':
- 	$Corps_HTML = '';
+	$Corps_HTML = '';
 
 	foreach ( $objSocietes->rechercherSocietes() as $Societe ) {
 		$Corps_HTML .= '<div class="tableau_synthese">' .
-			'<p class="titre fs-3">' . $L_Societe . ' : ' . $Societe->sct_nom . '</p>' .
+			'<p class="titre fs-5">' . $L_Societe . ' : ' . $Societe->sct_nom . '</p>' .
 			'<div class="corps">';
-		
+
+		$Nombre_Campagne_Par_Societe = 0;
+
 		foreach ( $objCampagnes->rechercherCampagnes( $Societe->sct_id, 'cmp_date-desc' ) as $Campagne ) {
-			$Corps_HTML .= '<p class="fw-bold fs-3">' .
+			$Nombre_Campagne_Par_Societe += 1;
+			
+			if ( $Nombre_Campagne_Par_Societe > $Nombre_Max_Campagnes_Par_Societe ) break;
+
+			$Corps_HTML .= '<p class="fw-bold fs-4 mt-3">' .
 				$L_Campagne . ' : ' . $Campagne->cmp_date .
 				'</p> <!-- .fw-bold -->';
-			$Donnees = $objCampagnes->syntheseCampagne( $Campagne->cmp_id );
+				$Donnees = $objCampagnes->syntheseCampagne( $Campagne->cmp_id, $Societe->sct_id );
 
 			$Nombre_BIA_A_Faire = $Donnees['total_bia'] - ( $Donnees['total_bia_valides'] + $Donnees['total_bia_en_cours'] );
 	

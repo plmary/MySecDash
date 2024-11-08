@@ -174,10 +174,12 @@ INSERT INTO ain_applications_internes (ain_id, tap_id, ain_libelle, ain_localisa
 (25, 1, 'Ecran Principal MyContinuity', 'MyContinuity-Principal.php'),
 
 -- *** Gestion transverse des TAGS, pas encore opérationnel
-(26, 1, 'Gestion des étiquettes (tags)', 'MySecDash-Etiquettes.php');
+(26, 1, 'Gestion des étiquettes (tags)', 'MySecDash-Etiquettes.php'),
+
+(27, 1, 'Comparateur de DMIA sur Activités', 'MySecDash-ComparateurDMIAActivites.php');
 
 
-SELECT pg_catalog.setval('ain_applications_internes_ain_id_seq', 24, true);
+SELECT pg_catalog.setval('ain_applications_internes_ain_id_seq', 27, true);
 
 --(9,  1, 'Consultation des Matrices des Risques', 'MySecDash-MatricesRisques.php'),
 --(10, 1, 'Gestion de l''Appréciation des Risques', 'MySecDash-AppreciationRisques.php'),
@@ -329,7 +331,8 @@ INSERT INTO caa_controle_acces_application_interne (prf_id, ain_id, drt_id) VALU
 (2, 23, 3),
 (2, 23, 4),
 (2, 24, 1),
-(2, 24, 3);
+(2, 24, 3),
+(2, 27, 1);
 
 
 --

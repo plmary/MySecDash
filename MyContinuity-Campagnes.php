@@ -122,6 +122,7 @@ switch( $Action ) {
 		'L_Matrice_Impacts' => $L_Matrice_Impacts,
 		'L_Entites' => $L_Entites,
 		'L_Echelles_Temps' => $L_Echelles_Temps,
+		'L_Echelle_Temps' => $L_Echelle_Temps,
 		'L_Applications' => $L_Applications,
 		'L_Fournisseurs' => $L_Fournisseurs,
 		'L_Date' => $L_Date,
@@ -138,9 +139,10 @@ switch( $Action ) {
 		'L_Non' => $L_No,
 		'L_Type' => $L_Type,
 		'L_Niveau' => $L_Niveau,
+		'L_Creer_Campagne_Avant_Echelle' => $L_Creer_Campagne_Avant_Echelle,
+		'L_Creer_Campagne_Avant_Matrice' => $L_Creer_Campagne_Avant_Matrice,
 		'Droits_Entites' => $PageHTML->permissionsGroupees('MySecDash-Entites.php'),
 		'Droits_Sites' => $PageHTML->permissionsGroupees('MyContinuity-Sites.php')
-		
 	);
 
 	if ( isset( $_POST['cmp_id'] ) ) {

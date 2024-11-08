@@ -31,7 +31,7 @@ public function __construct() {
 * \date 2015-07-22
 *
 */
-	$this->Version_Outil = '1.0-0'; // Version de l'outil
+	$this->Version_Outil = '1.1-0'; // Version de l'outil
 	
 	$this->Nom_Outil = '<span style="color: #717D11;">My</span><span style="color: #C34A36;">Sec</span><span style="color: #44808A;">Dash</span>';
 	$this->Nom_Outil_TXT = 'MySecDash';
@@ -661,7 +661,7 @@ public function construireBarreMenu( $Flux_JSON = '' ) {
 
 
 public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $Boutons_Alternatifs = [], 
-	$Options_Titre_1 = '', $Onglets = '', $Options_Titre_2 = '' ) {
+	$Options_Titre_1 = '', $Onglets = '', $Options_Titre_2 = '', $Options_Titre_3 = '' ) {
 /**
 * Standardisation du titre et des informations contextuelles des écrans.
 *
@@ -672,7 +672,7 @@ public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $
 * \param[in] $Titre_Ecran Titre de l'écran courant.
 * \param[in] $Societes_Autorisees Liste des sociétés autorisées pour l'utilisateur (si plusieurs sociétés, on affiche une Dropdownlist pour pouvoir changer, sinon on affiche simplement l'information).
 * \param[in] $Boutons_Alternatifs Permet l'affichage de boutons alternatifs (juste à droite du titre).
-* \param[in] $Options_Titre Permet d'afficher une liste (en fonction du contexte).
+* \param[in] $Options_Titre_1 Permet d'afficher une liste (en fonction du contexte).
 *
 * \param[out] $Objet_Titre_Ecran Objet HTML représentant la barre de titre et ses éventuelles options est à intégrer dans sa page HTML
 *
@@ -783,7 +783,7 @@ public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $
 		"   </div> <!-- #titre-menu -->\n\n";
 
 	$tmpOptions = '';
-	
+
 	if ( $Options_Titre_2 != '' and $Options_Titre_2 != [] ) {
 		$Objet_Titre_Ecran .= "   <div id=\"option-titre-menu\" class=\"col-lg-5 mt-1\">\n" .
 			"    <div class=\"input-group col-lg-5\">\n" .
@@ -831,6 +831,16 @@ public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $
 			"    </div> <!-- .input-group -->\n" .
 			"   </div> <!-- #option-titre-menu -->\n";
 	}
+
+	if ( $Options_Titre_3 != '' and $Options_Titre_3 != [] ) {
+		$Objet_Titre_Ecran .= "   <div id=\"option-titre-menu\" class=\"col-lg-5 mt-1\">\n" .
+			"    <div class=\"input-group col-lg-5\">\n" .
+			"    <span class=\"input-group-text\">" . $Options_Titre_3['libelle'] . "</span>\n" .
+			"     <input id=\"" . $Options_Titre_3['id'] . "\" class=\"form-control\">\n" .
+			"    </div> <!-- .input-group -->\n" .
+			"   </div> <!-- #option-titre-menu -->\n";
+	}
+
 	$Objet_Titre_Ecran .= "   </div> <!-- .row -->\n";
 	
 	if ( $Onglets != '' ) {

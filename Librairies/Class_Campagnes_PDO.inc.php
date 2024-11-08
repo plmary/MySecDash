@@ -1195,7 +1195,7 @@ WHERE act.cmp_id = :cmp_id ';
 	}
 
 
-	public function syntheseCampagne( $cmp_id ) {
+	public function syntheseCampagne( $cmp_id, $sct_id = '' ) {
 		/**
 		 * Récupère toutes les données de la Campagne
 		 *
@@ -1212,7 +1212,8 @@ WHERE act.cmp_id = :cmp_id ';
 
 		// ==========================================
 		// Récupère les informations de la Campagne.
-		$_Campagne = $this->rechercherCampagnes($_SESSION['s_sct_id'], 'cmp_date', $cmp_id);
+		if ( $sct_id == '') $sct_id = $_SESSION['s_sct_id'];
+		$_Campagne = $this->rechercherCampagnes($sct_id, 'cmp_date', $cmp_id);
 		$Donnees['campagne'] = $_Campagne[0];
 
 

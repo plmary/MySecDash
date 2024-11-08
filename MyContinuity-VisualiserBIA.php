@@ -337,24 +337,26 @@ switch( $Action ) {
 		$Corps_HTML .= '<table class="table table-bordered">';
 		$tmp_ete_poids = 0;
 		foreach($Liste_Activites as $Activite) {
-			if ($tmp_ete_poids != $Activite->ete_poids) {
-				$tmp_ete_poids = $Activite->ete_poids;
+			if ( isset($Liste_Echelles_Temps_Poids[$Activite->ete_poids]->ete_nom_code) ) {
+				if ($tmp_ete_poids != $Activite->ete_poids) {
+					$tmp_ete_poids = $Activite->ete_poids;
+					$Corps_HTML .= '<tr>' .
+						'<th colspan="3" style="background-color: silver">' .
+						$L_Activites_A_Redemarrer . '&nbsp;<span class="fs-5">' . $Liste_Echelles_Temps_Poids[$Activite->ete_poids]->ete_nom_code . '</span></th>' .
+						'</tr>' .
+						'<tr>' .
+						'<th>' . $L_Activite . '</th>' .
+						'<th>' . $L_Entite . '</th>' .
+						'<th>' . $L_Niveau_Impact . '</th>' .
+						'</tr>';
+				}
+	
 				$Corps_HTML .= '<tr>' .
-					'<th colspan="3" style="background-color: silver">' .
-					$L_Activites_A_Redemarrer . '&nbsp;<span class="fs-5">' . $Liste_Echelles_Temps_Poids[$Activite->ete_poids]->ete_nom_code . '</span></th>' .
-					'</tr>' .
-					'<tr>' .
-					'<th>' . $L_Activite . '</th>' .
-					'<th>' . $L_Entite . '</th>' .
-					'<th>' . $L_Niveau_Impact . '</th>' .
+					'<td>' . $Activite->act_nom . '</td>' .
+					'<td>' . ($Activite->ent_description != '' ? $Activite->ent_description : $Activite->ent_nom) . '</td>' .
+					'<td style="color: white; background-color: #'.$Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur.'">' . $Activite->nim_poids . ' - ' . $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code . '</td>' .
 					'</tr>';
 			}
-
-			$Corps_HTML .= '<tr>' .
-				'<td>' . $Activite->act_nom . '</td>' .
-				'<td>' . ($Activite->ent_description != '' ? $Activite->ent_description : $Activite->ent_nom) . '</td>' .
-				'<td style="color: white; background-color: #'.$Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur.'">' . $Activite->nim_poids . ' - ' . $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code . '</td>' .
-				'</tr>';
 		}
 		$Corps_HTML .= '</table>';
 
@@ -567,7 +569,7 @@ switch( $Action ) {
 		if ( $Informations_Validation->cmen_date_validation == NULL ) {
 			$Corps_HTML .= '<tbody>' .
 				'<tr>' .
-				'<td class="text-center" colspan="2"><span class="fs-5 fw-bold fg_couleur_3">' . $Neither_f . '</span></td>' .
+				'<td class="text-center" colspan="2"><span class="fs-5 fw-bold fg_couleur_3">' . $L_Neither_f . '</span></td>' .
 				'</tr>' .
 				'</tbody>' .
 				'</table>';

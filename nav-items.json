@@ -24,6 +24,7 @@
 				{"LibelleItem": "L_Campagnes", "Type" : "option", "Lien" : "MyContinuity-Campagnes.php"},
 				{"LibelleItem": "", "Type" : "separator"},
 				{"LibelleItem": "L_Activites", "Type" : "option", "Lien" : "MyContinuity-Activites.php"},
+				{"LibelleItem": "L_M_Comparateur_DMIA_Activites", "Type" : "option", "Lien" : "MyContinuity-ComparateurDMIAActivites.php"},
 				{"LibelleItem": "", "Type" : "separator"},
 				{"LibelleItem": "L_Valider_BIA", "Type" : "option", "Lien" : "MyContinuity-ValiderEntites.php"},
 				{"LibelleItem": "", "Type" : "separator"},

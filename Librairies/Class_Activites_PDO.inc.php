@@ -63,14 +63,33 @@ class Activites extends HBL_Connexioneur_BD {
 			if ( $act_description != '' ) $Request .= 'act_description, ';
 
 			$Request .= 'act_teletravail, act_dependances_internes_amont, act_dependances_internes_aval,
-				act_justification_dmia )
-				VALUES ( :cmp_id, :ent_id, :ppr_id_responsable, :act_nom, ';
+				act_justification_dmia ';
+			
+			if ( $act_effectifs_en_nominal != '' ) {
+				$Request .= ', act_effectifs_en_nominal ';
+			}
+			
+			if ( $act_effectifs_a_distance != '' ) {
+				$Request .= ', act_effectifs_a_distance ';
+			}
+			
+			$Request .= ') VALUES ( :cmp_id, :ent_id, :ppr_id_responsable, :act_nom, ';
 			
 			if ( $ppr_id_suppleant != '') $Request .= ':ppr_id_suppleant, ';
 			if ( $act_description != '' ) $Request .= ':act_description, ';
 			
 			$Request .= ':act_teletravail, :act_dependances_internes_amont, :act_dependances_internes_aval,
-				:act_justification_dmia ) ';
+				:act_justification_dmia ';
+
+			if ( $act_effectifs_en_nominal != '' ) {
+				$Request .= ', :act_effectifs_en_nominal ';
+			}
+
+			if ( $act_effectifs_a_distance != '' ) {
+				$Request .= ', :act_effectifs_a_distance ';
+			}
+
+			$Request .= ') ';
 			
 			$Query = $this->prepareSQL( $Request );
 		} else {
@@ -613,105 +632,86 @@ min_max.nim_poids, max_dmia.ete_poids ';
 
 		return $Query->fetchAll( PDO::FETCH_CLASS );
 	}
-	
-	
-	public function rechercherActivitesOld( $cmp_id, $ent_id, $Order = 'act_nom', $act_id = '' ) {
+
+
+	public function listerActivitesUtilisateur( $Order = 'act_nom' ) {
 		/**
-		 * Lister les Activités.
+		 * Lister les Activités Autorisées à l'Utilisateur.
 		 *
 		 * \license Copyright Loxense
 		 * \author Pierre-Luc MARY
-		 * \date 2024-03-05
+		 * \date 2024-11-06
 		 *
-		 * \param[in] $cmp_id Identifiant de la Campagne de rattachement
-		 * \param[in] $ent_id Identifiant de l'Entité de rattachement
 		 * \param[in] $Order Permet de gérer l'ordre d'affichage
-		 * \param[in] $act_id Identifiant de l'Activité spécifique à récupérer
 		 *
 		 * \return Renvoi une liste des Activités ou une liste vide
 		 */
 		$Request = 'SELECT
-			act.act_id, act.ppr_id_responsable, act.ppr_id_suppleant,
-			ppr_resp.ppr_nom AS "ppr_nom_resp", ppr_resp.ppr_prenom AS "ppr_prenom_resp",
-			ppr_supp.ppr_nom AS "ppr_nom_supp", ppr_supp.ppr_prenom AS "ppr_prenom_supp",
-			act_nom, act_description, act_teletravail, acst.sts_id AS "sts_id_nominal",
-			/* dma.mim_id, */
-			COUNT(DISTINCT ppac.ppr_id) AS "total_ppr",
-			COUNT(DISTINCT acst.sts_id) AS "total_sts",
-			COUNT(DISTINCT dma.ete_id) AS "total_dma",
-			COUNT(DISTINCT frn_id) AS "total_frn",
-			COUNT(DISTINCT app_id) AS "total_app"
-			FROM act_activites AS "act"
-			LEFT JOIN dma_dmia_activite AS "dma" ON dma.act_id = act.act_id
-			LEFT JOIN acfr_act_frn AS "acfr" ON acfr.act_id = act.act_id
-			LEFT JOIN acap_act_app AS "acap" ON acap.act_id = act.act_id
-			LEFT JOIN ppr_parties_prenantes AS "ppr_resp" ON ppr_resp.ppr_id = act.ppr_id_responsable
-			LEFT JOIN ppr_parties_prenantes AS "ppr_supp" ON ppr_supp.ppr_id = act.ppr_id_suppleant
-			LEFT JOIN ppac_ppr_act AS "ppac" ON ppac.act_id = act.act_id
-			LEFT JOIN acst_act_sts AS "acst" ON acst.act_id = act.act_id and acst.acst_type_site = 0
-			WHERE act.ent_id = :ent_id AND act.cmp_id = :cmp_id ';
-		
-		if ( $act_id != '' ) $Request .= 'AND act.act_id = :act_id ';
-		
-		$Request .= 'GROUP BY act.act_id, act.ppr_id_responsable, act.ppr_id_suppleant,
-			ppr_nom_resp, ppr_prenom_resp, ppr_nom_supp, ppr_prenom_supp,
-			act_nom, act_description, act_teletravail, acst.sts_id /* , dma.mim_id */ ';
-		
+sct.sct_nom,
+ent.ent_nom, ent.ent_description,
+act.act_id, act.act_nom,
+ete.ete_poids, ete.ete_nom_code,
+nim.nim_numero, nim.nim_poids, nim.nim_nom_code, nim.nim_couleur,
+tim.tim_poids, tim.tim_nom_code
+
+FROM idsc_idn_sct AS "idsc"
+LEFT JOIN sct_societes AS "sct" ON sct.sct_id = idsc.sct_id
+LEFT JOIN ent_entites AS "ent" ON ent.sct_id = idsc.sct_id
+LEFT JOIN act_activites AS "act" ON act.ent_id = ent.ent_id
+LEFT JOIN dma_dmia_activite AS "dma" ON dma.act_id = act.act_id
+LEFT JOIN ete_echelle_temps AS "ete" ON ete.ete_id = dma.ete_id
+LEFT JOIN mim_matrice_impacts AS "mim" ON mim.mim_id = dma.mim_id
+LEFT JOIN nim_niveaux_impact AS "nim" ON nim.nim_id = mim.nim_id
+LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
+
+		if ( $_SESSION['idn_super_admin'] === FALSE ) {
+			$Request .= 'WHERE idsc.idn_id = :idn_id ';
+		}
+
 		switch ( $Order ) {
 			default:
-			case 'ppr_id_responsable':
-				$Request .= 'ORDER BY ppr_nom_resp, ppr_prenom_resp ';
-				break;
-				
-			case 'ppr_id_responsable-desc':
-				$Request .= 'ORDER BY ppr_nom_resp DESC, ppr_prenom_resp DESC ';
-				break;
-				
-			case 'ppr_id_suppleant':
-				$Request .= 'ORDER BY ppr_nom_supp, ppr_prenom_supp ';
-				break;
-				
-			case 'ppr_id_suppleant-desc':
-				$Request .= 'ORDER BY ppr_nom_supp DESC, ppr_prenom_supp DESC ';
-				break;
-				
 			case 'act_nom':
-				$Request .= 'ORDER BY act_nom ';
+				$Request .= 'ORDER BY sct_nom, ent_nom, act_nom, ete_poids, nim_poids ';
 				break;
 				
 			case 'act_nom-desc':
-				$Request .= 'ORDER BY act_nom DESC ';
+				$Request .= 'ORDER BY sct_nom, ent_nom, act_nom DESC, ete_poids, nim_poids ';
 				break;
 				
-			case 'act_description':
-				$Request .= 'ORDER BY act_description ';
+			case 'nim_poids':
+				$Request .= 'ORDER BY sct_nom, ent_nom, act_nom, ete_poids, nim_poids ';
 				break;
 				
-			case 'act_description-desc':
-				$Request .= 'ORDER BY act_description DESC ';
+			case 'nim_poids-desc':
+				$Request .= 'ORDER BY sct_nom, ent_nom, act_nom, ete_poids, nim_poids DESC';
 				break;
 				
-			case 'act_teletravail':
-				$Request .= 'ORDER BY act_teletravail ';
+			case 'tim_poids':
+				$Request .= 'ORDER BY tim_poids, ete_poids, act_nom ';
 				break;
 				
-			case 'act_teletravail-desc':
-				$Request .= 'ORDER BY act_teletravail DESC ';
+			case 'tim_poids-desc':
+				$Request .= 'ORDER BY tim_poids DESC, ete_poids, act_nom ';
+				break;
+				
+			case 'ete_poids':
+				$Request .= 'ORDER BY ete_poids, nim_poids ';
+				break;
+				
+			case 'ete_poids-desc':
+				$Request .= 'ORDER BY ete_poids DESC, nim_poids ';
 				break;
 		}
-		
+
 		$Query = $this->prepareSQL( $Request );
-		
-		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT ) ;
-		$this->bindSQL( $Query, ':ent_id', $ent_id, PDO::PARAM_INT ) ;
-		
-		if ( $act_id != '' ) $this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
-		
+
+		if ( $_SESSION['idn_super_admin'] === FALSE ) $this->bindSQL( $Query, ':idn_id', $_SESSION['idn_id'], PDO::PARAM_INT );
+
 		$this->executeSQL( $Query );
-		
+
 		return $Query->fetchAll( PDO::FETCH_CLASS );
 	}
-	
+
 
 	public function supprimerActivite( $act_id ) {
 	/**

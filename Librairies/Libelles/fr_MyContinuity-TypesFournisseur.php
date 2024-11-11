@@ -2,6 +2,6 @@
 
 include_once( 'Constants.inc.php' );
 
-include(HBL_DIR_LABELS . '/fr_MyContinuity-Fournisseurs.php');
+include(DIR_LIBELLES . '/fr_MyContinuity-Fournisseurs.php');
 
 ?>

@@ -31,6 +31,6 @@ $L_Type_Fournisseur_Supprime = 'Supplier Type deleted';
 $L_ERR_DUPL_Type_Fournisseur = 'This Supplier Type already exists';
 
 $L_Confirmer_Suppression_Type_Fournisseur = 'Do you really want to remove this Supplier Type "<span class=\"fg_couleur_1 fw-bold\">%s</span>"?';
-$L_Type_Fournisseur_Est_Associee = 'Please note that this Supplier Type is associated with:';
+$L_Confirmer_Suppression_Type_Fournisseur_Associe = $L_Type_Fournisseur_Est_Associee = 'Please note that this Supplier Type is associated with:';
 
 ?>

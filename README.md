@@ -1,6 +1,8 @@
 
 # MySecDash : My Security Dashboard
 
+![Logo MySecDash](/Images/Logo-MySecDash.png)
+
 Préambule : Désolé par avance, mais ce projet sera en "français". Pour autant, les écrans seront multilingues (Français et Anglais pour commencer).
 
 Le projet "MySecDash" permet de gérer les différents projets d'un RSSI ou d'un RPCA.

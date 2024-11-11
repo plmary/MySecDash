@@ -129,19 +129,27 @@ switch( $Action ) {
 				
 				$texteHTMLGestion .= "</a>";
 		}
-
-
-		if ( isset( $Permissions['MyContinuity-Effectifs.php'] ) ) {
-			$texteHTMLGestion .= "<a href=\"MyContinuity-Effectifs.php\" class=\"btn btn-admin btn-principal\"><span class=\"me-1\">" .
-				couperLibelle( $L_Gestion_Effectifs, 39 ) . "</span>";
-
-			$texteHTMLGestion .= "</a>";
-		}
 		
 		
 		if ( isset( $Permissions['MyContinuity-Activites.php'] ) ) {
 			$texteHTMLGestion .= "<a href=\"MyContinuity-Activites.php\" class=\"btn btn-admin btn-principal\"><span class=\"me-1\">" .
 				couperLibelle( $L_Gestion_Activites, 39 ) . "</span>";
+				
+				$texteHTMLGestion .= "</a>";
+		}
+		
+		
+		if ( isset( $Permissions['MyContinuity-ComparateurDMIAActivites.php'] ) ) {
+			$texteHTMLGestion .= "<a href=\"MyContinuity-ComparateurDMIAActivites.php\" class=\"btn btn-admin btn-principal\"><span class=\"me-1\">" .
+				couperLibelle( $L_M_Comparateur_DMIA_Activites, 39 ) . "</span>";
+				
+				$texteHTMLGestion .= "</a>";
+		}
+		
+		
+		if ( isset( $Permissions['MyContinuity-ValiderEntites.php'] ) ) {
+			$texteHTMLGestion .= "<a href=\"MyContinuity-ValiderEntites.php\" class=\"btn btn-admin btn-principal\"><span class=\"me-1\">" .
+				couperLibelle( $L_Valider_BIA, 39 ) . "</span>";
 				
 				$texteHTMLGestion .= "</a>";
 		}

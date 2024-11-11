@@ -482,6 +482,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 				}
 
 				$('#chp-rechercher-objet').val('');
+				rechercherObjetsDansOnglet();
 
 				$('div[id^="zone-x-select-"]').addClass('d-none');
 				$('#zone-x-select-entites').removeClass('d-none');
@@ -547,6 +548,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 				}
 
 				$('#chp-rechercher-objet').val('');
+				rechercherObjetsDansOnglet();
 
 				$('div[id^="zone-x-select-"]').addClass('d-none');
 				$('#zone-x-select-sites').removeClass('d-none');

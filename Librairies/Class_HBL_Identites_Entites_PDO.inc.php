@@ -51,7 +51,7 @@ class HBL_Identites_Entites extends HBL_Connexioneur_BD {
 			$Request .= 'WHERE ent.sct_id = :sct_id ';
 		}
 		
-		$Request .= 'ORDER BY ent_nom ';
+		$Request .= 'ORDER BY sct.sct_nom, ent.ent_nom ';
 		
 		$Query = $this->prepareSQL( $Request );
 		

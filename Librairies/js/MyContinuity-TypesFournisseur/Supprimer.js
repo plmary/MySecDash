@@ -35,7 +35,7 @@ function ModalSupprimer( Id, Libelle ){
 				Corps,
 				'idBoutonSupprimer', reponse[ 'L_Supprimer' ],
 				true, reponse[ 'L_Fermer' ],
-				'formSupprimer' );
+				'formSupprimer', 'modal-lg' );
 
 			$('#idModalSupprimer').modal('show'); // Affiche la modale qui vient d'être créée
 

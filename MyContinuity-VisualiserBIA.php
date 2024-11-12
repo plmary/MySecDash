@@ -414,6 +414,57 @@ switch( $Action ) {
 		$Corps_HTML .= '</table>';
 
 
+		// Affichage des PDMA des Applications de cette Campagne.
+		$Liste_Applications = $objCampagnes->rechercherPDMAApplicationsCampagne( $_SESSION['s_cmp_id'] );
+		
+		$Corps_HTML .= '<h1 class="text-center">'.$L_Liste_Applications_Par_PDMA.'</h1>';
+		
+		$Corps_HTML .= '<table class="table table-bordered">';
+		$tmp_poids = 0;
+		foreach($Liste_Applications as $Application) {
+			if ($tmp_poids != $Application->pdma) {
+				$tmp_poids = $Application->pdma;
+				$Corps_HTML .= '<tr>' .
+					'<th colspan="3" style="background-color: silver">' .
+					$L_Applications_PDMA . '&nbsp;<span class="fs-5">' . $Liste_Echelles_Temps_Poids[$Application->pdma]->ete_nom_code . '</span></th>' .
+					'</tr>' .
+					'<tr>' .
+					'<th>' . $L_Nom_G . '</th>' .
+					'<th>' . $L_Activites . '</th>' .
+					'</tr>';
+			}
+			
+			$Corps_HTML .= '<tr>' .
+				'<td>' . $Application->app_nom . '</td>' .
+				'<td>';
+			
+			$textlines = explode('//', $Application->act_nom);
+			if (count($textlines) > 0) {
+				$compteur = 0;
+				
+				foreach($textlines as $line) {
+					if ($line != '') {
+						$compteur += 1;
+						
+						if ($compteur > 1) $Corps_HTML .= '<br>';
+						
+						$Corps_HTML .= $line;
+					}
+				}
+				
+				if ($compteur == 0) {
+					$Corps_HTML .= $L_Neither;
+				}
+			} else {
+				$Corps_HTML .= $L_Neither;
+			}
+			
+			$Corps_HTML .= '</td>' .
+				'</tr>';
+		}
+		$Corps_HTML .= '</table>';
+
+
 		// Affichage des Personnes Clés de cette Campagne.
 		$Liste_Personnes = $objCampagnes->rechercherPersonnesClesCampagne( $_SESSION['s_cmp_id'] );
 

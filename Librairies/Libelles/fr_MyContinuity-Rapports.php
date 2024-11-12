@@ -133,6 +133,7 @@ $L_Activites_A_Redemarrer = 'Activités à redémarrer en';
 
 $L_Liste_Applications = 'Liste des applications';
 $L_Applications_A_Redemarrer = 'Applications à redémarrer en';
+$L_Applications_PDMA = 'Applications avec un perte de données maximale admissible de';
 
 $L_Liste_Personnes_Cles = 'Liste des personnes clés';
 
@@ -146,6 +147,7 @@ $L_Nom_G = 'Nom';
 $L_Liste_Activites_Redemarrer_Par_Periode = 'Liste des activités à redémarrer par période';
 $L_Liste_Applications_Redemarrer_Par_Periode = 'Liste des applications à redémarrer par période';
 $L_Liste_Fournisseurs_Utiles_Par_Periode = 'Liste des fournisseurs utiles par période';
+$L_Liste_Applications_Par_PDMA = 'Liste des applications par période de perte de données maximale admissible';
 
 $L_BIA_Entite = 'BIA de l\'entité';
 $L_BIAs_Societe = 'BIAs de la société';

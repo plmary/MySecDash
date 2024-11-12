@@ -663,7 +663,7 @@ switch( $Action ) {
 
 	if ( $_POST['flag_liste_app'] == 'true' ) {
 		$section->addPageBreak();
-		
+
 		// Affichage des Applications de cette Campagne.
 		$Liste_Applications = $objCampagnes->rechercherApplicationsCampagne( $_POST['cmp_id'] );
 
@@ -717,6 +717,42 @@ switch( $Action ) {
 				}
 			} else {
 				$textrun->addText($L_Neither, $fontTexteTableau, $styleParagrapheTableau);
+			}
+		}
+
+
+		$section->addPageBreak();
+
+		// Affichage des Applications de cette Campagne.
+		$Liste_Applications = $objCampagnes->rechercherPDMAApplicationsCampagne( $_POST['cmp_id'] );
+
+		$section->addTitle( $L_Liste_Applications_Par_PDMA, 1 );
+
+		$tmp_poids = 0;
+		foreach($Liste_Applications as $Application) {
+			if ($tmp_poids != $Application->pdma) {
+				$tmp_poids = $Application->pdma;
+
+				$section->addTitle($L_Applications_PDMA.' '.$Liste_Echelles_Temps_Poids[$Application->pdma]->ete_nom_code, 2);
+
+				$table = $section->addTable(['borderSize' => 6, 'borderColor' => '006699',
+					'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 'cellMargin' => 160]);
+
+				$table->addRow(null, ['tblHeader' => true]);
+				$table->addCell(6000)->addText($L_Nom_G, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(9000)->addText($L_Activites, $fontTitreTableau, $styleParagrapheTableau);
+			}
+
+			$table->addRow();
+			$table->addCell(4000)->addText($Application->app_nom, $fontTexteTableau, $styleParagrapheTableau);
+
+			$textlines = explode('//', $Application->act_nom);
+			$textrun = $table->addCell(11000)->addTextRun();
+			$textrun->addText(array_shift($textlines), $fontTexteTableau, $styleParagrapheTableau);
+
+			foreach($textlines as $line) {
+				$textrun->addTextBreak(2);
+				$textrun->addText($line, $fontTexteTableau, $styleParagrapheTableau);
 			}
 		}
 	}

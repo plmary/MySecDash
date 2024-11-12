@@ -133,6 +133,7 @@ $L_Activites_A_Redemarrer = 'Activities to restart in';
 
 $L_Liste_Applications = 'Applications list';
 $L_Applications_A_Redemarrer = 'Applications to restart in';
+$L_Applications_PDMA = 'Applications with a maximum permissible data loss of';
 
 $L_Liste_Personnes_Cles = 'Key persons list';
 
@@ -146,6 +147,7 @@ $L_Nom_G = 'Name';
 $L_Liste_Activites_Redemarrer_Par_Periode = 'List of activities to be restarted by period';
 $L_Liste_Applications_Redemarrer_Par_Periode = 'List of applications to be restarted by period';
 $L_Liste_Fournisseurs_Utiles_Par_Periode = 'List of useful suppliers by period';
+$L_Liste_Applications_Par_PDMA = 'List of applications by recovery point objective';
 
 $L_BIA_Entite = 'Entity BIA';
 $L_BIAs_Societe = 'Company\'s BIAs';

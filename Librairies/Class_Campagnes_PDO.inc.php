@@ -1428,7 +1428,7 @@ WHERE act.cmp_id = :cmp_id ';
 		 */
 
 		$Request = 'SELECT app.app_nom, MIN(ete.ete_poids) AS "dmia",
-STRING_AGG( ent.ent_nom || \' (\' || ent.ent_description || \') - \' || act.act_nom, \',<br>\' ) AS "act_nom",
+STRING_AGG( ent.ent_nom || \' (\' || ent.ent_description || \') - \' || act.act_nom, \',<br>\' ORDER BY ent_nom, act_nom ) AS "act_nom",
 STRING_AGG( DISTINCT acap.acap_palliatif, \'##\' ) AS "acap_palliatif"
 FROM act_activites AS "act" 
 RIGHT JOIN acap_act_app AS "acap" ON acap.act_id = act.act_id
@@ -1454,6 +1454,60 @@ ORDER BY dmia, app.app_nom ';
 
 		if ( $dmia != '*' ) {
 			$this->bindSQL( $Query, ':dmia', $dmia, PDO::PARAM_INT );
+		}
+
+		if ( $ent_id != '*' ) {
+			$this->bindSQL( $Query, ':ent_id', $ent_id, PDO::PARAM_INT );
+		}
+
+		$this->executeSQL( $Query );
+
+		return $Query->fetchAll( PDO::FETCH_CLASS );
+	}
+
+
+	public function rechercherPDMAApplicationsCampagne( $cmp_id, $pdma = '*', $ent_id = '*' ) {
+		/**
+		 * Recherche les PDMA des Applications liés à une Campagne (et les classes par DMIA)
+		 *
+		 * \license Copyleft Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2024-09-10
+		 *
+		 * \param[in] $cmp_id Identifiant de la Campagne de rattachement
+		 * \param[in] $pdma ID de l'échelle de temps qui matérialise le PDMA de l'application
+		 * \param[in] $ent_id ID de l'Entité à récupérer plus particulièrement
+		 *
+		 * \return Renvoi TRUE si la cohérence est trouvée, sinon renvoie FALSE. Lève une Exception en cas d'erreur.
+		 */
+
+		$Request = 'SELECT app.app_nom,
+	MIN(ete.ete_poids) AS "pdma",
+	string_agg(ent_nom || \' (\' || ent_description || \') - \' || act_nom, \',//\' ORDER BY ent_nom, act_nom) AS "act_nom"
+FROM app_applications AS "app"
+LEFT JOIN acap_act_app AS "acap" ON acap.app_id = app.app_id
+LEFT JOIN ete_echelle_temps AS "ete" ON ete.ete_id = acap.ete_id_pdma
+LEFT JOIN act_activites AS "act" ON act.act_id = acap.act_id
+LEFT JOIN ent_entites AS "ent" ON ent.ent_id = act.ent_id
+WHERE ete_poids IS NOT NULL AND act.cmp_id = :cmp_id ';
+
+		if ( $pdma != '*' ) {
+			$Request .= 'AND acap.ete_id_pdma = :pdma ';
+		}
+
+		if ( $ent_id != '*' ) {
+			$Request .= 'AND act.ent_id = :ent_id ';
+		}
+
+		$Request .= 'GROUP BY app.app_nom
+ORDER BY pdma, app.app_nom ';
+
+		$Query = $this->prepareSQL( $Request );
+
+		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
+
+		if ( $pdma != '*' ) {
+			$this->bindSQL( $Query, ':pdma', $pdma, PDO::PARAM_INT );
 		}
 
 		if ( $ent_id != '*' ) {

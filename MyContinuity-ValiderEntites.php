@@ -291,8 +291,7 @@ switch( $Action ) {
 			'L_Gestion_Campagnes' => $L_Gestion_Campagnes,
 			'L_Campagne_Sans_Entite' => $L_Campagne_Sans_Entite,
 			'L_Gestion_Entites' => $L_Gestion_Entites,
-			'Liste_Campagnes' => $Liste_Campagnes,
-			'Liste_Entites' => $Liste_Entites
+			'Liste_Campagnes' => $Liste_Campagnes
 		);
 	} else {
 		$Resultat = array( 'statut' => 'error',

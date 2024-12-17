@@ -11,6 +11,8 @@
 
 Vous pouvez déclarer une Vulnérabilité en envoyant un courriel à l'adresse tech@mysecdash.fr
 
+Vous pouvez également utiliser l'option "*Nouveau brouillon d’avis de sécurité*" dans la section "*Security*".
+
 ## 18 Vulnérabilités ont été identifiées à ce jour par un testeur
 
 Les vulnérabilités vont de :

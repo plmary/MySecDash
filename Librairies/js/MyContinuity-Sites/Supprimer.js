@@ -30,7 +30,7 @@ function ModalSupprimer( Id, Libelle ){
 		success: function( reponse ) {
 			var Corps =
 				'<div id="STS-SUPR">' +
-				Message +
+				Message.replace('%s', Libelle) +
 				'</div>';
 
 			construireModal( 'idModalSupp',

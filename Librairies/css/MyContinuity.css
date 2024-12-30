@@ -159,31 +159,31 @@ ul.dropdown-menu li.dropdown-submenu ul.dropdown-menu li a:hover {
 ** Définition des couleurs
 */
 
-.fg_couleur_1 {
+.fg_couleur_1, .fg_vert {
 	color: #717D11;
 }
 
-.bg_couleur_1 {
+.bg_couleur_1, .bg_vert {
 	color: white;
 	background-color: #717D11;
 }
 
 
-.fg_couleur_2 {
+.fg_couleur_2, .fg_bleu {
 	color: #44808A;
 }
 
-.bg_couleur_2 {
+.bg_couleur_2, .bg_bleu {
 	color: white;
 	background-color: #44808A;
 }
 
 
-.fg_couleur_3 {
+.fg_couleur_3, .fg_rouge {
 	color: #C34A36;
 }
 
-.bg_couleur_3 {
+.bg_couleur_3, .bg_rouge {
 	color: white;
 	background-color: #C34A36;
 }
@@ -1312,6 +1312,12 @@ div[data-src="associations"] .btn-row {
 	right: 6px;
 }
 
+.btn-maj-1 {
+	position: relative;
+	bottom: 3px;
+	right: 6px;
+}
+
 /*
 .btn-modifier-cell, .btn-supprimer-cell {
 	position: absolute;
@@ -1343,12 +1349,12 @@ div[data-src="associations"] .btn-row {
 	border: 1px solid;
 }
 
-.titre-fond-bleu-fonce {
+.titre-fond-bleu-fonce, .table .titre-fond-bleu-fonce {
 	background-color: #2f4858;
 	color: white;
 }
 
-.titre-fond-bleu {
+.titre-fond-bleu, .table .titre-fond-bleu {
 	background-color: #44808A;
 	color: white;
 }

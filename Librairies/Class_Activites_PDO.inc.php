@@ -517,8 +517,7 @@ act.act_id, act.ppr_id_responsable, act.ppr_id_suppleant,
 ppr_resp.ppr_nom AS "ppr_nom_resp", ppr_resp.ppr_prenom AS "ppr_prenom_resp",
 ppr_supp.ppr_nom AS "ppr_nom_supp", ppr_supp.ppr_prenom AS "ppr_prenom_supp",
 act_nom, act_description, act_effectifs_en_nominal, act_effectifs_a_distance, act_teletravail, act_dependances_internes_amont,
-act_dependances_internes_aval, act_justification_dmia, acst0.sts_id AS "sts_id_nominal",
-acst1.sts_id AS "sts_id_secours", min_max.nim_poids, max_dmia.ete_poids,
+act_dependances_internes_aval, act_justification_dmia, min_max.nim_poids, max_dmia.ete_poids,
 COUNT(DISTINCT ppac.ppr_id) AS "total_ppr",
 COUNT(DISTINCT acst.sts_id) AS "total_sts",
 COUNT(DISTINCT dma.ete_id) AS "total_dma",
@@ -536,8 +535,6 @@ LEFT JOIN ppr_parties_prenantes AS "ppr_resp" ON ppr_resp.ppr_id = act.ppr_id_re
 LEFT JOIN ppr_parties_prenantes AS "ppr_supp" ON ppr_supp.ppr_id = act.ppr_id_suppleant
 LEFT JOIN ppac_ppr_act AS "ppac" ON ppac.act_id = act.act_id
 LEFT JOIN acst_act_sts AS "acst" ON acst.act_id = act.act_id
-LEFT JOIN acst_act_sts AS "acst0" ON acst0.act_id = act.act_id and acst0.acst_type_site = 0
-LEFT JOIN acst_act_sts AS "acst1" ON acst1.act_id = act.act_id and acst1.acst_type_site = 1
 LEFT JOIN
 	(SELECT act_id, max(nim.nim_poids) AS "nim_poids" 
 	FROM dma_dmia_activite AS "dma" 
@@ -559,8 +556,7 @@ WHERE act.cmp_id = :cmp_id AND act.ent_id = :ent_id ';
 		$Request .= 'GROUP BY act.act_id, act.ppr_id_responsable, act.ppr_id_suppleant,
 ppr_nom_resp, ppr_prenom_resp, ppr_nom_supp, ppr_prenom_supp, act_effectifs_en_nominal, act_effectifs_a_distance, 
 act_nom, act_description, act_teletravail, act_dependances_internes_amont,
-act_dependances_internes_aval, act_justification_dmia, acst0.sts_id, acst1.sts_id,
-min_max.nim_poids, max_dmia.ete_poids ';
+act_dependances_internes_aval, act_justification_dmia, min_max.nim_poids, max_dmia.ete_poids ';
 
 		switch ( $Order ) {
 		 default:
@@ -634,7 +630,67 @@ min_max.nim_poids, max_dmia.ete_poids ';
 	}
 
 
-	public function listerActivitesUtilisateur( $Order = 'act_nom' ) {
+	public function rechercherSitesActivite( $act_id ) {
+		/**
+		 * Rechercher les Sites rattachés à cette Activité.
+		 *
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2024-12-09
+		 *
+		 * \param[in] $act_id Id. de l'Activité recherchée
+		 *
+		 * \return Renvoi une liste des Activités ou une liste vide
+		*/
+
+		$Request = 'SELECT * FROM acst_act_sts AS "acst"
+LEFT JOIN sts_sites AS "sts" ON sts.sts_id = acst.sts_id 
+WHERE acst.act_id = :act_id
+ORDER BY sts_nom ';
+
+		$Query = $this->prepareSQL( $Request );
+
+		$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
+
+		$this->executeSQL( $Query );
+
+		return $Query->fetchAll( PDO::FETCH_CLASS );
+	}
+
+
+	public function rechercherSitesAssociesActivite( $cmp_id, $act_id ) {
+		/**
+		 * Rechercher tous les Sites et précise ceux qui sont rattachés à cette Activité.
+		 *
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2024-12-09
+		 *
+		 * \param[in] $act_id Id. de l'Activité recherchée
+		 *
+		 * \return Renvoi une liste des Activités ou une liste vide
+		 */
+		
+		$Request = 'SELECT sts.*, act_id AS "associe", acst_type_site, acst_strategie_montee_charge, acst_description_entraides
+FROM cmst_cmp_sts AS "cmst"
+LEFT JOIN sts_sites AS "sts" ON sts.sts_id = cmst.sts_id
+LEFT JOIN (SELECT act_id, sts_id, acst_type_site, acst_strategie_montee_charge, acst_description_entraides
+	FROM acst_act_sts WHERE act_id = :act_id ) AS "acst" ON acst.sts_id = sts.sts_id
+WHERE cmst.cmp_id = :cmp_id
+ORDER BY act_id, sts_nom ';
+		
+		$Query = $this->prepareSQL( $Request );
+		
+		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
+		
+		$this->executeSQL( $Query );
+		
+		return $Query->fetchAll( PDO::FETCH_CLASS );
+	}
+	
+
+	public function listerActivitesUtilisateur( $Order = 'act_nom', $cmp_id = '' ) {
 		/**
 		 * Lister les Activités Autorisées à l'Utilisateur.
 		 *
@@ -650,7 +706,7 @@ min_max.nim_poids, max_dmia.ete_poids ';
 sct.sct_nom,
 ent.ent_nom, ent.ent_description,
 act.act_id, act.act_nom,
-ete.ete_poids, ete.ete_nom_code,
+dma.ete_id, dma.mim_id, ete.ete_poids, ete.ete_nom_code,
 nim.nim_numero, nim.nim_poids, nim.nim_nom_code, nim.nim_couleur,
 tim.tim_poids, tim.tim_nom_code
 
@@ -664,9 +720,20 @@ LEFT JOIN mim_matrice_impacts AS "mim" ON mim.mim_id = dma.mim_id
 LEFT JOIN nim_niveaux_impact AS "nim" ON nim.nim_id = mim.nim_id
 LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 
-		if ( $_SESSION['idn_super_admin'] === FALSE ) {
-			$Request .= 'WHERE idsc.idn_id = :idn_id ';
+		if ( $cmp_id != '' ) {
+			$Where = 'WHERE act.cmp_id = :cmp_id ';
+		} else {
+			$Where = '';
 		}
+
+		if ( $_SESSION['idn_super_admin'] === FALSE ) {
+			if ( $Where == '' ) $Where = 'WHERE ';
+			else $Where .= 'AND ';
+
+			$Where .= 'idsc.idn_id = :idn_id ';
+		}
+
+		$Request .= $Where;
 
 		switch ( $Order ) {
 			default:
@@ -705,6 +772,7 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 
 		$Query = $this->prepareSQL( $Request );
 
+		if ( $cmp_id != '' ) $this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
 		if ( $_SESSION['idn_super_admin'] === FALSE ) $this->bindSQL( $Query, ':idn_id', $_SESSION['idn_id'], PDO::PARAM_INT );
 
 		$this->executeSQL( $Query );
@@ -1007,7 +1075,7 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 	}
 
 
-	public function ajouterSiteRattachementActivite( $cmp_id, $act_id, $sts_id, $acst_type_site=0, $acst_strategie_montee_charge='', $acst_description_entraides='' ) {
+	public function ajouterSiteActivite( $cmp_id, $act_id, $sts_id, $acst_type_site=0, $acst_strategie_montee_charge='', $acst_description_entraides='' ) {
 		/**
 		 * Ajoute un Site à l'Activité (par défaut, ajout du site nominal).
 		 *
@@ -1024,20 +1092,18 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 *
 		 * \return Renvoi TRUE si l'occurrence a été créée. Lève une Exception en cas d'erreur.
 		 */
-//print('top 1<br>');
+
 		$Request = 'SELECT COUNT(*) AS "total" FROM cmst_cmp_sts WHERE cmp_id = :cmp_id AND sts_id = :sts_id ';
 
 		$Query = $this->prepareSQL( $Request );
-//print('top 2<br>');
-		
+
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT ) ;
 		$this->bindSQL( $Query, ':sts_id', $sts_id, PDO::PARAM_INT ) ;
-//print('top 3<br>');
-		
+
 		$this->executeSQL( $Query );
 
 		$cmst = $Query->fetchObject();
-//print_r($cmst);print('<hr>');print_r($cmst->total);print('<hr>');
+
 		if ( $cmst->total != 1 ) {
 			$Request = 'INSERT INTO cmst_cmp_sts (cmp_id, sts_id) VALUES (:cmp_id, :sts_id) ';
 			$Query = $this->prepareSQL( $Request );
@@ -1072,7 +1138,7 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 	}
 
 
-	public function modifierSiteRattachementActivite( $cmp_id, $act_id, $sts_id, $acst_type_site, $acst_strategie_montee_charge='', $acst_description_entraides='' ) {
+	public function modifierSiteActivite( $cmp_id, $act_id, $sts_id, $acst_type_site, $acst_strategie_montee_charge='', $acst_description_entraides='' ) {
 		/**
 		 * Modifie un rattachement de Site à l'Activité.
 		 *
@@ -1116,7 +1182,7 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 	}
 
 
-	public function supprimerSiteRattachementActivite( $cmp_id, $act_id, $sts_id ) {
+	public function supprimerSiteActivite( $cmp_id, $act_id, $sts_id ) {
 		/**
 		 * Supprime la relation d'un Site à une Activité.
 		 *
@@ -1479,32 +1545,34 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 * \author Pierre-Luc MARY
 		 * \date 2024-08-21
 		 *
-		 * \param[in] $cmp_id Identifiant de la Campagne à récupérer
 		 * \param[in] $act_id Identifiant de l'Activité à récupérer
 		 *
 		 * \return Renvoi l'occurrence listant les associations du Site ou FALSE si pas d'entité. Lève une Exception en cas d'erreur.
 		 */
-		$Request = 'SELECT app.*, acap.act_id AS "associe", acap.ete_id_dima, acap.ete_id_pdma, 
-			acap.acap_donnees, acap.acap_palliatif
+		$Request = 'SELECT app.*, frn.*, acap.act_id AS "associe", acap.ete_id_dima, acap.ete_id_pdma, 
+			acap.acap_donnees, acap.acap_palliatif, acap.acap_hebergement, acap.acap_niveau_service
 			FROM app_applications AS "app"
-			LEFT JOIN (SELECT app_id, act_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif FROM acap_act_app WHERE act_id = :act_id) AS "acap" ON acap.app_id = app.app_id
+			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id
+			LEFT JOIN
+				(SELECT app_id, act_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif, acap_hebergement, acap_niveau_service
+					FROM acap_act_app WHERE act_id = :act_id) AS "acap" ON acap.app_id = app.app_id
 			ORDER BY acap.act_id, app.app_nom ';
-		
-		
+
+
 		$Query = $this->prepareSQL( $Request );
-		
+
 		$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
-		
+
 		$this->executeSQL( $Query );
-		
+
 		if ( $this->RowCount == 0 ) {
 			return FALSE;
 		}
-		
+
 		return $Query->fetchAll( PDO::FETCH_CLASS );
 	}
-	
-	
+
+
 	public function rechercherApplicationsAssocieesActivite( $act_id = 0 ) {
 		/**
 		 * Récupère les Applications associées à l'Activité.
@@ -1517,9 +1585,10 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 *
 		 * \return Renvoi l'occurrence listant les associations du Site ou FALSE si pas d'entité. Lève une Exception en cas d'erreur.
 		 */
-		$Request = 'SELECT *, ete1.ete_nom_code AS "ete_id_dima", ete2.ete_nom_code AS "ete_id_pdma"
+		$Request = 'SELECT acap.*, app.*, frn.*, ete1.ete_nom_code AS "ete_id_dima", ete2.ete_nom_code AS "ete_id_pdma"
 			FROM acap_act_app AS "acap"
 			LEFT JOIN app_applications AS "app" ON app.app_id = acap.app_id
+			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id
 			LEFT JOIN ete_echelle_temps AS "ete1" ON ete1.ete_id = acap.ete_id_dima
 			LEFT JOIN ete_echelle_temps AS "ete2" ON ete2.ete_id = acap.ete_id_pdma
 			WHERE acap.act_id = :act_id
@@ -1542,7 +1611,7 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 
 
 	public function ajouterApplicationActivite( $act_id, $app_id, $ete_id_dima, $ete_id_pdma,
-		$acap_donnees="", $acap_palliatif="" ) {
+		$acap_donnees="", $acap_palliatif="", $acap_hebergement="", $acap_niveau_service="" ) {
 		/**
 		 * Associe une Application à une Activité.
 		 *
@@ -1556,13 +1625,14 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 * \param[in] $ete_id_pdma Identifiant de l'échelle de temps pour le PDMA de l'Application
 		 * \param[in] $acap_donnees Données associées à cette Application
 		 * \param[in] $acap_palliatif Commentaire sur le palliatif
+		 * \param[in] $acap_hebergement Hébergement spécifique de l'Application pour cette Activité
+		 * \param[in] $acap_niveau_service Niveau de Service spécifique de l'Application pour cette Activité
 		 *
 		 * \return Renvoi TRUE si l'occurrence est créée. Lève une Exception en cas d'erreur.
 		 */
 		$Request = 'INSERT INTO acap_act_app AS "acap"
-			(act_id, app_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif)
-			VALUES (:act_id, :app_id, :ete_id_dima, :ete_id_pdma, :acap_donnees, :acap_palliatif) ';
-
+			(act_id, app_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif, acap_hebergement, acap_niveau_service)
+			VALUES (:act_id, :app_id, :ete_id_dima, :ete_id_pdma, :acap_donnees, :acap_palliatif, :acap_hebergement, :acap_niveau_service) ';
 
 		$Query = $this->prepareSQL( $Request );
 
@@ -1572,6 +1642,8 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		$this->bindSQL( $Query, ':ete_id_pdma', $ete_id_pdma, PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':acap_donnees', $acap_donnees, PDO::PARAM_LOB );
 		$this->bindSQL( $Query, ':acap_palliatif', $acap_palliatif, PDO::PARAM_LOB );
+		$this->bindSQL( $Query, ':acap_hebergement', $acap_hebergement, PDO::PARAM_LOB );
+		$this->bindSQL( $Query, ':acap_niveau_service', $acap_niveau_service, PDO::PARAM_LOB );
 
 		$this->executeSQL( $Query );
 
@@ -1585,7 +1657,7 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 
 
 	public function modifierApplicationActivite( $act_id, $app_id, $ete_id_dima, $ete_id_pdma,
-		$acap_donnees="", $acap_palliatif="" ) {
+		$acap_donnees="", $acap_palliatif="", $acap_hebergement="", $acap_niveau_service="" ) {
 		/**
 		 * Modifie une Application à une Activité.
 		 *
@@ -1599,6 +1671,8 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 * \param[in] $ete_id_pdma Identifiant de l'échelle de temps pour le PDMA de l'Application
 		 * \param[in] $acap_donnees Description des Données associées à l'Application
 		 * \param[in] $acap_palliatif Commentaire sur le palliatif
+		 * \param[in] $acap_hebergement Hébergement spécifique de l'Application pour cette Activité
+		 * \param[in] $acap_niveau_service Niveau de Service spécifique de l'Application pour cette Activité
 		 *
 		 * \return Renvoi TRUE si l'occurrence est créée. Lève une Exception en cas d'erreur.
 		 */
@@ -1606,7 +1680,9 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 			ete_id_dima = :ete_id_dima,
 			ete_id_pdma = :ete_id_pdma,
 			acap_donnees = :acap_donnees,
-			acap_palliatif = :acap_palliatif
+			acap_palliatif = :acap_palliatif,
+			acap_hebergement = :acap_hebergement,
+			acap_niveau_service = :acap_niveau_service
 			WHERE act_id = :act_id AND app_id = :app_id ';
 
 
@@ -1618,6 +1694,8 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		$this->bindSQL( $Query, ':ete_id_pdma', $ete_id_pdma, PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':acap_donnees', $acap_donnees, PDO::PARAM_LOB );
 		$this->bindSQL( $Query, ':acap_palliatif', $acap_palliatif, PDO::PARAM_LOB );
+		$this->bindSQL( $Query, ':acap_hebergement', $acap_hebergement, PDO::PARAM_LOB );
+		$this->bindSQL( $Query, ':acap_niveau_service', $acap_niveau_service, PDO::PARAM_LOB );
 
 		$this->executeSQL( $Query );
 

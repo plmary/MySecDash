@@ -206,7 +206,7 @@ switch( $Action ) {
 		'L_Consequence_Indisponibilite' => $L_Consequence_Indisponibilite,
 		'Liste_Civilites' => $objCivilites->rechercherCivilites(),
 		'Liste_Identites' => $objIdentites->rechercherIdentites( $_SESSION['s_sct_id'] ),
-		'Liste_Sites' => $objActivites->rechercherSitesCampagne( $_SESSION['s_cmp_id'] ),
+		'Liste_Sites' => $objActivites->rechercherSitesAssociesActivite( $_SESSION['s_sct_id'], 0 ), //rechercherSitesCampagne( $_SESSION['s_cmp_id'] ),
 		'Liste_EchellesTemps' => $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_cmp_id']),
 		'Liste_Niveaux_Impact' => $objCampagnes->rechercherNiveauxImpactCampagne( $_SESSION['s_cmp_id'] ),
 		'Liste_Types_Impact' => $objCampagnes->rechercherTypesImpactCampagne( $_SESSION['s_cmp_id'] ),
@@ -235,6 +235,7 @@ switch( $Action ) {
 				$Libelles['Activite'] = $objActivites->rechercherActivites( $_SESSION['s_cmp_id'], $_SESSION['s_ent_id'], '', $_POST['act_id'] );
 				$Libelles['Liste_DMIA'] = $objActivites->recupererDMIA( $_SESSION['s_cmp_id'], $_POST['act_id'] );
 				$Libelles['Liste_Personnes_Cles'] = $objActivites->rechercherPersonnesClesActivites( $_SESSION['s_sct_id'], $_POST['act_id'] );
+				$Libelles['Liste_Sites'] = $objActivites->rechercherSitesAssociesActivite( $_SESSION['s_sct_id'], $_POST['act_id'] );
 				$Libelles['Liste_Applications'] = $objActivites->rechercherApplicationsActivites( $_POST['act_id'] );
 				$Libelles['Liste_Fournisseurs'] = $objActivites->rechercherFournisseursActivite( $_POST['act_id'] );
 			} else {
@@ -250,8 +251,7 @@ switch( $Action ) {
 
  case 'AJAX_Ajouter':
 	if ( $Droit_Ajouter === TRUE ) {
-		if ( isset($_POST['act_nom']) and isset($_POST['ppr_id_responsable']) and isset($_POST['sts_id_nominal'])
-			and isset($_POST['act_teletravail'])) {
+		if ( isset($_POST['act_nom']) && isset($_POST['ppr_id_responsable']) && isset($_POST['act_teletravail'])) {
 
 			$_POST['act_nom'] = $PageHTML->controlerTypeValeur( $_POST['act_nom'], 'ASCII' );
 			if ( $_POST['act_nom'] == -1 ) {
@@ -278,16 +278,6 @@ switch( $Action ) {
 				echo json_encode( array(
 					'statut' => 'error',
 					'texteMsg' => $L_Invalid_Value . ' (ppr_id_suppleant)'
-				) );
-				
-				exit();
-			}
-
-			$_POST['sts_id_nominal'] = $PageHTML->controlerTypeValeur( $_POST['sts_id_nominal'], 'NUMERIC' );
-			if ( $_POST['sts_id_nominal'] == -1 ) {
-				echo json_encode( array(
-					'statut' => 'error',
-					'texteMsg' => $L_Invalid_Value . ' (sts_id_nominal)'
 				) );
 				
 				exit();
@@ -386,17 +376,11 @@ switch( $Action ) {
 
 
 				$_fonctionCourante = 'ajouterSiteRattachementActivite';
-				$objActivites->ajouterSiteRattachementActivite( $_SESSION['s_cmp_id'], $Id_Activite, $_POST['sts_id_nominal'], 0);
+				foreach( $_POST['sites_a_ajouter'] as $Site ) {
+					$objActivites->ajouterSiteRattachementActivite( $_SESSION['s_cmp_id'], $Id_Activite, $Site[0], $Site[1] );
 
-				$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_ACTIVITE', 'cmp_id="' . $_SESSION['s_cmp_id'] . ', act_id="' . $Id_Activite .
-					'", sts_id_nominal="' . $_POST['sts_id_nominal'] . '", acst_type_site="0"' );
-
-				if (isset($_POST['sts_id_secours']) and $_POST['sts_id_secours'] != '') {
-					$_fonctionCourante = 'ajouterSiteRattachementActivite';
-					$objActivites->ajouterSiteRattachementActivite( $_SESSION['s_cmp_id'], $Id_Activite, $_POST['sts_id_secours'], 1);
-					
 					$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_ACTIVITE', 'cmp_id="' . $_SESSION['s_cmp_id'] . ', act_id="' . $Id_Activite .
-						'", sts_id_secours="' . $_POST['sts_id_secours'] . '", acst_type_site="1"' );
+						'", sts_id_nominal="' . $Site[0] . '", acst_type_site="' . $Site[1] . '"' );
 				}
 
 
@@ -587,7 +571,7 @@ switch( $Action ) {
 			try {
 				$objActivites->majActiviteParChamp($_POST['id'], $_POST['source'], $_POST['valeur']);
 
-				$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_PARTIE_PRENANTE', $_POST[ 'source' ] . ' = "' . $_POST['valeur'] . '"' );
+				$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_ACTIVITE', $_POST[ 'source' ] . ' = "' . $_POST['valeur'] . '"' );
 
 				$Resultat = array(
 					'statut' => 'success',
@@ -911,8 +895,8 @@ switch( $Action ) {
 
  case 'AJAX_Modifier':
 	if ( $Droit_Modifier === TRUE ) {
-		if ( isset($_POST['act_nom']) and isset($_POST['ppr_id_responsable']) and isset($_POST['ppr_id_suppleant'])
-		 and isset($_POST['sts_id_nominal']) and isset($_POST['act_description']) ) {
+		if ( isset($_POST['act_nom']) && isset($_POST['ppr_id_responsable']) && isset($_POST['ppr_id_suppleant'])
+		 && isset($_POST['act_description']) ) {
 			if ( ! $PageHTML->verifierActiviteAutorisee( $_POST['act_id'] ) ) {
 				echo json_encode( array(
 					'statut' => 'error',
@@ -947,16 +931,6 @@ switch( $Action ) {
 				echo json_encode( array(
 					'statut' => 'error',
 					'texteMsg' => $L_Invalid_Value . ' (ppr_id_suppleant)'
-				) );
-
-				exit();
-			}
-
-			$_POST['sts_id_nominal'] = $PageHTML->controlerTypeValeur( $_POST['sts_id_nominal'], 'NUMERIC' );
-			if ( $_POST['sts_id_nominal'] == -1 ) {
-				echo json_encode( array(
-					'statut' => 'error',
-					'texteMsg' => $L_Invalid_Value . ' (sts_id_nominal)'
 				) );
 
 				exit();
@@ -1100,7 +1074,7 @@ switch( $Action ) {
 
 			try {
 				// Ajoute les Personnes Clés (si nécessaire)
-				if (isset($_POST['personnes_cles_a_ajouter']) and $_POST['personnes_cles_a_ajouter'] != []) {
+				if (isset($_POST['personnes_cles_a_ajouter']) && $_POST['personnes_cles_a_ajouter'] != []) {
 					foreach($_POST['personnes_cles_a_ajouter'] as $Element) {
 						$ppr_id = $Element[0];
 						$ppac_description = $Element[1];
@@ -1116,7 +1090,7 @@ switch( $Action ) {
 
 
 				// Modifie les Personnes Clés (si nécessaire)
-				if (isset($_POST['personnes_cles_a_modifier']) and $_POST['personnes_cles_a_modifier'] != []) {
+				if (isset($_POST['personnes_cles_a_modifier']) && $_POST['personnes_cles_a_modifier'] != []) {
 					foreach($_POST['personnes_cles_a_modifier'] as $Element) {
 						$ppr_id = $Element[0];
 						$ppac_description = $Element[1];
@@ -1132,7 +1106,7 @@ switch( $Action ) {
 
 
 				// Supprime les Personnes Clés (si nécessaire)
-				if (isset($_POST['personnes_cles_a_supprimer']) and $_POST['personnes_cles_a_supprimer'] != []) {
+				if (isset($_POST['personnes_cles_a_supprimer']) && $_POST['personnes_cles_a_supprimer'] != []) {
 					foreach($_POST['personnes_cles_a_supprimer'] as $Element) {
 						$ppr_id = $Element;
 						
@@ -1163,51 +1137,57 @@ switch( $Action ) {
 
 			try {
 				// Ajoute les Applications (si nécessaire)
-				if (isset($_POST['applications_a_ajouter']) and $_POST['applications_a_ajouter'] != []) {
+				if (isset($_POST['applications_a_ajouter']) && $_POST['applications_a_ajouter'] != []) {
 					foreach($_POST['applications_a_ajouter'] as $Element) {
 						$app_id = $Element[0];
 						$ete_id_dima = $Element[1];
 						$ete_id_pdma = $Element[2];
 						$acap_donnees = $Element[3];
 						$acap_palliatif = $Element[4];
+						$acap_hebergement = $Element[5];
+						$acap_niveau_service = $Element[6];
 						
 						$_fonctionCourante = 'ajouterApplicationActivite';
 						$objActivites->ajouterApplicationActivite($_POST['act_id'],
-							$app_id, $ete_id_dima, $ete_id_pdma, $acap_donnees, $acap_palliatif);
+							$app_id, $ete_id_dima, $ete_id_pdma, $acap_donnees, $acap_palliatif, $acap_hebergement, $acap_niveau_service);
 						
 						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_ACTIVITE',
 							'act_id="' . $_POST['act_id'] . '"' .
 							', app_id="' . $app_id . '", ete_id_dima="' . $ete_id_dima . '"' .
 							', ete_id_pdma="' . $ete_id_pdma . '", acap_donnees="' . $acap_donnees . '"' .
-							', acap_palliatif="' . $acap_palliatif . '"');
+							', acap_palliatif="' . $acap_palliatif . '", acap_hebergement="' . $acap_hebergement . '"' .
+							', acap_niveau_service="' . $acap_niveau_service . '"');
 					}
 				}
 
 
 				// Modifie les Applications (si nécessaire)
-				if (isset($_POST['applications_a_modifier']) and $_POST['applications_a_modifier'] != []) {
+				if (isset($_POST['applications_a_modifier']) && $_POST['applications_a_modifier'] != []) {
 					foreach($_POST['applications_a_modifier'] as $Element) {
 						$app_id = $Element[0];
 						$ete_id_dima = $Element[1];
 						$ete_id_pdma = $Element[2];
 						$acap_donnees = $Element[3];
 						$acap_palliatif = $Element[4];
+						$acap_hebergement = $Element[5];
+						$acap_niveau_service = $Element[6];
 
 						$_fonctionCourante = 'modifierApplicationActivite';
 						$objActivites->modifierApplicationActivite($_POST['act_id'], 
-							$app_id, $ete_id_dima , $ete_id_pdma, $acap_donnees, $acap_palliatif);
+							$app_id, $ete_id_dima , $ete_id_pdma, $acap_donnees, $acap_palliatif, $acap_hebergement, $acap_niveau_service);
 
 						$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_ACTIVITE',
-							'act_id="' . $_POST['act_id'] .
-							'", app_id="' . $app_id . '", ete_id_dima="' . $ete_id_dima . '"' .
+							'act_id="' . $_POST['act_id'] . '"' .
+							', app_id="' . $app_id . '", ete_id_dima="' . $ete_id_dima . '"' .
 							', ete_id_pdma="' . $ete_id_pdma . '", acap_donnees="' . $acap_donnees . '"' .
-							', acap_palliatif="' . $acap_palliatif . '"');
+							', acap_palliatif="' . $acap_palliatif . '", acap_hebergement="' . $acap_hebergement . '"' .
+							', acap_niveau_service="' . $acap_niveau_service . '"');
 					}
 				}
 
 
 				// Supprime les Applications (si nécessaire)
-				if (isset($_POST['applications_a_supprimer']) and $_POST['applications_a_supprimer'] != []) {
+				if (isset($_POST['applications_a_supprimer']) && $_POST['applications_a_supprimer'] != []) {
 					foreach($_POST['applications_a_supprimer'] as $Element) {
 						$app_id = $Element;
 						
@@ -1255,8 +1235,8 @@ switch( $Action ) {
 							', acfr_palliatif_tiers="' . $acfr_palliatif_tiers . '"');
 					}
 				}
-				
-				
+
+
 				// Modifie les Fournisseurs (si nécessaire)
 				if (isset($_POST['fournisseurs_a_modifier']) and $_POST['fournisseurs_a_modifier'] != []) {
 					foreach($_POST['fournisseurs_a_modifier'] as $Element) {
@@ -1264,11 +1244,11 @@ switch( $Action ) {
 						$ete_id = $Element[1];
 						$acfr_consequence_indisponibilite = $Element[2];
 						$acfr_palliatif_tiers = $Element[3];
-						
+
 						$_fonctionCourante = 'modifierFournisseurActivite';
 						$objActivites->modifierFournisseurActivite($_POST['act_id'],
 							$frn_id, $ete_id, $acfr_consequence_indisponibilite, $acfr_palliatif_tiers);
-						
+
 						$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_ACTIVITE',
 							'act_id="' . $_POST['act_id'] . '"' .
 							', frn_id="' . $frn_id . '", ete_id="' . $ete_id . '"' .
@@ -1276,8 +1256,8 @@ switch( $Action ) {
 							', acfr_palliatif_tiers="' . $acfr_palliatif_tiers . '"');
 					}
 				}
-				
-				
+
+
 				// Supprime les Fournisseurs (si nécessaire)
 				if (isset($_POST['fournisseurs_a_supprimer']) and $_POST['fournisseurs_a_supprimer'] != []) {
 					foreach($_POST['fournisseurs_a_supprimer'] as $Element) {
@@ -1308,57 +1288,70 @@ switch( $Action ) {
 
 
 			try {
-				if ( isset( $_POST['sts_id_nominal_old'] ) and $_POST['sts_id_nominal_old'] != "null" ) {
-					if ( $_POST['sts_id_nominal'] != $_POST['sts_id_nominal_old'] ) {
-						$_localAction = "supprimerSiteRattachementActivite  site_nominal";
-						$objActivites->supprimerSiteRattachementActivite( $_SESSION['s_cmp_id'],
-							$_POST['act_id'], $_POST['sts_id_nominal_old'] );
-						
-						$_localAction = "ajouterSiteRattachementActivite site_nominal";
-						$objActivites->ajouterSiteRattachementActivite( $_SESSION['s_cmp_id'], 
-							$_POST['act_id'], $_POST['sts_id_nominal'], 0 );
+				// Ajoute les Sites (si nécessaire)
+				if (isset($_POST['sites_a_ajouter']) && $_POST['sites_a_ajouter'] != []) {
+					foreach($_POST['sites_a_ajouter'] as $Element) {
+						$sts_id = $Element[0];
+						$acst_type_site = $Element[1];
+
+						$_fonctionCourante = 'ajouterSiteActivite';
+						$objActivites->ajouterSiteActivite($_SESSION['s_cmp_id'], $_POST['act_id'], $sts_id, $acst_type_site);
+
+						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_ACTIVITE',
+							'cmp_id="' . $_SESSION['s_cmp_id'] . '", act_id="' . $_POST['act_id'] . '"' .
+							', sts_id="' . $sts_id . '", acst_type_site="' . $acst_type_site . '"');
 					}
 				}
-				
-				$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_ACTIVITE',
-					'cmp_id = "' . $_SESSION['s_cmp_id'] . '", act_id="' . $_POST['act_id'] . '", ' .
-					'sts_id_nominal="' . $_POST['sts_id_nominal'] . '", acst_type_site="0"' );
 
 
-				if ( $_POST['sts_id_secours_old'] != "null" ) {
-					$_localAction = "supprimerSiteRattachementActivite site_secours";
-					$objActivites->supprimerSiteRattachementActivite( $_SESSION['s_cmp_id'], 
-						$_POST['act_id'], $_POST['sts_id_secours_old'] );
-				}
-
-				if ( $_POST['sts_id_secours'] != "" ) {
-						$_localAction = "ajouterSiteRattachementActivite site_secours";
-						$objActivites->ajouterSiteRattachementActivite( $_SESSION['s_cmp_id'],
-							$_POST['act_id'], $_POST['sts_id_secours'], 1 );
+				// Modifie les Sites (si nécessaire)
+				if (isset($_POST['sites_a_modifier']) && $_POST['sites_a_modifier'] != []) {
+					foreach($_POST['sites_a_modifier'] as $Element) {
+						$sts_id = $Element[0];
+						$acst_type_site = $Element[1];
+						
+						$_fonctionCourante = 'modifierSiteActivite';
+						$objActivites->modifierSiteActivite($_POST['act_id'], $sts_id, $acst_type_site);
 
 						$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_ACTIVITE',
-							'cmp_id="' . $_SESSION['s_cmp_id'] . '", act_id="' . $_POST['act_id'] . '", ' .
-							'sts_id_secours="' . $_POST['sts_id_secours'] . '", acst_type_site="1"' );
+							'cmp_id="' . $_SESSION['s_cmp_id'] . '", act_id="' . $_POST['act_id'] . '"' .
+							', sts_id="' . $sts_id . '", acst_type_site="' . $acst_type_site . '"');
+					}
 				}
 
-				$Resultat = array( 'statut' => 'success',
-					'texteMsg' => $L_Activite_Modifiee
-					);
+
+				// Supprime les Sites (si nécessaire)
+				if (isset($_POST['sites_a_supprimer']) && $_POST['sites_a_supprimer'] != []) {
+					foreach($_POST['sites_a_supprimer'] as $Element) {
+						$sts_id = $Element;
+						
+						$_fonctionCourante = 'supprimerSiteActivite';
+						$objActivites->supprimerSiteActivite($_SESSION['s_cmp_id'], $_POST['act_id'], $sts_id);
+						
+						$PageHTML->ecrireEvenement( 'ATP_SUPPRESSION', 'OTP_ACTIVITE',
+							'cmp_id="' . $_SESSION['s_cmp_id'] . '", act_id="' . $_POST['act_id'] . '", sts_id="' . $sts_id . '"' );
+					}
+				}
 			} catch (Exception $e) {
 				$Statut = 'error';
-				$Message = $e->getMessage() . " ($_localAction)";
+				$Message = $e->getMessage() . ' (' . $_fonctionCourante .')';
 
 				if ( $e->getCode() == 23505 ) {
-					$Message = $L_ERR_DUPL_Activite . " ($_localAction)";
+					$Message = $L_ERR_DUPL_Activite;
 				}
 
-				$Resultat = array(
+				echo json_encode( array(
 					'statut' => $Statut,
 					'texteMsg' => $Message
-					);
+				) );
+
+				exit();
 			}
 
-			echo json_encode( $Resultat );
+			echo json_encode(  array(
+				'statut' => 'success',
+				'texteMsg' => $L_Activite_Modifiee
+			) );
 		} else {
 			$Resultat = array(
 				'statut' => 'error',
@@ -1582,16 +1575,40 @@ switch( $Action ) {
 				exit();
 			}
 
+			if ( isset( $_POST['sts_description'] ) ) {
+				$_POST['sts_description'] = $PageHTML->controlerTypeValeur( $_POST['sts_description'], 'ASCII' );
+				if ( $_POST['sts_description'] == -1 ) {
+					echo json_encode( array(
+						'statut' => 'error',
+						'texteMsg' => $L_Invalid_Value . ' (sts_description)'
+					) );
+					
+					exit();
+				}
+			} else {
+				$_POST['sts_description'] = '';
+			}
+
 			try {
-				$objSites->majSite( $_SESSION['s_sct_id'], $_POST['sts_nom'] );
+				$objSites->majSite( $_SESSION['s_sct_id'], $_POST['sts_nom'], $_POST['sts_description'] );
 			} catch( Exception $e ) {
 				$Resultat = array( 'statut' => 'error',
-					'texteMsg' => $e->getMessage() );
+					'texteMsg' => $e->getMessage() . ' (majSite)' );
+			}
+
+			try {
+				$objCampagnes->associerSiteCampagne( $_SESSION['s_cmp_id'], $objSites->LastInsertId );
+			} catch( Exception $e ) {
+				$Resultat = array( 'statut' => 'error',
+					'texteMsg' => $e->getMessage() . ' (associerSiteCampagne)' );
 			}
 
 			$Resultat = array( 'statut' => 'success',
 				'texteMsg' => $L_Site_Cree,
-				'ppr_id' => $objSites->LastInsertId
+				'sts_id' => $objSites->LastInsertId,
+				'L_Aucun' => $L_Neither,
+				'L_Site_Nominal' => $L_Site_Nominal,
+				'L_Site_Secours' => $L_Site_Secours
 			);
 
 			echo json_encode( $Resultat );
@@ -1669,6 +1686,9 @@ switch( $Action ) {
 			} catch( Exception $e ) {
 				$Resultat = array( 'statut' => 'error',
 					'texteMsg' => $e->getMessage() . ' (' . $_Internal_Function . ')' );
+
+				echo json_encode( $Resultat );
+				exit();
 			}
 
 			$Resultat = array( 'statut' => 'success',

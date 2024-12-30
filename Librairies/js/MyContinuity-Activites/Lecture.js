@@ -351,8 +351,6 @@ function ModalAjouterModifier( act_id = '' ) {
 
 			var ppr_id_responsable = '';
 			var ppr_id_suppleant = '';
-			var sts_id_nominal = '';
-			var sts_id_secours = '';
 			var act_dependances_internes_amont = '';
 			var act_dependances_internes_aval = '';
 			
@@ -405,8 +403,6 @@ function ModalAjouterModifier( act_id = '' ) {
 
 			var ppr_id_responsable = reponse['Activite'][0].ppr_id_responsable;
 			var ppr_id_suppleant = reponse['Activite'][0].ppr_id_suppleant;
-			var sts_id_nominal = reponse['Activite'][0].sts_id_nominal;
-			var sts_id_secours = reponse['Activite'][0].sts_id_secours;
 
 			if (reponse['Activite'][0].act_dependances_internes_amont == null) {
 				var act_dependances_internes_amont = '';
@@ -480,7 +476,7 @@ function ModalAjouterModifier( act_id = '' ) {
 			Corps +='<ul class="nav nav-tabs">' +
 				'<li><a id="afficher_cartouche" class="nav-link" href="#">' + reponse[ 'L_Cartouche'] + '</a></li>' +
 				'<li><a id="afficher_dima" class="nav-link" href="#" title="' + reponse[ 'L_Libelle_DMIA' ] + '">' + reponse[ 'L_DMIA'] + '</a></li>' +
-				//'<li><a id="afficher_sites" class="nav-link" href="#">' + reponse[ 'L_Sites'] + '</a></li>' +
+				'<li><a id="afficher_sites" class="nav-link" href="#">' + reponse[ 'L_Sites'] + '</a></li>' +
 				'<li><a id="afficher_personnes_cles" class="nav-link" href="#">' + reponse[ 'L_Personnes_Cles'] + '</a></li>' +
 				'<li><a id="afficher_interdependances" class="nav-link" href="#">' + reponse[ 'L_Interdependances'] + '</a></li>' +
 				'<li><a id="afficher_applications" class="nav-link" href="#">' + reponse[ 'L_Applications'] + '</a></li>' +
@@ -511,8 +507,27 @@ function ModalAjouterModifier( act_id = '' ) {
 				  '<button type="button" class="btn btn-outline-secondary" id="btn-fermer-zone-personne_cle">' + reponse['L_Fermer'] + '</button>' +
 				 '</div> <!-- #ZoneCreerPersonneCle -->' +
 
+				 '<div id="ZoneCreerSite" class="input-group mb-3 d-none">' +
+				  '<input type="text" class="form-control" placeholder="' + reponse['L_Nom'] + '" id="sts_nom">' +
+				  '<input type="text" class="form-control" placeholder="' + reponse['L_Description'] + '" id="sts_description">' +
+				  '<button type="button" class="btn btn-outline-secondary" id="btn-creer-site">' + reponse['L_Creer'] + '</button>' +
+				  '<button type="button" class="btn btn-outline-secondary" id="btn-fermer-zone-site">' + reponse['L_Fermer'] + '</button>' +
+				 '</div> <!-- #ZoneCreerSite -->' +
+
 				 '<div id="ZoneCreerApplication" class="input-group mb-3 d-none">' +
 				  '<input type="text" class="form-control" placeholder="' + reponse['L_Nom'] + '" id="app_nom">' +
+				  '<select class="form-select" id="frn_id">' +
+				  ' <option value="">' + reponse['L_Aucun'] + '</option>';
+			var _Description;
+			for (let Fournisseur of reponse['Liste_Fournisseurs']) {
+				if ( Fournisseur.frn_description != '' ) {
+					_Description = ' (' + Fournisseur.frn_description + ')';
+				} else {
+					_Description = '';
+				}
+				Corps += '<option value="' + Fournisseur.frn_id + '">' + Fournisseur.frn_nom + _Description + '</option>';
+			}
+			Corps += '</select>' +
 				  '<input type="text" class="form-control" placeholder="' + reponse['L_Hebergement'] + '" id="app_hebergement">' +
 				  '<input type="text" class="form-control" placeholder="' + reponse['L_Niveau_Service'] + '" id="app_niveau_service">' +
 				  '<input type="text" class="form-control" placeholder="' + reponse['L_Description'] + '" id="app_description">' +
@@ -525,7 +540,6 @@ function ModalAjouterModifier( act_id = '' ) {
 				  '<select type="text" class="form-select" placeholder="' + reponse['L_Hebergement'] + '" id="tfr_id">' +
 				  ' <option value="">' + reponse['L_Aucun'] + '</option>';
 			for (let Type_Fournisseur of reponse['Liste_Types_Fournisseur']) {
-
 				Corps += '<option value="' + Type_Fournisseur.tfr_id + '">' + Type_Fournisseur.tfr_nom_code + '</option>';
 			}
 			Corps += '</select>' +
@@ -667,89 +681,9 @@ function ModalAjouterModifier( act_id = '' ) {
 				'<option value="0" ' + Selection_Non + '>' + reponse['L_Non'] + '</option>' +
 				'</select>' +
 				'</div>' +
-				'</div>' +
+				'</div>';
 
-					// --------------------------------
-					// Définition du Site Nominal de l'Activité
-					'<div class="row">' +
-					'<label for="sts_id_nominal" class="col-lg-2 col-form-label">' + reponse[ 'L_Site_Nominal' ] + '</label>' +
-					'<div class="col-lg-7">' +
-					'<div id="section-selectionner-site-nominal" class="input-group">' + 
-					'<select id="sts_id_nominal" class="form-select" data-old="' + sts_id_nominal + '" required>' +
-					'<option value="">' + reponse['L_Aucun'] + '</option>';
-				for (let Site of reponse['Liste_Sites']) {
-					Selected = '';
-					if (reponse['Activite'] !== undefined) {
-						if (Site.sts_id == sts_id_nominal) {
-							Selected = ' selected';
-						} else {
-							Selected = '';
-						}
-					} else {
-						Selected = '';
-					}
-					Corps += '<option value="' + Site.sts_id + '"' + Selected + '>' + Site.sts_nom + ' (' + Site.sts_description + ')</option>';
-				}
-				Corps += '</select>';
-
-				if ( reponse['Droit_Ajouter_Sites'] == true ) {
-					Corps += '<button class="btn btn-outline-secondary" id="btn-section-ajouter-site-nominal" type="button" title="'+reponse['L_Creer']+'"><i class="bi-plus"></i></button>';
-				}
-
-				Corps += '</div> <!-- #section-selectionner-site-nominal -->' +
-
-					'<div id="section-ajouter-site-nominal" class="input-group d-none">' +
-					'<input type="text" class="form-control" placeholder="' + reponse['L_Nom'] + '" id="sts_nom_nominal">' +
-					'<button type="button" class="btn btn-outline-secondary" id="btn-ajouter-site-nominal">' + reponse['L_Creer'] + '</button>' +
-					'<button type="button" class="btn btn-outline-secondary" id="btn-fermer-zone-site-nominal">' + reponse['L_Fermer'] + '</button>' +
-					'</div> <!-- #section-ajouter-site-nominal -->' +
-
-					'</div> <!-- .col-lg-7 -->' +
-//					'<label class="col-lg-2 col-form-label" for="act_teletravail">' + reponse[ 'L_Activite_Teletravaillable' ] + '</label>' +
-//					'<div class="col-lg-1">' +
-//					'<input id="act_teletravail_2" class="form-control" type="text" disabled>' +
-//					'</div>' +
-					'</div> <!-- .row -->' +
-
-					// --------------------------------
-					// Définition du Site de Secours de l'Activité
-					'<div class="row">' +
-						'<label for="sts_id" class="col-lg-2 col-form-label">' + reponse[ 'L_Site_Secours' ] + '</label>' +
-						'<div class="col-lg-7">' +
-						'<div id="section-selectionner-site-secours" class="input-group">' + 
-						'<select id="sts_id_secours" class="form-select" data-old="' + sts_id_secours + '">' +
-						'<option value="">' + reponse['L_Aucun'] + '</option>';
-					for (let Site of reponse['Liste_Sites']) {
-						Selected = '';
-						if (reponse['Activite'] !== undefined) {
-							if (Site.sts_id == sts_id_secours) {
-								Selected = ' selected';
-							} else {
-								Selected = '';
-							}
-						} else {
-							Selected = '';
-						}
-						Corps += '<option value="' + Site.sts_id + '"' + Selected + '>' + Site.sts_nom + ' (' + Site.sts_description + ')</option>';
-					}
-					Corps += '</select>';
-
-					if ( reponse['Droit_Ajouter_Sites'] == true ) {
-						Corps += '<button class="btn btn-outline-secondary" id="btn-section-ajouter-site-secours" type="button" title="'+reponse['L_Creer']+'"><i class="bi-plus"></i></button>';
-					}
-
-					Corps += '</div> <!-- #section-selectionner-site-secours -->' +
-
-						'<div id="section-ajouter-site-secours" class="input-group d-none">' +
-						'<input type="text" class="form-control" placeholder="' + reponse['L_Nom'] + '" id="sts_nom_secours">' +
-						'<button type="button" class="btn btn-outline-secondary" id="btn-ajouter-site-secours">' + reponse['L_Creer'] + '</button>' +
-						'<button type="button" class="btn btn-outline-secondary" id="btn-fermer-zone-site-secours">' + reponse['L_Fermer'] + '</button>' +
-						'</div> <!-- #section-ajouter-site-secours -->' +
-
-						'</div> <!-- .col-lg-7 -->' +
-						'</div> <!-- .row -->' +
-
-				'<div class="row">' +
+			Corps += '<div class="row">' +
 				'<label class="col-lg-2 col-form-label" for="act_description">' + reponse[ 'L_Description' ] + '</label>' +
 				'<div class="col-lg-10">' +
 				'<textarea id="act_description" class="form-control" rows="2">'+ act_description + '</textarea>' +
@@ -825,80 +759,50 @@ function ModalAjouterModifier( act_id = '' ) {
 
 			// =====================================
 			// *************************************
-			Corps += '<div id="zone-sites" class="d-none">' +
-				// --------------------------------
-				// Définition du Site Nominal de l'Activité
-				'<div class="row">' +
-				'<label for="sts_id_nominal" class="col-lg-2 col-form-label">' + reponse[ 'L_Site_Nominal' ] + '</label>' +
-				'<div class=\"col-lg-7\">' +
-/*				'<div id="section-selectionner-site-nominal" class="input-group">' + 
-				'<select id="sts_id_nominal" class="form-select" data-old="' + sts_id_nominal + '" required>' +
-				'<option value="">' + reponse['L_Aucun'] + '</option>';
+			Corps += '<div id="zone-sites" class="overflow-y-scroll d-none">';
+
 			for (let Site of reponse['Liste_Sites']) {
-				Selected = '';
-				if (reponse['Activite'] !== undefined) {
-					if (Site.sts_id == sts_id_nominal) {
-						Selected = ' selected';
-					} else {
-						Selected = '';
-					}
+				if (Site.associe !== null) {
+					var Checked = ' checked';
+					var Old_Value = 1;
 				} else {
-					Selected = '';
+					var Checked = '';
+					var Old_Value = 0;
 				}
-				Corps += '<option value="' + Site.sts_id + '"' + Selected + '>' + Site.sts_nom + ' (' + Site.sts_description + ')</option>';
+
+				if ( Site.sts_description != '' && Site.sts_description != null ) {
+					var Description_Site = ' (' + Site.sts_description + ')';
+				} else {
+					var Description_Site = '';
+				}
+
+				var Select_Nominal = '';
+				var Select_Secours = '';
+
+				if ( Site.acst_type_site == 0 ) {
+					var Select_Nominal = ' selected';
+				} else if ( Site.acst_type_site == 1 ) {
+					var Select_Secours = ' selected';
+				}
+
+				Corps += '<div class="row liste mt-1">' +
+					'<div class="col-6">' +
+					'<div class="form-check">' +
+					'<input type="checkbox" class="form-check-input" id="sts-' + Site.sts_id + '" data-old_value="' + Old_Value + '" ' + Checked + '>' +
+					'<label class="form-check-label" for="sts-' + Site.sts_id + '">' + Site.sts_nom + Description_Site + '</label>' +
+					'</div> <!-- .form-check -->' +
+					'</div> <!-- .col-6 -->' +
+					'<div class="col-2">' +
+					'<select class="form-select" id="acst_type_site-' + Site.sts_id + '" data-old_value="' + Site.acst_type_site + '">' +
+					'<option value="">' + reponse["L_Aucun"] + '</option>' +
+					'<option value="0"' + Select_Nominal + '>' + reponse["L_Site_Nominal"] + '</option>' +
+					'<option value="1"' + Select_Secours + '>' + reponse["L_Site_Secours"] + '</option>' +
+					'</select>' +
+					'</div> <!-- .col-2 -->' +
+					'</div> <!-- .row -->';
 			}
-			Corps += '</select>' +
-				'<button class="btn btn-outline-secondary" id="btn-section-ajouter-site-nominal" type="button" title="'+reponse['L_Creer']+'"><i class="bi-plus"></i></button>' +
-				'</div> <!-- #section-selectionner-site-nominal -->' +
 
-				'<div id="section-ajouter-site-nominal" class="input-group d-none">' +
-				'<input type="text" class="form-control" placeholder="' + reponse['L_Nom'] + '" id="sts_nom_nominal">' +
-				'<button type="button" class="btn btn-outline-secondary" id="btn-ajouter-site-nominal">' + reponse['L_Creer'] + '</button>' +
-				'<button type="button" class="btn btn-outline-secondary" id="btn-fermer-zone-site-nominal">' + reponse['L_Fermer'] + '</button>' +
-				'</div> <!-- #section-ajouter-site-nominal -->' +
-*/
-				'</div> <!-- .col-lg-7 -->' +
-				'<label class="col-lg-2 col-form-label" for="act_teletravail">' + reponse[ 'L_Activite_Teletravaillable' ] + '</label>' +
-				'<div class="col-lg-1">' +
-				'<input id="act_teletravail_2" class="form-control" type="text" disabled>' +
-				'</div>' +
-				'</div> <!-- .row -->' +
-
-				// --------------------------------
-				// Définition du Site de Secours de l'Activité
-				'<div class="row">' +
-					'<label for="sts_id" class="col-lg-2 col-form-label">' + reponse[ 'L_Site_Secours' ] + '</label>' +
-					'<div class=\"col-lg-7\">' +
-					'<div id="section-selectionner-site-secours" class="input-group">' + 
-					'<select id="sts_id_secours" class="form-select" data-old="' + sts_id_secours + '">' +
-					'<option value="">' + reponse['L_Aucun'] + '</option>';
-				for (let Site of reponse['Liste_Sites']) {
-					Selected = '';
-					if (reponse['Activite'] !== undefined) {
-						if (Site.sts_id == sts_id_secours) {
-							Selected = ' selected';
-						} else {
-							Selected = '';
-						}
-					} else {
-						Selected = '';
-					}
-					Corps += '<option value="' + Site.sts_id + '"' + Selected + '>' + Site.sts_nom + ' (' + Site.sts_description + ')</option>';
-				}
-				Corps += '</select>' +
-					'<button class="btn btn-outline-secondary" id="btn-section-ajouter-site-secours" type="button" title="'+reponse['L_Creer']+'"><i class="bi-plus"></i></button>' +
-					'</div> <!-- #section-selectionner-site-secours -->' +
-
-					'<div id="section-ajouter-site-secours" class="input-group d-none">' +
-					'<input type="text" class="form-control" placeholder="' + reponse['L_Nom'] + '" id="sts_nom_secours">' +
-					'<button type="button" class="btn btn-outline-secondary" id="btn-ajouter-site-secours">' + reponse['L_Creer'] + '</button>' +
-					'<button type="button" class="btn btn-outline-secondary" id="btn-fermer-zone-site-secours">' + reponse['L_Fermer'] + '</button>' +
-					'</div> <!-- #section-ajouter-site-secours -->' +
-
-					'</div> <!-- .col-lg-7 -->' +
-					'</div> <!-- .row -->' +
-
-				'</div> <!-- zone-sites -->';
+			Corps += '</div> <!-- zone-sites -->';
 
 
 			// =====================================
@@ -960,7 +864,7 @@ function ModalAjouterModifier( act_id = '' ) {
 				   '<textarea id="act_dependances_internes_amont" type="text" class="form-control" rows="3">'+act_dependances_internes_amont+'</textarea>' +
 				  '</div> <!-- .col-6 -->' +
 				  '<div class="col-6">' +
-				   '<label for="act_dependances_internes_aval" class="form-label">'+reponse['L_Dependances_Internes_Amont']+'</label>' +
+				   '<label for="act_dependances_internes_aval" class="form-label">'+reponse['L_Dependances_Internes_Aval']+'</label>' +
 				   '<textarea id="act_dependances_internes_aval" type="text" class="form-control" rows="3">'+act_dependances_internes_aval+'</textarea>' +
 				  '</div> <!-- .col-6 -->' +
 				 '</div> <!-- .row -->' +
@@ -991,17 +895,31 @@ function ModalAjouterModifier( act_id = '' ) {
 
 					var Nom_Complet = Application.app_nom;
 
-					if (Application.app_hebergement != '' && Application.app_hebergement != null) {
-						Nom_Complet += ' [' + Application.app_hebergement + ']';
-					}
-
-					if (Application.app_niveau_service != '' && Application.app_niveau_service != null) {
-						Nom_Complet += ' [' + Application.app_niveau_service + ']';
+					if (Application.frn_id != '' && Application.frn_id != null) {
+						Nom_Complet += ' [' + Application.frn_nom + ']';
 					}
 
 					if (Application.app_description != '' && Application.app_description != null) {
 						Nom_Complet += ' [' + Application.app_description + ']';
 					}
+
+
+					if (Application.app_hebergement == null) Application.app_hebergement = '';
+					if (Application.acap_hebergement == null) Application.acap_hebergement = '';
+					if (Application.app_hebergement == '') {
+						Application.app_hebergement = reponse['L_Hebergement'];
+					}
+					Nom_Complet += '<input type="text" class="form-control" id="acap_hebergement-'+Application.app_id+'" ' +
+						'placeholder="' + Application.app_hebergement + '" value="' + Application.acap_hebergement + '">';
+
+					if (Application.app_niveau_service == null) Application.app_niveau_service = '';
+					if (Application.acap_niveau_service == null) Application.acap_niveau_service = '';
+					if (Application.app_niveau_service == '') {
+						Application.app_niveau_service = reponse['L_Niveau_Service'];
+					}
+					Nom_Complet += '<input type="text" class="form-control" id="acap_niveau_service-'+Application.app_id+'" ' + 
+						'placeholder="' + Application.app_niveau_service + '" value="' + Application.acap_niveau_service + '">';
+
 
 					var t_ete_id_dima = Application.ete_id_dima;
 					var t_ete_id_pdma = Application.ete_id_pdma;
@@ -1272,66 +1190,6 @@ function ModalAjouterModifier( act_id = '' ) {
 				});
 
 
-				$('#btn-section-ajouter-site-nominal').on('click', function(){
-					$('#section-selectionner-site-nominal').addClass('d-none');
-					$('#section-ajouter-site-nominal').removeClass('d-none');
-
-					$('#sts_nom_nominal').focus();
-
-					return -1;
-				});
-
-				$('#btn-fermer-zone-site-nominal').on('click', function(){
-					$('#section-selectionner-site-nominal').removeClass('d-none');
-					$('#section-ajouter-site-nominal').addClass('d-none');
-
-					$('#sts_id_nominal').focus();
-
-					return -1;
-				});
-
-				$('#btn-ajouter-site-nominal').on('click', function(){
-					sts_nom = $('#sts_nom_nominal').val();
-
-					ajouterSiteNominal( sts_nom );
-
-					$('#section-selectionner-site-nominal').removeClass('d-none');
-					$('#section-ajouter-site-nominal').addClass('d-none');
-					
-					return -1;
-				});
-
-
-				$('#btn-section-ajouter-site-secours').on('click', function(){
-					$('#section-selectionner-site-secours').addClass('d-none');
-					$('#section-ajouter-site-secours').removeClass('d-none');
-
-					$('#sts_nom_secours').focus();
-
-					return -1;
-				});
-
-				$('#btn-fermer-zone-site-secours').on('click', function(){
-					$('#section-selectionner-site-secours').removeClass('d-none');
-					$('#section-ajouter-site-secours').addClass('d-none');
-
-					$('#sts_id_secours').focus();
-
-					return -1;
-				});
-
-				$('#btn-ajouter-site-secours').on('click', function(){
-					sts_nom = $('#sts_nom_secours').val();
-
-					ajouterSiteSecours( sts_nom );
-
-					$('#section-selectionner-site-secours').removeClass('d-none');
-					$('#section-ajouter-site-secours').addClass('d-none');
-					
-					return -1;
-				});
-
-
 				// Ce bouton permet de valider les informations liées à cette activité.
 				// Il alimente le champ avec la date du jour où l'activité a été validée.
 				$('#btn-validation').on('click', function(){
@@ -1351,6 +1209,9 @@ function ModalAjouterModifier( act_id = '' ) {
 				// ===============================
 				// -------------------------------
 				// Affiche le contenu des onglets.
+
+				// =========
+				// Gestion de l'onglet "Cartouche"
 				$('#afficher_cartouche').on('click', function() {
 					$('.nav-link').removeClass('active');
 					$('a#afficher_cartouche').addClass('active');
@@ -1374,6 +1235,8 @@ function ModalAjouterModifier( act_id = '' ) {
 				});
 
 
+				// =========
+				// Gestion de l'onglet "DIMA"
 				$('#afficher_dima').on('click', function() {
 					$('.nav-link').removeClass('active');
 					$('a#afficher_dima').addClass('active');
@@ -1383,7 +1246,8 @@ function ModalAjouterModifier( act_id = '' ) {
 				});
 
 
-				/*
+				// =========
+				// Gestion de l'onglet "Sites"
 				$('#afficher_sites').on('click', function() {
 					$('.nav-link').removeClass('active');
 					$('a#afficher_sites').addClass('active');
@@ -1391,13 +1255,52 @@ function ModalAjouterModifier( act_id = '' ) {
 					$('div[id^=zone-]').addClass('d-none');
 					$('#zone-sites').removeClass('d-none');
 
+					$('#zone-action').removeClass('d-none');
+					$('div[id^="ZoneCreer"]').addClass('d-none');
+					$('div[id^="ZoneRecherche"]').removeClass('d-none');
+
 					$('#act_teletravail_2').val($('#act_teletravail option:selected').text());
-	
+
+					if ( reponse['Droit_Ajouter_Sites'] == true ) {
+						$('#zone-btn-creer-objet').removeClass('d-none');
+					} else {
+						$('#zone-btn-creer-objet').addClass('d-none');
+					}
+
+
+					// ---------
+					// Gestion de la zone "Action" de l'Onglet
+					$('#chp-rechercher-objet').off('keyup').on('keyup', function( eventKey){
+						rechercherObjetsDansOnglet('div#zone-sites ');
+					});
+
+					$('#btn-fermer-zone-site').off('click').on('click', function(){
+						$('#ZoneCreerSite').addClass('d-none');
+						$('#ZoneRecherche').removeClass('d-none');
+
+						$('#sts_nom').val('');
+						$('#sts_description').val('');
+					});
+
+					$('#btn-creer-objet').off('click').on('click', function(){
+						$('#ZoneCreerSite').removeClass('d-none');
+						$('#ZoneRecherche').addClass('d-none');
+
+						$('div#ZoneCreerSite input:first').focus();
+
+						return false;
+					});
+
+					$('#btn-creer-site').off('click').on('click', function(){
+						creerSite();
+					});
+
 					$('div#zone-sites select:first').focus();
 				});
-				*/
 
 
+				// =========
+				// Gestion de l'onglet "Personnes Clés"
 				$('#afficher_personnes_cles').on('click', function() {
 					$('.nav-link').removeClass('active');
 					$('a#afficher_personnes_cles').addClass('active');
@@ -1445,6 +1348,8 @@ function ModalAjouterModifier( act_id = '' ) {
 				});
 
 
+				// =========
+				// Gestion de l'onglet "Interdependances"
 				$('#afficher_interdependances').on('click', function() {
 					$('.nav-link').removeClass('active');
 					$('a#afficher_interdependances').addClass('active');
@@ -1456,6 +1361,8 @@ function ModalAjouterModifier( act_id = '' ) {
 				});
 
 
+				// =========
+				// Gestion de l'onglet "Applications"
 				$('#afficher_applications').on('click', function() {
 					$('.nav-link').removeClass('active');
 					$('a#afficher_applications').addClass('active');
@@ -1516,6 +1423,8 @@ function ModalAjouterModifier( act_id = '' ) {
 				});
 
 
+				// =========
+				// Gestion de l'onglet "Fournisseurs"
 				$('#afficher_fournisseurs').on('click', function() {
 					$('.nav-link').removeClass('active');
 					$('a#afficher_fournisseurs').addClass('active');
@@ -1634,9 +1543,10 @@ function creerOccurrenceApplicationDansListe(ID_Application, Nom_Application, Fl
 		var Champ_Obligatoire = '';
 	}
 
+
 	Corps = '<div class="row liste">' +
-		 '<div class="col-3">' +
-		  '<div class="form-check">' + 
+		 '<div class="col-3 text-end">' +
+		  '<div class="form-check text-start">' + 
 		   '<input class="form-check-input" type="checkbox" value="" data-old_value="'+Flag_Selection_Origine+'" id="choix_application-'+ID_Application+'"'+Selection_Actuelle+'>' +
 		   '<label class="form-check-label" for="choix_application-'+ID_Application+'">'+Nom_Application+'</label>' +
 		  '</div> <!-- .form-check -->' +
@@ -1655,10 +1565,10 @@ function creerOccurrenceApplicationDansListe(ID_Application, Nom_Application, Fl
 		
 		Corps += '<option value="'+EchelleTemps.ete_id+'"'+Selectionne+'>'+EchelleTemps.ete_nom_code+'</option>';
 	}
-	
+
 	Corps += '</select>' +
 		 '</div> <!-- .col-2 -->' +
-	
+
 		 '<div class="col-2">' +
 		  '<select id="ete_id_pdma-'+ID_Application+'" class="form-select" data-old="'+ID_PDMA+'"'+Champ_Obligatoire+'>' +
 		  '<option value="">'+Libelle_Aucun+'</option>';
@@ -1736,6 +1646,29 @@ function creerOccurrenceFournisseurDansListe(ID_Fournisseur, Nom_Fournisseur, Fl
 		  '<textarea class="form-control" id="acfr_palliatif_tiers-'+ID_Fournisseur+'" rows="3">' +
 		   acfr_palliatif_tiers+'</textarea>' +
 		 '</div> <!-- .col-3 -->' +
+		'</div> <!-- .row -->';
+
+	return Corps;
+}
+
+
+
+function creerOccurrenceSiteDansListe( sts_id, Nom_Complet, Old_Value, Checked, L_Aucun, L_Site_Nominal, L_Site_Secours, Select_Nominal = '',
+	Select_Secours = '' ) {
+	Corps = '<div class="row liste mt-1">' +
+		'<div class="col-6">' +
+		'<div class="form-check">' +
+		'<input type="checkbox" class="form-check-input" id="sts_id-' + sts_id + '" data-old_value="' + Old_Value + '" ' + Checked + '>' +
+		'<label class="form-check-label" for="sts_id-' + sts_id + '">' + Nom_Complet + '</label>' +
+		'</div> <!-- .form-check -->' +
+		'</div> <!-- .col-6 -->' +
+		'<div class="col-2">' +
+		'<select class="form-select" id="acst_type_site-' + sts_id + '">' +
+		'<option value="">' + L_Aucun + '</option>' +
+		'<option value="0"' + Select_Nominal + '>' + L_Site_Nominal + '</option>' +
+		'<option value="1"' + Select_Secours + '>' + L_Site_Secours + '</option>' +
+		'</select>' +
+		'</div> <!-- .col-2 -->' +
 		'</div> <!-- .row -->';
 
 	return Corps;

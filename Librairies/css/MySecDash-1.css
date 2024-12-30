@@ -159,15 +159,15 @@ ul.dropdown-menu li.dropdown-submenu ul.dropdown-menu li a:hover {
 ** Définition des couleurs
 */
 
-.fg_couleur_1 {
+.fg_couleur_1, .fg_rouge {
 	color: #C34A36;
 }
 
-.fg_couleur_2 {
+.fg_couleur_2, .fg_bleu {
 	color: #44808A;
 }
 
-.fg_couleur_3 {
+.fg_couleur_3, .fg_vert {
 	color: #717D11;
 }
 

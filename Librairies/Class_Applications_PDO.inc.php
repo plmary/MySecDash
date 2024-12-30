@@ -28,7 +28,7 @@ class Applications extends HBL_Connexioneur_BD {
 
 
 	public function majApplication( $app_id, $app_nom, $frn_id='', $app_hebergement='', $app_niveau_service='',
-		$app_description='' ) {
+		$app_description='', $sct_id = NULL ) {
 	/**
 	* Créé ou actualise une Application.
 	*
@@ -41,14 +41,15 @@ class Applications extends HBL_Connexioneur_BD {
 	* \param[in] $frn_id ID du Fournisseur
 	* \param[in] $app_hebergement Définit l'hébergement de l'application
 	* \param[in] $app_niveau_service Niveau de service de l'application
-	* \param[in] $app_description Donne une description de l'application.
+	* \param[in] $app_description Donne une description de l'application
+	* \param[in] $sct_id Permet de déclarer une Société quand l'application est spécifique à celle-ci
 	*
 	* \return Renvoi un booléen sur le succès de la création ou la modification de l'application
 	*/
 		if ( $app_id == '' ) {
 			$Request = 'INSERT INTO app_applications 
-				( app_nom, frn_id, app_hebergement, app_niveau_service, app_description ) VALUES
-				( :app_nom, :frn_id, :app_hebergement, :app_niveau_service, :app_description )';
+				( app_nom, frn_id, app_hebergement, app_niveau_service, app_description, sct_id ) VALUES
+				( :app_nom, :frn_id, :app_hebergement, :app_niveau_service, :app_description, :sct_id )';
 
 			$Query = $this->prepareSQL( $Request );
 		} else {
@@ -57,7 +58,8 @@ class Applications extends HBL_Connexioneur_BD {
 				frn_id = :frn_id,
 				app_hebergement = :app_hebergement,
 				app_niveau_service = :app_niveau_service,
-				app_description = :app_description
+				app_description = :app_description,
+				sct_id = :sct_id
 				WHERE app_id = :app_id ';
 
 			$Query = $this->prepareSQL( $Request );
@@ -69,6 +71,12 @@ class Applications extends HBL_Connexioneur_BD {
 		$this->bindSQL( $Query, ':app_hebergement', $app_hebergement, PDO::PARAM_STR, L_APP_HEBERGEMENT );
 		$this->bindSQL( $Query, ':app_niveau_service', $app_niveau_service, PDO::PARAM_STR, L_APP_NIVEAU_SERVICE );
 		$this->bindSQL( $Query, ':app_description', $app_description, PDO::PARAM_LOB );
+
+		if ( $sct_id == NULL ) {
+			$this->bindSQL( $Query, ':sct_id', NULL, PDO::PARAM_NULL );
+		} else {
+			$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT );
+		}
 
 		if ($frn_id != '') {
 			$this->bindSQL( $Query, ':frn_id', $frn_id, PDO::PARAM_INT );
@@ -127,7 +135,16 @@ class Applications extends HBL_Connexioneur_BD {
 			case 'frn_id':
 				$Request .= 'frn_id = :Value ';
 				break;
-
+				
+			case 'sct_id':
+				$Request .= 'sct_id = :Value ';
+				if ( $Value == 1 ) {
+					$Value = $_SESSION['s_sct_id'];
+				} else {
+					$Value = NULL;
+				}
+				break;
+				
 			case 'app_hebergement':
 				$Request .= 'app_hebergement = :Value ';
 				break;
@@ -155,7 +172,7 @@ class Applications extends HBL_Connexioneur_BD {
 			case 'app_nom':
 				$this->bindSQL( $Query, ':Value', $Value, PDO::PARAM_STR, L_APP_NOM );
 				break;
-			
+
 			case 'frn_id':
 				if ($Value != '') {
 					$this->bindSQL( $Query, ':Value', $Value, PDO::PARAM_INT );
@@ -163,16 +180,24 @@ class Applications extends HBL_Connexioneur_BD {
 					$this->bindSQL( $Query, ':Value', NULL, PDO::PARAM_NULL );
 				}
 				break;
-				
+
+			case 'sct_id':
+				if ($Value != NULL) {
+					$this->bindSQL( $Query, ':Value', $Value, PDO::PARAM_INT );
+				} else {
+					$this->bindSQL( $Query, ':Value', NULL, PDO::PARAM_NULL );
+				}
+				break;
+
 			case 'app_hebergement':
 				$this->bindSQL( $Query, ':Value', $Value,
 					PDO::PARAM_STR, L_APP_HEBERGEMENT );
 				break;
-			
+
 			case 'app_niveau_service':
 				$this->bindSQL( $Query, ':Value', $Value, PDO::PARAM_STR, L_APP_NIVEAU_SERVICE );
 				break;
-			
+
 			case 'app_description':
 				$this->bindSQL( $Query, ':Value', $Value, PDO::PARAM_LOB );
 				break;
@@ -190,7 +215,7 @@ class Applications extends HBL_Connexioneur_BD {
 	}
 
 
-	public function rechercherApplications( $Order = 'app_nom', $app_id = '' ) {
+	public function rechercherApplications( $Order = 'app_nom', $app_id = '', $sct_id = '' ) {
 	/**
 	* Lister les Applications.
 	*
@@ -200,6 +225,7 @@ class Applications extends HBL_Connexioneur_BD {
 	*
 	* \param[in] $Order Permet de gérer l'ordre d'affichage
 	* \param[in] $app_id Permet de limiter la recherche à une application spécifique
+	* \param[in] $sct_id Permet d'ajouter les applications spécifique à une société
 	*
 	* \return Renvoi une liste d'Applications ou une liste vide
 	*/
@@ -208,11 +234,16 @@ class Applications extends HBL_Connexioneur_BD {
 		$Request = 'SELECT
 			*
 			FROM app_applications AS "app" 
-			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id ';
+			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id 
+			WHERE app.sct_id IS NULL ';
 
 
 		if ($app_id != '') {
-			$Where .= 'WHERE app.app_id = :app_id ';
+			$Where .= 'AND app.app_id = :app_id ';
+		}
+
+		if ($sct_id != '') {
+			$Where .= 'OR app.sct_id = :sct_id ';
 		}
 
 
@@ -260,6 +291,10 @@ class Applications extends HBL_Connexioneur_BD {
 
 		if ($app_id != '') {
 			$this->bindSQL( $Query, ':app_id', $app_id, PDO::PARAM_INT ) ;
+		}
+
+		if ($sct_id != '') {
+			$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT ) ;
 		}
 
 

@@ -601,4 +601,7 @@ $L_Ecran_Synthese = 'Ecran de synthèse';
 
 $L_M_Comparateur_DMIA_Activites = 'Comparateur DMIA (Activités)';
 
+$L_Specifique = 'Spécifique';
+$L_Specifique_A = 'Spécifique à';
+
 ?>

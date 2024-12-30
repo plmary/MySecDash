@@ -33,6 +33,7 @@ include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MyContinuity-RolesPart
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MyContinuity-Sites.php' );
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MyContinuity-TypesFournisseur.php' );
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MyContinuity-Rapports.php' );
+include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_HBL_Generiques.inc.php' );
 
 include( DIR_LIBRAIRIES . '/Class_Campagnes_PDO.inc.php' );
 include( DIR_LIBRAIRIES . '/Class_HBL_Societes_PDO.inc.php' );
@@ -151,7 +152,9 @@ switch( $Action ) {
 		'L_Liste_Applications' => $L_Liste_Applications,
 		'L_Liste_Personnes_Cles' => $L_Liste_Personnes_Cles,
 		'L_Liste_Fournisseurs' => $L_Liste_Fournisseurs,
-		'L_Detail_Activites' => $L_Detail_Activites
+		'L_Detail_Activites' => $L_Detail_Activites,
+		'L_Entite' => $L_Entite,
+		'L_Toutes' => $L_Toutes
 		);
 
 	if ( isset( $_POST['cmp_id'] ) ) {
@@ -254,9 +257,18 @@ switch( $Action ) {
 		$Nom_Redacteur = '';
 	}
 
-	$Nom_Fichier = 'Restitution - '.$_POST['sct_nom'].' - '.$_POST['cmp_date'].' '.date('[Y-m-d - H\hi\ms\s]');
+	if ( $_POST['entite_a_editer'] == '*' ) {
+		$_Nom_Entite = $L_Toutes;
+		$_ID_Entite = '';
+	} else {
+		$_Nom_Entite = substr( $_POST['nom_entite_a_editer'], 0, stripos($_POST['nom_entite_a_editer'], ' - ') );
+		$_Nom_Entite = str_replace([':', '/', '\\'], '-', $_Nom_Entite);
+		$_ID_Entite = $_POST['entite_a_editer'];
+	}
+	
+	$Nom_Fichier = 'Restitution - '.$_POST['sct_nom'].' - '.$_POST['cmp_date'].' - '.$_Nom_Entite.' '.date('[Y-m-d - H\hi\ms\s]');
 
-	$Liste_Entites = $objCampagnes->rechercherEntitesCampagne($_POST['cmp_id']);
+	$Liste_Entites = $objCampagnes->rechercherEntitesCampagne($_POST['cmp_id'], $_ID_Entite);
 	$Liste_EchellesTemps = $objEchellesTemps->rechercherEchellesTemps($_POST['cmp_id']);
 	$Liste_Niveaux_Impact = $objCampagnes->rechercherNiveauxImpactCampagne( $_POST['cmp_id'] );
 	$Liste_Types_Impact = $objCampagnes->rechercherTypesImpactCampagne( $_POST['cmp_id'] );
@@ -377,12 +389,13 @@ switch( $Action ) {
 	$table->addCell(5000)->addLink('https://www.loxense.fr', 'Loxense');
 	$table->addCell(5000)->addText('C2 - Diffusion Restreinte', $fontStyle12FortRouge, ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
 	$table->addCell(5000)->addPreserveText('{PAGE} / {NUMPAGES}', null, ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::END]);
-	
-	
+
+
 	// =================================================================
 	// Création d'une nouvelle section et ajoute une table des matières
 	$section = $phpWord->addSection(['orientation' => 'landscape', 'breakType' => 'nextPage']);
-	
+
+
 	// Ajoute un entête de page
 	$footer = $section->addHeader();
 	$table = $footer->addTable();
@@ -416,7 +429,7 @@ switch( $Action ) {
 
 	// ====================================
 	// Gestion de la synthèse managériale.
-	if ( $_POST['flag_synthese_manager'] == 'true' ) {
+	if ( $_POST['flag_synthese_manager'] == 'true' && $_POST['entite_a_editer'] == '*' ) {
 		$section->addPageBreak();
 
 		$Nombre_BIA_A_Faire = $Donnees['total_bia'] - ( $Donnees['total_bia_valides'] + $Donnees['total_bia_en_cours'] );
@@ -520,11 +533,11 @@ switch( $Action ) {
 		if ($Donnees['total_act_4'] > 1) {
 			$_Sujet = $L_T_Activites;
 			$_Auxiliere = $L_T_Sont;
-			$_Type = $L_T_Critiques;
+			$_Type = $L_T_Vitales;
 		} else {
 			$_Sujet = $L_T_Activite;
 			$_Auxiliere = $L_T_Est;
-			$_Type = $L_T_Critiques;
+			$_Type = $L_T_Vitale;
 		}
 		$TextRun = $table->addCell(7500)->addTextRun($styleParagrapheTableau);
 		$TextRun->addImage(DIR_IMAGES . DIRECTORY_SEPARATOR . 'glyphicons' . DIRECTORY_SEPARATOR .
@@ -534,7 +547,7 @@ switch( $Action ) {
 		$TextRun->addText(' '.$_Sujet, $fontStyle16FortRouge);
 		$TextRun->addText(' '.$_Auxiliere.' ', $fontStyle14);
 		$TextRun->addText($_Type, $fontStyle16FortRouge);
-		$TextRun->addText(' '.$L_T_Def_Activites_Critiques, $fontStyle14);
+		$TextRun->addText(' '.$L_T_Def_Activites_Vitales, $fontStyle14);
 
 
 		// Nouvelle occurrence du tableau
@@ -623,22 +636,27 @@ switch( $Action ) {
 	// **********************
 
 
-	// ======================
-	// Gestion des activités
+	// ========================================
+	// Gestion des activités de cette Campagne
 	if ( $_POST['flag_liste_act'] == 'true' ) {
 		$section->addPageBreak();
 
 		// Affichage des Activités à redémarrer par période.
 		$Liste_Activites = $objActivites->rechercherSyntheseActivites( $_POST['cmp_id'], '*', '', 'ete_poids' );
 
+		$Liste_Activites_ID = [];
+		foreach( $Liste_Activites as $Occurrence ) {
+			$Liste_Activites_ID[$Occurrence->act_id] = $Occurrence;
+		}
+
 		$section->addTitle( $L_Liste_Activites_Redemarrer_Par_Periode, 1 );
 
 		$tmp_ete_poids = 0;
 		foreach($Liste_Activites as $Activite) {
-			if ($Activite->ete_poids > 2) {
-				if ( isset($Liste_Echelles_Temps_Poids[$Activite->ete_poids]->ete_nom_code) ) {
+			if ( isset($Liste_Echelles_Temps_Poids[$Activite->ete_poids]->ete_nom_code) ) {
+				if ($tmp_ete_poids != $Activite->ete_poids) {
 					$tmp_ete_poids = $Activite->ete_poids;
-	
+
 					$section->addTitle($L_Activites_A_Redemarrer.' '.$Liste_Echelles_Temps_Poids[$Activite->ete_poids]->ete_nom_code, 2);
 	
 					$table = $section->addTable(['borderSize' => 6, 'borderColor' => '006699',
@@ -649,22 +667,25 @@ switch( $Action ) {
 					$table->addCell(5000)->addText($L_Entite, $fontTitreTableau, $styleParagrapheTableau);
 					$table->addCell(3000)->addText($L_Niveau_Impact, $fontTitreTableau, $styleParagrapheTableau);
 				}
-	
-				$table->addRow();
-				$table->addCell(7000)->addText($Activite->act_nom, $fontTexteTableau, $styleParagrapheTableau);
-				$table->addCell(5000)->addText(($Activite->ent_description != '' ? $Activite->ent_description : $Activite->ent_nom), $fontTexteTableau, $styleParagrapheTableau);
-				$table->addCell(3000, ['bgColor' => $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur])
-				->addText($Activite->nim_poids . ' - ' . $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code, ['size' => 10, 'bold' => true, 'color' => 'ffffff'],
-						array_merge($styleParagrapheTableau, ['alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER]));
 			}
+
+			$table->addRow();
+			$table->addCell(7000)->addText($Activite->act_nom, $fontTexteTableau, $styleParagrapheTableau);
+			$table->addCell(5000)->addText(($Activite->ent_description != '' ? $Activite->ent_description : $Activite->ent_nom), $fontTexteTableau, $styleParagrapheTableau);
+			$table->addCell(3000, ['bgColor' => $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur])
+			->addText($Activite->nim_poids . ' - ' . $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code, ['size' => 10, 'bold' => true, 'color' => 'ffffff'],
+					array_merge($styleParagrapheTableau, ['alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER]));
 		}
 	}
 
 
+	// ===========================================
+	// Gestion des Applications de cette Campagne
 	if ( $_POST['flag_liste_app'] == 'true' ) {
 		$section->addPageBreak();
 
-		// Affichage des Applications de cette Campagne.
+		// -------------------------------------------------------
+		// Affichage des Applications de cette Campagne par DMIA.
 		$Liste_Applications = $objCampagnes->rechercherApplicationsCampagne( $_POST['cmp_id'] );
 
 		$section->addTitle( $L_Liste_Applications_Redemarrer_Par_Periode, 1 );
@@ -680,25 +701,100 @@ switch( $Action ) {
 					'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 'cellMargin' => 160]);
 
 				$table->addRow(null, ['tblHeader' => true]);
-				$table->addCell(4000)->addText($L_Nom_G, $fontTitreTableau, $styleParagrapheTableau);
-				$table->addCell(55000)->addText($L_Activites, $fontTitreTableau, $styleParagrapheTableau);
-				$table->addCell(55000)->addText($L_Palliatif, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(1500)->addText($L_Nom_G, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(6000)->addText($L_Activites, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(5250)->addText($L_Donnees, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(2250)->addText($L_Palliatif, $fontTitreTableau, $styleParagrapheTableau);
 			}
 
 			$table->addRow();
-			$table->addCell(4000)->addText($Application->app_nom, $fontTexteTableau, $styleParagrapheTableau);
+			$table->addCell(1000)->addText($Application->app_nom, $fontTexteTableau, $styleParagrapheTableau);
 
-			$textlines = explode('<br>', $Application->act_nom);
-			$textrun = $table->addCell(11000)->addTextRun();
-			$textrun->addText(array_shift($textlines), $fontTexteTableau, $styleParagrapheTableau);
+			$textlines = explode(',<br>', $Application->act_nom);
+			$textrun = $table->addCell(6000)->addTextRun();
+
+			$line = explode('###', array_shift($textlines));
+			$_act_nom = $line[0];
+			$_act_id = $line[1];
+
+			$textrun->addText($_act_nom . ' ', $fontTexteTableau, $styleParagrapheTableau);
+
+			if ( array_key_exists($_act_id, $Liste_Activites_ID) ) {
+				$textrun->addText('(', $fontTexteTableau, $styleParagrapheTableau);
+
+				$_nim_poids = $Liste_Activites_ID[$_act_id]->nim_poids;
+
+				$textrun->addText($_nim_poids . ' - ' . $Liste_Niveaux_Impact_Poids[$_nim_poids]->nim_nom_code,
+					['size' => 10, 'bold' => true, 'color' => $Liste_Niveaux_Impact_Poids[$_nim_poids]->nim_couleur],
+					$styleParagrapheTableau );
+				
+				if ( $_nim_poids > 2 ) {
+					$_ete_poids = $Liste_Activites_ID[$_act_id]->ete_poids;
+					if ($_ete_poids != '') {
+						$textrun->addText( ' / ' . $Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code,
+							['size' => 10, 'bold' => true], $styleParagrapheTableau );
+					}
+				}
+
+				$textrun->addText(')', $fontTexteTableau, $styleParagrapheTableau);
+			}
 
 			foreach($textlines as $line) {
 				$textrun->addTextBreak(2);
-				$textrun->addText($line, $fontTexteTableau, $styleParagrapheTableau);
+
+				$line = explode('###', $line);
+				$_act_nom = $line[0];
+				$_act_id = $line[1];
+
+				$textrun->addText($_act_nom . ' ', $fontTexteTableau, $styleParagrapheTableau);
+
+				if ( array_key_exists($_act_id, $Liste_Activites_ID) ) {
+					$textrun->addText('(', $fontTexteTableau, $styleParagrapheTableau);
+
+					$_nim_poids = $Liste_Activites_ID[$_act_id]->nim_poids;
+
+					$textrun->addText($_nim_poids . ' - ' . $Liste_Niveaux_Impact_Poids[$_nim_poids]->nim_nom_code,
+						['size' => 10, 'bold' => true, 'color' => $Liste_Niveaux_Impact_Poids[$_nim_poids]->nim_couleur],
+						$styleParagrapheTableau );
+					
+					if ( $_nim_poids > 2 ) {
+						$_ete_poids = $Liste_Activites_ID[$_act_id]->ete_poids;
+						if ($_ete_poids != '') {
+							$textrun->addText( ' / ' . $Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code,
+								['size' => 10, 'bold' => true], $styleParagrapheTableau );
+						}
+					}
+
+					$textrun->addText(')', $fontTexteTableau, $styleParagrapheTableau);
+				}
 			}
 
+
+			$textlines = explode('##', $Application->acap_donnees);
+			$textrun = $table->addCell(2250)->addTextRun();
+			if (count($textlines) > 0) {
+				$compteur = 0;
+				
+				foreach($textlines as $line) {
+					if ($line != '') {
+						$compteur += 1;
+						
+						if ($compteur > 1) $textrun->addTextBreak(2);
+						
+						$textrun->addText($line, $fontTexteTableau, $styleParagrapheTableau);
+					}
+				}
+				
+				if ($compteur == 0) {
+					$textrun->addText($L_Neither, $fontTexteTableau, $styleParagrapheTableau);
+				}
+			} else {
+				$textrun->addText($L_Neither, $fontTexteTableau, $styleParagrapheTableau);
+			}
+
+
 			$textlines = explode('##', $Application->acap_palliatif);
-			$textrun = $table->addCell(11000)->addTextRun();
+			$textrun = $table->addCell(2250)->addTextRun();
 			if (count($textlines) > 0) {
 				$compteur = 0;
 
@@ -723,7 +819,9 @@ switch( $Action ) {
 
 		$section->addPageBreak();
 
-		// Affichage des Applications de cette Campagne.
+
+		// -------------------------------------------------------
+		// Affichage des Applications de cette Campagne par PDMA.
 		$Liste_Applications = $objCampagnes->rechercherPDMAApplicationsCampagne( $_POST['cmp_id'] );
 
 		$section->addTitle( $L_Liste_Applications_Par_PDMA, 1 );
@@ -739,20 +837,44 @@ switch( $Action ) {
 					'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 'cellMargin' => 160]);
 
 				$table->addRow(null, ['tblHeader' => true]);
-				$table->addCell(6000)->addText($L_Nom_G, $fontTitreTableau, $styleParagrapheTableau);
-				$table->addCell(9000)->addText($L_Activites, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(1500)->addText($L_Nom_G, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(6750)->addText($L_Activites, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(6750)->addText($L_Donnees, $fontTitreTableau, $styleParagrapheTableau);
 			}
 
 			$table->addRow();
-			$table->addCell(4000)->addText($Application->app_nom, $fontTexteTableau, $styleParagrapheTableau);
+			$table->addCell(1500)->addText($Application->app_nom, $fontTexteTableau, $styleParagrapheTableau);
 
 			$textlines = explode('//', $Application->act_nom);
-			$textrun = $table->addCell(11000)->addTextRun();
+			$textrun = $table->addCell(6750)->addTextRun();
 			$textrun->addText(array_shift($textlines), $fontTexteTableau, $styleParagrapheTableau);
 
 			foreach($textlines as $line) {
 				$textrun->addTextBreak(2);
 				$textrun->addText($line, $fontTexteTableau, $styleParagrapheTableau);
+			}
+			
+			
+			$textlines = explode('##', $Application->acap_donnees);
+			$textrun = $table->addCell(6750)->addTextRun();
+			if (count($textlines) > 0) {
+				$compteur = 0;
+				
+				foreach($textlines as $line) {
+					if ($line != '') {
+						$compteur += 1;
+						
+						if ($compteur > 1) $textrun->addTextBreak(2);
+						
+						$textrun->addText($line, $fontTexteTableau, $styleParagrapheTableau);
+					}
+				}
+				
+				if ($compteur == 0) {
+					$textrun->addText($L_Neither, $fontTexteTableau, $styleParagrapheTableau);
+				}
+			} else {
+				$textrun->addText($L_Neither, $fontTexteTableau, $styleParagrapheTableau);
 			}
 		}
 	}
@@ -903,7 +1025,7 @@ switch( $Action ) {
 			if ( $Informations_Validation->cmen_date_validation == NULL ) {
 				$table->addRow(null, ['tblHeader' => true]);
 				$table->addCell(15000, ['gridSpan' => 2])
-					->addText($Neither_f, $fontTexteTableau, $styleParagrapheTableau);
+					->addText($L_Neither_f, $fontTexteTableau, $styleParagrapheTableau);
 			} else {
 				$table->addRow(null, ['tblHeader' => true]);
 				$table->addCell(7500)
@@ -922,7 +1044,8 @@ switch( $Action ) {
 				$Liste_Personnes_Cles = $objActivites->rechercherPersonnesClesAssociesActivite( $Activite->act_id );
 				$Liste_Applications = $objActivites->rechercherApplicationsAssocieesActivite( $Activite->act_id );
 				$Liste_Fournisseurs = $objActivites->rechercherFournisseursAssociesActivite( $Activite->act_id );
-
+				$Liste_Sites = $objActivites->rechercherSitesActivite( $Activite->act_id );
+				
 				$Compteur += 1;
 
 				$section->addTitle($Activite->act_nom, 3);
@@ -956,27 +1079,51 @@ switch( $Action ) {
 				$table->addCell(4500)->addText($L_Activite_Teletravaillable, $fontTexteTableau, $styleParagrapheTableau);
 				$table->addCell(10500)->addText($_Activite_Teletravail, $fontTexteFortTableau, $styleParagrapheTableau);
 
-
-				$table->addRow(null, ['tblHeader' => true]);
-				$table->addCell(4500)->addText($L_Site_Nominal, $fontTexteTableau, $styleParagrapheTableau);
-				$table->addCell(10500)->addText($Liste_Sites_Id[$Activite->sts_id_nominal]->sts_nom . ' ('.$Liste_Sites_Id[$Activite->sts_id_nominal]->sts_description .')', $fontTexteFortTableau, $styleParagrapheTableau);
-
-				if ($Activite->sts_id_secours != NULL) {
-					$_Nom_Site_Secours = $Liste_Sites_Id[$Activite->sts_id_secours]->sts_nom . ' ('.$Liste_Sites_Id[$Activite->sts_id_secours]->sts_description .')</td>';
-				} else {
-					$_Nom_Site_Secours = $L_Neither;
-				}
-
-
-				$table->addRow(null, ['tblHeader' => true]);
-				$table->addCell(4500)->addText($L_Site_Secours, $fontTexteTableau, $styleParagrapheTableau);
-				$table->addCell(10500)->addText($_Nom_Site_Secours, $fontTexteFortTableau, $styleParagrapheTableau);
-
-
 				$table->addRow(null, ['tblHeader' => true]);
 				$table->addCell(4500)->addText($L_Description, $fontTexteTableau, $styleParagrapheTableau);
 				if ( $Activite->act_description == NULL ) $Activite->act_description = '';
 				$table->addCell(15000)->addText($Activite->act_description, $fontTexteFortTableau, $styleParagrapheTableau);
+
+
+				// ====================
+				// Sites de l'activité
+
+				// Gestion de l'entête du tableau
+				$section->addTextBreak(1);
+				$table = $section->addTable(['borderSize' => 6, 'borderColor' => '006699', 'topFromText' => 20,
+					'bottomFromText' => 60, 'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER,
+					'cellMargin' => 160]);
+				
+				$table->addRow();
+				$table->addCell(15000, ['gridSpan' => 3, 'bgColor' => 'C0C0C0'])
+					->addText($L_Sites, $fontTitreTableau, ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceBefore' => 60, 'spaceAfter' => 60]);
+
+				$table->addRow(null, ['tblHeader' => true]);
+				$table->addCell(3000)->addText($L_Type, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(4500)->addText($L_Nom_G, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(7500)->addText($L_Description, $fontTitreTableau, $styleParagrapheTableau);
+
+
+				// Gestion du corps du tableau
+				foreach( $Liste_Sites as $Site ) {
+					switch ( $Site->acst_type_site ) {
+						default:
+							$_Type_Site = $L_Neither;
+							break;
+							
+						case 0:
+							$_Type_Site = $L_Site_Nominal;
+							break;
+							
+						case 1:
+							$_Type_Site = $L_Site_Secours;
+							break;
+					}
+					$table->addRow();
+					$table->addCell(3000)->addText($_Type_Site, $fontTexteTableau, $styleParagrapheTableau);
+					$table->addCell(4500)->addText($Site->sts_nom, $fontTexteTableau, $styleParagrapheTableau);
+					$table->addCell(7500)->addText($Site->sts_description, $fontTexteTableau, $styleParagrapheTableau);
+				}
 
 
 				// ====================
@@ -992,7 +1139,7 @@ switch( $Action ) {
 
 				$table->addRow();
 				$table->addCell(15000, ['gridSpan' => $Nombre_Echelle, 'bgColor' => 'C0C0C0'])
-				->addText($L_DMIA, $fontTitreTableau, ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceBefore' => 60, 'spaceAfter' => 60]);
+					->addText($L_DMIA, $fontTitreTableau, ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER, 'spaceBefore' => 60, 'spaceAfter' => 60]);
 
 				$table->addRow(null, ['tblHeader' => true]);
 
@@ -1130,55 +1277,71 @@ switch( $Action ) {
 					'cellMargin' => 160]);
 				
 				$table->addRow();
-				$table->addCell(15000, ['gridSpan' => 6, 'bgColor' => 'C0C0C0'])
+				$table->addCell(15000, ['gridSpan' => 8, 'bgColor' => 'C0C0C0'])
 					->addText($L_Applications, $fontStyle16Fort, array_merge($styleParagrapheTableau, ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]));
 				
 				$table->addRow(null, ['tblHeader' => true]);
-				$table->addCell(2500)->addText($L_Nom, $fontTitreTableau, $styleParagrapheTableau);
-				$table->addCell(2500)->addText($L_Hebergement, $fontTitreTableau, $styleParagrapheTableau);
-				$table->addCell(2500)->addText($L_DMIA, $fontTitreTableau, $styleParagrapheTableau);
-				$table->addCell(2500)->addText($L_PDMA, $fontTitreTableau, $styleParagrapheTableau);
-				$table->addCell(2500)->addText($L_Donnees, $fontTitreTableau, $styleParagrapheTableau);
-				$table->addCell(2500)->addText($L_Palliatif, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(1875)->addText($L_Nom, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(1875)->addText($L_Fournisseur, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(1875)->addText($L_Hebergement, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(1875)->addText($L_Niveau_Service, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(1875)->addText($L_DMIA, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(1875)->addText($L_PDMA, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(1875)->addText($L_Donnees, $fontTitreTableau, $styleParagrapheTableau);
+				$table->addCell(1875)->addText($L_Palliatif, $fontTitreTableau, $styleParagrapheTableau);
 				
 				if ( $Liste_Applications != FALSE ) {
 					foreach ($Liste_Applications as $Application) {
 						$table->addRow();
 
 						if ( $Application->app_nom == NULL ) $Application->app_nom = '';
-						$table->addCell(2500)->addText($Application->app_nom, $fontTexteTableau, $styleParagrapheTableau);
+						$table->addCell(1875)->addText($Application->app_nom, $fontTexteTableau, $styleParagrapheTableau);
+
+						if ( $Application->frn_nom == NULL ) $Application->frn_nom = '';
+						$table->addCell(1875)->addText($Application->frn_nom, $fontTexteTableau, $styleParagrapheTableau);
 
 						if ( $Application->app_hebergement == NULL ) $Application->app_hebergement = '';
-						$table->addCell(2500)->addText($Application->app_hebergement, $fontTexteTableau, $styleParagrapheTableau);
+						if ( $Application->acap_hebergement == NULL ) $Application->acap_hebergement = '';
+						$table->addCell(1875)->addText(
+							($Application->acap_hebergement != '' ? $Application->acap_hebergement : $Application->app_hebergement),
+							$fontTexteTableau, $styleParagrapheTableau
+							);
+
+						if ( $Application->app_niveau_service == NULL ) $Application->app_niveau_service = '';
+						if ( $Application->acap_niveau_service == NULL ) $Application->acap_niveau_service = '';
+						$table->addCell(1875)->addText(
+							($Application->acap_niveau_service != '' ? $Application->acap_niveau_service : $Application->app_niveau_service),
+							$fontTexteTableau, $styleParagrapheTableau
+							);
 
 						if ( $Application->ete_id_dima == NULL ) $Application->ete_id_dima = '';
-						$table->addCell(2500)->addText($Application->ete_id_dima, $fontTexteTableau, $styleParagrapheTableau);
-						
+						$table->addCell(1875)->addText($Application->ete_id_dima, $fontTexteTableau, $styleParagrapheTableau);
+
 						if ( $Application->ete_id_pdma == NULL ) $Application->ete_id_pdma = '';
-						$table->addCell(2500)->addText($Application->ete_id_pdma, $fontTexteTableau, $styleParagrapheTableau);
-						
+						$table->addCell(1875)->addText($Application->ete_id_pdma, $fontTexteTableau, $styleParagrapheTableau);
+
 						if ( $Application->acap_donnees == NULL ) {
 							$Application->acap_donnees = '';
-							$table->addCell(2500)->addText($Application->acap_donnees, $fontTexteTableau, $styleParagrapheTableau);
+							$table->addCell(1875)->addText($Application->acap_donnees, $fontTexteTableau, $styleParagrapheTableau);
 						} else {
 							$textlines = explode("\n", $Application->acap_donnees);
-							$textrun = $table->addCell(2500)->addTextRun();
+							$textrun = $table->addCell(1875)->addTextRun();
 							$textrun->addText(array_shift($textlines), $fontTexteTableau, $styleParagrapheTableau);
-							
+
 							foreach($textlines as $line) {
 								$textrun->addTextBreak(1);
 								$textrun->addText($line, $fontTexteTableau, $styleParagrapheTableau);
 							}
 						}
-						
+
 						if ( $Application->acap_palliatif == NULL ) {
 							$Application->acap_palliatif = '';
-							$table->addCell(2500)->addText($Application->acap_palliatif, $fontTexteTableau, $styleParagrapheTableau);
+							$table->addCell(1875)->addText($Application->acap_palliatif, $fontTexteTableau, $styleParagrapheTableau);
 						} else {
 							$textlines = explode("\n", $Application->acap_palliatif);
-							$textrun = $table->addCell(2500)->addTextRun();
+							$textrun = $table->addCell(1875)->addTextRun();
 							$textrun->addText(array_shift($textlines), $fontTexteTableau, $styleParagrapheTableau);
-							
+
 							foreach($textlines as $line) {
 								$textrun->addTextBreak(1);
 								$textrun->addText($line, $fontTexteTableau, $styleParagrapheTableau);
@@ -1187,7 +1350,7 @@ switch( $Action ) {
 					}
 				} else {
 					$table->addRow();
-					$table->addCell(15000, ['gridSpan' => 6])->addText($L_Neither_f, $fontTitreTableau, array_merge($styleParagrapheTableau, ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]));
+					$table->addCell(15000, ['gridSpan' => 8])->addText($L_Neither_f, $fontTitreTableau, array_merge($styleParagrapheTableau, ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]));
 				}
 
 

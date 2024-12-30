@@ -65,15 +65,18 @@ $L_Nombre_Activite_Essentielle = '<span id="total_activites_essentielles" class=
 
 $L_T_Dont = 'dont';
 $L_T_Critiques = 'critiques';
-$L_T_Def_Activites_Critiques = '(impact = 4)';
+$L_T_Def_Activites_Critiques = '(impact = 3)';
+$L_T_Vitales = 'vitales';
+$L_T_Def_Activites_Vitales = '(impact = 4)';
 
-$L_Nombre_Activites_Critiques = $L_T_Dont.' <span id="total_activites_critiques" class="fg_couleur_3 fs-3">%s</span>&nbsp;' .
-	$L_T_Activites.' '.$L_T_Sont.' <span  class="fg_couleur_3 fs-4">'.$L_T_Critiques.'</span> '.$L_T_Def_Activites_Critiques;
+$L_Nombre_Activites_Vitales = $L_T_Dont.' <span id="total_activites_vitales" class="fg_couleur_3 fs-3">%s</span>&nbsp;' .
+	$L_T_Activites.' '.$L_T_Sont.' <span  class="fg_couleur_3 fs-4">'.$L_T_Vitales.'</span> '.$L_T_Def_Activites_Vitales;
 
 $L_T_Critique = 'critique';
+$L_T_Vitale = 'vitale';
 
-$L_Nombre_Activite_Critique = $L_T_Dont.' <span id="total_activites_critiques" class="fg_couleur_3 fs-3">%s</span>&nbsp;' .
-	$L_T_Activite.' '.$L_T_Est.' <span  class="fg_couleur_3 fs-4">'.$L_T_Critique.'</span> '.$L_T_Def_Activites_Critiques;
+$L_Nombre_Activite_Vitale = $L_T_Dont.' <span id="total_activites_vitales" class="fg_couleur_3 fs-3">%s</span>&nbsp;' .
+	$L_T_Activite.' '.$L_T_Est.' <span  class="fg_couleur_3 fs-4">'.$L_T_Vitale.'</span> '.$L_T_Def_Activites_Vitales;
 
 $L_T_Def_Activites_Graves = '(impact = 3)';
 

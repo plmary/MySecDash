@@ -264,9 +264,13 @@ function ModalMAJCampagne( cmp_id = '' ){
 
 				'</div> <!-- #zone_action -->' +
 
-				'<div id="onglets_utilisateur">' +
+				'<div id="onglets_utilisateur" style="height: 520px;">' +
 				
-				'<div id="zone-x-select-entites" class="d-none">';
+				'<div id="zone-x-select-entites" class="d-none">' +
+					'<div class="form-check liste">' +
+					'<input class="form-check-input" type="checkbox" id="tout-cocher-ent">' +
+					'<label class="form-check-label fw-bold fg_bleu" for="tout-cocher-ent">' + reponse['L_Tout_Cocher_Decocher'] + '</label>' +
+					'</div>';
 				for (let Entite of reponse['Liste_Entites']) {
 					if (Entite.associe != null) {
 						Associe = ' checked';
@@ -287,7 +291,11 @@ function ModalMAJCampagne( cmp_id = '' ){
 				Corps += '</div> <!-- #zone-x-select-entites -->' +
 
 
-				'<div id="zone-x-select-sites" class="d-none">';
+				'<div id="zone-x-select-sites" class="d-none">' +
+					'<div class="form-check liste">' +
+					'<input class="form-check-input" type="checkbox" id="tout-cocher-sts">' +
+					'<label class="form-check-label fw-bold fg_bleu" for="tout-cocher-sts">' + reponse['L_Tout_Cocher_Decocher'] + '</label>' +
+					'</div>';
 				for (let Site of reponse['Liste_Sites']) {
 					if (Site.associe != null) {
 						Associe = ' checked';
@@ -406,7 +414,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 				Corps,
 				'idBoutonAjouter', Bouton,
 				true, reponse[ 'L_Fermer' ],
-				'formMAJCampagne', 'modal-xl' );
+				'formMAJCampagne', 'modal-xxl' );
 
 			// Affiche la modale qui vient d'être créée
 			$('#idModalCampagne').modal('show');
@@ -458,6 +466,24 @@ function ModalMAJCampagne( cmp_id = '' ){
 					$('#tfr_id').val('');
 					$('#frn_description').val('');
 				});
+	
+				$('#tout-cocher-ent').on( 'click', function() {
+					var Checked = $('#tout-cocher-ent').is(':checked');
+					if ( Checked ) {
+						$('#zone-x-select-entites input[id^="entite-"]').prop('checked', true);
+					} else {
+						$('#zone-x-select-entites input[id^="entite-"]').prop('checked', false);
+					}
+				} );
+
+				$('#tout-cocher-sts').on( 'click', function() {
+					var Checked = $('#tout-cocher-sts').is(':checked');
+					if ( Checked ) {
+						$('#zone-x-select-sites input[id^="site-"]').prop('checked', true);
+					} else {
+						$('#zone-x-select-sites input[id^="site-"]').prop('checked', false);
+					}
+				} );
 			});
 
 			$('#idModalCampagne').on('hidden.bs.modal', function() {

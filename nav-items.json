@@ -9,9 +9,10 @@
 				{"LibelleItem": "L_Societes", "Type" : "option", "Lien": "MySecDash-Societes.php"},
 				{"LibelleItem": "L_Entites", "Type" : "option", "Lien": "MySecDash-Entites.php"},
 				{"LibelleItem": "L_Civilites", "Type" : "option", "Lien": "MySecDash-Civilites.php"},
+				{"LibelleItem": "L_Utilisateurs", "Type" : "option", "Lien": "MySecDash-Utilisateurs.php"},
+				{"LibelleItem": "", "Type" : "separator"},
 				{"LibelleItem": "L_ApplicationsInternes", "Type" : "option", "Lien": "MySecDash-ApplicationsInternes.php"},
 				{"LibelleItem": "L_Profils", "Type" : "option", "Lien": "MySecDash-Profils.php"},
-				{"LibelleItem": "L_Utilisateurs", "Type" : "option", "Lien": "MySecDash-Utilisateurs.php"},
 				{"LibelleItem": "L_Etiquettes", "Type" : "option", "Lien": "MySecDash-Etiquettes.php"}
 			]},
 			{"LibelleItem": "", "Type" : "separator"},

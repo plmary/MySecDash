@@ -139,6 +139,7 @@ switch( $Action ) {
 		'L_Non' => $L_No,
 		'L_Type' => $L_Type,
 		'L_Niveau' => $L_Niveau,
+		'L_Tout_Cocher_Decocher' => $L_Tout_Cocher_Decocher,
 		'L_Creer_Campagne_Avant_Echelle' => $L_Creer_Campagne_Avant_Echelle,
 		'L_Creer_Campagne_Avant_Matrice' => $L_Creer_Campagne_Avant_Matrice,
 		'Droits_Entites' => $PageHTML->permissionsGroupees('MySecDash-Entites.php'),

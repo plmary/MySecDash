@@ -487,7 +487,7 @@ WHERE act.cmp_id = :cmp_id ';
 	}
 
 
-	public function rechercherEntitesCampagne( $cmp_id ) {
+	public function rechercherEntitesCampagne( $cmp_id, $ent_id = '' ) {
 		/**
 		 * Lister les Entites déclarées sur une Campagne
 		 *
@@ -496,24 +496,32 @@ WHERE act.cmp_id = :cmp_id ';
 		 * \date 2024-01-15
 		 *
 		 * \param[in] $cmp_id ID de la Campagne qui pourrait être associé
+		 * \param[in] $ent_id ID de l'Entité spécifique à rechercher (par défaut recherche toutes les Entités rattachées à une Campagne
 		 *
 		 * \return Renvoi un tableau d'objet ou un tableau vide si pas de données trouvées. Lève une exception en cas d'erreur.
 		 */
+		
+		$Where = '';
+		
+		if ( $ent_id != '' && $ent_id != '*' ) $Where = 'AND cmen.ent_id = :ent_id ';
+		
 		$Request = 'SELECT *
 			FROM cmen_cmp_ent AS "cmen"
 			LEFT JOIN ent_entites AS "ent" ON ent.ent_id = cmen.ent_id
 			LEFT JOIN cmp_campagnes AS "cmp" ON cmp.cmp_id = cmen.cmp_id
 			LEFT JOIN idn_identites AS "idn" ON idn.idn_id = cmen.idn_id_validation
 			LEFT JOIN cvl_civilites AS "cvl" ON cvl.cvl_id = idn.cvl_id
-			WHERE cmen.cmp_id = :cmp_id
-			ORDER BY ent_nom ';
+			WHERE cmen.cmp_id = :cmp_id ' . $Where .
+			'ORDER BY ent_nom ';
 		
 		$Query = $this->prepareSQL( $Request );
 		
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
-		
+
+		if ( $ent_id != '' ) $this->bindSQL( $Query, ':ent_id', $ent_id, PDO::PARAM_INT );
+
 		$this->executeSQL( $Query );
-		
+
 		return $Query->fetchAll( PDO::FETCH_CLASS );
 	}
 
@@ -1427,10 +1435,13 @@ WHERE act.cmp_id = :cmp_id ';
 		 * \return Renvoi TRUE si la cohérence est trouvée, sinon renvoie FALSE. Lève une Exception en cas d'erreur.
 		 */
 
-		$Request = 'SELECT app.app_nom, MIN(ete.ete_poids) AS "dmia",
-STRING_AGG( ent.ent_nom || \' (\' || ent.ent_description || \') - \' || act.act_nom, \',<br>\' ORDER BY ent_nom, act_nom ) AS "act_nom",
-STRING_AGG( DISTINCT acap.acap_palliatif, \'##\' ) AS "acap_palliatif"
-FROM act_activites AS "act" 
+		$Request = 'SELECT app.app_id, app.app_nom, app.app_niveau_service, app.app_hebergement, MIN(ete.ete_poids) AS "dmia",
+STRING_AGG( ent.ent_nom || \' (\' || ent.ent_description || \') - \' || act.act_nom || \'###\'||act.act_id, \',<br>\' ORDER BY ent_nom, act_nom ) AS "act_nom",
+STRING_AGG( DISTINCT acap.acap_palliatif, \'##\' ) AS "acap_palliatif",
+STRING_AGG( DISTINCT acap.acap_donnees, \'##\' ) AS "acap_donnees",
+STRING_AGG( DISTINCT acap.acap_hebergement, \'##\' ) AS "acap_hebergement",
+STRING_AGG( DISTINCT acap.acap_niveau_service, \'##\' ) AS "acap_niveau_service"
+FROM act_activites AS "act"
 RIGHT JOIN acap_act_app AS "acap" ON acap.act_id = act.act_id
 LEFT JOIN ent_entites AS "ent" ON ent.ent_id = act.ent_id
 LEFT JOIN app_applications AS "app" ON app.app_id = acap.app_id
@@ -1445,7 +1456,7 @@ WHERE act.cmp_id = :cmp_id ';
 			$Request .= 'AND act.ent_id = :ent_id ';
 		}
 
-		$Request .= 'GROUP BY app.app_nom
+		$Request .= 'GROUP BY app.app_id, app.app_nom
 ORDER BY dmia, app.app_nom ';
 
 		$Query = $this->prepareSQL( $Request );
@@ -1481,9 +1492,10 @@ ORDER BY dmia, app.app_nom ';
 		 * \return Renvoi TRUE si la cohérence est trouvée, sinon renvoie FALSE. Lève une Exception en cas d'erreur.
 		 */
 
-		$Request = 'SELECT app.app_nom,
-	MIN(ete.ete_poids) AS "pdma",
-	string_agg(ent_nom || \' (\' || ent_description || \') - \' || act_nom, \',//\' ORDER BY ent_nom, act_nom) AS "act_nom"
+		$Request = 'SELECT app.app_nom, app.app_description, app.app_hebergement, app.app_niveau_service, acap.acap_hebergement, acap.acap_niveau_service,
+MIN(ete.ete_poids) AS "pdma",
+STRING_AGG(ent_nom || \' (\' || ent_description || \') - \' || act_nom, \',//\' ORDER BY ent_nom, act_nom) AS "act_nom",
+STRING_AGG( DISTINCT acap.acap_donnees, \'##\' ) AS "acap_donnees"
 FROM app_applications AS "app"
 LEFT JOIN acap_act_app AS "acap" ON acap.app_id = app.app_id
 LEFT JOIN ete_echelle_temps AS "ete" ON ete.ete_id = acap.ete_id_pdma
@@ -1499,7 +1511,7 @@ WHERE ete_poids IS NOT NULL AND act.cmp_id = :cmp_id ';
 			$Request .= 'AND act.ent_id = :ent_id ';
 		}
 
-		$Request .= 'GROUP BY app.app_nom
+		$Request .= 'GROUP BY app.app_nom, app.app_description, app.app_hebergement, app.app_niveau_service, acap.acap_hebergement, acap.acap_niveau_service
 ORDER BY pdma, app.app_nom ';
 
 		$Query = $this->prepareSQL( $Request );

@@ -145,23 +145,25 @@ function ModalAjouterModifier( app_id = '' ){
 		dataType: 'json',
 		success: function( reponse ) {
 			if ( app_id == '' ) {
-				Titre = reponse['L_Titre_Ajouter'];
-				Bouton = reponse[ 'L_Ajouter' ]
+				var Titre = reponse['L_Titre_Ajouter'];
+				var Bouton = reponse[ 'L_Ajouter' ]
 
-				app_nom = '';
-				frn_id = '';
-				app_hebergement = '';
-				app_niveau_service = '';
-				app_description = '';
+				var app_nom = '';
+				var frn_id = '';
+				var app_hebergement = '';
+				var app_niveau_service = '';
+				var app_description = '';
+				var sct_id = '';
 			} else {
-				Titre = reponse['L_Titre_Modifier'];
-				Bouton = reponse[ 'L_Modifier' ]
+				var Titre = reponse['L_Titre_Modifier'];
+				var Bouton = reponse[ 'L_Modifier' ]
 
-				app_nom = reponse['Application'].app_nom;
-				frn_id = reponse['Application'].frn_id;
-				app_hebergement = reponse['Application'].app_hebergement;
-				app_niveau_service = reponse['Application'].app_niveau_service;
-				app_description = reponse['Application'].app_description;
+				var app_nom = reponse['Application'].app_nom;
+				var frn_id = reponse['Application'].frn_id;
+				var app_hebergement = reponse['Application'].app_hebergement;
+				var app_niveau_service = reponse['Application'].app_niveau_service;
+				var app_description = reponse['Application'].app_description;
+				var sct_id = reponse['Application'].sct_id;
 			}
 
 			var Corps =
@@ -228,6 +230,21 @@ function ModalAjouterModifier( app_id = '' ){
 				 '<div class="col-lg-10">' +
 				  '<input id="app_niveau_service" class="form-control" type="text" value="'+ app_niveau_service + '">' +
 				 '</div>' + // .col-lg-9
+				'</div>' + // .row
+
+				'<div class="row">' +
+				 '<label class="col-lg-2 col-form-label" for="sct_id">' + reponse[ 'L_Specifique_A' ] + ' ' + $('#s_sct_id option:selected').text() + '</label>' +
+				 '<div class="col-lg-2">' +
+				  '<select id="sct_id" class="form-select">';
+			if ( sct_id == null ) {
+				Corps += '<option value="0" selected>' + reponse['L_Non'] + '</option>' +
+					'<option value="1">' + reponse['L_Oui'] + '</option>';
+			} else {
+				Corps += '<option value="0">' + reponse['L_Non'] + '</option>' +
+					'<option value="1" selected>' + reponse['L_Oui'] + '</option>';
+			}
+			Corps += '</select>' +
+				'</div>' + // .col-lg-9
 				'</div>' + // .row
 
 				'<div class="row">' +

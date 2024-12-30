@@ -16,8 +16,6 @@ function AjouterActivite() {
 	var act_nom = $('#act_nom').val();
 	var ppr_id_responsable = $('#ppr_id_responsable').val();
 	var ppr_id_suppleant = $('#ppr_id_suppleant').val();
-	var sts_id_nominal = $('#sts_id_nominal').val();
-	var sts_id_secours = $('#sts_id_secours').val();
 	var act_description = $('#act_description').val();
 	var act_teletravail = $('#act_teletravail').val();
 	var act_dependances_internes_amont = $('#act_dependances_internes_amont').val();
@@ -36,6 +34,26 @@ function AjouterActivite() {
 		if (mim_id != undefined && mim_id_old == undefined) {
 			total_dmia += 1;
 			dmia_activite.push(ete_id+'='+mim_id);
+		}
+	});
+
+	var Liste_STS_Ajouter = [];
+	var total_sites = 0;
+
+	$('input[id^="sts-"]').each(function(index, element){
+		if ($(element).is(':checked')) {
+			if ( $(element).attr('data-old_value') == 0) {
+				sts_id = $(element).attr('id').split('-')[1];
+				acst_type_site = $('#acst_type_site-'+sts_id).val();
+
+				if ( acst_type_site == '' ) {
+					$('#afficher_sites').trigger('click');
+					$('#acst_type_site-'+sts_id).css('border-color', 'red').focus();
+					return -1;
+				}
+				Liste_STS_Ajouter.push([sts_id, acst_type_site]);
+				total_sites += 1;
+			}
 		}
 	});
 
@@ -63,9 +81,11 @@ function AjouterActivite() {
 			ete_id_pdma = $('#ete_id_pdma-'+app_id).val();
 			acap_donnees = $('#acap_donnees-'+app_id).val();
 			acap_palliatif = $('#acap_palliatif-'+app_id).val();
+			acap_hebergement = $('#acap_hebergement-'+app_id).val();
+			acap_niveau_service = $('#acap_niveau_service-'+app_id).val();
 
 			if ( $(element).attr('data-old_value') == 0) {
-				Liste_APP_Ajouter.push([app_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif]);
+				Liste_APP_Ajouter.push([app_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif, acap_hebergement, acap_niveau_service]);
 				total_applications += 1;
 			}
 		}
@@ -102,15 +122,13 @@ function AjouterActivite() {
 		type: 'POST',
 		data: $.param({'act_nom': act_nom, 'ppr_id_responsable': ppr_id_responsable,
 			'act_teletravail': act_teletravail,
-			'ppr_id_suppleant': ppr_id_suppleant, 'sts_id_nominal': sts_id_nominal,
-			'act_description': act_description, 'dmia_activite': dmia_activite, 'total_dmia': total_dmia,
-			'sts_id_secours': sts_id_secours, 'act_dependances_internes_amont': act_dependances_internes_amont,
-			'act_dependances_internes_aval': act_dependances_internes_aval,
+			'ppr_id_suppleant': ppr_id_suppleant, 'act_description': act_description, 'dmia_activite': dmia_activite, 'total_dmia': total_dmia,
+			'act_dependances_internes_amont': act_dependances_internes_amont, 'act_dependances_internes_aval': act_dependances_internes_aval,
 			'act_effectifs_en_nominal': act_effectifs_en_nominal, 'act_effectifs_a_distance': act_effectifs_a_distance,
 			'act_justification_dmia': act_justification_dmia,
 			'personnes_cles_a_ajouter': Liste_PPR_CLE_Ajouter, 'nim_nom_code': nim_nom_code,
 			'nim_couleur': nim_couleur, 'nim_numero': nim_numero, 'ete_nom_code': ete_nom_code,
-			'applications_a_ajouter': Liste_APP_Ajouter, 'fournisseurs_a_ajouter': Liste_FRN_Ajouter}), // les paramètres sont protégés avant envoi
+			'applications_a_ajouter': Liste_APP_Ajouter, 'fournisseurs_a_ajouter': Liste_FRN_Ajouter, 'sites_a_ajouter': Liste_STS_Ajouter}), // les paramètres sont protégés avant envoi
 		dataType: 'json', // le résultat est transmit dans un objet JSON
 		success: function( reponse ) { // Le serveur n'a pas rencontré de problème lors de l'échange ou de l'exécution.
 			var statut = reponse['statut'];
@@ -335,11 +353,53 @@ function creerFournisseur() {
 }
 
 
+function creerSite() {
+	var sts_nom = $('#sts_nom').val();
+	var sts_description = $('#sts_description').val();
+
+	if (sts_nom == '') {
+		$('#sts_nom').focus();
+		afficherMessage( reponse['L_Champ_Obligatoire'], 'erreur', 'body' );
+		return -1;
+	}
+
+	$.ajax({
+		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Ajouter_Site',
+		type: 'POST',
+		data: $.param({'sts_nom': sts_nom, 'sts_description': sts_description}),
+		dataType: 'json',
+		success: function( reponse ) {
+			if ( reponse['statut'] == 'success' ) {
+				var sts_id = reponse['sts_id'];
+				
+				Nom_Complet = sts_nom;
+
+				if (sts_description != '' && sts_description != null) {
+					Nom_Complet += ' (' + sts_description + ')';
+				}
+
+				Corps = creerOccurrenceSiteDansListe( sts_id, Nom_Complet, 0, ' checked', reponse['L_Aucun'], reponse['L_Site_Nominal'],
+					reponse['L_Site_Secours'], '', '');
+
+				$('div#zone-sites').prepend( Corps );
+
+				afficherMessage( reponse['texteMsg'], reponse['statut'], 'body' );
+				$('#btn-fermer-zone-site').trigger('click');
+			} else {
+				afficherMessage( texteMsg, statut, '#idModal', 0, 'n' );
+			}
+		}
+	});
+}
+
+
 function creerApplication() {
 	app_nom = $('#app_nom').val();
 	app_hebergement = $('#app_hebergement').val();
 	app_niveau_service = $('#app_niveau_service').val();
 	app_description = $('#app_description').val();
+	frn_id = $('#frn_id').val()
+	frn_nom = $('#frn_id option:selected').text();
 
 	if (app_nom == '') {
 		$('#app_nom').focus();
@@ -350,28 +410,38 @@ function creerApplication() {
 	$.ajax({
 		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Ajouter_Application',
 		type: 'POST',
-		data: $.param({'app_nom': app_nom, 'app_hebergement': app_hebergement,
+		data: $.param({'app_nom': app_nom, 'app_hebergement': app_hebergement, 'frn_id': frn_id,
 			'app_niveau_service': app_niveau_service, 'app_description': app_description}),
 		dataType: 'json',
 		success: function( reponse ) {
 			if ( reponse['statut'] == 'success' ) {
-				ppr_id = reponse['ppr_id'];
+				app_id = reponse['app_id'];
 				
 				Nom_Complet = app_nom;
 
-				if (app_hebergement != '' && app_hebergement != null) {
-					Nom_Complet += ' [' + app_hebergement + ']';
+				if (frn_id != '' && frn_id != null) {
+					Nom_Complet += ' [' + frn_nom + ']';
 				}
 
-				if (app_niveau_service != '' && app_niveau_service != null) {
-					Nom_Complet += ' [' + app_niveau_service + ']';
+				if (app_hebergement == null) app_hebergement = '';
+				if (app_hebergement == '') {
+					app_hebergement = reponse['L_Hebergement'];
 				}
+				Nom_Complet += '<input type="text" class="form-control" id="acap_hebergement-'+Application.app_id+'" ' +
+					'placeholder="' + Application.app_hebergement + '" value="">';
+
+				if (Application.app_niveau_service == null) Application.app_niveau_service = '';
+				if (Application.app_niveau_service == '') {
+					Application.app_niveau_service = reponse['L_Niveau_Service'];
+				}
+				Nom_Complet += '<input type="text" class="form-control" id="acap_niveau_service-'+Application.app_id+'" ' + 
+					'placeholder="' + Application.app_niveau_service + '" value="">';
 
 				if (app_description != '' && app_description != null) {
 					Nom_Complet += ' [' + app_description + ']';
 				}
 
-				Corps = creerOccurrenceApplicationDansListe(reponse['app_id'], Nom_Complet,
+				Corps = creerOccurrenceApplicationDansListe(app_id, Nom_Complet,
 					0, ' checked', reponse['Liste_EchellesTemps'], reponse['L_DMIA'], '',
 					reponse['L_PDMA'], '', reponse['L_Palliatif'], '', '', reponse['L_Aucun']);
 

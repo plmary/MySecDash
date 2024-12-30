@@ -3,10 +3,6 @@ function ModifierActivite( act_id ) {
 	var ppr_id_responsable = $('#ppr_id_responsable').val();
 	var ppr_nom_responsable = $('#ppr_id_responsable option:selected').text();
 	var ppr_id_suppleant = $('#ppr_id_suppleant').val();
-	var sts_id_nominal = $('#sts_id_nominal').val();
-	var sts_id_nominal_old = $('#sts_id_nominal').attr('data-old');
-	var sts_id_secours = $('#sts_id_secours').val();
-	var sts_id_secours_old = $('#sts_id_secours').attr('data-old');
 	var act_description = $('#act_description').val();
 	var act_teletravail = $('#act_teletravail').val();
 	var act_dependances_internes_amont = $('#act_dependances_internes_amont').val();
@@ -28,6 +24,43 @@ function ModifierActivite( act_id ) {
 				total_dmia += 1;
 			}
 			dmia_activite.push(ete_id+'='+mim_id_old+'-'+mim_id);
+		}
+	});
+
+	
+	var Liste_STS_Ajouter = [];
+	var Liste_STS_Modifier = [];
+	var Liste_STS_Supprimer = [];
+	var total_sites = Number($('#ACT_'+act_id+' .btn_sts').text());
+
+	$('input[id^="sts-"]').each(function(index, element){
+		if ($(element).is(':checked')) {
+			if ( $(element).attr('data-old_value') == 0) { // Cas d'un ajout, car n'était pas coché avant.
+				sts_id = $(element).attr('id').split('-')[1];
+
+				acst_type_site = $('#acst_type_site-'+sts_id).val();
+				if ( acst_type_site == '' ) {
+					$('#afficher_sites').trigger('click');
+					$('#acst_type_site-'+sts_id).css('border-color', 'red').focus();
+					return -1;
+				}
+				Liste_STS_Ajouter.push([sts_id, acst_type_site]);
+				total_sites += 1;
+			} else { // Cas d'une possible modification, coché et qui reste coché
+				sts_id = $(element).attr('id').split('-')[1];
+				acst_type_site = $('#acst_type_site-'+sts_id).val();
+				acst_type_site_old = $('#acst_type_site-'+sts_id).attr('data-old_value');
+
+				if ( acst_type_site != acst_type_site_old ) {
+					Liste_STS_Modifier.push([sts_id, acst_type_site]);
+				}
+			}
+		} else {
+			if ( $(element).attr('data-old_value') == 1) { // Cas d'une suppression, n'est plus coché alors que coché précédemment.
+				sts_id = $(element).attr('id').split('-')[1];
+				Liste_STS_Supprimer.push(sts_id);
+				total_sites -= 1;
+			}
 		}
 	});
 
@@ -68,12 +101,14 @@ function ModifierActivite( act_id ) {
 			ete_id_pdma = $('#ete_id_pdma-'+app_id).val();
 			acap_donnees = $('#acap_donnees-'+app_id).val();
 			acap_palliatif = $('#acap_palliatif-'+app_id).val();
+			acap_hebergement = $('#acap_hebergement-'+app_id).val();
+			acap_niveau_service = $('#acap_niveau_service-'+app_id).val();
 
 			if ( $(element).attr('data-old_value') == 0) {
-				Liste_APP_Ajouter.push([app_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif]);
+				Liste_APP_Ajouter.push([app_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif, acap_hebergement, acap_niveau_service]);
 				total_applications += 1;
 			} else {
-				Liste_APP_Modifier.push([app_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif]);
+				Liste_APP_Modifier.push([app_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif, acap_hebergement, acap_niveau_service]);
 			}
 		} else {
 			if ( $(element).attr('data-old_value') == 1) {
@@ -122,8 +157,6 @@ function ModifierActivite( act_id ) {
 		type: 'POST',
 		data: $.param({'act_id': act_id, 'act_nom': act_nom, 'ppr_id_responsable': ppr_id_responsable,
 			'ppr_id_suppleant': ppr_id_suppleant,
-			'sts_id_nominal': sts_id_nominal, 'sts_id_nominal_old': sts_id_nominal_old,
-			'sts_id_secours': sts_id_secours, 'sts_id_secours_old': sts_id_secours_old,
 			'act_description': act_description, 'act_teletravail': act_teletravail,
 			'dmia_activite': dmia_activite, 
 			'act_dependances_internes_amont': act_dependances_internes_amont,
@@ -135,7 +168,9 @@ function ModifierActivite( act_id ) {
 			'applications_a_ajouter': Liste_APP_Ajouter, 'applications_a_supprimer': Liste_APP_Supprimer,
 			'applications_a_modifier': Liste_APP_Modifier,
 			'fournisseurs_a_ajouter': Liste_FRN_Ajouter, 'fournisseurs_a_supprimer': Liste_FRN_Supprimer,
-			'fournisseurs_a_modifier': Liste_FRN_Modifier}), // les paramètres sont protégés avant envoi
+			'fournisseurs_a_modifier': Liste_FRN_Modifier,
+			'sites_a_ajouter': Liste_STS_Ajouter, 'sites_a_supprimer': Liste_STS_Supprimer,
+			'sites_a_modifier': Liste_STS_Modifier}), // les paramètres sont protégés avant envoi
 		dataType: 'json', // le résultat est transmit dans un objet JSON
 		success: function( reponse ) { // Le serveur n'a pas rencontré de problème lors de l'échange ou de l'exécution.
 			var statut = reponse['statut'];
@@ -145,23 +180,18 @@ function ModifierActivite( act_id ) {
 				$('#idModal').modal('hide'); // Cache la modale d'ajout.
 
 				// Met à jour les différents champs de l'occurrence modifiée.
-				//$('#ACT_' + act_id).find('div[data-src="act_nom"]').find('span').text( act_nom );
-				//$('#ACT_' + act_id).find('div[data-src="ppr_id_responsable"]').find('span').text( ppr_nom_responsable );
 				$('#ACT_' + act_id + ' div[data-src="act_nom"] span').text( act_nom );
 				$('#ACT_' + act_id + ' div[data-src="ppr_id_responsable"] span').text( ppr_nom_responsable );
 
 				$('#ACT_' + act_id + ' div[data-src="nim_poids"] button').text( nim_numero );
-				$('#ACT_' + act_id + ' div[data-src="nim_poids"] button').css('background-color', nim_couleur);
+				if ( nim_numero > 0 ) {
+					$('#ACT_' + act_id + ' div[data-src="nim_poids"] button').css('background-color', nim_couleur);
+				}
 				$('#ACT_' + act_id + ' div[data-src="nim_poids"] button').attr('title', nim_nom_code);
 
 				$('#ACT_' + act_id + ' div[data-src="ete_poids"] span').text(ete_nom_code);
 
-
-				var total_sites = 1;
-				if (sts_id_secours != '') total_sites += 1;
-
 				$('#ACT_' + act_id + ' .btn_sts').text( total_sites );
-				//$('#ACT_' + act_id + ' .btn_ete').text( total_dmia );
 				$('#ACT_' + act_id + ' .btn_ppr').text( total_personnes_cles );
 				$('#ACT_' + act_id + ' .btn_app').text( total_applications );
 				$('#ACT_' + act_id + ' .btn_frn').text( total_fournisseurs );

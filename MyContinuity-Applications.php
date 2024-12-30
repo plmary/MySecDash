@@ -50,7 +50,9 @@ $Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_niveau_service', 'titre'
 	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'app_niveau_service', 'type' => 'input', 'modifiable' => 'oui' );
 $Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_description', 'titre' => $L_Description, 'taille' => '2',
 	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'app_description', 'type' => 'textarea', 'modifiable' => 'oui' );
-$Format_Colonnes[ 'Actions' ] = array( 'taille' => '2', 'titre' => $L_Actions,
+$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'sct_id', 'titre' => $L_Specifique, 'taille' => '1',
+	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'sct_id', 'type' => 'select', 'liste' => '0='.$L_No.';1='.$L_Yes, 'modifiable' => 'oui' );
+$Format_Colonnes[ 'Actions' ] = array( 'taille' => '1', 'titre' => $L_Actions,
 	'boutons' => array( 'modifier' => $Droit_Modifier, 'supprimer' => $Droit_Supprimer ) );
 
 $Droit_Ajouter_Fournisseurs = $PageHTML->controlerPermission('MyContinuity-Fournisseurs.php', 'RGH_2');
@@ -59,16 +61,29 @@ $Droit_Ajouter_Fournisseurs = $PageHTML->controlerPermission('MyContinuity-Fourn
 // Exécute l'action identifie
 switch( $Action ) {
  default:
+	if ( $_SESSION['idn_super_admin'] === TRUE ) {
+		$Liste_Societes = $objSocietes->rechercherSocietes();
+	} else {
+		$Liste_Societes = $objSocietes->rechercherSocietes('', '', $_SESSION['idn_id'] );
+	}
+
+	$Choix_Societe['id'] = 's_sct_id';
+	$Choix_Societe['libelle'] = $L_Specifique_A;
+	
+	if ( $Liste_Societes != '' ) {
+		foreach( $Liste_Societes AS $Societe ) {
+			$Choix_Societe['options'][] = array('id' => $Societe->sct_id, 'nom' => $Societe->sct_nom );
+		}
+	}
+
 	if ( $Droit_Ajouter === TRUE ) {
 		$Boutons_Alternatifs[] = ['class'=>'btn-ajouter', 'libelle'=>$L_Ajouter, 'glyph'=>'plus'];
 	}
 	$Boutons_Alternatifs[] = ['class'=>'btn-rechercher', 'libelle'=>$L_Rechercher, 'glyph'=>'search'];
 
-	print( $PageHTML->construireEnteteHTML( $L_Gestion_Applications, $Fichiers_JavaScript, 3 ) .
+	print $PageHTML->construireEnteteHTML( $L_Gestion_Applications, $Fichiers_JavaScript, 3 ) .
 		$PageHTML->construireNavbarJson('Logo-MyContinuity.svg', 'nav-items.json') .
-		$PageHTML->construireTitreEcran( $L_Gestion_Applications, '', $Boutons_Alternatifs, '' )
-		//$PageHTML->construireTitreEcran( $L_Gestion_Applications, $Liste_Societes, $Boutons_Alternatifs, $Choix_Campagnes )
-		);
+		$PageHTML->construireTitreEcran( $L_Gestion_Applications, '', $Boutons_Alternatifs, '', '', $Choix_Societe );
 
 
 	if ( $Droit_Lecture === TRUE ) {
@@ -107,12 +122,15 @@ switch( $Action ) {
 		'L_Fournisseur' => $L_Fournisseur,
 		'L_Aucun' => $L_Neither,
 		'Liste_Types_Fournisseur' => $objFournisseurs->rechercherTypesFournisseur(),
-		'Droit_Ajouter_Fournisseurs' => $Droit_Ajouter_Fournisseurs
+		'Droit_Ajouter_Fournisseurs' => $Droit_Ajouter_Fournisseurs,
+		'L_Specifique_A' => $L_Specifique_A,
+		'L_Oui' => $L_Yes,
+		'L_Non' => $L_No
 		);
 
 	if ( $Droit_Modifier === TRUE ) {
 		if ( isset($_POST['app_id']) and $_POST['app_id'] != '') {
-			$Application = $objApplications->rechercherApplications( 'app_nom', $_POST['app_id'] );
+			$Application = $objApplications->rechercherApplications( 'app_nom', $_POST['app_id'], $_SESSION['s_sct_id'] );
 			$Libelles['Application'] = $Application[0];
 			$Libelles['Liste_Fournisseurs'] = listerFournisseurs($Application[0]->frn_id);
 		} else {
@@ -362,7 +380,7 @@ switch( $Action ) {
 		$Trier = $_POST[ 'trier' ];
 		
 		try {
-			$ListeApplications = $objApplications->rechercherApplications( $Trier );
+			$ListeApplications = $objApplications->rechercherApplications( $Trier, '', $_SESSION['s_sct_id'] );
 			$Total = $objApplications->RowCount;
 
 			$Texte_HTML = '';
@@ -370,6 +388,11 @@ switch( $Action ) {
 			foreach ($ListeApplications as $Occurrence) {
 				$Occurrence->frn_id = $Occurrence->frn_nom;
 
+				if ( $Occurrence->sct_id == NULL ) {
+					$Occurrence->sct_id = $L_No;
+				} else {
+					$Occurrence->sct_id = $L_Yes;
+				}
 				$Texte_HTML .= $PageHTML->creerOccurrenceCorpsTableau( $Occurrence->app_id, $Occurrence, $Format_Colonnes );
 			}
 
@@ -395,6 +418,33 @@ switch( $Action ) {
 		echo json_encode( $Resultat );
 		exit();
 	}	
+	break;
+
+
+ case 'AJAX_Selectioner_Societe':
+	if ( isset($_POST['sct_id']) ) {
+		if ( ! $PageHTML->verifierSocieteAutorisee($_POST['sct_id']) ) {
+			print( json_encode( array( 'Statut' => 'error',
+				'texteMsg' => $L_Pas_Droit_Ressource . ' (sct_id="' . $_POST['sct_id'] . '")'.' [' . __LINE__ . ']' ) ) );
+
+			$PageHTML->ecrireEvenement( 'ATP_ALERTE', 'OTP_SECURITE', $L_Pas_Droit_Ressource . ' (sct_id="' . $_POST['sct_id'] . '")'.' [' . __LINE__ . ']' );
+
+			exit();
+		}
+
+		$_SESSION['s_sct_id'] = $_POST['sct_id'];
+
+		$Resultat = array( 'statut' => 'success',
+			'texteMsg' => $L_Societe_Change,
+			'sct_id' => $_SESSION['s_sct_id']
+		);
+	} else {
+		$Resultat = array( 'statut' => 'error',
+			'texteMsg' => $L_ERR_Champs_Obligatoires . ' (sct_id)' );
+	}
+
+	echo json_encode( $Resultat );
+
 	break;
 
 
@@ -452,6 +502,22 @@ switch( $Action ) {
 					) );
 
 					exit();
+				}
+
+				$_POST['sct_id'] = $PageHTML->controlerTypeValeur( $_POST['sct_id'], 'BOOLEAN' );
+				if ( $_POST['sct_id'] == -1 ) {
+					echo json_encode( array(
+						'statut' => 'error',
+						'texteMsg' => $L_Invalid_Value . ' (sct_id)'
+					) );
+
+					exit();
+				} else {
+					if ( $_POST['sct_id'] == 1 ) {
+						$_POST['sct_id'] = $_SESSION['s_sct_id'];
+					} else {
+						$_POST['sct_id'] = NULL;
+					}
 				}
 
 				$_POST['app_hebergement'] = $PageHTML->controlerTypeValeur( $_POST['app_hebergement'], 'ASCII' );

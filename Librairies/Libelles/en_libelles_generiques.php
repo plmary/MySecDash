@@ -546,4 +546,7 @@ $L_Ecran_Synthese = 'Overview screen';
 
 $L_M_Comparateur_DMIA_Activites = 'RTO Comparator (Activities)';
 
+$L_Specifique = 'Specific';
+$L_Specifique_A = 'Specific to';
+
 ?>

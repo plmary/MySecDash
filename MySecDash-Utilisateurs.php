@@ -152,7 +152,8 @@ switch( $Action ) {
 		'L_Etiquettes' => $L_Etiquettes,
 		's_sct_id' => $_SESSION['s_sct_id'],
 		'Civilites' => $objCivilites->rechercherCivilites(),
-		'Droits_Civilites' => $PageHTML->permissionsGroupees('MySecDash-Civilites.php')
+		'Droits_Civilites' => $PageHTML->permissionsGroupees('MySecDash-Civilites.php'),
+		'L_Tout_Cocher_Decocher' => $L_Tout_Cocher_Decocher
 		);
 
 	if ( $Droit_Lecture === TRUE ) {

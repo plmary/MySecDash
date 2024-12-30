@@ -195,16 +195,6 @@ switch( $Action ) {
 	if ( isset($_POST['ent_id']) ) {
 		$_SESSION['s_ent_id'] = $_POST['ent_id'];
 
-/*		try {
-			list($Liste_Societes, $Liste_Campagnes, $Liste_Entites) =
-				actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $objActivites, 3);
-		} catch ( Exception $e ) {
-			$Resultat = array( 'statut' => 'error',
-				'texteMsg' => $e->getMessage() );
-			echo json_encode( $Resultat );
-			break;
-		} */
-
 		$Resultat = array( 'statut' => 'success',
 			'texteMsg' => $L_Entite_Change,
 			'sct_id' => $_SESSION['s_sct_id'],
@@ -275,9 +265,9 @@ switch( $Action ) {
 		$Corps_HTML .= '<td><i class="bi-alarm fg_couleur_3 m-3" style="font-size: 3rem;"></i> ';
 
 		if ($Donnees['total_act_4'] > 1) {
-			$Corps_HTML .= sprintf($L_Nombre_Activites_Critiques . '</td></tr>', $Donnees['total_act_4']);
+			$Corps_HTML .= sprintf($L_Nombre_Activites_Vitales . '</td></tr>', $Donnees['total_act_4']);
 		} else {
-			$Corps_HTML .= sprintf($L_Nombre_Activite_Critique . '</td></tr>', $Donnees['total_act_4']);
+			$Corps_HTML .= sprintf($L_Nombre_Activite_Vitale . '</td></tr>', $Donnees['total_act_4']);
 		}
 
 		$Corps_HTML .= '<tr><td><i class="bi-buildings fg_couleur_1 m-3" style="font-size: 3rem;"></i> ';
@@ -329,8 +319,15 @@ switch( $Action ) {
 		}
 
 
+		// --------------------------------------------------
 		// Affichage des Activités à redémarrer par période.
 		$Liste_Activites = $objActivites->rechercherSyntheseActivites( $_SESSION['s_cmp_id'], '*', '', 'ete_poids' );
+
+		$Liste_Activites_ID = [];
+		foreach( $Liste_Activites as $Occurrence ) {
+			$Liste_Activites_ID[$Occurrence->act_id] = $Occurrence;
+		}
+
 
 		$Corps_HTML .= '<h1 class="text-center">'.$L_Liste_Activites_Redemarrer_Par_Periode.'</h1>';
 
@@ -361,6 +358,7 @@ switch( $Action ) {
 		$Corps_HTML .= '</table>';
 
 
+		// ----------------------------------------------
 		// Affichage des Applications de cette Campagne.
 		$Liste_Applications = $objCampagnes->rechercherApplicationsCampagne( $_SESSION['s_cmp_id'] );
 
@@ -372,19 +370,59 @@ switch( $Action ) {
 			if ($tmp_poids != $Application->dmia) {
 				$tmp_poids = $Application->dmia;
 				$Corps_HTML .= '<tr>' .
-					'<th colspan="3" style="background-color: silver">' .
+					'<th colspan="4" style="background-color: silver">' .
 					$L_Applications_A_Redemarrer . '&nbsp;<span class="fs-5">' . $Liste_Echelles_Temps_Poids[$Application->dmia]->ete_nom_code . '</span></th>' .
 					'</tr>' .
 					'<tr>' .
-					'<th>' . $L_Nom_G . '</th>' .
-					'<th>' . $L_Activites . '</th>' .
-					'<th>' . $L_Palliatif . '</th>' .
+					'<th width="10%">' . $L_Nom_G . '</th>' .
+					'<th width="40%">' . $L_Activites . '</th>' .
+					'<th width="35%">' . $L_Donnees . '</th>' .
+					'<th width="15%">' . $L_Palliatif . '</th>' .
 					'</tr>';
+			}
+
+
+			// Attention découpe la chaîne par Activité et ensuite recherche le poids de l'activité
+			$_Activites_Detaillees = '';
+			foreach(explode(',<br>', $Application->act_nom) as $_Application) {
+				$_act_nom = explode( '###', $_Application)[0];
+				$_act_id = explode( '###', $_Application)[1];
+	
+				if ( array_key_exists($_act_id, $Liste_Activites_ID) ) {
+					$_nim_poids = $Liste_Activites_ID[$_act_id]->nim_poids;
+					$_nim_poids = '<span class="fw-bold" style="color: white; color: #'.$Liste_Niveaux_Impact_Poids[$_nim_poids]->nim_couleur.'">' . $_nim_poids . '&nbsp;-&nbsp;' . $Liste_Niveaux_Impact_Poids[$_nim_poids]->nim_nom_code . '</span>';
+					
+				
+					if ( $_nim_poids > 2 ) {
+						$_ete_poids = $Liste_Activites_ID[$_act_id]->ete_poids;
+						if ($_ete_poids != '') {
+							$_ete_poids = ' / <span class="fw-bold">' . $Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code . '</span>';
+						}
+					} else {
+						$_ete_poids = '';
+					}
+				} else {
+					$_nim_poids = '';
+					$_ete_poids = '';
+				}
+
+				if ($_Activites_Detaillees != '') { $_Activites_Detaillees .= ',<br>'; }
+				$_Activites_Detaillees .= $_act_nom . ' (' . $_nim_poids . $_ete_poids . ')';
+			}
+
+
+			$_Donnees_Application = '';
+			foreach(explode('##', $Application->acap_donnees) as $_Donnees) {
+				if ( $_Donnees != '' ) {
+					if ( $_Donnees_Application != '' ) { $_Donnees_Application .= ',<br>'; }
+					$_Donnees_Application .= $_Donnees;
+				}
 			}
 
 			$Corps_HTML .= '<tr>' .
 				'<td>' . $Application->app_nom . '</td>' .
-				'<td>' . $Application->act_nom . '</td>' .
+				'<td>' . $_Activites_Detaillees . '</td>' .
+				'<td>' . $_Donnees_Application . '</td>' .
 				'<td>';
 
 			$textlines = explode('##', $Application->acap_palliatif);
@@ -414,6 +452,7 @@ switch( $Action ) {
 		$Corps_HTML .= '</table>';
 
 
+		// -------------------------------------------------------
 		// Affichage des PDMA des Applications de cette Campagne.
 		$Liste_Applications = $objCampagnes->rechercherPDMAApplicationsCampagne( $_SESSION['s_cmp_id'] );
 		
@@ -429,8 +468,9 @@ switch( $Action ) {
 					$L_Applications_PDMA . '&nbsp;<span class="fs-5">' . $Liste_Echelles_Temps_Poids[$Application->pdma]->ete_nom_code . '</span></th>' .
 					'</tr>' .
 					'<tr>' .
-					'<th>' . $L_Nom_G . '</th>' .
-					'<th>' . $L_Activites . '</th>' .
+					'<th width="10%">' . $L_Nom_G . '</th>' .
+					'<th width="45%">' . $L_Activites . '</th>' .
+					'<th width="45%">' . $L_Donnees . '</th>' .
 					'</tr>';
 			}
 			
@@ -458,13 +498,25 @@ switch( $Action ) {
 			} else {
 				$Corps_HTML .= $L_Neither;
 			}
-			
+
+
+			$_Donnees_Application = '';
+			foreach(explode('##', $Application->acap_donnees) as $_Donnees) {
+				if ( $_Donnees != '' ) {
+					if ( $_Donnees_Application != '' ) { $_Donnees_Application .= ',<br>'; }
+					$_Donnees_Application .= $_Donnees;
+				}
+			}
+
+
 			$Corps_HTML .= '</td>' .
+				'<td>' . $_Donnees_Application . '</td>' .
 				'</tr>';
 		}
 		$Corps_HTML .= '</table>';
 
 
+		// ------------------------------------------------
 		// Affichage des Personnes Clés de cette Campagne.
 		$Liste_Personnes = $objCampagnes->rechercherPersonnesClesCampagne( $_SESSION['s_cmp_id'] );
 
@@ -506,6 +558,7 @@ switch( $Action ) {
 		$Corps_HTML .= '</table>';
 
 
+		// ----------------------------------------------
 		// Affichage des Fournisseurs de cette Campagne.
 		$Liste_Fournisseurs = $objCampagnes->rechercherFournisseursCampagne( $_SESSION['s_cmp_id'] );
 
@@ -596,11 +649,17 @@ switch( $Action ) {
 		foreach ($Activites as $Activite) {
 			$Compteur += 1;
 
+			if ( isset( $Liste_EchellesTemps_Poids[$Activite->ete_poids]->ete_nom_code ) ) {
+				$_ete_nom_code = $Liste_EchellesTemps_Poids[$Activite->ete_poids]->ete_nom_code;
+			} else {
+				$_ete_nom_code = '';
+			}
+
 			$Corps_HTML .= '<tr>' .
 			//'<td><a href="#ACT_' . $Compteur . '">' . $Activite->act_nom . '</a></td>' .
 			'<td>' . $Activite->act_nom . '</td>' .
 			'<td class="text-center" style="color: white; background-color: #'.$Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur.'">' . $Activite->nim_poids . ' - ' . $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code . '</td>' .
-			'<td>' . $Liste_EchellesTemps_Poids[$Activite->ete_poids]->ete_nom_code . '</td>' .
+			'<td>' . $_ete_nom_code . '</td>' .
 			'</tr>';
 		}
 
@@ -635,8 +694,8 @@ switch( $Action ) {
 		}
 
 
-		// ======================================
-		// Détail de chaque activités pour cette entité
+		// =============================================
+		// Détail de chaque Activités pour cette Entité
 		$Corps_HTML .= '<h2 style="margin-top: 48px; padding: 6px 9px;" class="bg_couleur_1">' . $L_Detail_Activites . '</h2>';
 
 		$Compteur = 0;
@@ -647,6 +706,7 @@ switch( $Action ) {
 			$Infos['Liste_Personnes_Cles'] = $objActivites->rechercherPersonnesClesAssociesActivite( $Activite->act_id );
 			$Infos['Liste_Applications'] = $objActivites->rechercherApplicationsAssocieesActivite( $Activite->act_id );
 			$Infos['Liste_Fournisseurs'] = $objActivites->rechercherFournisseursAssociesActivite( $Activite->act_id );
+			$Infos['Liste_Sites'] = $objActivites->rechercherSitesActivite( $Activite->act_id );
 
 			$Compteur += 1;
 
@@ -682,28 +742,53 @@ switch( $Action ) {
 			$Corps_HTML .= '<td>' . $_Activite_Teletravail . '</td>' .
 				'</tr>' .
 				'<tr>' .
-				 '<td>' . $L_Site_Nominal . '</td>' .
-				 '<td>' . $Liste_Sites_Id[$Activite->sts_id_nominal]->sts_nom . ' ('.$Liste_Sites_Id[$Activite->sts_id_nominal]->sts_description .')</td>' .
-				'</tr>' .
-				'<tr>' .
-				 '<td>' . $L_Site_Secours . '</td>';
-
-			if ($Activite->sts_id_secours != NULL) {
-				$_Nom_Site_Secours = $Liste_Sites_Id[$Activite->sts_id_secours]->sts_nom . ' ('.$Liste_Sites_Id[$Activite->sts_id_secours]->sts_description .')</td>';
-			} else {
-				$_Nom_Site_Secours = $L_Neither;
-			}
-
-			$Corps_HTML .= '<td>' . $_Nom_Site_Secours . '</td>' .
-				'</tr>' .
-				'<tr>' .
 				 '<td>' . $L_Description . '</td>' .
 				 '<td>' . $Activite->act_description . '</td>' .
 				'</tr>'.
 				'</tbody>' .
 				'</table>';
 
-			// DMIA de l'activité
+
+			$Corps_HTML .= '<table class="table-visu table-bordered">' .
+				'<thead>' .
+				'<tr><th colspan="3" class="bg-gris-normal text-center">' . $L_Sites . '</th></tr>' .
+				'<tr>' .
+				'<th width="20%">' . $L_Type . '</th>' .
+				'<th width="30%">' . $L_Nom_G . '</th>' .
+				'<th width="50%">' . $L_Description . '</th>' .
+				'</tr>' .
+				'</thead>' .
+				'<tbody>';
+
+			// ====================
+			// Sites de l'Activité
+			foreach ( $Infos['Liste_Sites'] as $Site ) {
+				switch ( $Site->acst_type_site ) {
+					default:
+						$Type_Site = $L_Neither;
+						break;
+
+					case 0:
+						$Type_Site = $L_Site_Nominal;
+						break;
+
+					case 1:
+						$Type_Site = $L_Site_Secours;
+						break;
+				}
+				$Corps_HTML .= '<tr>' .
+					'<td>' . $Type_Site . '</td>' .
+					'<td>' . $Site->sts_nom . '</td>' . 
+					'<td>' . $Site->sts_description . '</td>' .
+					'</tr>';
+			}
+
+			$Corps_HTML .= '</tbody>' .
+				'</table>';
+
+
+			// ===================
+			// DMIA de l'Activité
 			$_Row_1 = '';
 			$_Row_2 = '';
 			$_Row_3 = '';
@@ -756,7 +841,8 @@ switch( $Action ) {
 				'</table>';
 
 
-			// Affichage des personnes clés
+			// =============================
+			// Personnes Clés de l'Activité
 			$Corps_HTML .= '<table class="table-visu table-bordered">' .
 				'<thead>' .
 				 '<tr><th colspan="2" class="text-center bg-gris-normal">' . $L_Personnes_Cles . '</th></tr>' .
@@ -782,7 +868,8 @@ switch( $Action ) {
 				'</table>';
 
 
-			// Affichage des interdépendances
+			// ===============================
+			// Interdépendances de l'Activité
 			$Corps_HTML .= '<table class="table-visu table-bordered">' .
 				'<thead>' .
 				'<tr><th colspan="2" class="text-center bg-gris-normal">' . $L_Interdependances . '</th></tr>' .
@@ -813,13 +900,16 @@ switch( $Action ) {
 				'</table>';
 
 
-			// Affichage des Applications
+			// ===========================
+			// Applications de l'Activité
 			$Corps_HTML .= '<table class="table-visu table-bordered">' .
 			'<thead>' .
-			'<tr><th colspan="6" class="text-center bg-gris-normal">' . $L_Applications . '</th></tr>' .
+			'<tr><th colspan="8" class="text-center bg-gris-normal">' . $L_Applications . '</th></tr>' .
 			'<tr>' .
 			'<th>' . $L_Nom . '</th>' .
+			'<th>' . $L_Fournisseur . '</th>' .
 			'<th>' . $L_Hebergement . '</th>' .
+			'<th>' . $L_Niveau_Service . '</th>' .
 			'<th>' . $L_DMIA . '</th>' .
 			'<th>' . $L_PDMA . '</th>' .
 			'<th>' . $L_Donnees . '</th>' .
@@ -835,7 +925,9 @@ switch( $Action ) {
 					
 					$Corps_HTML .= '<tr>' .
 						'<td>' . $Application->app_nom . '</td>' .
-						'<td>' . $Application->app_hebergement . '</td>' .
+						'<td>' . $Application->frn_nom . '</td>' .
+						'<td>' . ($Application->acap_hebergement != '' ? $Application->acap_hebergement : $Application->app_hebergement) . '</td>' .
+						'<td>' . ($Application->acap_niveau_service != '' ? $Application->acap_niveau_service : $Application->app_niveau_service) . '</td>' .
 						'<td>' . $Application->ete_id_dima . '</td>' .
 						'<td>' . $Application->ete_id_pdma . '</td>' .
 						'<td>' . $Application->acap_donnees . '</td>' .
@@ -843,7 +935,7 @@ switch( $Action ) {
 						'</tr>';
 				}
 			} else {
-				$Corps_HTML .= '<tr><td colspan="6"class="text-center">' . $L_Neither_f . '</td></tr>';
+				$Corps_HTML .= '<tr><td colspan="8"class="text-center">' . $L_Neither_f . '</td></tr>';
 			}
 			
 			$Corps_HTML .= '</tbody>' .

@@ -290,9 +290,9 @@ switch( $Action ) {
 			$Corps_HTML .= '<td><i class="bi-alarm fg_couleur_3 m-3" style="font-size: 3rem;"></i> ';
 	
 			if ($Donnees['total_act_4'] > 1) {
-				$Corps_HTML .= sprintf($L_Nombre_Activites_Critiques . '</td></tr>', $Donnees['total_act_4']);
+				$Corps_HTML .= sprintf($L_Nombre_Activites_Vitales . '</td></tr>', $Donnees['total_act_4']);
 			} else {
-				$Corps_HTML .= sprintf($L_Nombre_Activite_Critique . '</td></tr>', $Donnees['total_act_4']);
+				$Corps_HTML .= sprintf($L_Nombre_Activite_Vitale . '</td></tr>', $Donnees['total_act_4']);
 			}
 	
 			$Corps_HTML .= '<tr><td><i class="bi-buildings fg_couleur_1 m-3" style="font-size: 3rem;"></i> ';

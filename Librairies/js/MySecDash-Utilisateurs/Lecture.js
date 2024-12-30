@@ -368,7 +368,15 @@ function ModalAjouterModifier( Id ){
 					'</ul>' +
 					'<div id="onglets_utilisateur">';
 
-				Corps += '<div id="liste-societes" class="liste-interne" style="display: none">';
+				Corps += '<div id="liste-societes" class="liste-interne" style="display: none">' +
+					'<div class="row liste">' +
+					'<div class="col-lg-8">' +
+					'<div class="form-check form-check-inline">' +
+					'<input class="form-check-input" type="checkbox" id="tout-cocher-sct">' +
+					'<label class="form-check-label fw-bold fg_bleu" for="tout-cocher-sct">' + reponse['L_Tout_Cocher_Decocher'] + '</label>' +
+					'</div>' +
+					'</div>' +
+					'</div>';
 				for (let Societe of reponse['Societes']) {
 					if (Societe.autorise === null || Societe.autorise === undefined) {
 						Old_Value = '0';
@@ -404,7 +412,15 @@ function ModalAjouterModifier( Id ){
 				}
 				Corps += '</div>';
 
-				Corps += '<div id="liste-entites" class="liste-interne" style="display: none">';
+				Corps += '<div id="liste-entites" class="liste-interne" style="display: none">' +
+					'<div class="row liste">' +
+					'<div class="col-lg-8">' +
+					'<div class="form-check form-check-inline">' +
+					'<input class="form-check-input" type="checkbox" id="tout-cocher-ent">' +
+					'<label class="form-check-label fw-bold fg_bleu" for="tout-cocher-ent">' + reponse['L_Tout_Cocher_Decocher'] + '</label>' +
+					'</div>' +
+					'</div>' +
+					'</div>';
 				for (let Entite of reponse['Entites']) {
 					if (Entite.autorise === null || Entite.autorise === undefined) {
 						Old_Value = '0';
@@ -445,7 +461,15 @@ function ModalAjouterModifier( Id ){
 				}
 				Corps += '</div>';
 
-				Corps += '<div id="liste-profils" class="liste-interne" style="display: none">';
+				Corps += '<div id="liste-profils" class="liste-interne" style="display: none">' +
+					'<div class="row liste">' +
+					'<div class="col-lg-8">' +
+					'<div class="form-check form-check-inline">' +
+					'<input class="form-check-input" type="checkbox" id="tout-cocher-prf">' +
+					'<label class="form-check-label fw-bold fg_bleu" for="tout-cocher-prf">' + reponse['L_Tout_Cocher_Decocher'] + '</label>' +
+					'</div>' +
+					'</div>' +
+					'</div>';
 				for (let Profil of reponse['Profils']) {
 					if (Profil.autorise === null || Profil.autorise === undefined) {
 						Old_Value = '0';
@@ -494,6 +518,33 @@ function ModalAjouterModifier( Id ){
 
 					// On place le curseur après le dernier caractère.
 					document.getElementById('idn_login').selectionStart = Username.length;
+
+					$('#tout-cocher-sct').on( 'click', function() {
+						var Checked = $('#tout-cocher-sct').is(':checked');
+						if ( Checked ) {
+							$('input[id^="chk-SCT-"]').prop('checked', true);
+						} else {
+							$('input[id^="chk-SCT-"]').prop('checked', false);
+						}
+					} );
+
+					$('#tout-cocher-ent').on( 'click', function() {
+						var Checked = $('#tout-cocher-ent').is(':checked');
+						if ( Checked ) {
+							$('input[id^="chk-ENT-"]').prop('checked', true);
+						} else {
+							$('input[id^="chk-ENT-"]').prop('checked', false);
+						}
+					} );
+	
+					$('#tout-cocher-prf').on( 'click', function() {
+						var Checked = $('#tout-cocher-prf').is(':checked');
+						if ( Checked ) {
+							$('input[id^="chk-PRF-"]').prop('checked', true);
+						} else {
+							$('input[id^="chk-PRF-"]').prop('checked', false);
+						}
+					} );
 				});
 
 				// Supprime la modale après l'avoir caché.

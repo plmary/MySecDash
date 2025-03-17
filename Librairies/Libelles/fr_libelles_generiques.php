@@ -604,4 +604,6 @@ $L_M_Comparateur_DMIA_Activites = 'Comparateur DMIA (Activités)';
 $L_Specifique = 'Spécifique';
 $L_Specifique_A = 'Spécifique à';
 
+$L_Libelles_Referentiel = 'Libellés du référentiel';
+
 ?>

@@ -2164,9 +2164,6 @@ tbody {
   /*height: 350px;*/
   overflow-y: auto;
 }
-.datepicker tbody{
-  display: table-row-group;
-}
 
 tbody.scrollContent {
   overflow-x: hidden;

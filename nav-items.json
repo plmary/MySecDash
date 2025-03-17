@@ -3,6 +3,7 @@
 		{"LibelleItemPrincipale": "L_Administration", "Items": [
 			{"LibelleItem": "L_Referentiel_Interne", "Type" : "sous-menu", "Items" : [
 				{"LibelleItem": "L_Parametres_Base", "Type" : "option", "Lien": "MySecDash-Parametres.php"},
+				{"LibelleItem": "L_Libelles_Referentiel", "Type" : "option", "Lien" : "MySecDash-LibellesReferentiel.php"},
 				{"LibelleItem": "L_Types_Fournisseur", "Type" : "option", "Lien" : "MyContinuity-TypesFournisseur.php"}
 			]},
 			{"LibelleItem": "L_Controle_Acces", "Type" : "sous-menu", "Items" : [

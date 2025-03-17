@@ -176,7 +176,9 @@ INSERT INTO ain_applications_internes (ain_id, tap_id, ain_libelle, ain_localisa
 -- *** Gestion transverse des TAGS, pas encore opérationnel
 (26, 1, 'Gestion des étiquettes (tags)', 'MySecDash-Etiquettes.php'),
 
-(27, 1, 'Comparateur de DMIA sur Activités', 'MySecDash-ComparateurDMIAActivites.php');
+(27, 1, 'Comparateur de DMIA sur Activités', 'MySecDash-ComparateurDMIAActivites.php'),
+
+(28, 1, 'Gestion des Libellés du Référentiel', 'MySecDash-LibellesReferentiel.php');
 
 
 SELECT pg_catalog.setval('ain_applications_internes_ain_id_seq', 27, true);

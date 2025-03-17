@@ -1,7 +1,7 @@
 <?php
 
 include_once( 'Constants.inc.php' );
-include_once( HBL_DIR_LIBRARIES . '/Class_HBL_Connecteur_BD_PDO.inc.php' );
+include_once( HBL_DIR_LIBRARIES . '/Class_LibellesReferentiel_PDO.inc.php' );
 
 
 /**
@@ -17,7 +17,7 @@ define( 'L_SPR_NAME', 30 );
 define( 'L_SPR_VALUE', 60 );
 
 
-class HBL_Parametres extends HBL_Connexioneur_BD {
+class HBL_Parametres extends LibellesReferentiel {
 
 	public function __construct() {
 	/**

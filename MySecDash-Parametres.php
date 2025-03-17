@@ -11,14 +11,14 @@
 */
 
 // Charge les constantes du projet.
-include( 'Constants.inc.php' );
+include 'Constants.inc.php';
 
-include( DIR_LIBRAIRIES . '/Loxense-Entete-Standard.php' );
+include DIR_LIBRAIRIES . '/Loxense-Entete-Standard.php';
 
 // Charge les libellés en fonction de la langue sélectionnée.
-include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Generiques.inc.php' );
-include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_' . basename( $Script ) );
+include DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php';
+include HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Generiques.inc.php';
+include DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_' . basename( $Script );
 
 
 $Trier = 'label';
@@ -35,7 +35,7 @@ switch( $Action ) {
 
 	$Onglets = '<ul class="nav nav-tabs col-lg-12" style="margin-top: 15px;">';
 	
-	if ( $_SESSION['idn_super_admin'] == TRUE ||
+	if ( $_SESSION['idn_super_admin'] == true ||
 		( array_key_exists( 'syslog_alert', $Systemes ) &&
 		array_key_exists( 'syslog_host', $Systemes ) &&
 		array_key_exists( 'syslog_port', $Systemes ) &&
@@ -59,23 +59,22 @@ switch( $Action ) {
 		'triable' => 'non', 'tri_actif' => 'non' );
 	$Format_Colonnes['Colonnes'][] = array( 'titre' => $L_Value, 'taille' => '7' );
 
-	print( $PageHTML->construireEnteteHTML( $L_Gestion_Parametres_Base, $Fichiers_JavaScript ) .
+	print $PageHTML->construireEnteteHTML( $L_Gestion_Parametres_Base, $Fichiers_JavaScript ) .
 		$PageHTML->construireNavbarJson('Logo-MySecDash.svg', 'nav-items.json') .
 		$PageHTML->construireTitreEcran( $L_Gestion_Parametres_Base,
 			'', // Choix de Sociétés possibles
 			'', // Boutons supplémentaires accrochés au titre de l'écran
 			'', // Liste contextuelle possible
-			$Onglets )
-		);
+			$Onglets );
 
 
-	if ( $Droit_Lecture === TRUE ) {
+	if ( $Droit_Lecture === true ) {
 		// Construit un tableau central vide.
 		print( $PageHTML->contruireTableauVide( $Format_Colonnes ) );
 	}
 
-	print( $PageHTML->construireFooter( TRUE ) .
-		$PageHTML->construirePiedHTML() );
+	print $PageHTML->construireFooter( true ) .
+		$PageHTML->construirePiedHTML();
 
 	break;
 
@@ -85,19 +84,19 @@ switch( $Action ) {
  */
 
  case 'AJAX_Libeller':
-	print( json_encode( array(
+	print json_encode( array(
 		'Statut' => 'success',
 		'L_Fermer' => $L_Fermer,
 		'Titre' => $L_Ajouter_Entite,
 		'L_Ajouter' => $L_Ajouter,
 		'L_Libelle' => $L_Label
-		) ) );
+		) );
 	
 	exit();
 
 
  case 'AJAX_Modifier':
-	if ( $Droit_Modifier === TRUE ) {
+	if ( $Droit_Modifier === true ) {
 		if (isset($_POST['id']) && isset($_POST['libelle'])){
 			try {
 				$PageHTML->majParametreParID($_POST['id'], $_POST['libelle']);
@@ -142,11 +141,14 @@ switch( $Action ) {
 
 
  case 'AJAX_Trier':
-	if ( $Droit_Lecture === TRUE ) {
+	if ( $Droit_Lecture === true ) {
 		$Trier = $_POST[ 'trier' ];
 
-		if ( ! isset( $_POST[ 'groupe' ] ) ) $Groupe = '';
-		else $Groupe = mb_strtolower( $_POST[ 'groupe' ] );
+		if ( ! isset( $_POST[ 'groupe' ] ) ) {
+			$Groupe = '';
+		} else {
+			$Groupe = mb_strtolower( $_POST[ 'groupe' ] );
+		}
 
 		try {
 			$Systemes = $PageHTML->rechercherParametres( $Trier, '', '*', $Groupe );
@@ -159,21 +161,27 @@ switch( $Action ) {
 
 			switch( $Groupe ) {
 			 case 'alerte':
-			 	$Option_HTML = '';
-			 	$Option_TEXT = '';
-			 	if ( array_key_exists( 'mail_body_type', $Systemes ) ) {
-			 		if ( $Systemes['mail_body_type']->prs_valeur == 'HTML' ) $Option_HTML = ' selected';
-			 		if ( $Systemes['mail_body_type']->prs_valeur == 'TEXT' ) $Option_TEXT = ' selected';
-			 	}
+				$Option_HTML = '';
+				$Option_TEXT = '';
+				if ( array_key_exists( 'mail_body_type', $Systemes ) ) {
+					if ( $Systemes['mail_body_type']->prs_valeur == 'HTML' ) {
+						$Option_HTML = ' selected';
+					}
 
-			 	
-		 		if ( array_key_exists( 'syslog_alert', $Systemes ) ) {
-		 			$Syslog_Alert = '';
+					if ( $Systemes['mail_body_type']->prs_valeur == 'TEXT' ) {
+						$Option_TEXT = ' selected';
+					}
+				}
 
-		 			if ( $Systemes['syslog_alert']->prs_valeur == 1
-		 				or $Systemes['syslog_alert']->prs_valeur == 'true' ) $Syslog_Alert = 'checked';
-		 				
-			 		$Texte_HTML .=
+				if ( array_key_exists( 'syslog_alert', $Systemes ) ) {
+					$Syslog_Alert = '';
+
+					if ( $Systemes['syslog_alert']->prs_valeur == 1
+					 || $Systemes['syslog_alert']->prs_valeur == 'true' ) {
+						$Syslog_Alert = 'checked';
+					}
+
+					$Texte_HTML .=
 						'<div class="row">' .
 						 '<div class="col-lg-4 g-2 mb-2">' .
 						  '<label class="form-label fw-bold">' . $L_Alertes_Syslog . '</label>' .
@@ -189,12 +197,12 @@ switch( $Action ) {
 						   '</div>' . // .form-check
 						 '</div>' . // .col-lg-7
 						'</div>'; // .my-row-1
-		 		}
+				}
 
-		 		
-		 		if ( array_key_exists( 'syslog_host', $Systemes ) ) {
-		 			$Texte_HTML .=
-				 		'<div class="row">' .
+
+				if ( array_key_exists( 'syslog_host', $Systemes ) ) {
+					$Texte_HTML .=
+						'<div class="row">' .
 						 '<div class="col-lg-4 g-2 mb-2">&nbsp;</div>' .
 						 '<div class="col-lg-7 g-2 mb-2">' .
 						  '<label class="form-label" for="prs_valeur-' . $Systemes['syslog_host']->prs_id . '">' . $L_Replication_Syslog . '</label>' .
@@ -206,10 +214,10 @@ switch( $Action ) {
 						'</div>';
 				}
 
-		 		
-		 		if ( array_key_exists( 'syslog_port', $Systemes ) ) {
-		 			$Texte_HTML .=
-			 			'<div class="row">' .
+
+				if ( array_key_exists( 'syslog_port', $Systemes ) ) {
+					$Texte_HTML .=
+						'<div class="row">' .
 						 '<div class="col-lg-4 g-2">&nbsp;</div>' .
 						 '<label class="form-label col-lg-8 g-2">' . $L_Replication_Port_Syslog . '</label>' .
 						 '<div class="col-lg-4 mb-2">&nbsp;</div>' .
@@ -220,12 +228,12 @@ switch( $Action ) {
 						    'onBlur="sauverParametre(' . $Systemes['syslog_port']->prs_id . ');">' .
 						 '</div>' . // .col-2
 						'</div>'; // .row
-		 		}
-	
+				}
 
-		 		if ( array_key_exists( 'syslog_template', $Systemes ) ) {
-		 			$Texte_HTML .=
-		 				'<div class="row">' .
+
+				if ( array_key_exists( 'syslog_template', $Systemes ) ) {
+					$Texte_HTML .=
+						'<div class="row">' .
 						 '<div class="col-lg-4 g-2 mb-2">&nbsp;</div>' .
 						 '<div class="col-lg-6 g-2 mb-2">' .
 						  '<label class="form-label">' . $L_Fichier_Squelette . '</label>' .
@@ -240,12 +248,14 @@ switch( $Action ) {
 						'</div>'; // .row
 				}
 
-									
+
 				if ( array_key_exists( 'mail_alert', $Systemes ) ) {
 					$Mail_Alert = '';
 
 					if ( $Systemes['mail_alert']->prs_valeur == 1
-						or $Systemes['mail_alert']->prs_valeur == 'true' ) $Mail_Alert = 'checked';
+					 || $Systemes['mail_alert']->prs_valeur == 'true' ) {
+							$Mail_Alert = 'checked';
+						}
 
 					$Texte_HTML .=
 						'<div class="row my-separator">' .
@@ -263,7 +273,7 @@ switch( $Action ) {
 						'</div>';
 				}
 
-								
+
 				if ( array_key_exists( 'mail_sender', $Systemes ) ) {
 					$Texte_HTML .=
 					'<div class="row">' .
@@ -278,7 +288,7 @@ switch( $Action ) {
 					'</div>';
 				}
 
-							
+
 				if ( array_key_exists( 'mail_receiver', $Systemes ) ) {
 					$Texte_HTML .=
 						'<div class="row">' .
@@ -293,7 +303,7 @@ switch( $Action ) {
 						'</div>';
 				}
 
-						
+
 				if ( array_key_exists( 'mail_title', $Systemes ) ) {
 					$Texte_HTML .=
 						'<div class="row">' .
@@ -308,7 +318,7 @@ switch( $Action ) {
 						'</div>';
 				}
 
-					
+
 				if ( array_key_exists( 'mail_body_type', $Systemes ) ) {
 					$Texte_HTML .=
 					'<div class="row">' .
@@ -316,8 +326,8 @@ switch( $Action ) {
 					 '<div class="col-lg-4 g-2 mb-2">' .
 					  '<label class="form-label">' . $L_Type_Corps_Courriel . '</label>' .
 					  '<select class="form-select" id="prs_valeur-' . $Systemes['mail_body_type']->prs_id .
-						'" data-old="' . $Systemes['mail_body_type']->prs_valeur . '" ' .
-						'onChange="sauverParametre(' . $Systemes['mail_body_type']->prs_id . ');">' .
+					    '" data-old="' . $Systemes['mail_body_type']->prs_valeur . '" ' .
+					    'onChange="sauverParametre(' . $Systemes['mail_body_type']->prs_id . ');">' .
 					   '<option value="HTML"' . $Option_HTML . '>HTML</option>' .
 					   '<option value="TEXT"' . $Option_TEXT . '>' . $L_Texte . '</option>' .
 					  '</select>' .
@@ -334,9 +344,9 @@ switch( $Action ) {
 					  '<label class="form-label">' . $L_Fichier_Squelette . '</label>' .
 					  '<div class="input-group">' .
 					   '<input class="form-control" type="text" maxlength="60" id="prs_valeur-' . $Systemes['mail_template']->prs_id .
-					   '" data-old="' . $Systemes['mail_template']->prs_valeur . '" value="' . $Systemes['mail_template']->prs_valeur . '" ' .
-					   'onKeyDown="controleSaisieChamp(event, ' . $Systemes['mail_template']->prs_id . ');" ' .
-					   'onBlur="sauverParametre(' . $Systemes['mail_template']->prs_id . ');">' .
+					    '" data-old="' . $Systemes['mail_template']->prs_valeur . '" value="' . $Systemes['mail_template']->prs_valeur . '" ' .
+					    'onKeyDown="controleSaisieChamp(event, ' . $Systemes['mail_template']->prs_id . ');" ' .
+					    'onBlur="sauverParametre(' . $Systemes['mail_template']->prs_id . ');">' .
 					   '<span class="input-group-text"><button class="btn btn-outline-secondary btn-sm" id="edit-mail-body" disabled><i class="bi-pencil-square"></i></button></span>' .
 					  '</div>' .
 					 '</div>' .
@@ -352,45 +362,44 @@ switch( $Action ) {
 				$Base_Selectionnee = ' disabled ';
 				$LDAP_Selectionnee = ' disabled ';
 
-				
 				if ( array_key_exists( 'authentification_type', $Systemes ) ) {
 					switch( mb_strtoupper( $Systemes['authentification_type']->prs_valeur ) ) {
 					 case 'D':
 						$Option_Base = ' checked';
 						$Base_Selectionnee = '';
 						break;
-	
+
 					 case 'L':
 						$Option_LDAP = ' checked';
 						$LDAP_Selectionnee = '';
 						break;
-				 	}
+					}
 				}
 
 
-			 	$Complexite_1 = '';
-			 	$Complexite_2 = '';
-			 	$Complexite_3 = '';
-			 	$Complexite_4 = '';
+				$Complexite_1 = '';
+				$Complexite_2 = '';
+				$Complexite_3 = '';
+				$Complexite_4 = '';
 
-			 	if ( array_key_exists( 'password_complexity', $Systemes ) ) {
-				 	switch( $Systemes['password_complexity']->prs_valeur ) {
-				 	 case '1':
-				 		$Complexite_1 = ' selected';
-				 		break;
-	
-				 	 case '2':
-				 		$Complexite_2 = ' selected';
-				 		break;
-	
-				 	 case '3':
-				 		$Complexite_3 = ' selected';
-				 		break;
-	
-				 	 case '4':
-				 		$Complexite_4 = ' selected';
-				 		break;
-				 	}
+				if ( array_key_exists( 'password_complexity', $Systemes ) ) {
+					switch( $Systemes['password_complexity']->prs_valeur ) {
+					 case '1':
+						$Complexite_1 = ' selected';
+						break;
+
+					 case '2':
+						$Complexite_2 = ' selected';
+						break;
+
+					 case '3':
+						$Complexite_3 = ' selected';
+						break;
+
+					 case '4':
+						$Complexite_4 = ' selected';
+						break;
+					}
 			 	}
 
 
@@ -413,10 +422,13 @@ switch( $Action ) {
 
 
 		 		if ( array_key_exists( 'root_alternative_boot', $Systemes ) ) {
-					if ( mb_strtoupper( $Systemes['root_alternative_boot']->prs_valeur ) == 'TRUE' ) $Connexion_Alertnative_Root = ' checked';
-					else $Connexion_Alertnative_Root = '';
+		 			if ( mb_strtoupper( $Systemes['root_alternative_boot']->prs_valeur ) == 'true' ) {
+		 				$Connexion_Alertnative_Root = ' checked';
+		 			} else {
+		 				$Connexion_Alertnative_Root = '';
+		 			}
 
-					
+
 					$Texte_HTML .=
 						'<div class="row">' .
 						 '<div class="col-lg-4 g-2 mb-2">&nbsp;</div>' .
@@ -424,18 +436,18 @@ switch( $Action ) {
 						  '<div class="form-check">' .
 						   '<input type="checkbox" class="form-check-input" ' .
 						    'id="prs_valeur-' . $Systemes['root_alternative_boot']->prs_id . '" ' .
-							'data-old="' . $Systemes['root_alternative_boot']->prs_valeur . '" ' .
-							'data-name="root_alternative_boot" ' .
-							$Connexion_Alertnative_Root . ' ' . //$Base_Selectionnee .
-							'onChange="sauverParametre(' . $Systemes['root_alternative_boot']->prs_id . ');">' .
-						 '<label for="prs_valeur-' . $Systemes['root_alternative_boot']->prs_id . '" class="form-check-label">' . $L_Connexion_Alertnative_Root . '</label>' .
-						 '</div>' . 
+						    'data-old="' . $Systemes['root_alternative_boot']->prs_valeur . '" ' .
+						    'data-name="root_alternative_boot" ' .
+						    $Connexion_Alertnative_Root . ' ' . //$Base_Selectionnee .
+						    'onChange="sauverParametre(' . $Systemes['root_alternative_boot']->prs_id . ');">' .
+						   '<label for="prs_valeur-' . $Systemes['root_alternative_boot']->prs_id . '" class="form-check-label">' . $L_Connexion_Alertnative_Root . '</label>' .
+						  '</div>' . 
 						 '</div>' .
 						'</div>';
 				}
 
 
-				if ( $_SESSION['idn_super_admin'] == TRUE || $Systemes['authentification_type']->prs_valeur == 'D' ) {
+				if ( $_SESSION['idn_super_admin'] == true || $Systemes['authentification_type']->prs_valeur == 'D' ) {
 					if ( array_key_exists( 'authentification_type', $Systemes ) ) {
 						$Texte_HTML .=
 						'<div class="row my-separator">' .
@@ -558,7 +570,7 @@ switch( $Action ) {
 				}
 
 
-				if ( array_key_exists( 'authentification_type', $Systemes ) && $_SESSION['idn_super_admin'] == TRUE ) {
+				if ( array_key_exists( 'authentification_type', $Systemes ) && $_SESSION['idn_super_admin'] == true ) {
 					$Texte_HTML .=
 						'<div class="row my-separator">' .
 						 '<div class="col-lg-4 g-2 mb-2">' .
@@ -593,10 +605,10 @@ switch( $Action ) {
 					 '</div>' .
 					'</div>';
 				}
-	
-				
+
+
 				if ( array_key_exists( 'ldap_ssl', $Systemes ) ) {
-					if ( mb_strtoupper( $Systemes['ldap_ssl']->prs_valeur ) == 'TRUE' ) $Connexion_LDAP_SSL = ' checked';
+					if ( mb_strtoupper( $Systemes['ldap_ssl']->prs_valeur ) == 'true' ) $Connexion_LDAP_SSL = ' checked';
 					else $Connexion_LDAP_SSL = '';
 						
 					$Texte_HTML .=
@@ -709,7 +721,7 @@ switch( $Action ) {
 						'<span>' . $Occurrence->prs_commentaire . '</span>' .
 						'</div>';
 
-					if ( $Droit_Modifier === TRUE ) {
+					if ( $Droit_Modifier === true ) {
 						switch ( $Occurrence->prs_type ) {
 							case 0: // Boîte à cocher
 								if ( $Occurrence->prs_valeur == 'false' ) {
@@ -775,18 +787,18 @@ switch( $Action ) {
 		
 		echo json_encode( $Resultat );
 		exit();
-	}	
+	}
 	break;
 
 
  case 'AJAX_Generer_Conf_LDAP':
-	if ( $Droit_Ajouter === TRUE ) {
+	if ( $Droit_Ajouter === true ) {
 		if ( ! isset( $_POST['ldap_ip_address'] )
-			or ! isset( $_POST['ldap_ip_port'] )
-			or ! isset( $_POST['ldap_protocol_version'] )
-			or ! isset( $_POST['ldap_organization'] )
-			or ! isset( $_POST['ldap_rdn_prefix'] )
-			or ! isset( $_POST['ldap_ssl'] )
+			|| ! isset( $_POST['ldap_ip_port'] )
+			|| ! isset( $_POST['ldap_protocol_version'] )
+			|| ! isset( $_POST['ldap_organization'] )
+			|| ! isset( $_POST['ldap_rdn_prefix'] )
+			|| ! isset( $_POST['ldap_ssl'] )
 		) {
 			echo json_encode( array(
 				'statut' => 'error',
@@ -798,16 +810,16 @@ switch( $Action ) {
 	
 	
 		if ( $_POST['ldap_ssl'] == 'true' ) {
-			$_POST['ldap_ssl'] = 'TRUE';
+			$_POST['ldap_ssl'] = 'true';
 		} else {
-			$_POST['ldap_ssl'] = 'FALSE';
+			$_POST['ldap_ssl'] = 'false';
 		}
 	
 	
 		try {
-		 	$P_Fichier_Conf = fopen( DIR_RESTREINT . '/Config_LDAP.inc.php', 'w' );
+			$P_Fichier_Conf = fopen( DIR_RESTREINT . '/Config_LDAP.inc.php', 'w' );
 	
-		 	fwrite( $P_Fichier_Conf,
+			fwrite( $P_Fichier_Conf,
 				"<?php\n" .
 				"\n" .
 				"/**\n" .
@@ -857,7 +869,7 @@ switch( $Action ) {
 
 
  case 'AJAX_Controler_MdP':
-	if ( $Droit_Ajouter === TRUE) {
+	if ( $Droit_Ajouter === true) {
 		$Texte_Statut = $L_Mot_Passe_Invalide;
 		$Statut = 'error';
 		$Salt = 'loxense_2016_loxense';
@@ -871,16 +883,15 @@ switch( $Action ) {
 				$Tmp_MdP = str_replace( array("\r","\n"), array('',''), $Tmp_MdP );
 	
 				if ( hash( 'sha256', $_POST['mdp_limitation_tmp'] . $Salt ) == $Tmp_MdP ) {
-					$_SESSION['MdP_Limitation'] = TRUE;
+					$_SESSION['MdP_Limitation'] = true;
 					$Statut = 'success';
 					$Texte_Statut = '';
 				} else {
-					$_SESSION['MdP_Limitation'] = FALSE;
-	//				$Texte_Statut = '"'.hash( 'sha256', $_POST['mdp_limitation_tmp'] . $Salt ).'" <=> "'.$Tmp_MdP.'"';
+					$_SESSION['MdP_Limitation'] = false;
 				}
 			}
 		}
-	
+
 		echo json_encode( array(
 			'statut' => $Statut,
 			'texteMsg' => $Texte_Statut,
@@ -893,7 +904,7 @@ switch( $Action ) {
 			'statut' => 'error',
 			'texteMsg' => $L_No_Authorize
 		);
-		
+
 		echo json_encode( $Resultat );
 		exit();
 	}

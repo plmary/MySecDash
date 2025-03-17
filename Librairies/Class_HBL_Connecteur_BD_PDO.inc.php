@@ -57,10 +57,8 @@ class HBL_Connexioneur_BD extends PDO {
 	*
 	* \return Passe l'objet en mode Transaction
 	*/
-		//$this->transactionBegin = TRUE;
 		$this->transactionBegin = TRUE;
 
-		//$this->exec( 'BEGIN' );
 		return $this->beginTransaction();
 	}
 
@@ -79,7 +77,6 @@ class HBL_Connexioneur_BD extends PDO {
 
 		$this->transactionBegin = FALSE;
 
-		//$this->exec( 'COMMIT' );
 		$this->commit();
 
 		return TRUE;
@@ -100,7 +97,6 @@ class HBL_Connexioneur_BD extends PDO {
 
 		$this->transactionBegin = FALSE;
 
-		//$this->exec( 'ROLLBACK' );
 		$this->rollBack();
 
 		return TRUE;
@@ -206,7 +202,6 @@ class HBL_Connexioneur_BD extends PDO {
 			throw new Exception( $message, $Error[ 1 ] );
 		}
 
-//		$this->LastInsertId = $this->lastInsertId();
 		$this->RowCount = $Query->rowCount();
 		
 		// permet les appels en cascade

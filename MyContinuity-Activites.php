@@ -126,14 +126,14 @@ switch( $Action ) {
 			$Choix_Entites['options'][] = array('id' => $Entite->ent_id, 'nom' => $Entite->ent_nom );
 		}
 	}
+//print_r($Choix_Entites);
 
 	$Fichiers_JavaScript[] = 'MatriceImpacts.js';
 
-	print( $PageHTML->construireEnteteHTML( $L_Gestion_Activites, $Fichiers_JavaScript, 3 ) .
+	print $PageHTML->construireEnteteHTML( $L_Gestion_Activites, $Fichiers_JavaScript, 3 ) .
 		$PageHTML->construireNavbarJson('Logo-MyContinuity.svg', 'nav-items.json') .
-		$PageHTML->construireTitreEcran( $L_Gestion_Activites, $Liste_Societes, $Boutons_Alternatifs, 
-			$Choix_Campagnes, '', $Choix_Entites )
-	);
+		$PageHTML->construireTitreEcran( $L_Gestion_Activites, $Liste_Societes, $Boutons_Alternatifs,
+			$Choix_Campagnes, '', $Choix_Entites );
 //print_r($_SERVER);
 
 	if ( $Droit_Lecture === TRUE ) {
@@ -235,7 +235,7 @@ switch( $Action ) {
 				$Libelles['Activite'] = $objActivites->rechercherActivites( $_SESSION['s_cmp_id'], $_SESSION['s_ent_id'], '', $_POST['act_id'] );
 				$Libelles['Liste_DMIA'] = $objActivites->recupererDMIA( $_SESSION['s_cmp_id'], $_POST['act_id'] );
 				$Libelles['Liste_Personnes_Cles'] = $objActivites->rechercherPersonnesClesActivites( $_SESSION['s_sct_id'], $_POST['act_id'] );
-				$Libelles['Liste_Sites'] = $objActivites->rechercherSitesAssociesActivite( $_SESSION['s_sct_id'], $_POST['act_id'] );
+				$Libelles['Liste_Sites'] = $objActivites->rechercherSitesAssociesActivite( $_SESSION['s_cmp_id'], $_POST['act_id'] );
 				$Libelles['Liste_Applications'] = $objActivites->rechercherApplicationsActivites( $_POST['act_id'] );
 				$Libelles['Liste_Fournisseurs'] = $objActivites->rechercherFournisseursActivite( $_POST['act_id'] );
 			} else {

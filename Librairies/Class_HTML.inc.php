@@ -1,8 +1,8 @@
 <?php
 
 // Charge les constantes du projet.
-include_once( 'Constants.inc.php' );
-include_once( HBL_DIR_LIBRARIES . '/Class_HBL_Authentifications_PDO.inc.php' );
+include_once 'Constants.inc.php';
+include_once HBL_DIR_LIBRARIES . '/Class_HBL_Authentifications_PDO.inc.php';
 
 class HTML extends HBL_Authentifications {
 /**
@@ -31,7 +31,7 @@ public function __construct() {
 * \date 2015-07-22
 *
 */
-	$this->Version_Outil = '1.2-0'; // Version de l'outil
+	$this->Version_Outil = '1.2-2'; // Version de l'outil
 	
 	$this->Nom_Outil = '<span style="color: #717D11;">My</span><span style="color: #C34A36;">Sec</span><span style="color: #44808A;">Dash</span>';
 	$this->Nom_Outil_TXT = 'MySecDash';
@@ -73,7 +73,7 @@ public function construireEnteteHTML( $Titre_Page = "", $Fichiers_JavaScript = "
 *
 * \return Retourne la chaîne d'entête d'une page HTML.
 */
-	include( DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php" );
+	include DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php";
 	
 	$Entete = "<!doctype html>\n\n" .
 	 "<html lang=\"en\">\n" .
@@ -93,6 +93,7 @@ public function construireEnteteHTML( $Titre_Page = "", $Fichiers_JavaScript = "
 	 "  <link rel=\"stylesheet\" type=\"text/css\" href=\"" . URL_LIBRAIRIES . "/bootstrap-dist/css/bootstrap.min.css\" media=\"screen\">\n";
 	
 	switch ( $CSS_Minimal ) {
+	 default:
 	 case 0:
 		$Entete .= '  <link rel="stylesheet" type="text/css" href="' . URL_LIBRAIRIES . '/css/MySecDash-1.css" media="screen">' . "\n" .
 			'  <link rel="stylesheet" type="text/css" href="' . URL_LIBRAIRIES . '/css/bootstrap-colorselector.css" />' . "\n" .
@@ -171,15 +172,18 @@ public function construireNavbar( $Nom_Fichier_Logo = '' ) {
 *$Barre_Menu
 * \return Retourne la chaîne standardisant l'affichage du menu principal.
 */
-	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
+	include DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php";
 
 	$Permissions = $this->permissionsGroupees();
 
 	$Barre_Menu = "  <nav class=\"navbar navbar-expand-lg fixed-top\">\n" .
 		"   <div class=\"container-fluid\">\n";
 
-	if ( file_exists( URL_IMAGES . '/' . $Nom_Fichier_Logo ) ) $Nom_Fichier_Logo = URL_IMAGES . '/' . $Nom_Fichier_Logo;
-	else $Nom_Fichier_Logo = URL_IMAGES . '/Logo-MySecDash.svg';
+	if ( file_exists( URL_IMAGES . '/' . $Nom_Fichier_Logo ) ) {
+		$Nom_Fichier_Logo = URL_IMAGES . '/' . $Nom_Fichier_Logo;
+	} else {
+		$Nom_Fichier_Logo = URL_IMAGES . '/Logo-MySecDash.svg';
+	}
 
 	$Barre_Menu .= "    <a class=\"navbar-brand\" data-bs-toggle=\"offcanvas\" href=\"#offcanvasChangerUnivers\" role=\"button\" aria-controls=\"offcanvasChangerUnivers\"><img src=\"" . $Nom_Fichier_Logo . "\" alt=\"Logo\" height=\"25\" /></a>\n" .
 		"     <button class=\"navbar-toggler btn-outline-secondary\" type=\"button\" data-bs-toggle=\"collapse\" data-bs-target=\"#navbarNavPrincipal\" aria-controls=\"navbarNavPrincipal\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">\n" .
@@ -190,96 +194,96 @@ public function construireNavbar( $Nom_Fichier_Logo = '' ) {
 
 	// Contrôle si l'utilisateur a au moins accès à une option d'Admnisitration pour lui donner accès.
 	if ( isset( $Permissions['MySecDash-Parametres.php'] )
-		or isset( $Permissions['MySecDash-ReferentielsConformite.php'] ) ) {
-		$Acces_Administration = TRUE;
-		$Referentiel_Interne = TRUE;
+	 || isset( $Permissions['MySecDash-ReferentielsConformite.php'] ) ) {
+		$Acces_Administration = true;
+		$Referentiel_Interne = true;
 	} else {
-		$Acces_Administration = FALSE;
-		$Referentiel_Interne = FALSE;
+		$Acces_Administration = false;
+		$Referentiel_Interne = false;
 	}
 
 	if ( isset( $Permissions['MySecDash-Historiques.php'] )
-		or isset( $Permissions['MySecDash-ExportBase.php'] ) ) {
-		$Acces_Administration = TRUE;
+	 || isset( $Permissions['MySecDash-ExportBase.php'] ) ) {
+		$Acces_Administration = true;
 	} else {
-		$Acces_Administration = FALSE;
+		$Acces_Administration = false;
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or $Acces_Administration === TRUE ) {
+	if ( $_SESSION['idn_super_admin'] === true || $Acces_Administration === true ) {
 		$Barre_Menu .= "       <li class=\"nav-item dropdown\">\n" .
 			"        <a href=\"#\" class=\"nav-link dropdown-toggle\" id=\"navbarDropdownMenuAdmin\" data-bs-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">" . $L_Administration . "</a>\n" .
 			"        <ul class=\"dropdown-menu\" aria-labelledby=\"navbarDropdownMenuAdmin\">\n";
 	}
 	
-	if ( $_SESSION['idn_super_admin'] === TRUE or $Referentiel_Interne === TRUE ) {
+	if ( $_SESSION['idn_super_admin'] === true || $Referentiel_Interne === true ) {
 		$Barre_Menu .= "        <li class=\"dropdown-submenu\">\n" .
 			"         <a href=\"#\" class=\"dropdown-item\">" . $L_Referentiel_Interne . "</a>\n" .
 			"         <ul class=\"dropdown-menu\">\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Parametres.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-Parametres.php'] ) ) {
 		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Parametres.php\" class=\"dropdown-item\">" . $L_Parametres_Base . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or $Referentiel_Interne === TRUE ) {
+	if ( $_SESSION['idn_super_admin'] === true || $Referentiel_Interne === true ) {
 		$Barre_Menu .= "         </ul>\n" .
 			"        </li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or $Control_Acces === TRUE ) {
+	if ( $_SESSION['idn_super_admin'] === true || $Control_Acces === true ) {
 		$Barre_Menu .= "        <li class=\"dropdown-submenu\">\n" .
 			"         <a href=\"" . URL_BASE . "/MySecDash-Utilisateurs.php\" class=\"dropdown-item\">" . $L_Controle_Acces . "</a>\n" .
 			"         <ul class=\"dropdown-menu\">\n";
 	}
 	
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Societes.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-Societes.php'] ) ) {
 		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Societes.php\" class=\"dropdown-item\">" . $L_Societes . "</a></li>\n";
 	}
 	
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Entites.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-Entites.php'] ) ) {
 		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Entites.php\" class=\"dropdown-item\">" . $L_Entites . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Civilites.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-Civilites.php'] ) ) {
 		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Civilites.php\" class=\"dropdown-item\">" . $L_Civilites . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-ApplicationsInternes.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-ApplicationsInternes.php'] ) ) {
 		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-ApplicationsInternes.php\" class=\"dropdown-item\">" . $L_ApplicationsInternes . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Profils.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-Profils.php'] ) ) {
 		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Profils.php\" class=\"dropdown-item\">" . $L_Profils . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Utilisateurs.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-Utilisateurs.php'] ) ) {
 		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Utilisateurs.php\" class=\"dropdown-item\">" . $L_Utilisateurs . "</a></li>\n";
 	}
 
-/*	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Gestionnaires.php'] ) ) {
+/*	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-Gestionnaires.php'] ) ) {
 		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Gestionnaires.php\" class=\"dropdown-item\">" . $L_Gestionnaires . "</a></li>\n";
 	} */
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Etiquettes.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-Etiquettes.php'] ) ) {
 		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-Etiquettes.php\" class=\"dropdown-item\">" . $L_Etiquettes . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or $Control_Acces === TRUE ) {
+	if ( $_SESSION['idn_super_admin'] === true || $Control_Acces === true ) {
 		$Barre_Menu .= "         </ul>\n" .
 			"        </li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Historiques.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-Historiques.php'] ) ) {
 		$Barre_Menu .= "        <li><hr class=\"dropdown-divider\"></li>\n" .
 			"        <li><a href=\"" . URL_BASE . "/MySecDash-Historiques.php\" class=\"dropdown-item\">" . $L_Historique . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-ExportBase.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-ExportBase.php'] ) ) {
 		$Barre_Menu .= "        <li><hr class=\"dropdown-divider\"></li>\n" .
 			"        <li><a href=\"" . URL_BASE . "/MySecDash-ExportBase.php\" class=\"dropdown-item\">" . $L_Export_Base . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or $Acces_Administration === TRUE ) {
+	if ( $_SESSION['idn_super_admin'] === true || $Acces_Administration === true ) {
 		$Barre_Menu .= "       </ul>\n" .
 			"      </li>\n";
 	}
@@ -288,36 +292,36 @@ public function construireNavbar( $Nom_Fichier_Logo = '' ) {
 	// ======
 
 
-	if ( $_SESSION['idn_super_admin'] === TRUE
-		or isset( $Permissions['MySecDash-Conformite.php']  )
-		or isset( $Permissions['MySecDash-EditionConformite.php']  )
-		or isset( $Permissions['MySecDash-MatriceConformite.php']  ) ) {
-		$Option_Gestion_Conformite = TRUE;
+	if ( $_SESSION['idn_super_admin'] === true
+	 || isset( $Permissions['MySecDash-Conformite.php']  )
+	 || isset( $Permissions['MySecDash-EditionConformite.php']  )
+	 || isset( $Permissions['MySecDash-MatriceConformite.php']  ) ) {
+		$Option_Gestion_Conformite = true;
 	} else {
-		$Option_Gestion_Conformite = FALSE;
+		$Option_Gestion_Conformite = false;
 	}
 
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or $Option_Gestion_Conformite === TRUE ) {
+	if ( $_SESSION['idn_super_admin'] === true || $Option_Gestion_Conformite === true ) {
 		$Barre_Menu .= "      <li class=\"nav-item dropdown\">\n" .
 			"       <a href=\"#\" class=\"nav-link dropdown-toggle\" id=\"navbarDropdownMenuConfo\" data-bs-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">" . $L_Gestion_Conformite . " <span class=\"caret\"></span></a>\n" .
 			"       <ul class=\"dropdown-menu\" aria-labelledby=\"navbarDropdownMenuConfo\">\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Conformite.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-Conformite.php'] ) ) {
 		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-Conformite.php\" class=\"dropdown-item\">" . $L_Gerer_Conformite . "</a></li>\n";
 	}
 	
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-EditionConformite.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-EditionConformite.php'] ) ) {
 		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-EditionConformite.php\" class=\"dropdown-item\">" . $L_Editer_Conformite . "</a></li>\n";
 	}
 	
-/*	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-MatriceConformite.php'] ) ) {
+/*	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-MatriceConformite.php'] ) ) {
 		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-MatriceConformite.php\" class=\"dropdown-item\">" . $L_Matrice_Conformite . "</a></li>\n";
 	} */
 
 	
-	if ( $_SESSION['idn_super_admin'] === TRUE or $Option_Gestion_Conformite === TRUE ) {
+	if ( $_SESSION['idn_super_admin'] === true || $Option_Gestion_Conformite === true ) {
 			$Barre_Menu .= "       </ul>\n" .
 			"      </li>\n";
 	}
@@ -326,31 +330,31 @@ public function construireNavbar( $Nom_Fichier_Logo = '' ) {
 	// ======
 
 
-	if ( $_SESSION['idn_super_admin'] === TRUE
-		or isset( $Permissions['MySecDash-Actions.php'] )
-		or isset( $Permissions['MySecDash-EditionsActions.php'] )) {
-		$Option_Gestion_Actions = TRUE;
+	if ( $_SESSION['idn_super_admin'] === true
+	 || isset( $Permissions['MySecDash-Actions.php'] )
+	 || isset( $Permissions['MySecDash-EditionsActions.php'] )) {
+		$Option_Gestion_Actions = true;
 	} else {
-		$Option_Gestion_Actions = FALSE;
+		$Option_Gestion_Actions = false;
 	}
 
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or $Option_Gestion_Actions === TRUE ) {
+	if ( $_SESSION['idn_super_admin'] === true || $Option_Gestion_Actions === true ) {
 		$Barre_Menu .= "      <li class=\"nav-item dropdown\">\n" .
 			"       <a href=\"#\" class=\"nav-link dropdown-toggle\" id=\"navbarDropdownMenuAction\" data-bs-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">" . $L_Gestion_Actions . " <span class=\"caret\"></span></a>\n" .
 			"       <ul class=\"dropdown-menu\" aria-labelledby=\"navbarDropdownMenuAction\">\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-Actions.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-Actions.php'] ) ) {
 		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-Actions.php\" class=\"dropdown-item\">" . $L_Gerer_Actions . "</a></li>\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-EditionsActions.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true || isset( $Permissions['MySecDash-EditionsActions.php'] ) ) {
 		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-EditionsActions.php\" class=\"dropdown-item\">" . $L_Editer_Actions . "</a></li>\n";
 	}
 
 	
-	if ( $_SESSION['idn_super_admin'] === TRUE or $Option_Gestion_Actions === TRUE ) {
+	if ( $_SESSION['idn_super_admin'] === true || $Option_Gestion_Actions === true ) {
 		$Barre_Menu .= "       </ul>\n" .
 			"      </li>\n";
 	}
@@ -359,51 +363,51 @@ public function construireNavbar( $Nom_Fichier_Logo = '' ) {
 	// ======
 
 /*
-	if ( $_SESSION['idn_super_admin'] === TRUE
+	if ( $_SESSION['idn_super_admin'] === true
 		or isset( $Permissions['MySecDash-ActifsPrimordiauxTags.php'] )
 		or isset( $Permissions['MySecDash-ActifsSupportsTags.php'] )
 		or isset( $Permissions['MySecDash-AppreciationRisquesTags.php'] )
 		or isset( $Permissions['MySecDash-TraitementRisquesTags.php'] )
 		) {
-		$Option_Gestion_Tags = TRUE;
+		$Option_Gestion_Tags = true;
 	} else {
-		$Option_Gestion_Tags = FALSE;
+		$Option_Gestion_Tags = false;
 	}
 
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or $Option_Gestion_Tags === TRUE ) {
+	if ( $_SESSION['idn_super_admin'] === true or $Option_Gestion_Tags === true ) {
 		$Barre_Menu .= "      <li class=\"nav-item dropdown\">\n" .
 			"       <a href=\"#\" class=\"nav-link dropdown-toggle\" id=\"navbarDropdownMenuTags\" data-bs-toggle=\"dropdown\" role=\"button\" aria-expanded=\"false\">" . $L_Vision_Consolidee . " <span class=\"caret\"></span></a>\n" .
 			"       <ul class=\"dropdown-menu\" aria-labelledby=\"navbarDropdownMenuTags\">\n";
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-ActifsPrimordiauxTags.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true or isset( $Permissions['MySecDash-ActifsPrimordiauxTags.php'] ) ) {
 		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-ActifsPrimordiauxTags.php\" class=\"dropdown-item\">" . $L_Actifs_Primordiaux . "</a></li>\n";
 
-		$Barre_Separation = TRUE;
+		$Barre_Separation = true;
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-ActifsSupportsTags.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true or isset( $Permissions['MySecDash-ActifsSupportsTags.php'] ) ) {
 		$Barre_Menu .= "        <li><a href=\"" . URL_BASE . "/MySecDash-ActifsSupportsTags.php\" class=\"dropdown-item\">" . $L_Actifs_Supports . "</a></li>\n";
 
-		$Barre_Separation = TRUE;
+		$Barre_Separation = true;
 	}
 
-	if ( $Barre_Separation == TRUE ) $Barre_Menu .= "		<li><hr class=\"dropdown-divider\"></li>\n";
+	if ( $Barre_Separation == true ) $Barre_Menu .= "		<li><hr class=\"dropdown-divider\"></li>\n";
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-AppreciationRisquesTags.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true or isset( $Permissions['MySecDash-AppreciationRisquesTags.php'] ) ) {
 		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-AppreciationRisquesTags.php\" class=\"dropdown-item\">" . $L_Appreciation_Risques . "</a></li>\n";
 
-		$Barre_Separation = FALSE;
+		$Barre_Separation = false;
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or isset( $Permissions['MySecDash-TraitementRisquesTags.php'] ) ) {
+	if ( $_SESSION['idn_super_admin'] === true or isset( $Permissions['MySecDash-TraitementRisquesTags.php'] ) ) {
 		$Barre_Menu .= "          <li><a href=\"" . URL_BASE . "/MySecDash-TraitementRisquesTags.php\" class=\"dropdown-item\">" . $L_Traitement_Risques . "</a></li>\n";
 
-		$Barre_Separation = FALSE;
+		$Barre_Separation = false;
 	}
 
-	if ( $_SESSION['idn_super_admin'] === TRUE or $Option_Gestion_Tags === TRUE ) {
+	if ( $_SESSION['idn_super_admin'] === true or $Option_Gestion_Tags === true ) {
 		$Barre_Menu .= "       </ul>\n" .
 			"      </li>\n";
 	}
@@ -484,7 +488,7 @@ public function construireNavbarJson( $Nom_Fichier_Logo = '', $Nom_Fichier_Json 
 	 *$Barre_Menu
 	 * \return Retourne la chaîne standardisant l'affichage du menu principal.
 	 */
-	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
+	include DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php";
 	
 	$Permissions = $this->permissionsGroupees();
 	
@@ -567,7 +571,7 @@ public function construireNavbarJson( $Nom_Fichier_Logo = '', $Nom_Fichier_Json 
 
 
 public function traiterItemPrincipaleMenu($Item) {
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
+	include DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php';
 
 	$Barre_Menu = '';
 	
@@ -588,7 +592,7 @@ public function traiterItemPrincipaleMenu($Item) {
 			} elseif ($Option->Type == 'separator') {
 				$Barre_Menu .= "        <li><hr class=\"dropdown-divider\"></li>\n";
 			} else {
-				print('Erreur : type d\'option de menu iconnu ['.$Option->Type.']');
+				print 'Erreur : type d\'option de menu iconnu ['.$Option->Type.']';
 				exit();
 			}
 		}
@@ -601,15 +605,16 @@ public function traiterItemPrincipaleMenu($Item) {
 }
 
 
+
 public function traiterOptionMenu($Option) {
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
+	include DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php';
 
 	if ( isset(${$Option->LibelleItem}) ) {
 		$Option->LibelleItem = ${$Option->LibelleItem};
 	}
 
 
-	if ( $this->controlerPermission($Option->Lien, 'RGH_1') === FALSE ) {
+	if ( $this->controlerPermission($Option->Lien, 'RGH_1') === false ) {
 		return "          <li><a class=\"dropdown-item disabled\" >" . $Option->LibelleItem . "</a></li>\n";
 	} else {
 		return "          <li><a href=\"" . URL_BASE . "/" . $Option->Lien . "\" class=\"dropdown-item\">" . $Option->LibelleItem . "</a></li>\n";
@@ -617,8 +622,9 @@ public function traiterOptionMenu($Option) {
 }
 
 
+
 public function traiterSousMenu($Option) {
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
+	include DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php';
 
 	if ( isset(${$Option->LibelleItem}) ) {
 		$Option->LibelleItem = ${$Option->LibelleItem};
@@ -627,7 +633,7 @@ public function traiterSousMenu($Option) {
 	$Barre_Menu = "        <li class=\"dropdown-submenu\">\n" .
 		"         <a href=\"#\" class=\"dropdown-item\">" . $Option->LibelleItem . "</a>\n" .
 		"         <ul class=\"dropdown-menu\">\n";
-	
+
 	foreach($Option->Items as $Option_SM) {
 		if ($Option_SM->Type == 'option') {
 			$Barre_Menu .= $this->traiterOptionMenu($Option_SM);
@@ -636,7 +642,7 @@ public function traiterSousMenu($Option) {
 		} elseif ($Option_SM->Type == 'separator') {
 			$Barre_Menu .= "        <li><hr class=\"dropdown-divider\"></li>\n";
 		} else {
-			print('Erreur : type d\'option de menu iconnu ['.$Option_SM->Type.']');
+			print 'Erreur : type d\'option de menu iconnu ['.$Option_SM->Type.']';
 			exit();
 		}
 	}
@@ -678,7 +684,7 @@ public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $
 *
 * \return Retourne la chaîne standardisant l'affichage du menu contextuel (sous forme de liste déroulante).
 */
-	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
+	include DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php";
 
 
 	$Objet_Titre_Ecran = "  <!-- === Zone : titre de l'écran === -->\n" .
@@ -691,8 +697,6 @@ public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $
 			"    <div class=\"input-group input-group-sm\">\n" .
 			"     <span class=\"input-group-text\">" . $L_Societe . "</span>\n";
 
-//var_dump($_SESSION);
-
 		if ( ! isset($_SESSION['s_sct_id']) || $_SESSION['s_sct_id'] == '' || $_SESSION['s_sct_id'] == '---' ) {
 			$_SESSION['s_sct_id'] = $Societes_Autorisees[0]->sct_id;
 		}
@@ -700,7 +704,7 @@ public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $
 		switch ( count($Societes_Autorisees) ) {
 		 default:
 			$Objet_Titre_Ecran .= "     <select id=\"s_sct_id\" class=\"form-select form-select-sm gris\">\n";
-			
+
 			foreach( $Societes_Autorisees as $Societe_Autorisee) {
 				$Defaut = '';
 				if ( isset( $_SESSION['s_sct_id'] ) ) {
@@ -798,7 +802,7 @@ public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $
 			switch( count($Options_Titre_2['options']) ) {
 				default:
 					foreach( $Options_Titre_2['options'] as $Option_Titre_2 ) {
-						$Infos_Complementaires = '';//print_r($Option_Titre);print('<hr>');
+						$Infos_Complementaires = '';
 						
 						if ( array_key_exists('infos',$Option_Titre_2) ) {
 							foreach( $Option_Titre_2['infos'] as $Info ) {
@@ -829,7 +833,7 @@ public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $
 		$Objet_Titre_Ecran .= $tmpOptions .
 			"     </select>\n" .
 			"    </div> <!-- .input-group -->\n" .
-			"   </div> <!-- #option-titre-menu -->\n";
+			"   </div> <!-- #option-titre-menu 2 -->\n";
 	}
 
 	if ( $Options_Titre_3 != '' and $Options_Titre_3 != [] ) {
@@ -838,7 +842,7 @@ public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $
 			"    <span class=\"input-group-text\">" . $Options_Titre_3['libelle'] . "</span>\n" .
 			"     <input id=\"" . $Options_Titre_3['id'] . "\" class=\"form-control\">\n" .
 			"    </div> <!-- .input-group -->\n" .
-			"   </div> <!-- #option-titre-menu -->\n";
+			"   </div> <!-- #option-titre-menu 3 -->\n";
 	}
 
 	$Objet_Titre_Ecran .= "   </div> <!-- .row -->\n";
@@ -941,7 +945,7 @@ public function construireEnteteTableau( $Colonnes ) {
 *
 * \return Retourne la chaîne à afficher.
 */
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
+	include DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php';
 	
 	$Texte = $this->construireDebutEnteteTableau();
 
@@ -954,18 +958,14 @@ public function construireEnteteTableau( $Colonnes ) {
 		$Marquer_colonne = '';
 	
 		// Vérifie si la colonne est triable.
-		if ( isset( $Colonne[ 'triable' ] ) ) {
-			if ( strtolower( $Colonne[ 'triable' ] ) == 'oui' ) {
-				$Class .= ' triable';
-				$Marquer_colonne = '&nbsp;<i class="bi-chevron-down"></i> ';
-			}
+		if ( isset( $Colonne[ 'triable' ] ) && strtolower( $Colonne[ 'triable' ] ) == 'oui' ) {
+			$Class .= ' triable';
+			$Marquer_colonne = '&nbsp;<i class="bi-chevron-down"></i> ';
 		}
 
 		// Vérifie si le tri est actif sur cette colonne au départ.
-		if ( isset( $Colonne[ 'tri_actif' ] ) ) {
-			if ( strtolower( $Colonne[ 'tri_actif' ] ) == 'oui' ) {
-				$Class .= ' active';
-			}
+		if ( isset( $Colonne[ 'tri_actif' ] ) && strtolower( $Colonne[ 'tri_actif' ] ) == 'oui' ) {
+			$Class .= ' active';
 		}
 
 		// Vérifie s'il y a un sens de tri à appliquer.
@@ -974,24 +974,30 @@ public function construireEnteteTableau( $Colonnes ) {
 		}
 
 		// Mise en place de la colonne
-		$Texte .= "	<div class=\"col-lg-" . $Colonne[ 'taille' ] . $Class . "\" " . $Sens_Tri . ">" .
+		$Texte .= "    <div class=\"col-lg-" . $Colonne[ 'taille' ] . $Class . "\" " . $Sens_Tri . ">" .
 			$Colonne['titre'] . $Marquer_colonne . "</div>\n";
 	}
 
 
 	if ( isset( $Colonnes[ 'Actions' ] ) ) {
-		if ( ! isset($Colonnes[ 'Actions' ][ 'titre' ]) ) $Colonnes[ 'Actions' ][ 'titre' ] = '';
+		if ( ! isset($Colonnes[ 'Actions' ][ 'titre' ]) ) {
+			$Colonnes[ 'Actions' ][ 'titre' ] = '';
+		}
 
 		$tmpActionClass = '';
 
 		if ( isset($Colonnes[ 'Actions' ][ 'affichage' ]) ) {
 			$tmpActionClass = ' affichage';
-			if ( $Colonnes[ 'Actions' ][ 'affichage' ] == 'cacher' ) $tmpActionClass = ' hide';
-			elseif ( $Colonnes[ 'Actions' ][ 'affichage' ] == 'invisible' ) $tmpActionClass = ' invisible';
-			elseif ( $Colonnes[ 'Actions' ][ 'affichage' ] == 'invisible-droit' ) $tmpActionClass = ' invisible text-end';
+			if ( $Colonnes[ 'Actions' ][ 'affichage' ] == 'cacher' ) {
+				$tmpActionClass = ' hide';
+			} elseif ( $Colonnes[ 'Actions' ][ 'affichage' ] == 'invisible' ) {
+				$tmpActionClass = ' invisible';
+			} elseif ( $Colonnes[ 'Actions' ][ 'affichage' ] == 'invisible-droit' ) {
+				$tmpActionClass = ' invisible text-end';
+			}
 		}
 
-		$Texte .= "	<div class=\"btn-actions col-lg-" . $Colonnes[ 'Actions' ][ 'taille' ] . $tmpActionClass . "\">" . $Colonnes[ 'Actions' ][ 'titre' ] . "</div>\n";
+		$Texte .= "    <div class=\"btn-actions col-lg-" . $Colonnes[ 'Actions' ][ 'taille' ] . $tmpActionClass . "\">" . $Colonnes[ 'Actions' ][ 'titre' ] . "</div>\n";
 	}
 
 	$Texte .= "   </div> <!-- /.row -->\n";
@@ -1021,7 +1027,7 @@ public function construireEnteteTableau( $Colonnes ) {
 	$Flag_Recherche = 0;
 
 	foreach ( $Colonnes[ 'Colonnes' ] as $Colonne ) {
-		if ( isset( $Colonne[ 'recherche' ] ) and $Criteres_Recherche == '' ) {
+		if ( isset( $Colonne[ 'recherche' ] ) && $Criteres_Recherche == '' ) {
 			$Flag_Recherche = 1;
 			$Texte .= "   <div class=\"row recherche\">\n";
 		}
@@ -1030,7 +1036,9 @@ public function construireEnteteTableau( $Colonnes ) {
 			if ( isset( $Colonne[ 'recherche' ][ 'nom' ] ) ) {
 				$Criteres_Recherche .= '<div class="col-lg-' . $Colonne[ 'taille' ] . '">';
 
-				if ( ! isset( $Colonne[ 'recherche' ][ 'type' ] ) ) $Colonne[ 'recherche' ][ 'type' ] = 'input';
+				if ( ! isset( $Colonne[ 'recherche' ][ 'type' ] ) ) {
+					$Colonne[ 'recherche' ][ 'type' ] = 'input';
+				}
 
 				switch( $Colonne[ 'recherche' ][ 'type' ] ) {
 				 case 'input':
@@ -1086,7 +1094,9 @@ public function construireEnteteTableau( $Colonnes ) {
 
 	}
 
-	if ( $Flag_Recherche == 1 )	$Texte .= $Criteres_Recherche . "   </div> <!-- /.row .recherche -->\n";
+	if ( $Flag_Recherche == 1 ) {
+		$Texte .= $Criteres_Recherche . "   </div> <!-- /.row .recherche -->\n";
+	}
 
 	$Texte .= $this->construireFinTableau();
 
@@ -1108,7 +1118,7 @@ public function construirePiedTableau( $Total = 0, $Bouton_Alternatif = '' ) {
 *
 * \return Retourne la chaîne afficher.
 */
-	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
+	include DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php";
 
 	$Texte = $this->construireDebutPiedTableau() . "   <div class=\"row\">\n" .
 		'<h6 style="margin-top: 0.5rem;">' . $L_Total . ' : <span class="badge bg-secondary" id="totalOccurrences">' . sprintf( "%03d", $Total ) . "</span></h6>";
@@ -1150,7 +1160,7 @@ public function contruireTableauVide( $Colonnes_Entete, $Bouton_Alternatif = '' 
 
 
 
-public function construireModal( $Id_Modal, $Titre, $Corps, $Id_Bouton, $Libelle_Bouton, $Bouton_Fermer = TRUE ) {
+public function construireModal( $Id_Modal, $Titre, $Corps, $Id_Bouton, $Libelle_Bouton, $Bouton_Fermer = true ) {
 /**
 * Standardisation des écrans de type "modal".
 * La standardisation définit une fenêtre complète.
@@ -1169,8 +1179,10 @@ public function construireModal( $Id_Modal, $Titre, $Corps, $Id_Bouton, $Libelle
 * \return Retourne la chaîne à afficher.
 */
 
-	if ( $Id_Modal == '' ) $Id_Modal = 'plmModal';
-	
+	if ( $Id_Modal == '' ) {
+		$Id_Modal = 'plmModal';
+	}
+
 	$Texte = "<!-- Modal -->\n" .
 		"<div class=\"modal fade\" id=\"" . $Id_Modal . "\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"" . $Id_Modal . "Label\">\n" .
 		" <div class=\"modal-dialog\" role=\"document\">\n" .
@@ -1184,17 +1196,22 @@ public function construireModal( $Id_Modal, $Titre, $Corps, $Id_Bouton, $Libelle
 		"   </div>\n" .
 		"   <div class=\"modal-footer\">\n";
 
-	if ( $Bouton_Fermer == TRUE ) $Texte .= "	<button type=\"button\" class=\"btn btn-outline-secondary\" data-dismiss=\"modal\">" . $L_Fermer . "</button>\n";
+	if ( $Bouton_Fermer == true ) {
+		$Texte .= "	<button type=\"button\" class=\"btn btn-outline-secondary\" data-dismiss=\"modal\">" . $L_Fermer . "</button>\n";
+	}
 
-	if ( $Id_Bouton != NULL and $Id_Bouton != '' ) $Texte .= "	<button type=\"button\" class=\"btn btn-primary\" id=\"" . $Id_Bouton . "\">" . $Libelle_Bouton . "</button>\n";
+	if ( $Id_Bouton != NULL && $Id_Bouton != '' ) {
+		$Texte .= "	<button type=\"button\" class=\"btn btn-primary\" id=\"" . $Id_Bouton . "\">" . $Libelle_Bouton . "</button>\n";
+	}
 
 	$Texte .= "   </div>\n" .
 		"  </div>\n" .
 		" </div>\n" .
 		"</div>\n";
 
-	 return $Texte;
+	return $Texte;
 }
+
 
 
 public function construireFooter() {
@@ -1208,8 +1225,8 @@ public function construireFooter() {
 *
 * \return Retourne l'objet HTML à afficher
 */
-	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
-	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_MySecDash-Connexion.php");
+	include DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php";
+	include DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_MySecDash-Connexion.php";
 
 
 	$Texte = "  <!-- Chargement des JavaScripts -->\n" .
@@ -1228,7 +1245,7 @@ public function construireFooter() {
 
 	$Texte .= "  <footer>\n" .
 	 "   Loxense <img src=\"" . URL_IMAGES . "/copyleft.svg\" alt=\"copyleft\" width=\"12px\">, " . $this->Nom_Outil . " v" . $this->Version_Outil . "\n" .
-		"  </footer>\n";
+	 "  </footer>\n";
 
 	return $Texte;
 }
@@ -1245,12 +1262,24 @@ public function construirePiedHTML() {
 *
 * \return Retourne une chaîne à afficher
 */
-	return " </body>\n</html>\n" ;
-} 
+	include DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php';
+
+	return "<div class=\"modal\" id=\"fenetre_attente\" tabindex=\"-1\" style=\"z-index: 3000;\">\n" .
+		" <div class=\"modal-dialog\" role=\"document\">\n" .
+		"  <div class=\"modal-content\">\n" .
+		"   <div class=\"modal-body\">\n" .
+		"	<img src=\"" . URL_IMAGES . "/ajax-loader-2.gif\" /><span style=\"margin-left:20px;font-weight:bold;font-size:20px;\">" . $L_Travail_En_Cours . "</span>\n" .
+		"   </div>\n" .
+		"  </div>\n" .
+		" </div>\n" .
+		"</div>\n" .
+		" </body>\n" .
+		"</html>\n" ;
+}
 
 
 
-public function afficherNotification( $Message, $Flag_Avertissement = FALSE ) {
+public function afficherNotification( $Message, $Flag_Avertissement = false ) {
 /**
 * Affiche une boîte d'information.
 *
@@ -1264,10 +1293,10 @@ public function afficherNotification( $Message, $Flag_Avertissement = FALSE ) {
 *
 * \return Retourne une chaîne à afficher
 */
-	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
+	include DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php";
 	
 
-	if ( $Flag_Avertissement == FALSE ) {
+	if ( $Flag_Avertissement == false ) {
 		$Type = "success";
 		$Icon = "ok";
 
@@ -1291,8 +1320,10 @@ public function afficherNotification( $Message, $Flag_Avertissement = FALSE ) {
 
 	$Texte .= "<div class=\"container alert alert-" . $Type . " alert-dismissible fade show\" role=\"alert\" " ;
 
-	if ( $IdMessage != '' ) $Texte .= "id=\"" . $IdMessage . "\" ";
-	
+	if ( $IdMessage != '' ) {
+		$Texte .= "id=\"" . $IdMessage . "\" ";
+	}
+
 	$Texte .= "style=\"position:absolute;top:175px;width:80%;left:10%;cursor:pointer;\" onClick=\"javascript:effacerMessage('" . $IdMessage . "');\">" .
 		" <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"" . $L_Fermer . "\"></button>" .
 		" <span class=\"glyphicon glyphicon-" . $Icon . " aria-hidden=\"true\"></span> " . $Message .
@@ -1317,7 +1348,7 @@ public function construirePageAlerte( $Message, $Script = 'MySecDash-Principal.p
 *
 * \return Retourne une chaîne matérialisant l'affichage de cet écran d'information
 */
-	include (DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php");
+	include DIR_LIBELLES . "/" . $_SESSION[ 'Language' ] . "_libelles_generiques.php";
 	
 	switch( $Type_Message ) {
 		case 0:
@@ -1330,6 +1361,7 @@ public function construirePageAlerte( $Message, $Script = 'MySecDash-Principal.p
 			$Nom_Image = '<i class="bi-exclamation-triangle text-warning"></i>';
 			$Couleur_Fond = 'panel-warning';
 			break;
+		default:
 		case 2:
 			$Titre_Page = $L_Error;
 			$Nom_Image = '<i class="bi-dash-circle-fill text-danger"></i>';
@@ -1358,7 +1390,7 @@ public function construirePageAlerte( $Message, $Script = 'MySecDash-Principal.p
 		"	</div>\n" .
 		"   </div>\n" .
 		"  </div>\n" .
-		$this->construireFooter( FALSE ) .
+		$this->construireFooter( false ) .
 		$this->construirePiedHTML();
 
 }
@@ -1421,8 +1453,11 @@ public static function calculCouleurCellule( $code_couleur_fond ) {
 
 	$calcul = (hexdec( $code_1 ) + hexdec( $code_2 ) + hexdec( $code_3)) / 3;
 
-	if ( $calcul < ((hexdec( '66' ) + hexdec( '66' ) + hexdec( '66' )) / 3) ) return 'white';
-	else return 'black';
+	if ( $calcul < ((hexdec( '66' ) + hexdec( '66' ) + hexdec( '66' )) / 3) ) {
+		return 'white';
+	} else {
+		return 'black';
+	}
 }
 
 
@@ -1445,8 +1480,11 @@ public static function calculCouleurCelluleHexa( $code_couleur_fond ) {
 
 	$calcul = (hexdec( $code_1 ) + hexdec( $code_2 ) + hexdec( $code_3)) / 3;
 
-	if ( $calcul < ((hexdec( '66' ) + hexdec( '66' ) + hexdec( '66' )) / 3) ) return 'FFFFFF';
-	else return '000000';
+	if ( $calcul < ((hexdec( '66' ) + hexdec( '66' ) + hexdec( '66' )) / 3) ) {
+		return 'FFFFFF';
+	} else {
+		return '000000';
+	}
 }
 
 
@@ -1464,69 +1502,69 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 	 *
 	 * \return Retourne le code hexadécimal de la couleur à utiliser
 	 */
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_HBL_Generiques.inc.php' );
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
+	include DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_HBL_Generiques.inc.php';
+	include DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php';
 
 
 	if ( isset( $Format_Colonnes_Corps['Actions'] ) ) {
 		if ( ! array_key_exists('historique', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['historique'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['historique'] = false;
 		}
 
 		if ( ! array_key_exists('visualiser', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['visualiser'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['visualiser'] = false;
 		}
 
 		if ( ! array_key_exists('dupliquer', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['dupliquer'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['dupliquer'] = false;
 		}
 
 		if ( ! array_key_exists('modifier', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['modifier'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['modifier'] = false;
 		}
 
 		if ( ! array_key_exists('supprimer', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['supprimer'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['supprimer'] = false;
 		}
 
 		if ( ! array_key_exists('supprimer_libelle', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['supprimer_libelle'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['supprimer_libelle'] = false;
 		}
 
 		if ( ! array_key_exists('ignorer_risque', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['ignorer_risque'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['ignorer_risque'] = false;
 		}
 
 		if ( ! array_key_exists('generer', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['generer'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['generer'] = false;
 		}
 
 		if ( ! array_key_exists('telecharger', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['telecharger'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['telecharger'] = false;
 		}
 
 		if ( ! array_key_exists('telecharger_e', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['telecharger_e'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['telecharger_e'] = false;
 		}
 
 		if ( ! array_key_exists('telecharger_w', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['telecharger_w'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['telecharger_w'] = false;
 		}
 
 		if ( ! array_key_exists('exporter', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['exporter'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['exporter'] = false;
 		}
 
 		if ( ! array_key_exists('restaurer', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['restaurer'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['restaurer'] = false;
 		}
 
 		if ( ! array_key_exists('imprimer', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['imprimer'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['imprimer'] = false;
 		}
 
 		if ( ! array_key_exists('valider', $Format_Colonnes_Corps['Actions']['boutons'] ) ) {
-			$Format_Colonnes_Corps['Actions']['boutons']['valider'] = FALSE;
+			$Format_Colonnes_Corps['Actions']['boutons']['valider'] = false;
 		}
 	}
 	
@@ -1579,8 +1617,10 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 		
 		if ( $Type != 'button' ) {
 			if ( isset( $Colonne['affichage'] ) ) {
-				if ( $Colonne['affichage'] == 'img' ) $Affichage = 'img';
-			} 
+				if ( $Colonne['affichage'] == 'img' ) {
+					$Affichage = 'img';
+				}
+			}
 
 
 			$Occurrence .= '<span';
@@ -1601,7 +1641,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 		}
 
 		if ( $Affichage != 'img' ) {
-			if ($Valeur != NULL) {
+			if ($Valeur != null) {
 				$Valeur = htmlspecialchars( $Valeur, ENT_QUOTES | ENT_HTML5 );
 			}
 		}
@@ -1619,14 +1659,18 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 		$tmpActionClass = '';
 
 		if ( isset($Format_Colonnes_Corps[ 'Actions' ][ 'affichage' ]) ) {
-			if ( $Format_Colonnes_Corps[ 'Actions' ][ 'affichage' ] == 'cacher' ) $tmpActionClass = ' hide';
-			elseif ( $Format_Colonnes_Corps[ 'Actions' ][ 'affichage' ] == 'invisible' ) $tmpActionClass = ' invisible';
-			elseif ( $Format_Colonnes_Corps[ 'Actions' ][ 'affichage' ] == 'invisible-droit' ) $tmpActionClass = ' invisible text-end';
+			if ( $Format_Colonnes_Corps[ 'Actions' ][ 'affichage' ] == 'cacher' ) {
+				$tmpActionClass = ' hide';
+			} elseif ( $Format_Colonnes_Corps[ 'Actions' ][ 'affichage' ] == 'invisible' ) {
+				$tmpActionClass = ' invisible';
+			} elseif ( $Format_Colonnes_Corps[ 'Actions' ][ 'affichage' ] == 'invisible-droit' ) {
+				$tmpActionClass = ' invisible text-end';
+			}
 		}
 
 		$Occurrence .= '<div class="btn-actions col-lg-' . $Format_Colonnes_Corps['Actions']['taille'] . $tmpActionClass . '">';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['historique'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['historique'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-historique" data-id="' . $Id . '" title="' . $L_Consulter_Historique . '" type="button">' .
 			'<i class="bi-clock"></i>' .
 			'</button>';
@@ -1634,7 +1678,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['visualiser'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['visualiser'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-visualiser" data-id="' . $Id . '" title="' . $L_Visualiser . '" type="button">' .
 			'<i class="bi-eye-fill"></i>' .
 			'</button>';
@@ -1642,7 +1686,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['dupliquer'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['dupliquer'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-dupliquer" data-id="' . $Id . '" title="' . $L_Dupliquer . '" type="button">' .
 			'<i class="bi-files"></i>' .
 			'</button>';
@@ -1650,7 +1694,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['modifier'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['modifier'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-modifier" data-id="' . $Id . '" title="' . $L_Modify . '" type="button">' .
 			'<i class="bi-pencil-fill"></i>' .
 			'</button>';
@@ -1658,7 +1702,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['exporter'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['exporter'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-exporter" data-id="' . $Id . '" title="' . $L_Exporter_Base . '" type="button">' .
 			'<i class="bi-cloud-upload"></i>' . // import save-file
 			'</button>';
@@ -1666,7 +1710,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['restaurer'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['restaurer'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-restaurer" data-id="' . $Id . '" title="' . $L_Restaurer_Base . '" type="button">' .
 			'<i class="bi-box-arrow-in-down-right"></i>' . // import save-file
 			'</button>';
@@ -1674,7 +1718,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['supprimer'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['supprimer'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-supprimer" data-id="' . $Id . '" title="' . $L_Delete . '" type="button">' .
 			'<i class="bi-x-circle"></i>' .
 			'</button>';
@@ -1682,7 +1726,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['supprimer_libelle'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['supprimer_libelle'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-supprimer_libelle" data-id="' . $Id . '" title="' . $L_Supprimer_Libelle . '" type="button">' .
 			'<i class="bi-x-circle-fill"></i>' .
 			'</button>';
@@ -1690,7 +1734,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['ignorer_risque'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['ignorer_risque'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-ignorer_risque" data-id="' . $Id . '" title="' . $L_Ignorer_Risque . '" type="button">' .
 			'<i class="bi-slash-circle"></i>' .
 			'</button>';
@@ -1698,7 +1742,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['generer'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['generer'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-generer" data-id="' . $Id . '" title="' . $L_Generer_Impression . '" type="button">' .
 			'<i class="bi-arrow-repeat"></i>' .
 			'</button>';
@@ -1706,7 +1750,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['telecharger'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['telecharger'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-telecharger" data-id="' . $Id . '" title="' . $L_Telecharger_Impression . '" type="button">' .
 			'<i class="bi-download"></i>' . // import save-file
 			'</button>';
@@ -1714,7 +1758,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['telecharger_e'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['telecharger_e'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-telecharger-e" data-id="' . $Id . '" title="' . $L_Telecharger_Excel . '" type="button">' .
 			'<img src="' . URL_IMAGES . '/Excel-2-icon.png" alt="Excel"/>' .
 			'</button>';
@@ -1722,7 +1766,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['telecharger_w'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['telecharger_w'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-telecharger-w" data-id="' . $Id . '" title="' . $L_Telecharger_Word . '" type="button">' .
 			'<img src="' . URL_IMAGES . '/Word-2-icon.png" alt="Word"/>' .
 			'</button>';
@@ -1730,7 +1774,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['imprimer'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['imprimer'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-imprimer" data-id="' . $Id . '" title="' . $L_Imprimer . '" type="button">' .
 			'<i class="bi-printer-fill"></i>' .
 			'</button>';
@@ -1738,7 +1782,7 @@ function creerOccurrenceCorpsTableau( $Id, $Valeurs, $Format_Colonnes_Corps ) {
 
 		$Occurrence .= ' ';
 
-		if ( $Format_Colonnes_Corps['Actions']['boutons']['valider'] === TRUE ) {
+		if ( $Format_Colonnes_Corps['Actions']['boutons']['valider'] === true ) {
 			$Occurrence .= '<button class="btn btn-outline-secondary btn-sm btn-valider" data-id="' . $Id . '" title="' . $L_Valider . '" type="button">' .
 				'<i class="bi-clipboard-check"></i>' .
 				'</button>';
@@ -1790,8 +1834,11 @@ public function construireCompteurListe( $Valeur ) {
 	 *
 	 * \return Retourne l'objet HTML à afficher
 	 */
-	if ( $Valeur == 0 ) $HTML = '<span class="badge bg-secondary align-middle">' . $Valeur . '</span>';
-	else $HTML = '<span class="badge bg-vert_normal align-middle">' . $Valeur . '</span>';
+	if ( $Valeur == 0 ) {
+		$HTML = '<span class="badge bg-secondary align-middle">' . $Valeur . '</span>';
+	} else {
+		$HTML = '<span class="badge bg-vert_normal align-middle">' . $Valeur . '</span>';
+	}
 
 	return $HTML;
 }

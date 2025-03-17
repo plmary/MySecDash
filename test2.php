@@ -1,14 +1,12 @@
 <?php 
-include( 'Constants.inc.php' );
-require_once CHEMIN_APPLICATION . '/vendor/autoload.php';
+$Resultat = [];
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+$Resultat['test1']['fr'] = 'test1';
+$Resultat['test1']['en'] = 'testing1';
+$Resultat['test2']['fr'] = 'test2';
+$Resultat['test1']['sp'] = 'testinges';
 
-$spreadsheet = new Spreadsheet();
-$activeWorkSheet = $spreadsheet->getActiveSheet();
-$activeWorkSheet->setCellValue('A1', 'Hello Wolrd!');
+print_r($Resultat);print "<hr>";
 
-$write = new Xlsx($spreadsheet);
-$write->save('Rapports/hello world.xlsx');
+print $Resultat['test1']['fr'].'<hr>';
 ?>

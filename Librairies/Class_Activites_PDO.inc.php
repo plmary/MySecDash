@@ -677,8 +677,9 @@ LEFT JOIN sts_sites AS "sts" ON sts.sts_id = cmst.sts_id
 LEFT JOIN (SELECT act_id, sts_id, acst_type_site, acst_strategie_montee_charge, acst_description_entraides
 	FROM acst_act_sts WHERE act_id = :act_id ) AS "acst" ON acst.sts_id = sts.sts_id
 WHERE cmst.cmp_id = :cmp_id
-ORDER BY act_id, sts_nom ';
-		
+ORDER BY sts_nom ';
+//print str_replace([':act_id', ':cmp_id'], [$act_id, $cmp_id], $Request).'<hr>';
+
 		$Query = $this->prepareSQL( $Request );
 		
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
@@ -688,7 +689,7 @@ ORDER BY act_id, sts_nom ';
 		
 		return $Query->fetchAll( PDO::FETCH_CLASS );
 	}
-	
+
 
 	public function listerActivitesUtilisateur( $Order = 'act_nom', $cmp_id = '' ) {
 		/**

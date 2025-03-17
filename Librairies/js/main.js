@@ -10,6 +10,7 @@ var ListeExtentions = ['pdf', 'odt', 'ods', 'odp', 'docx', 'xlsx', 'pptx', 'doc'
 var Pile_Messages = [];
 
 
+
 // Attend le chargement complet du DOM avant de mettre en place les écoutes sur les événéments.
 $(document).ready(function(){
 	// Gestion du "click" sur le bouton de "Déconnexion".
@@ -32,6 +33,7 @@ $(document).ready(function(){
 
 	// Lance un recalcul autormatique des objets dans la fenêtre du navigateur.
 	redimensionnerWindow();
+
 
 
 	// Si le script courant n'est pas le script de connexion, alors on déclenche la supervision de l'expiration de la session de l'utilisateur.
@@ -65,6 +67,8 @@ $(document).ready(function(){
 		var myVar=setInterval(controlerTempsSession, 1000 * 60); // Déclenche la fonction toutes les 60 secondes.
 	}
 
+
+
 	function sauverTempsSession() {
 		$.ajax({
 			url: Parameters['URL_BASE'] + '/MySecDash-Connexion.php?action=AJAX_SAUVER_TEMPS_SESSION',
@@ -78,41 +82,16 @@ $(document).ready(function(){
 		});
 	}
 
+
 	// Gestion du "click" sur le bouton de réinitialisation du temps de session.
 	$('#temps_session').on('click', function() {
 		sauverTempsSession();
 	});
 
 
-/*
-	$('#titre_ecran').on('click', function() {
-		sauverTempsSession();
-	});
-
-	$('#entete_tableau').on('click', function() {
-		sauverTempsSession();
-	});
-
-	$('#corps_tableau').on('click', function() {
-		sauverTempsSession();
-	});
-
-	$('#pied_tableau').on('click', function() {
-		sauverTempsSession();
-	});
-*/
-
 	// Gère l'affichage d'une fenêtre d'attente durant un traitement Ajax.
 	$(document).ajaxStart(function(){
-	$( "<div class=\"modal\" id=\"fenetre_attente\" tabindex=\"-1\" style=\"z-index: 3000;\">\n" +
-		" <div class=\"modal-dialog\" role=\"document\">\n" +
-		"  <div class=\"modal-content\">\n" +
-		"   <div class=\"modal-body\">\n" +
-		"	<img src=\"" + Parameters["URL_PICTURES"] + "/ajax-loader-2.gif\" /><span style=\"margin-left:20px;font-weight:bold;font-size:20px;\">" + Parameters['TravailEnCours'] + "</span>\n" +
-		"   </div>\n" +
-		"  </div>\n" +
-		" </div>\n" +
-		"</div>\n" ).prependTo('body').show();
+		$('#fenetre_attente').show();
 	}).ajaxStop(function(){
 		fermerFenetreAttente();
 	});
@@ -208,13 +187,13 @@ $(document).ready(function(){
 // Recalcul la position des objets dans la fenêtre suite au redimensionnement de celle-ci.
 function redimensionnerWindow() {
 	var hauteur_window = $(window).height();
-	
+
 	// =======================================
 	// Ajuste la position du titre de l'écran et de l'entête du tableau principal en fonction de la hauteur de la barre de navigation.
 	var hauteur_navbar = $("nav").outerHeight(true);
 	var hauteur_titre_ecran = $("#titre_ecran").outerHeight(true);
 	var hauteur_entete_tableau = $("#entete_tableau").outerHeight(true);
-	
+
 	$("#titre_ecran").css("top", hauteur_navbar + "px");
 	$("#entete_tableau").css("top",(hauteur_navbar + hauteur_titre_ecran) + "px");
 
@@ -222,8 +201,8 @@ function redimensionnerWindow() {
 	if ( Total == 0 ) Total = 70;
 
 	$("body").css("padding-top",Total + "px");
-	
-	
+
+
 	// =======================================
 	// Définit la position du "footer".
 	// Si le contenu de la page est plus grand que la fenêtre alors le footer est "static",
@@ -239,7 +218,7 @@ function redimensionnerWindow() {
 	}
 
 	//console.log(hauteur_body_total+" >= "+window_height+", "+$("footer").css("position"));
-	
+
 	if (hauteur_body_total >= hauteur_window) {
 		$("footer").css("position","static");
 	} else {
@@ -251,8 +230,9 @@ function redimensionnerWindow() {
 
 // Ferme la fenêtre d'attente (.ajaxstop).
 function fermerFenetreAttente() {
-	$('#fenetre_attente').remove();
+	$('#fenetre_attente').hide();
 }
+
 
 
 // Transforme une date JJ-MM-AAAA en AAAA-MM-JJ
@@ -267,6 +247,7 @@ function convertirDate(date) {
 }
 
 
+
 // Transforme une date AAAA-MM-JJ en JJ-MM-AAAA
 function convertirDateInverse(date) {
 	if (date==null||date=='') return '';
@@ -277,6 +258,7 @@ function convertirDateInverse(date) {
 
 	return date = jour + '-' + mois + '-'+annee;
 }
+
 
 
 // Valider une date
@@ -314,10 +296,12 @@ function validerDate(s) {
 	}
 
 	// Date(year, month, day)
- 	var ControleDate = new Date(Annee+'/'+Mois+'/'+Jour);
+	var ControleDate = new Date(Annee+'/'+Mois+'/'+Jour);
 
- 	return !!(ControleDate && (ControleDate.getMonth() + 1) == Mois && ControleDate.getDate() == Number(Jour));
+	return !!(ControleDate && (ControleDate.getMonth() + 1) == Mois && ControleDate.getDate() == Number(Jour));
 }
+
+
 
 // Force l'affichage d'une erreur interne à l'écran.
 function afficherErreurSysteme( reponse ){
@@ -331,6 +315,7 @@ function afficherErreurSysteme( reponse ){
 	document.write("Internal error: status = " + resultat['status'] + ", statusText = " + resultat['statusText'] + ", responseText = " + resultat['responseText']);
 	return -1;
 }
+
 
 
 // Efface la modale active, ainsi que de toutes autres fenêtres d'information ou d'attente.
@@ -359,10 +344,12 @@ function effaceChampsModal() {
 }
 
 
+
 // Récupère un numéro dans une chaîne de caractères.
 function extractionId(chaine){
 	return chaine.match(/(\d+)/)[0];
 }
+
 
 
 // Efface les messages d'alerte.
@@ -405,6 +392,7 @@ function effacerMessage( Id_Message ) {
 	}
 
 }
+
 
 
 // Affiche un message d'alerte.
@@ -454,6 +442,7 @@ function afficherMessage( texteMsg, statut, elementSpecifique, delai, message_in
 		$('div.alert-dismissible:last-child').css('top',Position_Message+'px');
 	}
 }
+
 
 
 // Affiche une fenêtre modale pouvant inclure un formulaire.
@@ -530,6 +519,7 @@ function construireModal( Id_Modal, Titre, Corps, Id_Bouton, Libelle_Bouton, Bou
 }
 
 
+
 // Affiche la modale de changement de mot de passe.
 function changerMdP( script_suivant ) {
 	script_suivant = script_suivant || '';
@@ -541,17 +531,17 @@ function changerMdP( script_suivant ) {
 		dataType: 'json',
 		success: function(reponse) {
 			var Corps = //'<form method="post" id="formChgMdP" class="form-horizontal" autocomplete="off">' +
-				'<div class="form-group">' +
-				'<label for="O_Password" class="col-lg-4 col-form-label">' + reponse[ 'MdP' ] + '</label>' +
-				'<div class="col-lg-8"><input type="password" class="form-control" id="O_Password" autofocus required></div>' +
+				'<div class="row">' +
+				'<label for="O_Password" class="col-lg-6 col-form-label">' + reponse[ 'MdP' ] + '</label>' +
+				'<div class="col-lg-6"><input type="password" class="form-control" id="O_Password" autofocus required></div>' +
 				'</div>' +
-				'<div class="form-group">' +
-				'<label for="N_Password" class="col-lg-4 col-form-label">' + reponse[ 'Nouveau_MdP' ] + '</label>' +
-				'<div class="col-lg-8"><input type="password" class="form-control" id="N_Password" required></div>' +
+				'<div class="row">' +
+				'<label for="N_Password" class="col-lg-6 col-form-label">' + reponse[ 'Nouveau_MdP' ] + '</label>' +
+				'<div class="col-lg-6"><input type="password" class="form-control" id="N_Password" required></div>' +
 				'</div>' +
-				'<div class="form-group">' +
-				'<label for="C_Password" class="col-lg-4 col-form-label">' + reponse[ 'Conf_MdP' ] + '</label>' +
-				'<div class="col-lg-8"><input type="password" class="form-control" id="C_Password" required></div>' +
+				'<div class="row">' +
+				'<label for="C_Password" class="col-lg-6 col-form-label">' + reponse[ 'Conf_MdP' ] + '</label>' +
+				'<div class="col-lg-6"><input type="password" class="form-control" id="C_Password" required></div>' +
 				'</div>'; //+
 				//'</form>';
 			var Bouton_Fermer = true;
@@ -610,6 +600,7 @@ function changerMdP( script_suivant ) {
 }
 
 
+
 // Ajoute des zéros au début d'un chiffre.
 function ajouterZero( chiffre, taille ) {
 	var taille = taille || 3;
@@ -627,27 +618,6 @@ function ajouterZero( chiffre, taille ) {
 }
 
 
-function ajouterSlashes( chaine, flag ) {
-	var flag = flag || 0;
-
-	if ( flag == 0 || flag == 3 ) chaine = chaine.replace(/\\/g, "\\");
-	if ( flag == 0 || flag == 1 ) chaine = chaine.replace(/'/g, "\\\'");
-	if ( flag == 0 || flag == 2 ) chaine = chaine.replace(/"/g, "\\\"");
-
-	return chaine;
-}
-
-
-function supprimerSlashes( chaine, flag ) {
-	var flag = flag || 0;
-
-	if ( flag == 0 || flag == 3 ) chaine = chaine.replace(/\\\\/g, "\\");
-	if ( flag == 0 || flag == 1 ) chaine = chaine.replace(/\\'/g, "\'");
-	if ( flag == 0 || flag == 2 ) chaine = chaine.replace(/\\\"/g, "\"");
-
-	return chaine;
-}
-
 
 function protegerQuotes( chaine ) {
 	chaine = chaine.replace(/'/g, "&apos;");  // (/\\'/g, "&apos;");
@@ -655,6 +625,7 @@ function protegerQuotes( chaine ) {
 
 	return chaine;
 }
+
 
 
 function gererBoutonAjouter( total, limitation, libelle_limitation ) {
@@ -683,6 +654,7 @@ function gererBoutonAjouter( total, limitation, libelle_limitation ) {
 }
 
 
+
 function traiterCarateresSpeciaux( Chaine ) {
 	var resultat='';
 
@@ -692,6 +664,7 @@ function traiterCarateresSpeciaux( Chaine ) {
 
 	return resultat;
 }
+
 
 
 function ouvrirChamp( event, Source, Id ) {
@@ -739,7 +712,7 @@ function ouvrirChamp( event, Source, Id ) {
 				'data-old="' + Libelle + '" ' + 
 				'value="' + Libelle + '" ' +
 				'onKeyDown="ouvrirChamp(event,\'' + Source + '\',\''+ Id +'\');" ' +
-				//'onBlur="fermerChamp(\'' + Source + '\', \'' + Id + '\', \'\', \'blur\');" ' +
+				'onBlur="fermerChamp(\'' + Source + '\', \'' + Id + '\', \'\', \'blur\');" ' +
 				' ';
 
 			if ( Champ.attr('data-maximum') != undefined ) Attr_Champ += 'maxlength="' + Champ.attr('data-maximum') + '" ';
@@ -759,7 +732,8 @@ function ouvrirChamp( event, Source, Id ) {
 			Attr_Champ += 'id="' + Source + '-' + Id + '" ' +
 				'data-old="' + Libelle + '" ' + 
 				'value="' + Libelle + '" ' +
-				'onKeyDown="ouvrirChamp(event,\'' + Source + '\',\''+ Id +'\');" ';
+				'onKeyDown="ouvrirChamp(event,\'' + Source + '\',\''+ Id +'\');" ' +
+				'onBlur="fermerChamp(\'' + Source + '\', \'' + Id + '\', \'\', \'blur\');" ';
 
 			Attr_Champ += '>';
 
@@ -784,7 +758,7 @@ function ouvrirChamp( event, Source, Id ) {
 				'id="' + Source + '-' + Id + '" ' +
 				'data-old="' + Libelle + '" ' + Colonnes + Lignes +
 				'onKeyDown="ouvrirChamp(event,\'' + Source + '\',\''+ Id +'\');" ' +
-//				'onBlur="fermerChamp(\'' + Source + '\', \'' + Id +'\');"' +
+				'onBlur="fermerChamp(\'' + Source + '\', \'' + Id +'\');"' +
 				'>' +
 				Libelle + '</textarea>'
 			);
@@ -799,7 +773,7 @@ function ouvrirChamp( event, Source, Id ) {
 		 case 'select':
 			var Texte = '<select id="' + Source + '-' + Id + '" class="form-select" ' + 
 				'onKeyUp="ouvrirChamp(event,\'' + Source + '\',\''+ Id +'\');" ' +
-//				'onBlur="fermerChamp(\'' + Source + '\', \'' + Id + '\',\'' + Libelle + '\');" ' +
+				'onBlur="fermerChamp(\'' + Source + '\', \'' + Id + '\',\'' + Libelle + '\');" ' +
 				'data-old="' + Libelle + '" ' +
 				'>';
 
@@ -874,6 +848,7 @@ function ouvrirChamp( event, Source, Id ) {
 }
 
 
+
 function fermerChamp( Source, Id, Valeur ) {
 	var Valeur = Valeur || '';
 	var Libelle;
@@ -889,8 +864,9 @@ function fermerChamp( Source, Id, Valeur ) {
 	}
 
 //	$( Champ ).replaceWith('<span class="modifiable" onClick="ouvrirChamp(event,\'' + Source + '\',\''+Id+'\');">' + Libelle + '</span>');
-	$( '#'+Source+'-'+Id ).replaceWith('<span class="modifiable" onClick="ouvrirChamp(event,\'' + Source + '\',\''+Id+'\');">' + Libelle + '</span>');
+	$( '#'+Source+'-'+Id ).replaceWith('<span class="modifiable" onClick="ouvrirChamp(event,\'' + Source + '\',\''+Id+'\');">' + protegerQuotes( Libelle ) + '</span>');
 }
+
 
 
 function sauverChamp( Source, Id, Valeur, Libelle ) {
@@ -906,7 +882,6 @@ function sauverChamp( Source, Id, Valeur, Libelle ) {
 	}
 
 	if ( Valeur_Modifiee == true ) {
-//alert( Source+', '+Id+', '+Valeur+', '+Libelle );
 		if ( Id.split('-').length > 1 ) {
 			var I_Id = Id.split('-');
 			Langue = I_Id[1];
@@ -963,6 +938,7 @@ function sauverChamp( Source, Id, Valeur, Libelle ) {
 }
 
 
+
 function defilerPage( page, speed ) {
 	var speed = speed || 'fast'; //750; // Durée de l'animation (en ms)
 
@@ -980,10 +956,12 @@ function defilerPage( page, speed ) {
 }
 
 
+
 function controlerSiExtentionFichierBureautique( extention ) {
 	if ( ListeExtentions.indexOf( extention.toLowerCase() ) == -1 ) return false;
 	else return true;
 }
+
 
 
 function afficherExtentionsFichierBureautique() {
@@ -997,6 +975,7 @@ function afficherExtentionsFichierBureautique() {
 
 	return Liste;
 }
+
 
 
 // Permet de déplacer les modales.
@@ -1032,6 +1011,7 @@ function afficherExtentionsFichierBureautique() {
 })(jQuery);
 
 
+
 function controlerChamp( event ) {
     var p_event = event;
     
@@ -1045,49 +1025,6 @@ function controlerChamp( event ) {
 
 }
 
-
-function filtrerOccurrences( event ) {
-	var p_event = event;
-	var valeur = $('#rechercher_items').val();
-
-
-	if ( p_event.key == 'Backspace' ) {
-		valeur = valeur.substring( 0, valeur.length - 1 );
-	}
-
-	if ( p_event.key.length == 1 ) valeur += p_event.key;
-
-	//if ( valeur.length == 1 || valeur.length == 2 ) return;
-
-	$('label.form-check-label').each( function( index, element ) {
-		var MaChaine = $(element).html();
-		MaChaine = MaChaine.replace('<span style="background-color: yellow; font-weight: bold;">','');
-		MaChaine = MaChaine.replace('</span>','');
-		
-		var MonInput = MaChaine.indexOf('>') + 1;
-		MonInput = MaChaine.substr(0, MonInput);
-
-		if ( (Pos0 = MaChaine.toLowerCase().search(valeur.toLowerCase())) == -1 && valeur != '' ) {
-			$(element).parent().hide();
-		} else {
-			_Tmp = MaChaine.substr(Pos0, valeur.length);
-			$(element).html( MonInput + $(element).text().replace(valeur,'<span style="background-color: yellow; font-weight: bold;">'+valeur+"</span>") );
-			$(element).html( MonInput + $(element).text().replace(_Tmp,'<span style="background-color: yellow; font-weight: bold;">'+_Tmp+"</span>") );
-			$(element).parent().show();
-		}
-	});
-
-
-	if ( p_event.key == KEY_Enter ) {
-		event.preventDefault();
-		$('#rechercher_items').focus();
-		return -1;
-	}
-
-	if ( p_event.key == KEY_Escape ) {
-		return -1;
-	}
-}
 
 
 function lancerRecherche() {
@@ -1121,15 +1058,20 @@ function lancerRecherche() {
 }
 
 
+
 function chercherXObjet(element) {
 	var rec = document.getElementById(element).getBoundingClientRect();
 	return rec.left + window.scrollX;
 }
 
+
+
 function chercherYObjet(element) {
 	var rec = document.getElementById(element).getBoundingClientRect();
 	return rec.top + window.scrollY;
 }
+
+
 
 function transformePrenom( prenom ) {
 	prenom = prenom

@@ -31,8 +31,17 @@ $(function() {
 						pbSynchronisation = 1;
 					} else {
 						// Mise à jour de la liste déroulante des Campagnes associées à la Société
+						var _Numero = 0, _Selected;
 						for (let element of reponse['Liste_Campagnes']) {
-							$('#s_cmp_id').append('<option value="' + element.cmp_id + '">' + element.cmp_date + '</option>');
+							_Numero += 1;
+
+							if (_Numero == 1) {
+								_Selected = ' selected';
+							} else {
+								_Selected = '';
+							}
+
+							$('#s_cmp_id').append('<option value="' + element.cmp_id + '"' + _Selected + '>' + element.cmp_date + '</option>');
 						}
 					}
 
@@ -43,8 +52,17 @@ $(function() {
 						}
 					} else {
 						// Mise à jour de la liste déroulante des Campagnes associées à la Société
+						var _Numero = 0, _Selected;
 						for (let element of reponse['Liste_Entites']) {
-							$('#s_ent_id').append('<option value="' + element.ent_id + '">' + element.ent_nom + '</option>');
+							_Numero += 1;
+
+							if (_Numero == 1) {
+								_Selected = ' selected';
+							} else {
+								_Selected = '';
+							}
+
+							$('#s_ent_id').append('<option value="' + element.ent_id + '"' + _Selected + '>' + element.ent_nom + '</option>');
 						}
 					}
 

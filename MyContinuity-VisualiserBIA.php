@@ -1112,10 +1112,14 @@ function actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $objActivit
 	
 	// Récupère les Entités associées à la Campagne Sélectionnée
 	$Liste_Entites = $objActivites->rechercherEntitesCampagne($_SESSION['s_cmp_id']);
-	if ( $Liste_Entites == [] and $_SESSION['s_ent_id'] != '*' ) {
+	if ( ! isset( $_SESSION['s_ent_id'] ) ) {
+		$_SESSION['s_ent_id'] = '*';
+	}
+
+	if ( $Liste_Entites == [] && $_SESSION['s_ent_id'] != '*' ) {
 		$_SESSION['s_ent_id'] = '';
 	} else {
-		if ( ! isset($_SESSION['s_ent_id']) or $_SESSION['s_ent_id'] == '' ) { // or $_SESSION['s_ent_id'] == '*' ) {
+		if ( ! isset($_SESSION['s_ent_id']) || $_SESSION['s_ent_id'] == '' ) { // or $_SESSION['s_ent_id'] == '*' ) {
 			$_SESSION['s_ent_id'] = $Liste_Entites[0]->ent_id;
 		} else {
 			// On contrôle que l'utilisateur a encore accès à cette Société.
@@ -1132,8 +1136,6 @@ function actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $objActivit
 			}
 		}
 	}
-	
-	//print($_SESSION['s_sct_id'].' - '.$_SESSION['s_cmp_id'].' - '.$_SESSION['s_ent_id'].'<hr>');
 	
 	return [$Liste_Societes, $Liste_Campagnes, $Liste_Entites];
 }

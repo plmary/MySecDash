@@ -229,7 +229,7 @@ INSERT INTO lbr_libelles_referentiel (lbr_code, lng_id, lbr_libelle) VALUES
 ('ACT_FREQUENCE_1', 'fr', 'Aucune'),
 ('ACT_FREQUENCE_1', 'en', 'None'),
 ('ACT_FREQUENCE_2', 'fr', 'Quotidienne'),
-('ACT_FREQUENCE_2', 'en', 'Dayly'),
+('ACT_FREQUENCE_2', 'en', 'Daily'),
 ('ACT_FREQUENCE_3', 'fr', 'Hebdomadaire'),
 ('ACT_FREQUENCE_3', 'en', 'Weekly'),
 ('ACT_FREQUENCE_4', 'fr', 'Mensuelle'),

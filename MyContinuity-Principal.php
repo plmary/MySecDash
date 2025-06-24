@@ -155,6 +155,22 @@ switch( $Action ) {
 		}
 		
 		
+		if ( isset( $Permissions['MyContinuity-VisualiserBIA.php'] ) ) {
+			$texteHTMLGestion .= "<a href=\"MyContinuity-VisualiserBIA.php\" class=\"btn btn-admin btn-principal\"><span class=\"me-1\">" .
+				couperLibelle( $L_Visualiser_BIA, 39 ) . "</span>";
+				
+				$texteHTMLGestion .= "</a>";
+		}
+		
+		
+		if ( isset( $Permissions['MyContinuity-EditionsBIA.php'] ) ) {
+			$texteHTMLGestion .= "<a href=\"MyContinuity-EditionsBIA.php\" class=\"btn btn-admin btn-principal\"><span class=\"me-1\">" .
+				couperLibelle( $L_Editer_BIA, 39 ) . "</span>";
+				
+				$texteHTMLGestion .= "</a>";
+		}
+		
+		
 		if ( isset( $Permissions['MyContinuity-Sites.php'] ) ) {
 			$texteHTMLReferentiel .= "<a href=\"MyContinuity-Sites.php\" class=\"btn btn-admin btn-principal\"><span class=\"me-1\">" .
 				couperLibelle( $L_Gestion_Sites, 39 ) . "</span>";

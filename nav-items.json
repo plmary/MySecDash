@@ -40,7 +40,7 @@
 		]},
 		{"LibelleItemPrincipale": "L_Visualisation", "Items": [
 			{"LibelleItem": "L_Visualiser_BIA", "Type" : "option", "Lien": "MyContinuity-VisualiserBIA.php"},
-			{"LibelleItem": "L_Editer_BIAs", "Type" : "option", "Lien": "MyContinuity-EditionsBIA.php"}
+			{"LibelleItem": "L_Editer_BIA", "Type" : "option", "Lien": "MyContinuity-EditionsBIA.php"}
 		]}
 	]
 }

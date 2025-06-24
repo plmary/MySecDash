@@ -208,11 +208,10 @@ function ModalMAJCampagne( cmp_id = '' ){
 			Corps += '<ul class="nav nav-tabs">' +
 				'<li><a id="lister_chk_entites" class="nav-link" href="#">' + reponse[ 'L_Entites'] + '</a></li>' +
 				'<li><a id="lister_chk_sites" class="nav-link" href="#">' + reponse[ 'L_Sites'] + '</a></li>' +
-				//'<li><a id="lister_chk_applications" class="nav-link" href="#">' + reponse[ 'L_Applications'] + '</a></li>' +
-				//'<li><a id="lister_chk_fournisseurs" class="nav-link" href="#">' + reponse[ 'L_Fournisseurs'] + '</a></li>' +
 				'<li><a id="lister_chk_echelle_temps" class="nav-link" href="#">' + reponse[ 'L_Echelle_Temps'] + '</a></li>' +
 				'<li><a id="lister_chk_matrice_impacts" class="nav-link" href="#">' + reponse[ 'L_Matrice_Impacts'] + '</a></li>' +
 				'</ul>' +
+
 				'<div id="zone_action">' +
 				 '<div class="row d-none" id="ZoneRecherche">' +
 				 '<div id="zone-btn-creer-objet" class="col-1 d-none">' +
@@ -229,6 +228,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 				 '<div class="input-group mb-3 d-none" id="ZoneCreerEntite">' +
 				 '<input id="ent_nom" class="form-control" type="text" placeholder="' + reponse['L_Nom'] + '">' +
 				 '<input id="ent_description" class="form-control" type="text" placeholder="' + reponse['L_Description'] + '">' +
+				 '<input id="ppr_id_cpca" class="form-control" type="text" placeholder="' + reponse['L_CPCA'] + '">' +
 				 '<button id="btn-creer-entite" class="btn btn-outline-secondary" type="button">' + reponse['L_Ajouter'] + '</button>' +
 				 '<button id="btn-fermer-entite" class="btn btn-outline-secondary" type="button">' + reponse['L_Fermer'] + '</button>' +
 				 '</div> <!-- #ZoneCreerEntite -->' +
@@ -240,37 +240,37 @@ function ModalMAJCampagne( cmp_id = '' ){
 				 '<button id="btn-fermer-site" class="btn btn-outline-secondary" type="button">' + reponse['L_Fermer'] + '</button>' +
 				 '</div> <!-- #ZoneCreerSite -->' +
 
-				 '<div class="input-group mb-3 d-none" id="ZoneCreerApplication">' +
-				 '<input id="app_nom" class="form-control" type="text" placeholder="' + reponse['L_Nom'] + '">' +
-				 '<input id="app_hebergement" class="form-control" type="text" placeholder="' + reponse['L_Hebergement'] + '">' +
-				 '<input id="app_niveau_service" class="form-control" type="text" placeholder="' + reponse['L_Niveau_Service'] + '">' +
-				 '<button id="btn-creer-application" class="btn btn-outline-secondary" type="button">' + reponse['L_Ajouter'] + '</button>' +
-				 '<button id="btn-fermer-application" class="btn btn-outline-secondary" type="button">' + reponse['L_Fermer'] + '</button>' +
-				 '</div> <!-- #ZoneCreerApplication -->' +
-
-				 '<div class="input-group mb-3 d-none" id="ZoneCreerFournisseur">' +
-				 '<input id="frn_nom" class="form-control" type="text" placeholder="' + reponse['L_Nom'] + '">' +
-				 '<select id="tfr_id" class="form-select">';
-
-			for (let Tampon of reponse['Liste_Types_Fournisseur']) {
-				Corps += '<option value="' + Tampon.tfr_id + '">' + Tampon.tfr_nom_code + '</option>';
-			}
-
-			Corps += '</select>' +
-				' <input id="frn_description" class="form-control" type="text" placeholder="' + reponse['L_Description'] + '">' +
-				' <button id="btn-creer-fournisseur" class="btn btn-outline-secondary" type="button">' + reponse['L_Ajouter'] + '</button>' +
-				' <button id="btn-fermer-fournisseur" class="btn btn-outline-secondary" type="button">' + reponse['L_Fermer'] + '</button>' +
-				' </div> <!-- #ZoneCreerFournisseur -->' +
+				 '<div class="input-group d-none" id="ZoneCreerPartiePrenante">' +
+				 '<input type="text" class="form-control text-uppercase" placeholder="' + reponse['L_Nom'] + '" id="ppr_nom">' +
+				 '<input type="text" class="form-control text-capitalize" placeholder="' + reponse['L_Prenom'] + '" id="ppr_prenom">' +
+				 '<span class="input-group-text"><div class="form-check form-check-reverse">' +
+				 '<input class="form-check-input" type="checkbox" value="" id="ppr_interne" checked>' +
+				 '<label class="form-check-label" for="ppr_interne_supp">' +reponse['L_Interne'] + '</label>' +
+				 '</div></span>' +
+				 '<button type="button" class="btn btn-outline-secondary" id="btn-creer-partie_prenante">' + reponse['L_Ajouter'] + '</button>' +
+				 '<button type="button" class="btn btn-outline-secondary" id="btn-fermer-partie_prenante">' + reponse['L_Fermer'] + '</button>' +
+				 '</div> <!-- #ZoneCreerPartiePrenante -->' +
 
 				'</div> <!-- #zone_action -->' +
 
 				'<div id="onglets_utilisateur" style="height: 520px;">' +
 				
 				'<div id="zone-x-select-entites" class="d-none">' +
-					'<div class="form-check liste">' +
+					'<div class="row">' +
+					'<div class="col-12">' +
+					'<div class="form-check">' +
 					'<input class="form-check-input" type="checkbox" id="tout-cocher-ent">' +
 					'<label class="form-check-label fw-bold fg_bleu" for="tout-cocher-ent">' + reponse['L_Tout_Cocher_Decocher'] + '</label>' +
-					'</div>';
+					'</div>' +
+					'</div> <!-- .col-12 -->' +
+					'</div> <!-- .row -->' +
+					'<div class="row">' +
+					'<div class="col-5 fw-bold bg_vert">' + reponse['L_Entite'] + '</div> <!-- .col-5 -->' +
+					'<div class="col-1 fw-bold bg_vert">' + reponse['L_Effectif'] + '</div> <!-- .col-1 -->' +
+					'<div class="col-4 fw-bold bg_vert">' + reponse['L_CPCA'] + '</div> <!-- .col-4 -->' +
+					'<div class="col-2 fw-bold bg_vert">' + reponse['L_Date_Entretien'] + '</div> <!-- .col-2 -->' +
+					'</div> <!-- .row -->';
+
 				for (let Entite of reponse['Liste_Entites']) {
 					if (Entite.associe != null) {
 						Associe = ' checked';
@@ -283,10 +283,61 @@ function ModalMAJCampagne( cmp_id = '' ){
 					Nom_Complet_Entite = Entite.ent_nom
 					if (Entite.ent_description != '' && Entite.ent_description != null) Nom_Complet_Entite += ' ('+Entite.ent_description + ')'
 
-					Corps += '<div class="form-check liste">' + 
+					var PartiesPrenantes = '<option value="">' + reponse['L_Aucun'] + '</option>';
+					var Option_Selectionnee = '';
+					for (let PartiePrenante of reponse['Liste_Parties_Prenantes']) {
+						if ( Entite.ppr_id_cpca != null) {
+							if (Entite.ppr_id_cpca == PartiePrenante.ppr_id) {
+								Option_Selectionnee = ' selected';
+							}
+						} else {
+							Entite.ppr_id_cpca = '';
+						}
+
+						if (PartiePrenante.ppr_interne == true) {
+							var Type_Partie_Prenante = reponse['L_Interne'];
+						} else {
+							var Type_Partie_Prenante = reponse['L_Externe'];
+						}
+
+						PartiesPrenantes += '<option value="'+PartiePrenante.ppr_id+'"'+Option_Selectionnee+'>'+PartiePrenante.ppr_nom+' '+PartiePrenante.ppr_prenom+' ('+Type_Partie_Prenante+')</option>';
+						Option_Selectionnee = '';
+					}
+
+					if ( Entite.cmen_date_entretien_cpca != null ) {
+						v2_cmp_date = Entite.cmen_date_entretien_cpca;
+					} else {
+						v2_cmp_date = '';
+					}
+
+					if ( Entite.cmen_effectif_total != null ) {
+						v_cmen_effectif_total = Entite.cmen_effectif_total;
+					} else {
+						v_cmen_effectif_total = '';
+					}
+
+					Corps += '<div class="row liste">' +
+						'<div class="col-5">' +
+						'<div class="form-check">' + 
 						'<input class="form-check-input" type="checkbox" value="" data-old_value="'+Old_Value+'" id="entite-'+Entite.ent_id+'"'+Associe+'>' +
 						'<label class="form-check-label" for="entite-'+Entite.ent_id+'">'+Nom_Complet_Entite+'</label>' +
-						'</div> <!-- .form-check -->';
+						'</div> <!-- .form-check -->' + 
+						'</div> <!-- .col-5 -->' +
+						'<div class="col-1">' +
+						'<input class="form-control" type="text" placeholder="Effectif total" value="'+v_cmen_effectif_total+'" data-old_value="'+v_cmen_effectif_total+'" id="cmen_effectif_total-'+Entite.ent_id+'">' +
+						'</div> <!-- .col-1 -->' +
+						'<div class="col-4">' +
+						'<div id="x-select-ppr_id_cpca-'+Entite.ent_id+'" class="input-group">' +
+						'<select id="ppr_id_cpca-'+Entite.ent_id+'" class="form-select" data-old_value="'+Entite.ppr_id_cpca+'">' +
+						PartiesPrenantes +
+						'</select>' +
+						'<button class="btn btn-outline-secondary" id="btn-section-ajouter-partie_prenante" type="button" title="Créer"><i class="bi-plus"></i></button>' +
+						'</div> <!-- .input-group -->' +
+						'</div> <!-- .col-4 -->' +
+						'<div class="col-2">' +
+						'<input id="cmen_date_entretien_cpca-'+Entite.ent_id+'" class="form-control" type="date" data-old_value="'+v2_cmp_date+'" value="' + v2_cmp_date + '">' +
+						'</div> <!-- .col-2 -->' +
+						'</div> <!-- .row -->';
 				}
 				Corps += '</div> <!-- #zone-x-select-entites -->' +
 
@@ -314,61 +365,6 @@ function ModalMAJCampagne( cmp_id = '' ){
 						'</div> <!-- .form-check -->';
 				}
 				Corps += '</div> <!-- #zone-x-select-sites -->' +
-
-
-				'<div id="zone-x-select-applications" class="d-none">';
-				if ( reponse['Liste_Applications'] != undefined ) {
-					for (let Application of reponse['Liste_Applications']) {
-						if (Application.associe != null) {
-							Associe = ' checked';
-							Old_Value = 1;
-						} else {
-							Associe = '';
-							Old_Value = 0;
-						}
-
-						Nom_Complet_Application = Application.app_nom + ' ' +
-							'[' + Application.app_hebergement + ']' + 
-							'[' + Application.app_niveau_service + ']';
-
-						if (Application.app_description != '') {
-							Nom_Complet_Application += ' (' + Application.app_description + ')';
-						}
-
-						Corps += '<div class="form-check liste">' +
-							'<input class="form-check-input" type="checkbox" value="" data-old_value="'+Old_Value+'" id="application-'+Application.app_id+'"'+Associe+'>' +
-							'<label class="form-check-label" for="application-'+Application.app_id+'">'+Nom_Complet_Application+'</label>' +
-							'</div> <!-- .form-check -->';
-					}
-				}
-				Corps += '</div> <!-- #zone-x-select-applications -->' +
-
-
-				'<div id="zone-x-select-fournisseurs" class="d-none">';
-				if ( reponse['Liste_Fournisseurs'] != undefined ) {
-					for (let Item of reponse['Liste_Fournisseurs']) {
-						if (Item.associe != null) {
-							Associe = ' checked';
-							Old_Value = 1;
-						} else {
-							Associe = '';
-							Old_Value = 0;
-						}
-
-						Nom_Complet = Item.frn_nom + ' ' +
-							'[' + Item.tfr_nom_code + ']';
-
-						if (Item.frn_description != '') {
-							Nom_Complet += ' (' + Item.frn_description + ')';
-						}
-
-						Corps += '<div class="form-check liste">' +
-							'<input class="form-check-input" type="checkbox" value="" data-old_value="'+Old_Value+'" id="fournisseur-'+Item.frn_id+'"'+Associe+'>' +
-							'<label class="form-check-label" for="fournisseur-'+Item.frn_id+'">'+Nom_Complet+'</label>' +
-							'</div> <!-- .form-check -->';
-					}
-				}
-				Corps += '</div> <!-- #zone-x-select-fournisseurs -->' +
 
 
 				'<div id="zone-x-select-echelles" class="d-none">';
@@ -449,22 +445,13 @@ function ModalMAJCampagne( cmp_id = '' ){
 					$('#sts_description').val('');
 				});
 
-				$('#btn-fermer-application').off('click').on('click', function(){
-					$('#ZoneCreerApplication').addClass('d-none');
+				$('#btn-fermer-partie_prenante').off('click').on('click', function(){
+					$('#ZoneCreerPartiePrenante').addClass('d-none');
 					$('#ZoneRecherche').removeClass('d-none');
 
-					$('#app_nom').val('');
-					$('#app_hebergement').val('');
-					$('#app_niveau_service').val('');
-				});
-
-				$('#btn-fermer-fournisseur').off('click').on('click', function(){
-					$('#ZoneCreerFournisseur').addClass('d-none');
-					$('#ZoneRecherche').removeClass('d-none');
-	
-					$('#frn_nom').val('');
-					$('#tfr_id').val('');
-					$('#frn_description').val('');
+					$('#ppr_nom').val('');
+					$('#ppr_prenom').val('');
+					$('#ppr_interne').val('');
 				});
 	
 				$('#tout-cocher-ent').on( 'click', function() {
@@ -522,6 +509,15 @@ function ModalMAJCampagne( cmp_id = '' ){
 					return false;
 				});
 
+				$('#btn-section-ajouter-partie_prenante').off('click').on('click', function(){
+					$('#ZoneCreerPartiePrenante').removeClass('d-none');
+					$('#ZoneRecherche').addClass('d-none');
+
+					$('div#ZoneCreerPartiePrenante input:first').focus();
+
+					return false;
+				});
+
 
 				$('#btn-creer-entite').off('click').on('click', function(){
 					ent_nom = $('#ent_nom').val();
@@ -550,6 +546,39 @@ function ModalMAJCampagne( cmp_id = '' ){
 
 								afficherMessage( reponse['texteMsg'], reponse['statut'], 'body' );
 								$('#btn-fermer-entite').trigger('click');
+							} else {
+								afficherMessage( reponse['texteMsg'], reponse['statut'], '#idModalCampagne', 0, 'n' );
+							}
+						}
+					});
+				});
+
+
+				$('#btn-creer-partie_prenante').off('click').on('click', function(){
+					var ppr_nom = $('#ppr_nom').val();
+					var ppr_prenom = $('#ppr_prenom').val();
+					var ppr_interne = $('#ppr_interne').is(':checked');
+
+					$.ajax({
+						url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Ajouter_Partie_Prenante',
+						type: 'POST',
+						data: $.param({'ppr_nom': ppr_nom, 'ppr_prenom': ppr_prenom, 'ppr_interne': ppr_interne}),
+						dataType: 'json',
+						success: function( reponse ) {
+							if ( reponse['statut'] == 'success' ) {
+								ppr_id = reponse['ppr_id'];
+								
+								Nom_Complet_Entite = ppr_nom + ' ' + ppr_prenom;
+								if (ppr_interne != 1) {
+									Nom_Complet_Entite += ' ('+ reponse['L_Externe'] + ')';
+								} else {
+									Nom_Complet_Entite += ' ('+ reponse['L_Interne'] + ')';
+								}
+
+								$('select[id^="ppr_id_cpca-"]').append('<option value="' + reponse['ppr_id'] + '">' + Nom_Complet_Entite + '</option>');
+
+								afficherMessage( reponse['texteMsg'], reponse['statut'], 'body' );
+								$('#btn-fermer-partie_prenante').trigger('click');
 							} else {
 								afficherMessage( reponse['texteMsg'], reponse['statut'], '#idModalCampagne', 0, 'n' );
 							}
@@ -618,123 +647,6 @@ function ModalMAJCampagne( cmp_id = '' ){
 								$('#btn-fermer-site').trigger('click');
 							} else {
 								afficherMessage( reponse['texteMsg'], reponse['statut'], '#idModalCampagne', 0, 'n' );
-							}
-						}
-					});
-				});
-			});
-
-
-			// Gestion de l'onglet "Applications".
-			$('#lister_chk_applications').on('click', function() {
-				$('ul.nav.nav-tabs li a').removeClass('active');
-				$('#lister_chk_applications').addClass('active');
-
-				$('div[id^="ZoneCreer"]').addClass('d-none');
-				$('#ZoneRecherche').removeClass('d-none');
-
-				$('#chp-rechercher-objet').val('');
-				$('#btn-fermer-application').trigger('click');
-
-				$('div[id^="zone-x-select-"]').addClass('d-none');
-				$('#zone-x-select-applications').removeClass('d-none');
-
-				$('#btn-creer-objet').off('click').on('click', function(){
-					$('#ZoneCreerApplication').removeClass('d-none');
-					$('#ZoneRecherche').addClass('d-none');
-
-					$('div#ZoneCreerApplication input:first').focus();
-
-					return false;
-				});
-
-				$('#btn-creer-application').off('click').on('click', function(){
-					app_nom = $('#app_nom').val();
-					app_hebergement = $('#app_hebergement').val();
-					app_niveau_service = $('#app_niveau_service').val();
-
-					$.ajax({
-						url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Ajouter_Application',
-						type: 'POST',
-						data: $.param({'app_nom': app_nom, 'app_hebergement': app_hebergement,
-							'app_niveau_service': app_niveau_service, 'cmp_id': cmp_id}),
-						dataType: 'json',
-						success: function( reponse ) {
-							if ( reponse['statut'] == 'success' ) {
-								app_id = reponse['app_id'];
-
-
-								Nom_Complet_Application = app_nom + ' ' +
-									'[' + app_hebergement + ']' + 
-									'[' + app_niveau_service + ']';
-
-								Corps = '<div class="form-check liste">' +
-									'<input class="form-check-input" type="checkbox" value="" data-old_value="0" id="application-'+app_id+'" checked>' +
-									'<label class="form-check-label" for="application-'+app_id+'">'+Nom_Complet_Application+'</label>' +
-									'</div> <!-- .form-check -->';
-	
-								$('#zone-x-select-applications').prepend( Corps );
-
-								afficherMessage( reponse['texteMsg'], reponse['statut'], 'body' );
-								$('#btn-fermer-application').trigger('click');
-							} else {
-								afficherMessage( texteMsg, statut, '#idModalCampagne', 0, 'n' );
-							}
-						}
-					});
-				});
-			});
-
-
-			// Gestion de l'onglet "Fournisseurs".
-			$('#lister_chk_fournisseurs').on('click', function() {
-				$('ul.nav.nav-tabs li a').removeClass('active');
-				$('#lister_chk_fournisseurs').addClass('active');
-
-				$('div[id^="ZoneCreer"]').addClass('d-none');
-				$('#ZoneRecherche').removeClass('d-none');
-
-				$('div[id^="zone-x-select-"]').addClass('d-none');
-				$('#zone-x-select-fournisseurs').removeClass('d-none');
-
-				$('#btn-creer-objet').off('click').on('click', function(){
-					$('#ZoneCreerFournisseur').removeClass('d-none');
-					$('#ZoneRecherche').addClass('d-none');
-
-					$('div#ZoneCreerFournisseur input:first').focus();
-
-					return false;
-				});
-
-				$('#btn-creer-fournisseur').off('click').on('click', function(){
-					frn_nom = $('#frn_nom').val();
-					tfr_id = $('#tfr_id').val();
-					tfr_nom = $('#tfr_id option:selected').text();
-					frn_description = $('#frn_description').val();
-
-					$.ajax({
-						url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Ajouter_Fournisseur',
-						type: 'POST',
-						data: $.param({'frn_nom': frn_nom, 'tfr_id': tfr_id, 'frn_description': frn_description}),
-						dataType: 'json',
-						success: function( reponse ) {
-							if ( reponse['statut'] == 'success' ) {
-								frn_id = reponse['frn_id'];
-
-								Nom_Complet = frn_nom + ' [' + tfr_nom + ']';
-								if (frn_description != '') Nom_Complet += ' (' + frn_description + ')';
-
-								Corps = '<div class="form-check liste">' +
-									'<input class="form-check-input" type="checkbox" value="" data-old_value="0" id="fournisseur-'+frn_id+'" checked>' +
-									'<label class="form-check-label" for="fournisseur-'+frn_id+'">'+Nom_Complet+'</label>' +
-									'</div> <!-- .form-check -->';
-
-								$('#zone-x-select-fournisseurs').prepend( Corps );
-
-								afficherMessage( reponse['texteMsg'], reponse['statut'], 'body' );
-								$('#btn-fermer-fournisseur').trigger('click');
-							} else {
-								afficherMessage( texteMsg, statut, '#idModalCampagne', 0, 'n' );
 							}
 						}
 					});

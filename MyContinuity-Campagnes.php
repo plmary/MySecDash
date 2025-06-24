@@ -20,6 +20,8 @@ include( DIR_LIBRAIRIES . '/Loxense-Entete-Standard.php' );
 // Charge les libellés en fonction de la langue sélectionnée.
 include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Generiques.inc.php' );
 include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Entites.inc.php' );
+include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Civilites.inc.php' );
+include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_MyContinuity-PartiesPrenantes.php' );
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MyContinuity-Applications.php' );
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MyContinuity-Fournisseurs.php' );
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MyContinuity-Sites.php' );
@@ -32,6 +34,7 @@ include( DIR_LIBRAIRIES . '/Class_Sites_PDO.inc.php' );
 include( DIR_LIBRAIRIES . '/Class_Applications_PDO.inc.php' );
 include( DIR_LIBRAIRIES . '/Class_Fournisseurs_PDO.inc.php' );
 include( DIR_LIBRAIRIES . '/Class_MatriceImpacts_PDO.inc.php' );
+include( DIR_LIBRAIRIES . '/Class_PartiesPrenantes_PDO.inc.php' );
 
 
 // Crée l'instance de l'objet Entites.
@@ -42,6 +45,7 @@ $objSites = new Sites();
 $objApplications = new Applications();
 $objFournisseurs = new Fournisseurs();
 $objMatriceImpacts = new MatriceImpacts();
+$objPartiesPrenantes = new PartiesPrenantes();
 
 
 // Définit le format des colonnes du tableau central.
@@ -114,6 +118,7 @@ switch( $Action ) {
 		'L_Validation' => $L_Validation,
 		'L_Libelle' => $L_Label,
 		'L_Nom' => $L_Nom,
+		'L_Prenom' => $L_Prenom,
 		'L_Description' => $L_Description,
 		'L_Administrateur' => $L_Administrateur,
 		'is_super_admin' => $_SESSION['idn_super_admin'],
@@ -121,6 +126,7 @@ switch( $Action ) {
 		'L_Sites' => $L_Sites,
 		'L_Matrice_Impacts' => $L_Matrice_Impacts,
 		'L_Entites' => $L_Entites,
+		'L_Entite' => $L_Entite,
 		'L_Echelles_Temps' => $L_Echelles_Temps,
 		'L_Echelle_Temps' => $L_Echelle_Temps,
 		'L_Applications' => $L_Applications,
@@ -143,7 +149,14 @@ switch( $Action ) {
 		'L_Creer_Campagne_Avant_Echelle' => $L_Creer_Campagne_Avant_Echelle,
 		'L_Creer_Campagne_Avant_Matrice' => $L_Creer_Campagne_Avant_Matrice,
 		'Droits_Entites' => $PageHTML->permissionsGroupees('MySecDash-Entites.php'),
-		'Droits_Sites' => $PageHTML->permissionsGroupees('MyContinuity-Sites.php')
+		'Droits_Sites' => $PageHTML->permissionsGroupees('MyContinuity-Sites.php'),
+		'L_CPCA' => $PageHTML->getLibelle('__LRI_CORRESPONDANT_PCA'),
+		'L_Date_Entretien' => $PageHTML->getLibelle('__LRI_DATE_ENTRETIEN'),
+		'L_Aucun' => $PageHTML->getLibelle('__LRI_AUCUN'),
+		'L_Interne' => $PageHTML->getLibelle('__LRI_INTERNE'),
+		'L_Externe' => $PageHTML->getLibelle('__LRI_EXTERNE'),
+		'L_Effectif' => $PageHTML->getLibelle('__LRI_EFFECTIF'),
+		'Liste_Parties_Prenantes' => $objPartiesPrenantes->rechercherPartiesPrenantes( $_SESSION['s_sct_id'] )
 	);
 
 	if ( isset( $_POST['cmp_id'] ) ) {
@@ -158,7 +171,7 @@ switch( $Action ) {
 				$Libelles['Liste_Niveaux_Impact'] = $objCampagnes->rechercherNiveauxImpactCampagne( $_POST['cmp_id'] );
 				$Libelles['Liste_Types_Impact'] = $objCampagnes->rechercherTypesImpactCampagne( $_POST['cmp_id'] );
 				$Libelles['Liste_Matrice_Impacts'] = $objMatriceImpacts->rechercherMatriceImpactsParID( $_POST['cmp_id'] );
-				
+
 			} else {
 				$Libelles['Liste_Campagnes'] = $objCampagnes->rechercherCampagnes( $_SESSION['s_sct_id'], 'cmp_date-desc' );
 				$Libelles['Liste_Entites'] = $objEntites->rechercherEntites( $_SESSION['s_sct_id'] );
@@ -202,22 +215,24 @@ switch( $Action ) {
 
 			try {
 				$objCampagnes->majCampagne( $_SESSION['s_sct_id'], '', $_POST[ 'cmp_date' ] );
-				$Id_Campagne= $objCampagnes->LastInsertId;
+				$Id_Campagne = $objCampagnes->LastInsertId;
 
 				$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_CAMPAGNE', 'cmp_id="' . $Id_Campagne . '", cmp_date="' . $_POST[ 'cmp_date' ] . '"' );
 
 
 				if (isset($_POST['liste_ent_ajouter'])) {
 					if ($_POST['liste_ent_ajouter'] != []) {
-						foreach($_POST['liste_ent_ajouter'] as $ent_id) {
-							$objCampagnes->associerEntiteCampagne($Id_Campagne, $ent_id);
+						foreach($_POST['liste_ent_ajouter'] as $Entite) {
+							$objCampagnes->associerEntiteCampagne($Id_Campagne, $Entite[0], $Entite[1], $Entite[2], $Entite[3]);
 							
-							$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_CAMPAGNE', 'cmp_id="' . $Id_Campagne . '" => ent_id="' . $ent_id . '"' );
+							$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_CAMPAGNE', 'cmp_id="' . $Id_Campagne . '" => ent_id="' . $Entite[0] . '"' .
+								', ppr_id_cpca="' . $Entite[1] . '", cmen_date_entretien_cpca="' . $Entite[2] . '"' .
+								', cmen_effectif_total="' . $Entite[3] . '"' );
 						}
 					}
-
+					
 					$Total_Entites = count($_POST['liste_ent_ajouter']);
-
+					
 					if (strlen($Total_Entites) == 1) $Total_Entites = '0' . $Total_Entites;
 				} else {
 					$Total_Entites = '00';
@@ -283,7 +298,7 @@ switch( $Action ) {
 					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-sites" title="' . $L_Sites . '">' . $Total_Sites . '</button>' .
 					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-echelles-temps" title="' . $L_Echelles_Temps . '">00</button>' .
 					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-matrices-impacts" title="' . $L_Matrices_Impacts . '">00</button>' .
-					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-activites" title="' . $L_Activites . '">' . sprintf('%02d', $Occurrence->total_act) . '</button>';
+					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-activites" title="' . $L_Activites . '">00</button>';
 				
 				$Occurrence = $PageHTML->creerOccurrenceCorpsTableau( $Id_Campagne, $Valeurs, $Format_Colonnes );
 
@@ -453,10 +468,25 @@ switch( $Action ) {
 
 			if (isset($_POST['liste_ent_ajouter'])) {
 				if ($_POST['liste_ent_ajouter'] != []) {
-					foreach($_POST['liste_ent_ajouter'] as $ent_id) {
-						$objCampagnes->associerEntiteCampagne($_POST[ 'cmp_id' ], $ent_id);
+					foreach($_POST['liste_ent_ajouter'] as $Entite) {
+						$objCampagnes->associerEntiteCampagne($_POST[ 'cmp_id' ], $Entite[0], $Entite[1], $Entite[2], $Entite[3]);
 
-						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_CAMPAGNE', 'cmp_id="' . $_POST[ 'cmp_id' ] . '" => ent_id="' . $ent_id . '"' );
+						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_CAMPAGNE', 'cmp_id="' . $_POST[ 'cmp_id' ] . '" => ent_id="' . $Entite[0] . '"' .
+							', ppr_id_cpca="' . $Entite[1] . '", cmen_date_entretien_cpca="' . $Entite[2] . '"' .
+							', cmen_effectif_total="' . $Entite[3] . '"' );
+					}
+				}
+			}
+
+
+			if (isset($_POST['liste_ent_modifier'])) {
+				if ($_POST['liste_ent_modifier'] != []) {
+					foreach($_POST['liste_ent_modifier'] as $Entite) {
+						$objCampagnes->modifierEntiteCampagne($_POST[ 'cmp_id' ], $Entite[0], $Entite[1], $Entite[2], $Entite[3]);
+						
+						$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_CAMPAGNE', 'cmp_id="' . $_POST[ 'cmp_id' ] . '" => ent_id="' . $Entite[0] . '"' .
+							', ppr_id_cpca="' . $Entite[1] . '", cmen_date_entretien_cpca="' . $Entite[2] . '"' .
+							', cmen_effectif_total="' . $Entite[3] . '"' );
 					}
 				}
 			}
@@ -909,170 +939,42 @@ switch( $Action ) {
 	break;
 
 
- case 'AJAX_Ajouter_Application':
+ case 'AJAX_Ajouter_Partie_Prenante':
 	if ( $Droit_Ajouter === TRUE ) {
-		if ( isset($_POST['app_nom']) && isset($_POST['app_hebergement'])
-			&& isset($_POST['app_niveau_service']) ) {
-			if ($_POST['app_nom'] == '') {
-				$Resultat = array( 'statut' => 'error',
-					'titreMsg' => $L_Error,
-					'texteMsg' => $L_Field_Mandatory . ' (' . $_POST['app_nom'] . ')' );
-				
-				echo json_encode( $Resultat );
-				exit();
-			}
-
-			if ($_POST['app_hebergement'] == '') {
-				$Resultat = array( 'statut' => 'error',
-					'titreMsg' => $L_Error,
-					'texteMsg' => $L_Field_Mandatory . ' (' . $_POST['app_hebergement'] . ')' );
-				
-				echo json_encode( $Resultat );
-				exit();
-			}
-
-			if ($_POST['app_niveau_service'] == '') {
-				$Resultat = array( 'statut' => 'error',
-					'titreMsg' => $L_Error,
-					'texteMsg' => $L_Field_Mandatory . ' (' . $_POST['app_niveau_service'] . ')' );
-				
-				echo json_encode( $Resultat );
-				exit();
-			}
-
-			$_POST['app_nom'] = $PageHTML->controlerTypeValeur( $_POST['app_nom'], 'ASCII' );
-			if ( $_POST['app_nom'] == -1 ) {
+		if ( isset($_POST['ppr_nom']) || isset($_POST['ppr_prenom']) ) {
+			$_POST['ppr_nom'] = $PageHTML->controlerTypeValeur( $_POST['ppr_nom'], 'ASCII' );
+			if ($_POST['ppr_nom'] == -1) {
 				echo json_encode( array(
 					'statut' => 'error',
-					'texteMsg' => $L_Invalid_Value . ' (app_nom)'
+					'texteMsg' => $L_Invalid_Value . ' (ppr_nom)'
 				) );
 
 				exit();
 			}
 
-			$_POST['app_hebergement'] = $PageHTML->controlerTypeValeur( $_POST['app_hebergement'], 'ASCII' );
-			if ( $_POST['app_hebergement'] == -1 ) {
+			$_POST['ppr_prenom'] = $PageHTML->controlerTypeValeur( $_POST['ppr_prenom'], 'ASCII' );
+			if ( $_POST['ppr_prenom'] == -1 ) {
 				echo json_encode( array(
 					'statut' => 'error',
-					'texteMsg' => $L_Invalid_Value . ' (app_hebergement)'
+					'texteMsg' => $L_Invalid_Value . ' (ppr_prenom)'
 				) );
 
 				exit();
 			}
 
-			$_POST['app_niveau_service'] = $PageHTML->controlerTypeValeur( $_POST['app_niveau_service'], 'ASCII' );
-			if ( $_POST['app_niveau_service'] == -1 ) {
+			$_POST['ppr_interne'] = $PageHTML->controlerTypeValeur( $_POST['ppr_interne'], 'BOOLEAN' );
+			if ( $_POST['ppr_interne'] != TRUE && $_POST['ppr_interne'] != FALSE ) {
 				echo json_encode( array(
 					'statut' => 'error',
-					'texteMsg' => $L_Invalid_Value . ' (app_niveau_service)'
+					'texteMsg' => $L_Invalid_Value . ' (ppr_interne)'
 				) );
 
-				exit();
-			}
-
-			$_POST['cmp_id'] = $PageHTML->controlerTypeValeur( $_POST['cmp_id'], 'NUMBER' );
-			if ( $_POST['cmp_id'] == -1 ) {
-				echo json_encode( array(
-					'statut' => 'error',
-					'texteMsg' => $L_Invalid_Value . ' (cmp_id)'
-				) );
-
-				exit();
-			}
-
-
-			try {
-				$objApplications->majApplication( '', $_POST['app_nom'], $_POST['app_hebergement'],
-					$_POST['app_niveau_service'] );
-				$Id_Application = $objApplications->LastInsertId;
-			} catch( Exception $e ) {
-				echo json_encode( array(
-					'statut' => 'error',
-					'texteMsg' => $e->getMessage()
-				) );
-
-				exit();
-			}
-			echo json_encode( array(
-				'statut' => 'success',
-				'texteMsg' => $L_Application_Cree,
-				'app_id' => $Id_Application
-			) );
-		}
-	} else {
-		echo json_encode( array(
-			'statut' => 'error',
-			'texteMsg' => $L_No_Authorize
-		) );
-	}
-	break;
-
-
- case 'AJAX_Ajouter_Fournisseur':
-	if ( $Droit_Ajouter === TRUE ) {
-		if ( isset($_POST['frn_nom']) && isset($_POST['tfr_id']) && isset($_POST['frn_description']) ) {
-			if ($_POST['frn_nom'] == '') {
-				$Resultat = array( 'statut' => 'error',
-					'titreMsg' => $L_Error,
-					'texteMsg' => $L_Field_Mandatory . '(frn_nom)' );
-
-				echo json_encode( $Resultat );
-				exit();
-			}
-
-			if ($_POST['frn_description'] == '') {
-				$Resultat = array( 'statut' => 'error',
-					'titreMsg' => $L_Error,
-					'texteMsg' => $L_Field_Mandatory . '(frn_description)' );
-				
-				echo json_encode( $Resultat );
-				exit();
-			}
-
-			if ($_POST['tfr_id'] == '') {
-				$Resultat = array( 'statut' => 'error',
-					'titreMsg' => $L_Error,
-					'texteMsg' => $L_Field_Mandatory . '(tfr_id)' );
-				
-				echo json_encode( $Resultat );
-				exit();
-			}
-
-
-			$_POST['frn_nom'] = $PageHTML->controlerTypeValeur( $_POST['frn_nom'], 'ASCII' );
-			if ( $_POST['frn_nom'] == -1 ) {
-				echo json_encode( array(
-					'statut' => 'error',
-					'texteMsg' => $L_Invalid_Value . ' (frn_nom)'
-				) );
-				
-				exit();
-			}
-
-			$_POST['frn_description'] = $PageHTML->controlerTypeValeur( $_POST['frn_description'], 'ASCII' );
-			if ( $_POST['frn_description'] == -1 ) {
-				echo json_encode( array(
-					'statut' => 'error',
-					'texteMsg' => $L_Invalid_Value . ' (frn_description)'
-				) );
-
-				exit();
-			}
-
-			$_POST['tfr_id'] = $PageHTML->controlerTypeValeur( $_POST['tfr_id'], 'NUMBER' );
-			if ( $_POST['tfr_id'] == -1 ) {
-				echo json_encode( array(
-					'statut' => 'error',
-					'texteMsg' => $L_Invalid_Value . ' (tfr_id)'
-				) );
-				
 				exit();
 			}
 
 			try {
-				$objFournisseurs->majFournisseur( '', $_POST[ 'tfr_id' ], $_POST[ 'frn_nom' ],
-					$_POST[ 'frn_description' ] );
-				$Id_Fournisseur = $objFournisseurs->LastInsertId;
+				$objPartiesPrenantes->majPartiePrenante( '', $_SESSION['s_sct_id'], $_POST[ 'ppr_nom' ], $_POST[ 'ppr_prenom' ], $_POST[ 'ppr_interne' ] );
+				$Id_Partie_Prenante = $objPartiesPrenantes->LastInsertId;
 			} catch( Exception $e ) {
 				echo json_encode( array(
 					'statut' => 'error',
@@ -1081,19 +983,21 @@ switch( $Action ) {
 				
 				exit();
 			}
+
 			echo json_encode( array(
 				'statut' => 'success',
-				'texteMsg' => $L_Fournisseur_Cree,
-				'frn_id' => $Id_Fournisseur
+				'texteMsg' => $L_PartiePrenante_Creee,
+				'ppr_id' => $Id_Partie_Prenante,
+				'L_Interne' => $PageHTML->getLibelle('__LRI_INTERNE'),
+				'L_Externe' => $PageHTML->getLibelle('__LRI_EXTERNE')
 			) );
 		} else {
 			$Resultat = array( 'statut' => 'error',
 				'titreMsg' => $L_Error,
-				'texteMsg' => $L_Field_Mandatory . '[frn_nom, tfr_id, frn_description]' );
+				'texteMsg' => $L_Field_Mandatory );
 			
 			echo json_encode( $Resultat );
 			exit();
-
 		}
 	} else {
 		echo json_encode( array(
@@ -1102,8 +1006,8 @@ switch( $Action ) {
 		) );
 	}
 	break;
-	
-	
+
+
  case 'AJAX_Ajouter_Site':
 	if ( $Droit_Ajouter === TRUE ) {
 		if ( isset($_POST['sts_nom']) ) {

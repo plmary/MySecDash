@@ -8,9 +8,17 @@ function ModifierActivite( act_id ) {
 	var act_dependances_internes_amont = $('#act_dependances_internes_amont').val();
 	var act_dependances_internes_aval = $('#act_dependances_internes_aval').val();
 	var act_effectifs_en_nominal = Number( $('#act_effectifs_en_nominal').val() );
+	var act_taux_occupation = Number( $('#act_taux_occupation').val() );
 	var act_effectifs_a_distance = Number( $('#act_effectifs_a_distance').val() );
 	var act_justification_dmia = $('#act_justification_dmia').val();
 	var total_dmia = Number($('#ACT_'+act_id+' .btn_ete').text());
+	var act_strategie_montee_en_charge = $('#act_strategie_montee_en_charge').val();
+	var act_description_entraides = $('#act_description_entraides').val();
+	var cmen_effectif_total = Number( $('#cmen_effectif_total').val() );
+
+	if ( cmen_effectif_total == Number( $('#cmen_effectif_total').attr("data-old_value")) ) {
+		cmen_effectif_total = null;
+	}
 
 	var dmia_activite = [];
 
@@ -147,6 +155,22 @@ function ModifierActivite( act_id ) {
 		}
 	});
 
+
+	var Liste_PPR_Ajouter = [];
+	var Liste_PPR_Modifier = [];
+
+	$('input[id^="personnes_prioritaires-"]').each(function(index, element){
+		if ($(element).val() != $(element).attr('data-old_value')) {
+			ete_id = $(element).attr('id').split('-')[1];
+
+			if ( $(element).attr('data-old_value') == '') {
+				Liste_PPR_Ajouter.push([act_id, ete_id, $(element).val()]);
+			} else {
+				Liste_PPR_Modifier.push([act_id, ete_id, $(element).val()]);
+			}
+		}
+	});
+
 	var nim_nom_code = $('#act_niveau_impact_max').attr('title');
 	var nim_couleur = $('#act_niveau_impact_max').css('background-color');
 	var nim_numero = $('#act_niveau_impact_max').val();
@@ -155,14 +179,15 @@ function ModifierActivite( act_id ) {
 	$.ajax({
 		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Modifier',
 		type: 'POST',
-		data: $.param({'act_id': act_id, 'act_nom': act_nom, 'ppr_id_responsable': ppr_id_responsable,
-			'ppr_id_suppleant': ppr_id_suppleant,
+		data: $.param({'act_id': act_id, 'act_nom': act_nom,
+			'ppr_id_responsable': ppr_id_responsable, 'ppr_id_suppleant': ppr_id_suppleant,
 			'act_description': act_description, 'act_teletravail': act_teletravail,
-			'dmia_activite': dmia_activite, 
+			'dmia_activite': dmia_activite, 'act_taux_occupation': act_taux_occupation,
 			'act_dependances_internes_amont': act_dependances_internes_amont,
 			'act_dependances_internes_aval': act_dependances_internes_aval,
 			'act_effectifs_en_nominal': act_effectifs_en_nominal, 'act_effectifs_a_distance': act_effectifs_a_distance,
-			'act_justification_dmia': act_justification_dmia,
+			'act_strategie_montee_en_charge': act_strategie_montee_en_charge, 'act_description_entraides': act_description_entraides,
+			'act_justification_dmia': act_justification_dmia, 'cmen_effectif_total': cmen_effectif_total, 
 			'personnes_cles_a_ajouter': Liste_CLE_Ajouter, 'personnes_cles_a_supprimer': Liste_CLE_Supprimer,
 			'personnes_cles_a_modifier': Liste_CLE_Modifier,
 			'applications_a_ajouter': Liste_APP_Ajouter, 'applications_a_supprimer': Liste_APP_Supprimer,
@@ -170,7 +195,9 @@ function ModifierActivite( act_id ) {
 			'fournisseurs_a_ajouter': Liste_FRN_Ajouter, 'fournisseurs_a_supprimer': Liste_FRN_Supprimer,
 			'fournisseurs_a_modifier': Liste_FRN_Modifier,
 			'sites_a_ajouter': Liste_STS_Ajouter, 'sites_a_supprimer': Liste_STS_Supprimer,
-			'sites_a_modifier': Liste_STS_Modifier}), // les paramètres sont protégés avant envoi
+			'sites_a_modifier': Liste_STS_Modifier,
+			'personnes_prioritaires_a_ajouter': Liste_PPR_Ajouter,
+			'personnes_prioritaires_a_modifier': Liste_PPR_Modifier}), // les paramètres sont protégés avant envoi
 		dataType: 'json', // le résultat est transmit dans un objet JSON
 		success: function( reponse ) { // Le serveur n'a pas rencontré de problème lors de l'échange ou de l'exécution.
 			var statut = reponse['statut'];

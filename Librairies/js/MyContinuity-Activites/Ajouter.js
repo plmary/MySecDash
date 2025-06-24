@@ -21,10 +21,18 @@ function AjouterActivite() {
 	var act_dependances_internes_amont = $('#act_dependances_internes_amont').val();
 	var act_dependances_internes_aval = $('#act_dependances_internes_aval').val();
 	var act_effectifs_en_nominal = Number( $('#act_effectifs_en_nominal').val() );
+	var act_taux_occupation = Number( $('#act_taux_occupation').val() );
 	var act_effectifs_a_distance = Number( $('#act_effectifs_a_distance').val() );
 	var act_justification_dmia = $('#act_justification_dmia').val();
+	var act_strategie_montee_en_charge = $('#act_strategie_montee_en_charge').val();
+	var act_description_entraides = $('#act_description_entraides').val();
 	var dmia_activite = [];
 	var total_dmia = 0;
+	var cmen_effectif_total = Number( $('#cmen_effectif_total').val() );
+
+	if ( cmen_effectif_total == Number( $('#cmen_effectif_total').attr("data-old_value")) ) {
+		cmen_effectif_total = null;
+	}
 
 	$('[id^="echelle-1-"]').each(function(index, value){
 		var ete_id = $(value).attr('data-ete_id');
@@ -112,10 +120,32 @@ function AjouterActivite() {
 	var total = $( '#totalOccurrences' ).text();
 	total = Number(total) + 1;
 
+
+	var Liste_PPR_Ajouter = [];
+
+	$('input[id^="personnes_prioritaires-"]').each(function(index, element){
+		if ($(element).val() != $(element).attr('data-old_value')) {
+			ete_id = $(element).attr('id').split('-')[1];
+
+			Liste_PPR_Ajouter.push([0, ete_id, $(element).val()]);
+		}
+	});
+
 	var nim_nom_code = $('#act_niveau_impact_max').attr('title');
 	var nim_couleur = $('#act_niveau_impact_max').css('background-color');
 	var nim_numero = $('#act_niveau_impact_max').val();
 	var ete_nom_code = $('#act_dmia_max').val();
+
+/*	alert('act_nom: '+act_nom+', ppr_id_responsable: '+ppr_id_responsable+', act_teletravail: '+act_teletravail+
+		', ppr_id_suppleant: '+ppr_id_suppleant+', act_description: '+act_description+', dmia_activite: '+dmia_activite+', total_dmia: '+total_dmia+
+		', act_dependances_internes_amont: '+act_dependances_internes_amont+', act_dependances_internes_aval: '+act_dependances_internes_aval+
+		', act_effectifs_en_nominal: '+act_effectifs_en_nominal+', act_effectifs_a_distance: '+act_effectifs_a_distance+
+		', act_justification_dmia: '+act_justification_dmia+', cmen_effectif_total: '+cmen_effectif_total+', act_taux_occupation: '+act_taux_occupation+
+		', act_strategie_montee_en_charge: '+act_strategie_montee_en_charge+', act_description_entraides: '+act_description_entraides+
+		', personnes_cles_a_ajouter: '+Liste_PPR_CLE_Ajouter+', nim_nom_code: '+nim_nom_code+
+		', nim_couleur: '+nim_couleur+', nim_numero: '+nim_numero+', ete_nom_code: '+ete_nom_code+
+		', applications_a_ajouter: '+Liste_APP_Ajouter+', fournisseurs_a_ajouter: '+Liste_FRN_Ajouter+', sites_a_ajouter: '+Liste_STS_Ajouter+
+		', personnes_prioritaires_a_ajouter: '+Liste_PPR_Ajouter); */
 
 	$.ajax({
 		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Ajouter',
@@ -125,10 +155,12 @@ function AjouterActivite() {
 			'ppr_id_suppleant': ppr_id_suppleant, 'act_description': act_description, 'dmia_activite': dmia_activite, 'total_dmia': total_dmia,
 			'act_dependances_internes_amont': act_dependances_internes_amont, 'act_dependances_internes_aval': act_dependances_internes_aval,
 			'act_effectifs_en_nominal': act_effectifs_en_nominal, 'act_effectifs_a_distance': act_effectifs_a_distance,
-			'act_justification_dmia': act_justification_dmia,
+			'act_justification_dmia': act_justification_dmia, 'cmen_effectif_total': cmen_effectif_total, 'act_taux_occupation': act_taux_occupation,
+			'act_strategie_montee_en_charge': act_strategie_montee_en_charge, 'act_description_entraides': act_description_entraides,
 			'personnes_cles_a_ajouter': Liste_PPR_CLE_Ajouter, 'nim_nom_code': nim_nom_code,
 			'nim_couleur': nim_couleur, 'nim_numero': nim_numero, 'ete_nom_code': ete_nom_code,
-			'applications_a_ajouter': Liste_APP_Ajouter, 'fournisseurs_a_ajouter': Liste_FRN_Ajouter, 'sites_a_ajouter': Liste_STS_Ajouter}), // les paramètres sont protégés avant envoi
+			'applications_a_ajouter': Liste_APP_Ajouter, 'fournisseurs_a_ajouter': Liste_FRN_Ajouter, 'sites_a_ajouter': Liste_STS_Ajouter,
+			'personnes_prioritaires_a_ajouter': Liste_PPR_Ajouter}), // les paramètres sont protégés avant envoi
 		dataType: 'json', // le résultat est transmit dans un objet JSON
 		success: function( reponse ) { // Le serveur n'a pas rencontré de problème lors de l'échange ou de l'exécution.
 			var statut = reponse['statut'];
@@ -144,14 +176,15 @@ function AjouterActivite() {
 				$( reponse[ 'texte' ] ).prependTo( '#corps_tableau' );
 				$( '#totalOccurrences' ).text( ajouterZero( total ) );
 
-				var total_sites = 0;
+/*				var total_sites = 0;
 				if (sts_id_nominal != '' && sts_id_nominal != null) total_sites += 1;
-				if (sts_id_secours != '' && sts_id_secours != null) total_sites += 1;
+				if (sts_id_secours != '' && sts_id_secours != null) total_sites += 1; */
 
 				$('#ACT_' + act_id + ' .btn_sts').text( total_sites );
-				$('#ACT_' + act_id + ' .btn_ete').text( dmia_activite.length );
+//				$('#ACT_' + act_id + ' .btn_ete').text( dmia_activite.length );
 				$('#ACT_' + act_id + ' .btn_ppr').text( total_personnes_cles );
 				$('#ACT_' + act_id + ' .btn_app').text( total_applications );
+				$('#ACT_' + act_id + ' .btn_frn').text( total_fournisseurs );
 
 				// Assigne l'événement "click" sur le bouton de Modification
 				if ( reponse[ 'droit_modifier' ] == true ) {
@@ -238,19 +271,19 @@ function DupliquerActivite( act_id ) {
 }
 
 
-function creerPersonneCle() {
+function creerPersonneCle( L_ERR_Champs_Obligatoires, L_Interne ) {
 	var ppr_nom = $('#ppr_nom_cle').val();
 	var ppr_prenom = $('#ppr_prenom_cle').val();
 	
 	if (ppr_nom == '') {
 		$('#ppr_nom_cle').focus();
-		afficherMessage( reponse['L_ERR_Champs_Obligatoires'], 'erreur', 'body' );
+		afficherMessage( L_ERR_Champs_Obligatoires, 'erreur', 'body' );
 		return -1;
 	}
 	
 	if (ppr_prenom == '') {
 		$('#ppr_prenom_cle').focus();
-		afficherMessage( reponse['L_ERR_Champs_Obligatoires'], 'erreur', 'body' );
+		afficherMessage( L_ERR_Champs_Obligatoires, 'erreur', 'body' );
 		return -1;
 	}
 	
@@ -259,7 +292,7 @@ function creerPersonneCle() {
 	
 	if ($('#ppr_interne_cle').is(':checked') == true) {
 		ppr_interne = 1;
-		t_ppr_interne = ' (' + reponse['L_Interne'] + ')';
+		t_ppr_interne = ' (' + L_Interne + ')';
 	} else {
 		ppr_interne = 0;
 		t_ppr_interne = '';
@@ -427,15 +460,15 @@ function creerApplication() {
 				if (app_hebergement == '') {
 					app_hebergement = reponse['L_Hebergement'];
 				}
-				Nom_Complet += '<input type="text" class="form-control" id="acap_hebergement-'+Application.app_id+'" ' +
-					'placeholder="' + Application.app_hebergement + '" value="">';
+				Nom_Complet += '<input type="text" class="form-control" id="acap_hebergement-'+app_id+'" ' +
+					'placeholder="' + app_hebergement + '" value="">';
 
-				if (Application.app_niveau_service == null) Application.app_niveau_service = '';
-				if (Application.app_niveau_service == '') {
-					Application.app_niveau_service = reponse['L_Niveau_Service'];
+				if (app_niveau_service == null) app_niveau_service = '';
+				if (app_niveau_service == '') {
+					app_niveau_service = reponse['L_Niveau_Service'];
 				}
-				Nom_Complet += '<input type="text" class="form-control" id="acap_niveau_service-'+Application.app_id+'" ' + 
-					'placeholder="' + Application.app_niveau_service + '" value="">';
+				Nom_Complet += '<input type="text" class="form-control" id="acap_niveau_service-'+app_id+'" ' + 
+					'placeholder="' + app_niveau_service + '" value="">';
 
 				if (app_description != '' && app_description != null) {
 					Nom_Complet += ' [' + app_description + ']';

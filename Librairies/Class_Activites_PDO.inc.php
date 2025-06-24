@@ -30,8 +30,8 @@ class Activites extends HBL_Connexioneur_BD {
 
 	public function majActivite( $act_id, $cmp_id, $ent_id, $ppr_id_responsable, $ppr_id_suppleant,
 		$act_nom, $act_description, $act_effectifs_en_nominal = '', $act_effectifs_a_distance = '',
-		$act_teletravail = 1, $act_dependances_internes_amont = "",
-		$act_dependances_internes_aval = "", $act_justification_dmia = "") {
+		$act_teletravail = 1, $act_dependances_internes_amont = "", $act_dependances_internes_aval = "",
+		$act_justification_dmia = "", $act_taux_occupation = "", $act_description_entraides = "", $act_strategie_montee_en_charge = "") {
 	/**
 	* Crée ou met à jour une Activité.
 	*
@@ -52,33 +52,58 @@ class Activites extends HBL_Connexioneur_BD {
 	* \param[in] $act_dependances_internes_amont Décrit les dépendances internes en amont de l'Activité
 	* \param[in] $act_dependances_internes_aval Décrit les dépendances internes en aval de l'Activité
 	* \param[in] $act_justification_dmia Justification du DMIA mis en oeuvre
+	* \param[in] $act_taux_occupation Taux d'occupation de l'effectif nominal sur l'Activité
+	* \param[in] $act_description_entraides Taux d'occupation de l'effectif nominal sur l'Activité
+	* \param[in] $act_strategie_montee_en_charge Taux d'occupation de l'effectif nominal sur l'Activité
 	*
 	* \return Renvoi un booléen sur le succès de la création ou la modification de l'application
 	*/
 		if ( $act_id == '' ) {
 			$Request = 'INSERT INTO act_activites
-				( cmp_id, ent_id, ppr_id_responsable, act_nom, ';
+				( cmp_id, ent_id, ppr_id_responsable, act_nom ';
 
-			if ( $ppr_id_suppleant != '') $Request .= 'ppr_id_suppleant, ' ;
-			if ( $act_description != '' ) $Request .= 'act_description, ';
+			if ( $ppr_id_suppleant != '') {
+				$Request .= ', ppr_id_suppleant ' ;
+			}
 
-			$Request .= 'act_teletravail, act_dependances_internes_amont, act_dependances_internes_aval,
+			if ( $act_description != '' ) {
+				$Request .= ', act_description ';
+			}
+
+			$Request .= ', act_teletravail, act_dependances_internes_amont, act_dependances_internes_aval,
 				act_justification_dmia ';
-			
+
 			if ( $act_effectifs_en_nominal != '' ) {
 				$Request .= ', act_effectifs_en_nominal ';
 			}
-			
+
 			if ( $act_effectifs_a_distance != '' ) {
 				$Request .= ', act_effectifs_a_distance ';
 			}
+
+			if ( $act_taux_occupation != '' ) {
+				$Request .= ', act_taux_occupation ';
+			}
+
+			if ( $act_description_entraides != '' ) {
+				$Request .= ', act_description_entraides ';
+			}
+
+			if ( $act_strategie_montee_en_charge != '' ) {
+				$Request .= ', act_strategie_montee_en_charge ';
+			}
+
+			$Request .= ') VALUES ( :cmp_id, :ent_id, :ppr_id_responsable, :act_nom ';
 			
-			$Request .= ') VALUES ( :cmp_id, :ent_id, :ppr_id_responsable, :act_nom, ';
-			
-			if ( $ppr_id_suppleant != '') $Request .= ':ppr_id_suppleant, ';
-			if ( $act_description != '' ) $Request .= ':act_description, ';
-			
-			$Request .= ':act_teletravail, :act_dependances_internes_amont, :act_dependances_internes_aval,
+			if ( $ppr_id_suppleant != '') {
+				$Request .= ', :ppr_id_suppleant ';
+			}
+
+			if ( $act_description != '' ) {
+				$Request .= ', :act_description ';
+			}
+
+			$Request .= ', :act_teletravail, :act_dependances_internes_amont, :act_dependances_internes_aval,
 				:act_justification_dmia ';
 
 			if ( $act_effectifs_en_nominal != '' ) {
@@ -89,8 +114,20 @@ class Activites extends HBL_Connexioneur_BD {
 				$Request .= ', :act_effectifs_a_distance ';
 			}
 
+			if ( $act_taux_occupation != '' ) {
+				$Request .= ', :act_taux_occupation ';
+			}
+
+			if ( $act_description_entraides != '' ) {
+				$Request .= ', :act_description_entraides ';
+			}
+
+			if ( $act_strategie_montee_en_charge != '' ) {
+				$Request .= ', :act_strategie_montee_en_charge ';
+			}
+
 			$Request .= ') ';
-			
+
 			$Query = $this->prepareSQL( $Request );
 		} else {
 			$Request = 'UPDATE act_activites SET
@@ -119,6 +156,18 @@ class Activites extends HBL_Connexioneur_BD {
 				$Request .= ', act_description = :act_description ';
 			}
 
+			if ( $act_taux_occupation != '' ) {
+				$Request .= ', act_taux_occupation = :act_taux_occupation ';
+			}
+
+			if ( $act_description_entraides != '' ) {
+				$Request .= ', act_description_entraides = :act_description_entraides ';
+			}
+
+			if ( $act_strategie_montee_en_charge != '' ) {
+				$Request .= ', act_strategie_montee_en_charge = :act_strategie_montee_en_charge ';
+			}
+
 			$Request .= 'WHERE act_id = :act_id';
 
 			$Query = $this->prepareSQL( $Request );
@@ -142,6 +191,12 @@ class Activites extends HBL_Connexioneur_BD {
 		if ( $ppr_id_suppleant != '') $this->bindSQL( $Query, ':ppr_id_suppleant', $ppr_id_suppleant, PDO::PARAM_INT );
 
 		if ( $act_description != '' ) $this->bindSQL( $Query, ':act_description', $act_description, PDO::PARAM_LOB );
+
+		if ( $act_taux_occupation != '' ) $this->bindSQL( $Query, ':act_taux_occupation', $act_taux_occupation, PDO::PARAM_INT );
+
+		if ( $act_description_entraides != '' ) $this->bindSQL( $Query, ':act_description_entraides', $act_description_entraides, PDO::PARAM_LOB );
+
+		if ( $act_strategie_montee_en_charge != '' ) $this->bindSQL( $Query, ':act_strategie_montee_en_charge', $act_strategie_montee_en_charge, PDO::PARAM_LOB );
 
 		if ($act_teletravail == 0) $act_teletravail = FALSE;
 		else $act_teletravail = TRUE;
@@ -497,7 +552,7 @@ class Activites extends HBL_Connexioneur_BD {
 	}
 
 
-	public function rechercherActivites( $cmp_id, $ent_id, $Order = 'act_nom', $act_id = '' ) {
+	public function rechercherActivites( $cmp_id, $ent_id = '*', $Order = 'act_nom', $act_id = '' ) {
 	/**
 	* Lister les Activités.
 	*
@@ -513,11 +568,13 @@ class Activites extends HBL_Connexioneur_BD {
 	* \return Renvoi une liste des Activités ou une liste vide
 	*/
 		$Request = 'SELECT
-act.act_id, act.ppr_id_responsable, act.ppr_id_suppleant,
+act.act_id, act.ppr_id_responsable, act.ppr_id_suppleant, act.act_effectifs_en_nominal, act.act_effectifs_a_distance, act.act_taux_occupation,
 ppr_resp.ppr_nom AS "ppr_nom_resp", ppr_resp.ppr_prenom AS "ppr_prenom_resp",
 ppr_supp.ppr_nom AS "ppr_nom_supp", ppr_supp.ppr_prenom AS "ppr_prenom_supp",
 act_nom, act_description, act_effectifs_en_nominal, act_effectifs_a_distance, act_teletravail, act_dependances_internes_amont,
-act_dependances_internes_aval, act_justification_dmia, min_max.nim_poids, max_dmia.ete_poids,
+act_dependances_internes_aval, act_justification_dmia, act_description_entraides, act_strategie_montee_en_charge,
+min_max.nim_poids, max_dmia.ete_poids, ent.ent_nom, ent.ent_description, cmen.cmen_effectif_total,
+STRING_AGG( DISTINCT sts_nom || \'---\' || sts_description || \'---\' || acst_type_site, \'###\' ) AS "sites",
 COUNT(DISTINCT ppac.ppr_id) AS "total_ppr",
 COUNT(DISTINCT acst.sts_id) AS "total_sts",
 COUNT(DISTINCT dma.ete_id) AS "total_dma",
@@ -535,6 +592,9 @@ LEFT JOIN ppr_parties_prenantes AS "ppr_resp" ON ppr_resp.ppr_id = act.ppr_id_re
 LEFT JOIN ppr_parties_prenantes AS "ppr_supp" ON ppr_supp.ppr_id = act.ppr_id_suppleant
 LEFT JOIN ppac_ppr_act AS "ppac" ON ppac.act_id = act.act_id
 LEFT JOIN acst_act_sts AS "acst" ON acst.act_id = act.act_id
+LEFT JOIN sts_sites AS "sts" ON sts.sts_id = acst.sts_id
+LEFT JOIN ent_entites AS "ent" ON ent.ent_id = act.ent_id
+LEFT JOIN cmen_cmp_ent AS "cmen" ON cmen.ent_id = ent.ent_id AND cmen.cmp_id = :cmp_id
 LEFT JOIN
 	(SELECT act_id, max(nim.nim_poids) AS "nim_poids" 
 	FROM dma_dmia_activite AS "dma" 
@@ -549,14 +609,17 @@ LEFT JOIN
 	LEFT JOIN ete_echelle_temps AS "ete" ON ete.ete_id = dma2.ete_id
 	GROUP BY act_id) AS "max_dmia" ON max_dmia.act_id = act.act_id
 
-WHERE act.cmp_id = :cmp_id AND act.ent_id = :ent_id ';
+WHERE act.cmp_id = :cmp_id ';
+
+		if ( $ent_id != '*' ) $Request .= 'AND act.ent_id = :ent_id ';
 
 		if ( $act_id != '' ) $Request .= 'AND act.act_id = :act_id ';
 
 		$Request .= 'GROUP BY act.act_id, act.ppr_id_responsable, act.ppr_id_suppleant,
 ppr_nom_resp, ppr_prenom_resp, ppr_nom_supp, ppr_prenom_supp, act_effectifs_en_nominal, act_effectifs_a_distance, 
 act_nom, act_description, act_teletravail, act_dependances_internes_amont,
-act_dependances_internes_aval, act_justification_dmia, min_max.nim_poids, max_dmia.ete_poids ';
+act_dependances_internes_aval, act_justification_dmia, min_max.nim_poids, max_dmia.ete_poids, ent.ent_nom, ent.ent_description,
+cmen.cmen_effectif_total ';
 
 		switch ( $Order ) {
 		 default:
@@ -571,11 +634,19 @@ act_dependances_internes_aval, act_justification_dmia, min_max.nim_poids, max_dm
 		 case 'ppr_id_suppleant':
 		 	$Request .= 'ORDER BY ppr_nom_supp, ppr_prenom_supp ';
 		 	break;
-		 	
+
 		 case 'ppr_id_suppleant-desc':
 		 	$Request .= 'ORDER BY ppr_nom_supp DESC, ppr_prenom_supp DESC ';
 		 	break;
-		 	
+
+		 case 'ent_nom':
+			$Request .= 'ORDER BY ent_nom ';
+			break;
+
+		 case 'ent_nom-desc':
+			$Request .= 'ORDER BY ent_nom DESC ';
+			break;
+
 		 case 'act_nom':
 			$Request .= 'ORDER BY act_nom ';
 			break;
@@ -620,9 +691,52 @@ act_dependances_internes_aval, act_justification_dmia, min_max.nim_poids, max_dm
 		$Query = $this->prepareSQL( $Request );
 
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT ) ;
-		$this->bindSQL( $Query, ':ent_id', $ent_id, PDO::PARAM_INT ) ;
-		
+
 		if ( $act_id != '' ) $this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
+
+		if ( $ent_id != '*' ) $this->bindSQL( $Query, ':ent_id', $ent_id, PDO::PARAM_INT ) ;
+
+		$this->executeSQL( $Query );
+
+		return $Query->fetchAll( PDO::FETCH_CLASS );
+	}
+	
+	
+	public function rechercherEffectifsActivite( $cmp_id, $ent_id = '*' ) {
+		/**
+		 * Lister les Effectfis par Activité.
+		 *
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2024-03-05
+		 *
+		 * \param[in] $cmp_id Identifiant de la Campagne de rattachement
+		 *
+		 * \return Renvoi une liste des Activités ou une liste vide
+		 */
+		$Request = 'SELECT
+act.act_nom, act_effectifs_en_nominal, act_effectifs_a_distance, ent_nom, ent_description,
+STRING_AGG( DISTINCT sts_nom || \'---\' || sts_description || \'---\' || acst_type_site, \'###\' ) AS "sites"
+FROM act_activites AS "act"
+LEFT JOIN ent_entites AS "ent" ON ent.ent_id = act.ent_id
+LEFT JOIN acst_act_sts AS "acst" ON acst.act_id = act.act_id
+LEFT JOIN sts_sites AS "sts" ON sts.sts_id = acst.sts_id ';
+		if ( $ent_id == '*' ) {
+			$Request .= 'WHERE act.cmp_id = :cmp_id ';
+		} else {
+			$Request .= 'WHERE act.cmp_id = :cmp_id AND act.ent_id = :ent_id ';
+		}
+		$Request .= 'GROUP BY act.act_nom, act_effectifs_en_nominal, act_effectifs_a_distance, ent_nom, ent_description 
+ORDER BY ent_nom ';
+		
+		
+		$Query = $this->prepareSQL( $Request );
+		
+		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT ) ;
+
+		if ( $ent_id != '*' ) {
+			$this->bindSQL( $Query, ':ent_id', $ent_id, PDO::PARAM_INT ) ;
+		}
 
 		$this->executeSQL( $Query );
 
@@ -671,10 +785,10 @@ ORDER BY sts_nom ';
 		 * \return Renvoi une liste des Activités ou une liste vide
 		 */
 		
-		$Request = 'SELECT sts.*, act_id AS "associe", acst_type_site, acst_strategie_montee_charge, acst_description_entraides
+		$Request = 'SELECT sts.*, act_id AS "associe", acst_type_site
 FROM cmst_cmp_sts AS "cmst"
 LEFT JOIN sts_sites AS "sts" ON sts.sts_id = cmst.sts_id
-LEFT JOIN (SELECT act_id, sts_id, acst_type_site, acst_strategie_montee_charge, acst_description_entraides
+LEFT JOIN (SELECT act_id, sts_id, acst_type_site
 	FROM acst_act_sts WHERE act_id = :act_id ) AS "acst" ON acst.sts_id = sts.sts_id
 WHERE cmst.cmp_id = :cmp_id
 ORDER BY sts_nom ';
@@ -1342,7 +1456,8 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 * \author Pierre-Luc MARY
 		 * \date 2024-08-18
 		 *
-		 * \param[in] $cmp_id Identifiant de la Campagne à associer
+		 * \param[in] $cmp_id Identifiant de la Campagne associée
+		 * \param[in] $act_id Identifiant de l'Activité associée
 		 *
 		 * \return Renvoi les occurrences qui sont associées à une Campagne. Lève une Exception en cas d'erreur.
 		 */
@@ -1363,6 +1478,31 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		return $Query->fetchAll( PDO::FETCH_CLASS );
 	}
 
+
+	public function recupererPersonnesPrioritaires($act_id) {
+		/**
+		 * Récupère les Personnes Prioritaires d'une Activité.
+		 *
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2025-04-15
+		 *
+		 * \param[in] $act_id Identifiant de l'Activité associée
+		 *
+		 * \return Renvoi les occurrences qui sont associées à une Activité. Lève une Exception en cas d'erreur.
+		 */
+		$Request = 'SELECT * FROM rut_redemarrage_utilisateurs AS "rut"
+			WHERE rut.act_id = :act_id ';
+		
+		$Query = $this->prepareSQL( $Request );
+		
+		$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT ) ;
+		
+		$this->executeSQL( $Query );
+		
+		return $Query->fetchAll( PDO::FETCH_CLASS );
+	}
+	
 
 	public function rechercherPersonnesClesActivites( $sct_id, $act_id = 0 ) {
 		/**
@@ -1431,6 +1571,73 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		return $Query->fetchAll( PDO::FETCH_CLASS );
 	}
 	
+	
+	public function ajouterNombrePersonnesPrioritairesActivite( $act_id, $ete_id, $rut_nbr_utilisateurs_a_redemarrer ) {
+		/**
+		 * Associe un Nombre de Personnes Prioritaires à redémarrer sur une Période et pour une Activité.
+		 *
+		 * \license Copyleft Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2025-04-16
+		 *
+		 * \param[in] $act_id Identifiant de l'Activité à associer
+		 * \param[in] $ete_id Identifiant de la Période à associer
+		 * \param[in] $rut_nbr_utilisateurs_a_redemarrer Nombre de Personnes Prioritaires à redémarrer
+		 *
+		 * \return Renvoi TRUE si l'occurrence est créée. Lève une Exception en cas d'erreur.
+		 */
+		$Request = 'INSERT INTO rut_redemarrage_utilisateurs AS "rut" (act_id, ete_id, rut_nbr_utilisateurs_a_redemarrer)
+			VALUES (:act_id, :ete_id, :rut_nbr_utilisateurs_a_redemarrer) ';
+		
+		
+		$Query = $this->prepareSQL( $Request );
+		
+		$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':ete_id', $ete_id, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':rut_nbr_utilisateurs_a_redemarrer', $rut_nbr_utilisateurs_a_redemarrer, PDO::PARAM_INT );
+		
+		$this->executeSQL( $Query );
+		
+		if ( $this->RowCount == 0 ) {
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+	
+	
+	public function modifierNombrePersonnesPrioritairesActivite( $act_id, $ete_id, $rut_nbr_utilisateurs_a_redemarrer ) {
+		/**
+		 * Modifie le Nombre de Personnes Prioritaires à redémarrer sur une Période et pour une Activité.
+		 *
+		 * \license Copyleft Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2025-04-16
+		 *
+		 * \param[in] $act_id Identifiant de l'Activité à associer
+		 * \param[in] $ete_id Identifiant de la Période à associer
+		 * \param[in] $rut_nbr_utilisateurs_a_redemarrer Nombre de Personnes Prioritaires à redémarrer
+		 *
+		 * \return Renvoi TRUE si l'occurrence est modifiée. Lève une Exception en cas d'erreur.
+		 */
+		$Request = 'UPDATE rut_redemarrage_utilisateurs SET rut_nbr_utilisateurs_a_redemarrer = :rut_nbr_utilisateurs_a_redemarrer
+			WHERE act_id = :act_id AND ete_id = :ete_id';
+		
+		$Query = $this->prepareSQL( $Request );
+		
+		$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':ete_id', $ete_id, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':rut_nbr_utilisateurs_a_redemarrer', $rut_nbr_utilisateurs_a_redemarrer, PDO::PARAM_INT );
+		
+		$this->executeSQL( $Query );
+		
+		if ( $this->RowCount == 0 ) {
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+
 
 	public function ajouterPersonneCleActivite( $cmp_id, $act_id, $ppr_id, $ppac_description ) {
 		/**
@@ -1485,20 +1692,20 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 */
 		$Request = 'UPDATE ppac_ppr_act SET ppac_description = :ppac_description
 			WHERE cmp_id = :cmp_id AND act_id = :act_id AND ppr_id = :ppr_id';
-
+		
 		$Query = $this->prepareSQL( $Request );
-
+		
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':ppr_id', $ppr_id, PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':ppac_description', $ppac_description, PDO::PARAM_LOB );
-
+		
 		$this->executeSQL( $Query );
-
+		
 		if ( $this->RowCount == 0 ) {
 			return FALSE;
 		}
-
+		
 		return TRUE;
 	}
 

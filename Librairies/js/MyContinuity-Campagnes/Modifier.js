@@ -14,6 +14,7 @@ function ModifierCampagne( cmp_id ) {
 	var cmp_validation = $('#cmp_flag_validation').val();
 
 	var Liste_ENT_Ajouter = [];
+	var Liste_ENT_Modifier = [];
 	var Liste_ENT_Supprimer = [];
 	var total_entites = Number($('#CMP_'+cmp_id+' .btn-entites').text());
 
@@ -31,14 +32,24 @@ function ModifierCampagne( cmp_id ) {
 
 
 	$('input[id^="entite-"]').each(function(index, element){
+		var ent_id = $(element).attr('id').split('-')[1];
+
 		if ($(element).is(':checked')) {
 			if ( $(element).attr('data-old_value') == 0) {
-				Liste_ENT_Ajouter.push($(element).attr('id').split('-')[1]);
+				Liste_ENT_Ajouter.push([ent_id, $('#ppr_id_cpca-'+ent_id).val(), $('#cmen_date_entretien_cpca-'+ent_id).val(),
+					$('#cmen_effectif_total-'+ent_id).val()]);
 				total_entites += 1;
+			} else {
+				if ($('#ppr_id_cpca-'+ent_id).val() != $('#ppr_id_cpca-'+ent_id).attr('data-old_value') ||
+				 $('#cmen_date_entretien_cpca-'+ent_id).val() != $('#cmen_date_entretien_cpca-'+ent_id).attr('data-old_value') ||
+				 $('#cmen_effectif_total-'+ent_id).val() != $('#cmen_effectif_total-'+ent_id).attr('data-old_value')) {
+					Liste_ENT_Modifier.push([ent_id, $('#ppr_id_cpca-'+ent_id).val(), $('#cmen_date_entretien_cpca-'+ent_id).val(),
+						$('#cmen_effectif_total-'+ent_id).val()]);
+				}
 			}
 		} else {
 			if ( $(element).attr('data-old_value') == 1) {
-				Liste_ENT_Supprimer.push($(element).attr('id').split('-')[1]);
+				Liste_ENT_Supprimer.push(ent_id);
 				total_entites -= 1;
 			}
 		}
@@ -90,7 +101,7 @@ function ModifierCampagne( cmp_id ) {
 		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Modifier',
 		type: 'POST',
 		data: $.param({'cmp_id': cmp_id, 'cmp_date': cmp_date, 'cmp_validation': cmp_validation,
-			'liste_ent_ajouter': Liste_ENT_Ajouter, 'liste_ent_supprimer': Liste_ENT_Supprimer,
+			'liste_ent_ajouter': Liste_ENT_Ajouter, 'liste_ent_modifier': Liste_ENT_Modifier, 'liste_ent_supprimer': Liste_ENT_Supprimer,
 			'liste_app_ajouter': Liste_APP_Ajouter, 'liste_app_supprimer': Liste_APP_Supprimer,
 			'liste_frn_ajouter': Liste_FRN_Ajouter, 'liste_frn_supprimer': Liste_FRN_Supprimer,
 			'liste_sts_ajouter': Liste_STS_Ajouter, 'liste_sts_supprimer': Liste_STS_Supprimer}), // les paramètres sont protégés avant envoi

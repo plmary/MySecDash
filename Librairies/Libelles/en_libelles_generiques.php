@@ -502,12 +502,10 @@ $L_Ecrans_Referentiel = 'Referential screens';
 $L_Initialiser = 'Initialize';
 $L_Reinitialiser = 'Reinitialize';
 
-$L_Editer_BIA = 'Editing BIAs';
-
 
 // Gestion des libellés relatif aux éditions de rapports.
 $L_Visualiser_BIA = 'View BIAs';
-$L_Editer_BIAs = 'Edit BIAs';
+$L_Editer_BIA = 'Edit BIAs';
 $L_Edition_BIA = 'BIAs Edition';
 $L_Gestion_Editions_BIA = 'Managing BIA editions';
 

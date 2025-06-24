@@ -374,6 +374,12 @@ function ModalAjouterModifier( act_id = '' ) {
 			
 			var act_effectifs_en_nominal = '';
 			var act_effectifs_a_distance = '';
+			
+			var cmen_effectif_total = '';
+			var act_taux_occupation = '';
+
+			var act_description_entraides = '';
+			var act_strategie_montee_en_charge = '';
 		} else {
 			var Titre = reponse['L_Titre_Modifier'];
 			var Bouton = reponse[ 'L_Modifier' ];
@@ -445,6 +451,30 @@ function ModalAjouterModifier( act_id = '' ) {
 			} else {
 				var act_effectifs_a_distance = reponse['Activite'][0].act_effectifs_a_distance;
 			}
+
+			if (reponse['Activite'][0].cmen_effectif_total == null) {
+				var cmen_effectif_total = '';
+			} else {
+				var cmen_effectif_total = reponse['Activite'][0].cmen_effectif_total;
+			}
+
+			if (reponse['Activite'][0].act_taux_occupation == null) {
+				var act_taux_occupation = '';
+			} else {
+				var act_taux_occupation = reponse['Activite'][0].act_taux_occupation;
+			}
+
+			if (reponse['Activite'][0].act_description_entraides == null) {
+				var act_description_entraides = '';
+			} else {
+				var act_description_entraides = reponse['Activite'][0].act_description_entraides;
+			}
+
+			if (reponse['Activite'][0].act_strategie_montee_en_charge == null) {
+				var act_strategie_montee_en_charge = '';
+			} else {
+				var act_strategie_montee_en_charge = reponse['Activite'][0].act_strategie_montee_en_charge;
+			}
 		}
 
 
@@ -499,6 +529,7 @@ function ModalAjouterModifier( act_id = '' ) {
 				'<li><a id="afficher_interdependances" class="nav-link" href="#">' + reponse[ 'L_Interdependances'] + '</a></li>' +
 				'<li><a id="afficher_applications" class="nav-link" href="#">' + reponse[ 'L_Applications'] + '</a></li>' +
 				'<li><a id="afficher_fournisseurs" class="nav-link" href="#">' + reponse[ 'L_Fournisseurs'] + '</a></li>' +
+				'<li><a id="afficher_personnes_prioritaires" class="nav-link" href="#">' + reponse[ 'L_Personnes_Prioritaires'] + '</a></li>' +
 				'</ul>';
 
 			Corps += '<div id="zone-action" class="d-none">' +
@@ -667,12 +698,25 @@ function ModalAjouterModifier( act_id = '' ) {
 				'</div> <!-- .col-lg-8 -->' +
 				'</div> <!-- .row -->' +
 
+				// Effectif total dans l'Entité
+				'<div class="row">' +
+				 '<label class="col-lg-2 col-form-label" for="act_effectifs_en_nominal">' + reponse[ 'L_Effectif_Total_Entite' ] + '</label>' +
+				 '<div class="col-lg-1">' +
+				  '<input id="cmen_effectif_total" type="number" class="form-control bg-gris-clair" data-old_value="' + reponse['Total_Effectif_Entite'] + '" value="' + reponse['Total_Effectif_Entite'] + '">' +
+				 '</div>' +
+				'</div>' +
+
 				// Effectif en nominal
 				'<div class="row">' +
 				 '<label class="col-lg-2 col-form-label" for="act_effectifs_en_nominal">' + reponse[ 'L_Effectifs_En_Nominal' ] + '</label>' +
 				 '<div class="col-lg-1">' +
 				  '<input id="act_effectifs_en_nominal" type="number" class="form-control" value="' + act_effectifs_en_nominal + '">' +
 				 '</div>' +
+				 '<label class="col-lg-2 col-form-label text-end" for="act_taux_occupation">' + reponse[ 'L_Taux_Occupation' ] + '</label>' +
+				 '<div class="col-lg-1">' +
+				  '<input id="act_taux_occupation" type="number" class="form-control" value="' + act_taux_occupation + '">' +
+				 '</div>' +
+				 '<label class="col-lg-1 col-form-label" for="act_taux_occupation">%</label>' +
 				'</div>' +
 
 				// Effectif à distance
@@ -773,6 +817,54 @@ function ModalAjouterModifier( act_id = '' ) {
 				  '</div>' +
 				 '</div> <!-- .row -->' +
 				'</div> <!-- zone-dima -->';
+
+
+				// =====================================
+				// *************************************
+				Corps += '<div id="zone-personnes_prioritaires" class="d-none">';
+				var _Row_1 = '';
+				var _Row_2 = '';
+				var _largeur_colonne = 100 / reponse['Liste_EchellesTemps'].length;
+				for (let EchelleTemps of reponse['Liste_EchellesTemps']) {
+					// Gestion de l'entête du tableau
+					_Row_1 += '<th class="titre-fond-bleu border border-secondary-subtle" ' +
+					 'width="'+_largeur_colonne+'%" id="t_ete_id_'+EchelleTemps.ete_id+'">'+EchelleTemps.ete_nom_code+'</th>';
+					Nbr_Personnes_Prioritaires = '';
+					if (reponse['Liste_Personnes_Prioritaires'] != undefined && reponse['Liste_Personnes_Prioritaires'] != []) {
+						for (let Personnes_Prioritaires of reponse['Liste_Personnes_Prioritaires']) {
+							//alert(DetailEchelle.ete_id+' == '+EchelleTemps.ete_id);
+							if (Personnes_Prioritaires.ete_id == EchelleTemps.ete_id) {
+								Nbr_Personnes_Prioritaires = Personnes_Prioritaires.rut_nbr_utilisateurs_a_redemarrer;
+							}
+						}
+					}
+					// Affichage du niveau retenu.
+					_Row_2 += '<td class="border border-secondary-subtle cellule-echelle">' +
+						'<input  id="personnes_prioritaires-'+EchelleTemps.ete_id+'" type="number" step="0.05" class="form-control" ' +
+						'data-old_value="'+Nbr_Personnes_Prioritaires+'" value="'+Nbr_Personnes_Prioritaires+'">' +
+						'</td>';
+				}
+				Corps += '<table class="table-100">' +
+					'<thead class="text-center"><tr>' + _Row_1 + '</tr></thead>' +
+					'<tbody class="text-center">' +
+					'<tr>' + _Row_2 + '</tr>' +
+					'</tbody>' +
+					'</table>' +
+					 '<div class="row mt-3">' +
+					 '<div class="col-6">' +
+					  '<label for="act_strategie_montee_en_charge" class="form-label">'+reponse['L_Description_Strategie_Montee_Charge']+'</label>' +
+					   '<textarea class="form-control" id="act_strategie_montee_en_charge" row="3">' +
+					   act_strategie_montee_en_charge +
+					   '</textarea>' +
+					  '</div> <!-- .col-6 -->' +
+					  '<div class="col-6">' +
+					   '<label for="act_description_entraides" class="form-label">'+reponse['L_Description_Entraides']+'</label>' +
+					    '<textarea class="form-control" id="act_description_entraides" row="3">' +
+					    act_description_entraides +
+					    '</textarea>' +
+					   '</div> <!-- .col-6 -->' +
+					 '</div> <!-- .row -->' +
+					'</div> <!-- zone-personnes_prioritaires -->';
 
 
 			// =====================================
@@ -1265,6 +1357,17 @@ function ModalAjouterModifier( act_id = '' ) {
 
 
 				// =========
+				// Gestion de l'onglet "Personnes Prioritaires"
+				$('#afficher_personnes_prioritaires').on('click', function() {
+					$('.nav-link').removeClass('active');
+					$('a#afficher_personnes_prioritaires').addClass('active');
+
+					$('div[id^=zone-]').addClass('d-none');
+					$('#zone-personnes_prioritaires').removeClass('d-none');
+				});
+
+
+				// =========
 				// Gestion de l'onglet "Sites"
 				$('#afficher_sites').on('click', function() {
 					$('.nav-link').removeClass('active');
@@ -1359,7 +1462,7 @@ function ModalAjouterModifier( act_id = '' ) {
 					});
 
 					$('#btn-creer-personne_cle').off('click').on('click', function(){
-						creerPersonneCle();
+						creerPersonneCle(reponse['L_ERR_Champs_Obligatoires'], reponse['L_Interne'] );
 					});
 
 					$('div#zone-personnes_cles input:first').focus();

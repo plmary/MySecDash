@@ -118,7 +118,7 @@ class HBL_Securite extends HBL_Parametres {
 				return $value;
 			} else return -1 ;
 			break;
-	  	
+
 		 case 'ALPHA-NUMERIC' :
 			if ( $value == '' ) return $value;
 
@@ -142,12 +142,20 @@ class HBL_Securite extends HBL_Parametres {
 		 case 'BOOLEAN' :
 			if ( $value == '' ) return $value;
 
-			if ( strtoupper( $value ) == 'FALSE' or strtoupper( $value ) == 'TRUE'
-			 or $value === FALSE or $value === TRUE or $value === false or $value === true
-			 or $value === 0 or $value === 1 ) {
-				if ( strtoupper( $value ) == 'FALSE' or $value === FALSE or $value === false or $value == 0 ) return FALSE;
-				if ( strtoupper( $value ) == 'TRUE' or $value === TRUE or $value === true or $value == 1 ) return TRUE;
-			} else return -1 ;
+			switch( $value ) {
+				case 'FALSE':
+				case 'false':
+				case FALSE:
+					return FALSE;
+
+				case 'TRUE':
+				case 'true':
+				case TRUE:
+					return TRUE;
+
+				default:
+					return -1;
+			}
 			break;
 
 		 default:

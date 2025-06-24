@@ -21,8 +21,12 @@ function AjouterCampagne( p_cmp_date ) {
 
 	$('input[id^="entite-"]').each(function(index, element){
 		if ($(element).is(':checked')) {
+			var ent_id = $(element).attr('id').split('-')[1];
+
 			if ( $(element).attr('data-old_value') == 0) {
-				Liste_ENT_Ajouter.push($(element).attr('id').split('-')[1]);
+				Liste_ENT_Ajouter.push([ent_id, $('#ppr_id_cpca-'+ent_id).val(), $('#cmen_date_entretien_cpca-'+ent_id).val(),
+					$('#cmen_effectif_total-'+ent_id).val()
+				]);
 			}
 		}
 	});

@@ -384,38 +384,67 @@ WHERE ent.ent_id  = :ent_id ';
 
 		$pHTML = new HTML();
 
-    	// Affiche les infrmations transmises ou les récupère en base.
-    	if ( $objEntity == '' ) $objEntity = $this->detaillerEntite( $ent_id );
+		// Affiche les infrmations transmises ou les récupère en base.
+		if ( $objEntity == '' ) $objEntity = $this->detaillerEntite( $ent_id );
 
-    	// Récupère les libellés pour le message
-    	$Labels = $pHTML->getTextCode( array( 'L_Label' ) );
+		// Récupère les libellés pour le message
+		$Labels = $pHTML->getTextCode( array( 'L_Label' ) );
 
-    	return ' (' . $Labels[ 'L_Label' ] . ': "' . $objEntity->ent_libelle . '")';
-    }
-    
-    
-    public function recupererENT_IDparCRS_ID( $crs_id ) {
-    	/**
-    	 * Récupère l'ID de l'Entité associé à une Cartographie.
-    	 *
-    	 * \license Loxense
-    	 * \author Pierre-Luc MARY
-    	 * \date 2018-03-30
-    	 *
-    	 * \param[in] $crs_id ID de la Cartographie
-    	 *
-    	 * \return Renvoi l'ID de l'Entité associée.
-    	 */
-    	
-    	$requete = $this->prepareSQL(
-    		'SELECT ent_id FROM crs_cartographies_risques AS "crs" WHERE crs_id = :crs_id '
-    		);
-    	
-    	return $this->bindSQL($requete, ':crs_id', $crs_id, PDO::PARAM_INT)
-    	->executeSQL($requete)
-    	->fetchObject()->ent_id;
-    }
+		return ' (' . $Labels[ 'L_Label' ] . ': "' . $objEntity->ent_libelle . '")';
+	}
 
+
+	public function recupererENT_IDparCRS_ID( $crs_id ) {
+		/**
+		 * Récupère l'ID de l'Entité associé à une Cartographie.
+		 *
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2018-03-30
+		 *
+		 * \param[in] $crs_id ID de la Cartographie
+		 *
+		 * \return Renvoi l'ID de l'Entité associée.
+		 */
+
+		$requete = $this->prepareSQL(
+		'SELECT ent_id FROM crs_cartographies_risques AS "crs" WHERE crs_id = :crs_id '
+		);
+
+		return $this->bindSQL($requete, ':crs_id', $crs_id, PDO::PARAM_INT)
+			->executeSQL($requete)
+			->fetchObject()->ent_id;
+	}
+
+
+	public function recupererEffectifEntite( $cmp_id, $ent_id ) {
+		/**
+		 * Récupérer l'Effectif de l'Entité.
+		 *
+		 * \license Copyleft Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2025-04-22
+		 *
+		 * \param[in] $cmp_id Identifiant de la Campagne de rattachement de l'Entité
+		 * \param[in] $ent_id Identifiant de l'entité à modifier (si précisé)
+		 *
+		 * \return Renvoi le nombre de personnes rattachées à l'Entité, FALSE si l'entité n'existe pas ou lève une exception en cas d'erreur.
+		 */
+
+		$requete = $this->prepareSQL(
+			'SELECT cmen_effectif_total FROM cmen_cmp_ent AS "cmen"
+			WHERE cmp_id = :cmp_id AND ent_id = :ent_id '
+			);
+
+		$this->bindSQL($requete, ':cmp_id', $cmp_id, PDO::PARAM_INT);
+		$this->bindSQL($requete, ':ent_id', $ent_id, PDO::PARAM_INT);
+
+		$this->executeSQL($requete);
+
+		$cmen_effectif_total = $requete->fetchObject()->cmen_effectif_total;
+		
+		return $cmen_effectif_total;
+	}
 } // Fin class IICA_Entities
 
 ?>

@@ -103,7 +103,7 @@ function ModalChoixImpression( Id ) {
 	}
 	var cmp_date = $('#CMP_'+Id+' div[data-src="cmp_date"] span').text();
 
-		$.ajax({
+	$.ajax({
 		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Libeller',
 		type: 'POST',
 		dataType: 'json',
@@ -146,6 +146,7 @@ function ModalChoixImpression( Id ) {
 				    '<option value="docx">Word</option>' +
 				    '<option value="odt">OpenOffice</option>' +
 				    '<option value="html">HTML</option>' +
+				    '<option value="xlsx">Excel</option>' +
 				   '</select>' +
 				  '</div>' +
 				 '</div> <!-- .row -->' +
@@ -153,53 +154,65 @@ function ModalChoixImpression( Id ) {
 				 '<div class="titre">' + reponse['L_Chapitres'] + '</div>' +
 
 				 '<div class="row">' +
-				  '<label class="col-lg-4 col-form-label text-left" for="m_flag_cocher_decocher">' + reponse[ 'L_Tout_Cocher_Decocher' ] + '</label>' +
+				  '<label class="col-lg-4 form-check-label fst-italic text-left" for="m_flag_cocher_decocher">' + reponse[ 'L_Tout_Cocher_Decocher' ] + '</label>' +
 				  '<div class="col-lg-1">' +
 				   '<input id="m_flag_cocher_decocher" class="form-check-input" type="checkbox" checked>' +
 				  '</div>' +
 				 '</div> <!-- .row -->' +
 
 				 '<div class="row">' +
-				  '<label class="col-lg-4 col-form-label text-left" for="flag_synthese_manager">' + reponse[ 'L_Synthese_Manageriale_Globale' ] + '</label>' +
+				  '<label class="col-lg-4 form-check-label text-left" for="flag_synthese_manager">' + reponse[ 'L_Synthese_Manageriale_Globale' ] + '</label>' +
 				  '<div class="col-lg-1">' +
 				   '<input id="flag_synthese_manager" class="form-check-input" type="checkbox" checked>' +
 				  '</div>' +
 				 '</div> <!-- .row -->' +
 
 				 '<div class="row">' +
-				  '<label class="col-lg-4 col-form-label" for="flag_liste_act">' + reponse[ 'L_Liste_Activites' ] + '</label>' +
+				  '<label class="col-lg-4 form-check-label" for="flag_liste_pln_eff">' + reponse[ 'L_Planning' ] + '</label>' +
+				  '<div class="col-lg-1">' +
+				   '<input id="flag_liste_pln_eff" class="form-check-input" type="checkbox" checked>' +
+				  '</div>' +
+				 '</div> <!-- .row -->' +
+
+				 '<div class="row">' +
+				  '<label class="col-lg-4 form-check-label" for="flag_liste_act">' + reponse[ 'L_Liste_Activites' ] + '</label>' +
 				  '<div class="col-lg-1">' +
 				   '<input id="flag_liste_act" class="form-check-input" type="checkbox" checked>' +
 				  '</div>' +
 				 '</div> <!-- .row -->' +
 
 				 '<div class="row">' +
-				  '<label class="col-lg-4 col-form-label" for="flag_liste_app">' + reponse[ 'L_Liste_Applications' ] + '</label>' +
+				  '<label class="col-lg-4 form-check-label" for="flag_liste_pcl">' + reponse[ 'L_Liste_Personnes_Cles' ] + '</label>' +
+				  '<div class="col-lg-1">' +
+				   '<input id="flag_liste_pcl" class="form-check-input" type="checkbox" checked>' +
+				  '</div>' +
+				 '</div> <!-- .row -->' +
+
+				 '<div class="row">' +
+				  '<label class="col-lg-4 form-check-label" for="flag_liste_int">' + reponse[ 'L_Liste_Interdependances' ] + '</label>' +
+				  '<div class="col-lg-1">' +
+				   '<input id="flag_liste_int" class="form-check-input" type="checkbox" checked>' +
+				  '</div>' +
+				 '</div> <!-- .row -->' +
+
+				 '<div class="row">' +
+				  '<label class="col-lg-4 form-check-label" for="flag_liste_app">' + reponse[ 'L_Liste_Applications' ] + '</label>' +
 				  '<div class="col-lg-1">' +
 				   '<input id="flag_liste_app" class="form-check-input" type="checkbox" checked>' +
 				  '</div>' +
 				 '</div> <!-- .row -->' +
 
 				 '<div class="row">' +
-				  '<label class="col-lg-4 col-form-label" for="flag_liste_ppr">' + reponse[ 'L_Liste_Personnes_Cles' ] + '</label>' +
-				  '<div class="col-lg-1">' +
-				   '<input id="flag_liste_ppr" class="form-check-input" type="checkbox" checked>' +
-				  '</div>' +
-				 '</div> <!-- .row -->' +
-
-
-				 '<div class="row">' +
-				  '<label class="col-lg-4 col-form-label" for="flag_liste_frn">' + reponse[ 'L_Liste_Fournisseurs' ] + '</label>' +
+				  '<label class="col-lg-4 form-check-label" for="flag_liste_frn">' + reponse[ 'L_Liste_Fournisseurs' ] + '</label>' +
 				  '<div class="col-lg-1">' +
 				   '<input id="flag_liste_frn" class="form-check-input" type="checkbox" checked>' +
 				  '</div>' +
 				 '</div> <!-- .row -->' +
 
-
 				 '<div class="row">' +
-				  '<label class="col-lg-4 col-form-label" for="flag_liste_dtl_act">' + reponse[ 'L_Detail_Activites' ] + '</label>' +
+				  '<label class="col-lg-4 form-check-label" for="flag_liste_ppr">' + reponse[ 'L_Liste_Personnes_Prioritaires' ] + '</label>' +
 				  '<div class="col-lg-1">' +
-				   '<input id="flag_liste_dtl_act" class="form-check-input" type="checkbox">' +
+				   '<input id="flag_liste_ppr" class="form-check-input" type="checkbox" checked>' +
 				  '</div>' +
 				 '</div> <!-- .row -->' +
 
@@ -229,33 +242,37 @@ function ModalChoixImpression( Id ) {
 				
 				$('#editer_entite').on('change', function() {
 					if ( $('#editer_entite').val() != '*' ) {
-						$('label[for="m_flag_cocher_decocher"]').addClass('disabled');
+//						$('label[for="m_flag_cocher_decocher"]').addClass('disabled');
 						$('label[for="flag_synthese_manager"]').addClass('disabled');
-						$('label[for="flag_liste_act"]').addClass('disabled');
-						$('label[for="flag_liste_app"]').addClass('disabled');
-						$('label[for="flag_liste_ppr"]').addClass('disabled');
-						$('label[for="flag_liste_frn"]').addClass('disabled');
+//						$('label[for="flag_liste_act"]').addClass('disabled');
+//						$('label[for="flag_liste_app"]').addClass('disabled');
+//						$('label[for="flag_liste_pcl"]').addClass('disabled');
+//						$('label[for="flag_liste_ppr"]').addClass('disabled');
+//						$('label[for="flag_liste_frn"]').addClass('disabled');
 
-						$('#m_flag_cocher_decocher').removeAttr('checked');
+//						$('#m_flag_cocher_decocher').removeAttr('checked');
 						$('#flag_synthese_manager').removeAttr('checked');
-						$('#flag_liste_act').removeAttr('checked');
-						$('#flag_liste_app').removeAttr('checked');
-						$('#flag_liste_ppr').removeAttr('checked');
-						$('#flag_liste_frn').removeAttr('checked');
+//						$('#flag_liste_act').removeAttr('checked');
+//						$('#flag_liste_app').removeAttr('checked');
+//						$('#flag_liste_ppr').removeAttr('checked');
+//						$('#flag_liste_pcl').removeAttr('checked');
+//						$('#flag_liste_frn').removeAttr('checked');
 						$('#flag_liste_dtl_act').attr('checked', 'checked');
 
-						$('#m_flag_cocher_decocher').attr('disabled', 'disabled');
+//						$('#m_flag_cocher_decocher').attr('disabled', 'disabled');
 						$('#flag_synthese_manager').attr('disabled', 'disabled');
-						$('#flag_liste_act').attr('disabled', 'disabled');
-						$('#flag_liste_app').attr('disabled', 'disabled');
-						$('#flag_liste_ppr').attr('disabled', 'disabled');
-						$('#flag_liste_frn').attr('disabled', 'disabled');
+//						$('#flag_liste_act').attr('disabled', 'disabled');
+//						$('#flag_liste_app').attr('disabled', 'disabled');
+//						$('#flag_liste_ppr').attr('disabled', 'disabled');
+//						$('#flag_liste_pcl').attr('disabled', 'disabled');
+//						$('#flag_liste_frn').attr('disabled', 'disabled');
 					} else {
 						$('label[for="m_flag_cocher_decocher"]').removeClass('disabled');
 						$('label[for="flag_synthese_manager"]').removeClass('disabled');
 						$('label[for="flag_liste_act"]').removeClass('disabled');
 						$('label[for="flag_liste_app"]').removeClass('disabled');
 						$('label[for="flag_liste_ppr"]').removeClass('disabled');
+						$('label[for="flag_liste_pcl"]').removeClass('disabled');
 						$('label[for="flag_liste_frn"]').removeClass('disabled');
 	
 						$('#m_flag_cocher_decocher').attr('checked', 'checked');
@@ -263,6 +280,7 @@ function ModalChoixImpression( Id ) {
 						$('#flag_liste_act').attr('checked', 'checked');
 						$('#flag_liste_app').attr('checked', 'checked');
 						$('#flag_liste_ppr').attr('checked', 'checked');
+						$('#flag_liste_pcl').attr('checked', 'checked');
 						$('#flag_liste_frn').attr('checked', 'checked');
 						$('#flag_liste_dtl_act').removeAttr('checked');
 	
@@ -271,6 +289,7 @@ function ModalChoixImpression( Id ) {
 						$('#flag_liste_act').removeAttr('disabled');
 						$('#flag_liste_app').removeAttr('disabled');
 						$('#flag_liste_ppr').removeAttr('disabled');
+						$('#flag_liste_pcl').removeAttr('disabled');
 						$('#flag_liste_frn').removeAttr('disabled');
 					}
 				});
@@ -298,11 +317,13 @@ function imprimerBIA( Id ) {
 	var nom_entite_a_editer = $('#editer_entite option:selected').text();
 	var format_edition = $('#format_edition').val();
 	var flag_synthese_manager = $('#flag_synthese_manager').is(':checked');
+	var flag_liste_pln_eff = $('#flag_liste_pln_eff').is(':checked');
 	var flag_liste_act = $('#flag_liste_act').is(':checked');
 	var flag_liste_app = $('#flag_liste_app').is(':checked');
 	var flag_liste_ppr = $('#flag_liste_ppr').is(':checked');
+	var flag_liste_pcl = $('#flag_liste_pcl').is(':checked');
+	var flag_liste_int = $('#flag_liste_int').is(':checked');
 	var flag_liste_frn = $('#flag_liste_frn').is(':checked');
-	var flag_liste_dtl_act = $('#flag_liste_dtl_act').is(':checked');
 	var cmp_date = $('div#CMP_'+Id+' div[data-src="cmp_date"] span').text();
 
 	var sct_nom = $('#s_sct_id option:selected').text();
@@ -318,11 +339,14 @@ function imprimerBIA( Id ) {
 		dataType: 'json',
 		data: $.param({'cmp_id': Id, 'format_edition': format_edition,
 			'flag_synthese_manager': flag_synthese_manager,
+			'flag_liste_pln_eff': flag_liste_pln_eff,
 			'flag_liste_act': flag_liste_act,
 			'flag_liste_app': flag_liste_app,
 			'flag_liste_ppr': flag_liste_ppr,
+			'flag_liste_pcl': flag_liste_pcl,
 			'flag_liste_frn': flag_liste_frn,
-			'flag_liste_dtl_act': flag_liste_dtl_act,
+			'flag_liste_int': flag_liste_int,
+			'flag_liste_dtl_act':'false',
 			'sct_nom': sct_nom, 'cmp_date': cmp_date,
 			'entite_a_editer': entite_a_editer,
 			'nom_entite_a_editer': nom_entite_a_editer

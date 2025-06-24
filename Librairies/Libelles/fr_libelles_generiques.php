@@ -558,12 +558,11 @@ $L_Ecrans_Referentiel = 'Ecrans du référentiel';
 $L_Initialiser = 'Initialiser';
 $L_Reinitialiser = 'Réinitialiser';
 
-$L_Visualiser_BIA = 'Visualiser les BIA';
-
 
 // Gestion des libellés relatif aux éditions de rapports.
-$L_Editer_BIAs = 'Editer les BIAs';
-$L_Edition_BIA = 'Edition des BIAs';
+$L_Visualiser_BIA = 'Visualiser les BIA';
+$L_Editer_BIA = 'Editer les BIA';
+$L_Edition_BIA = 'Edition des BIA';
 $L_Gestion_Editions_BIA = 'Gestion des éditions des BIA';
 
 $L_Format_Edition = 'Format de l\'édition';
@@ -587,13 +586,13 @@ $L_Annexe = 'Annexe';
 $L_Pas_Droit_Ressource = 'Vous n\'avez pas de droit sur cette ressource';
 
 $L_Valider = 'Valider';
-$L_Valider_BIA = 'Valider BIAs';
-$L_Validation_BIA_Entite = 'Validation des BIAs de l\'Entité';
-$L_Valider_BIA_Entite = 'Valider les BIAs de l\'Entité';
+$L_Valider_BIA = 'Valider BIA';
+$L_Validation_BIA_Entite = 'Validation des BIA de l\'Entité';
+$L_Valider_BIA_Entite = 'Valider les BIA de l\'Entité';
 $L_Valideur = 'Valideur';
 $L_Date_Validation = 'Date de validation';
 $L_Informations_Validation = 'Informations de validation';
-$L_Entite_Validee = 'BIAs de l\'Entité validés';
+$L_Entite_Validee = 'BIA de l\'Entité validés';
 
 $L_Accueil = 'Accueil';
 

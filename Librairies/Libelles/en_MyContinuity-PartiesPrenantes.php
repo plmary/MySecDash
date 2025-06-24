@@ -7,9 +7,9 @@ $L_Ajouter_PartiePrenante = 'Add a Stakeholder';
 $L_Modifier_PartiePrenante = 'Modify a Stakeholder';
 $L_Supprimer_PartiePrenante = 'Delete a Stakeholder';
 
-$L_PartiePrenante_Cree = 'Stakeholder added';
-$L_PartiePrenante_Modifie = 'Stakeholder modified';
-$L_PartiePrenante_Supprime = 'Stakeholder deleted';
+$L_PartiePrenante_Creee = 'Stakeholder added';
+$L_PartiePrenante_Modifiee = 'Stakeholder modified';
+$L_PartiePrenante_Supprimee = 'Stakeholder deleted';
 
 $L_ERR_DUPL_PartiePrenante = 'This Stakeholder already exists';
 

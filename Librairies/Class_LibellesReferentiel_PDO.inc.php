@@ -268,7 +268,6 @@ class LibellesReferentiel extends HBL_Connexioneur_BD {
 		$Langue = mb_strtolower( trim( $Langue ) );
 		$TypeRecherche = mb_strtoupper( trim( $TypeRecherche ) );
 
-
 		foreach ( $Codes as $Code ) {
 			$Code = mb_strtoupper( trim( $Code ) );
 
@@ -324,9 +323,11 @@ class LibellesReferentiel extends HBL_Connexioneur_BD {
 
 			$this->executeSQL( $Requete);
 
-			$Resultat = $Requete->fetchAll( PDO::FETCH_CLASS ); /* as $Occurrence ) {
-				$Resultat[] = $Occurrence; //->lbr_code ][ $Occurrence->lng_id ]= $Occurrence->lbr_libelle;
-			}*/
+			$_Tmp = $Requete->fetchAll( PDO::FETCH_CLASS );
+
+			foreach( $_Tmp as $_Occurrence ) {
+				$Resultat[$_Occurrence->lbr_code][$_Occurrence->lng_id] = $_Occurrence->lbr_libelle;
+			}
 		}
 
 		return $Resultat;

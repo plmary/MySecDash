@@ -628,7 +628,15 @@ switch( $Action ) {
 				
 				exit();
 			}
+
+			if ( substr($_POST['mim_description'], 0, 3) == '<p>' ) {
+				$_POST['mim_description'] = substr($_POST['mim_description'], 3);
+			}
 			
+			if ( substr($_POST['mim_description'], -4) == '</p>' ) {
+				$_POST['mim_description'] = substr($_POST['mim_description'], 0, (strlen($_POST['mim_description']) - 4));
+			}
+
 
 			try {
 				$objMatriceImpacts->MaJDescriptionImpact( $_SESSION['s_cmp_id'], '', $_POST['nim_id'], $_POST['tim_id'], $_POST['mim_description'] );
@@ -700,6 +708,14 @@ switch( $Action ) {
 				) );
 
 				exit();
+			}
+
+			if ( substr($_POST['mim_description'], 0, 3) == '<p>' ) {
+				$_POST['mim_description'] = substr($_POST['mim_description'], 3);
+			}
+
+			if ( substr($_POST['mim_description'], -4) == '</p>' ) {
+				$_POST['mim_description'] = substr($_POST['mim_description'], 0, (strlen($_POST['mim_description']) - 4));
 			}
 
 

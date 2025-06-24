@@ -1,11 +1,12 @@
 --
 -- Auteur  : Pierre-Luc MARY
--- Date    : 2024-09-02
+-- Date    : 2025-04-28
 -- Package : MySecDash
 --
 -- Commentaire :
 -- Ce script crée toutes les tables et toutes les contraintes de la base de données "mysecdash".
--- Modèle SQL : 2.2
+-- Modèle SQL : 2.3
+
 
 
 CREATE SEQUENCE public.tgs_tags_tgs_id_seq;
@@ -473,6 +474,7 @@ CREATE TABLE public.cmp_campagnes (
                 cmp_date DATE NOT NULL,
                 cmp_flag_validation BOOLEAN DEFAULT FALSE NOT NULL,
                 cmp_date_validation TIMESTAMP,
+                cmp_niveau_impact_accepte SMALLINT DEFAULT 2 NOT NULL,
                 CONSTRAINT cmp_campagnes_pk PRIMARY KEY (cmp_id)
 );
 COMMENT ON COLUMN public.cmp_campagnes.cmp_flag_validation IS 'FALSE = La Campagne n''est pas validé
@@ -495,12 +497,15 @@ CREATE TABLE public.act_activites (
                 ppr_id_suppleant BIGINT,
                 act_nom VARCHAR(100) NOT NULL,
                 act_teletravail BOOLEAN DEFAULT TRUE,
-                act_description TEXT,
+                act_effectifs_en_nominal INTEGER NOT NULL,
+                act_taux_occupation SMALLINT NOT NULL,
+                act_effectifs_a_distance INTEGER NOT NULL,
                 act_justification_dmia TEXT,
+                act_description TEXT,
                 act_dependances_internes_amont TEXT,
                 act_dependances_internes_aval TEXT,
-                act_effectifs_en_nominal INTEGER NOT NULL,
-                act_effectifs_a_distance INTEGER NOT NULL,
+                act_description_entraides TEXT,
+                act_strategie_montee_en_charge TEXT,
                 CONSTRAINT act_activites_pk PRIMARY KEY (act_id)
 );
 COMMENT ON COLUMN public.act_activites.act_teletravail IS 'FALSE = Activité pas télétravaillable
@@ -532,8 +537,6 @@ CREATE TABLE public.acst_act_sts (
                 cmp_id BIGINT NOT NULL,
                 sts_id BIGINT NOT NULL,
                 acst_type_site SMALLINT DEFAULT 0 NOT NULL,
-                acst_strategie_montee_charge TEXT,
-                acst_description_entraides TEXT,
                 CONSTRAINT acst_act_sts_pk PRIMARY KEY (act_id, cmp_id, sts_id)
 );
 COMMENT ON COLUMN public.acst_act_sts.acst_type_site IS '0 = Site Nominal pour l''Activité
@@ -618,8 +621,11 @@ CREATE TABLE public.ppac_ppr_act (
 CREATE TABLE public.cmen_cmp_ent (
                 ent_id BIGINT NOT NULL,
                 cmp_id BIGINT NOT NULL,
+                ppr_id_cpca BIGINT,
+                cmen_date_entretien_cpca DATE,
                 idn_id_validation BIGINT,
                 cmen_date_validation DATE,
+                cmen_effectif_total INTEGER,
                 CONSTRAINT cmen_cmp_ent_pk PRIMARY KEY (ent_id, cmp_id)
 );
 
@@ -667,6 +673,14 @@ CREATE INDEX ete_u_nom_idx
 CREATE UNIQUE INDEX ete_u_poids_idx
  ON public.ete_echelle_temps
  ( cmp_id, ete_poids );
+
+CREATE TABLE public.rut_redemarrage_utilisateurs (
+                ete_id BIGINT NOT NULL,
+                act_id BIGINT NOT NULL,
+                rut_nbr_utilisateurs_a_redemarrer INTEGER NOT NULL,
+                CONSTRAINT rut_redemarrage_utilisateurs_pk PRIMARY KEY (ete_id, act_id)
+);
+
 
 CREATE TABLE public.acfr_act_frn (
                 act_id BIGINT NOT NULL,
@@ -1169,6 +1183,13 @@ ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
+ALTER TABLE public.rut_redemarrage_utilisateurs ADD CONSTRAINT act_rut_fk
+FOREIGN KEY (act_id)
+REFERENCES public.act_activites (act_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
 ALTER TABLE public.acst_act_sts ADD CONSTRAINT cmst_acst_fk
 FOREIGN KEY (cmp_id, sts_id)
 REFERENCES public.cmst_cmp_sts (cmp_id, sts_id)
@@ -1222,6 +1243,13 @@ ALTER TABLE public.acfr_act_frn ADD CONSTRAINT ete_fret_fk
 FOREIGN KEY (ete_id)
 REFERENCES public.ete_echelle_temps (ete_id)
 ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.rut_redemarrage_utilisateurs ADD CONSTRAINT ete_rut_fk
+FOREIGN KEY (ete_id)
+REFERENCES public.ete_echelle_temps (ete_id)
+ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 

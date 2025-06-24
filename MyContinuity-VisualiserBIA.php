@@ -221,7 +221,7 @@ switch( $Action ) {
 		// Construit le corps de l'écran.
 		$Corps_HTML = '<h1 class="text-center">' . $L_Synthese_Manageriale_Globale . '</h1>' .
 			'<table class="table table-bordered">' .
-			'<caption>' . $L_Activites_Non_Critiques_Non_Abordees . '</caption>' .
+//			'<caption>' . $L_Activites_Non_Critiques_Non_Abordees . '</caption>' .
 			'<thead>' .
 			'<tr><th colspan="2" class="text-center">';
 
@@ -317,6 +317,36 @@ switch( $Action ) {
 		foreach ($Liste_Echelles_Temps as $Element) {
 			$Liste_Echelles_Temps_Poids[$Element->ete_poids] = $Element;
 		}
+
+
+
+		// --------------------------------------
+		// Affichage du Planning de la Campagne.
+		$Liste_Entites = $objCampagnes->rechercherEntitesAssocieesCampagne( $_SESSION['s_sct_id'], $_SESSION['s_cmp_id'] );
+
+		$Corps_HTML .= '<h1 class="text-center">'.$PageHTML->getLibelle('__LRI_PLANNING').'</h1>' .
+			'<table class="table table-bordered">' .
+			'<thead>' .
+			'<tr>' .
+			'<th>' . $L_Entite . '</th>' .
+			'<th>' . $PageHTML->getLibelle('__LRI_EFFECTIF') . '</th>' .
+			'<th>' . $PageHTML->getLibelle('__LRI_CORRESPONDANT_PCA') . '</th>' .
+			'<th>' . $PageHTML->getLibelle('__LRI_DATE_ENTRETIEN') . '</th>' .
+			'</tr>' .
+			'</thead>' .
+			'<tbody>';
+
+		foreach($Liste_Entites as $Entite) {
+			$Corps_HTML .= '<tr>' .
+				'<td>' . $Entite->ent_nom . ($Entite->ent_description != '' ? ' (' . $Entite->ent_description . ')' : '' ) . '</td>' .
+				'<td>' . $Entite->cmen_effectif_total . '</td>' .
+				'<td>' . $Entite->ppr_prenom . ' ' . $Entite->ppr_nom . '</td>' .
+				'<td>' . $Entite->cmen_date_entretien_cpca . '</td>' .
+				'</tr>';
+		}
+
+		$Corps_HTML .= '</tbody>' .
+			'</table>' ;
 
 
 		// --------------------------------------------------
@@ -707,17 +737,18 @@ switch( $Action ) {
 			$Infos['Liste_Applications'] = $objActivites->rechercherApplicationsAssocieesActivite( $Activite->act_id );
 			$Infos['Liste_Fournisseurs'] = $objActivites->rechercherFournisseursAssociesActivite( $Activite->act_id );
 			$Infos['Liste_Sites'] = $objActivites->rechercherSitesActivite( $Activite->act_id );
+			$Infos['Liste_Personnes_Prioritaires'] = $objActivites->recupererPersonnesPrioritaires( $Activite->act_id );
 
 			$Compteur += 1;
 
 			$Corps_HTML .= '<table class="table-visu-cartouche table-bordered">' .
 				'<tr>' .
-				'<th colspan="2" class="titre-visu-cartouche">' . $Activite->act_nom . '</th>' .
+				'<th colspan="4" class="titre-visu-cartouche">' . $Activite->act_nom . '</th>' .
 				'</tr>' .
 				'<tbody>' .
 				'<tr>' .
-				 '<td width="30%">' . $L_Responsable_Activite . '</td>' .
-				 '<td width="70%">' . $Activite->ppr_nom_resp . ' ' . $Activite->ppr_prenom_resp . '</td>' .
+				 '<td width="25%">' . $L_Responsable_Activite . '</td>' .
+				 '<td width="75%" colspan="3">' . $Activite->ppr_nom_resp . ' ' . $Activite->ppr_prenom_resp . '</td>' .
 				'</tr>' .
 				'<tr>' .
 				 '<td>' . $L_Suppleant . '</td>';
@@ -728,7 +759,21 @@ switch( $Action ) {
 				$_Nom_Suppleant = $L_Neither;
 			}
 
-			$Corps_HTML .= '<td>' . $_Nom_Suppleant . '</td>' .
+			$Corps_HTML .= '<td colspan="3">' . $_Nom_Suppleant . '</td>' .
+				'</tr>' .
+				'<tr>' .
+				'<td>' . $PageHTML->getLibelle('__LRI_EFFECTIF_TOTAL_ENTITE') . '</td>' .
+				'<td colspan="3">' . $objEntites->recupererEffectifEntite( $_SESSION['s_cmp_id'], $_SESSION['s_ent_id'] ) . '</td>' .
+				'</tr>' .
+				'<tr>' .
+				 '<td width="25%">' . $L_Effectifs_En_Nominal . '</td>' .
+				 '<td width="25%">' . $Activite->act_effectifs_en_nominal . '</td>' .
+				 '<td width="25%">' . $PageHTML->getLibelle('__LRI_TAUX_OCCUPATION') . '</td>' .
+				 '<td width="25%">' . $Activite->act_taux_occupation . ' %</td>' .
+				'</tr>' .
+				'<tr>' .
+				'<td>' . $L_Effectifs_A_Distance . '</td>' .
+				'<td colspan="3">' . $Activite->act_effectifs_en_nominal . '</td>' .
 				'</tr>' .
 				'<tr>' .
 				 '<td>' . $L_Activite_Teletravaillable . '</td>';
@@ -739,11 +784,11 @@ switch( $Action ) {
 				$_Activite_Teletravail = $L_No;
 			}
 
-			$Corps_HTML .= '<td>' . $_Activite_Teletravail . '</td>' .
+			$Corps_HTML .= '<td colspan="3">' . $_Activite_Teletravail . '</td>' .
 				'</tr>' .
 				'<tr>' .
 				 '<td>' . $L_Description . '</td>' .
-				 '<td>' . $Activite->act_description . '</td>' .
+				 '<td colspan="3">' . $Activite->act_description . '</td>' .
 				'</tr>'.
 				'</tbody>' .
 				'</table>';
@@ -862,6 +907,43 @@ switch( $Action ) {
 				}
 			} else {
 				$Corps_HTML .= '<tr><td colspan="2"class="text-center">' . $L_Neither_f . '</td></tr>';
+			}
+
+			$Corps_HTML .= '</tbody>' .
+				'</table>';
+
+
+			// =============================
+			// Personnes Prioritaires
+			$Nombre_Colonnes = count($Liste_EchellesTemps);
+
+			$Corps_HTML .= '<table class="table-visu table-bordered">' .
+				'<thead>' .
+				'<tr><th colspan="'. $Nombre_Colonnes . '" class="text-center bg-gris-normal">' . $PageHTML->getLibelle('__LRI_PERSONNES_PRIORITAIRES') . '</th></tr>' .
+				'<tr>';
+
+			$_Taille = 100 / count($Liste_EchellesTemps);
+			$_Ligne_2 = '';
+
+			foreach( $Liste_EchellesTemps as $EchelleTemps ) {
+				$Corps_HTML .= '<th width="' . $_Taille . '%">' . $EchelleTemps->ete_nom_code . '</th>';
+
+				foreach( $Infos['Liste_Personnes_Prioritaires'] as $Personne_Prioritaire ) {
+					if ($Personne_Prioritaire->ete_id == $EchelleTemps->ete_id) {
+						$_Ligne_2 .= '<td>' . $Personne_Prioritaire->rut_nbr_utilisateurs_a_redemarrer . '</td>';
+						break;
+					}
+				}
+			}
+
+			$Corps_HTML .= '</tr>' .
+				'</thead>' .
+				'<tbody>';
+
+			if ($_Ligne_2 != '') {
+				$Corps_HTML .= '<tr>' . $_Ligne_2 . '</tr>';
+			} else {
+				$Corps_HTML .= '<tr><td colspan="' . $Nombre_Colonnes . '"class="text-center">' . $L_Neither_f . '</td></tr>';
 			}
 
 			$Corps_HTML .= '</tbody>' .

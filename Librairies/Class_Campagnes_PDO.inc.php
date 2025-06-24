@@ -441,7 +441,7 @@ WHERE act.cmp_id = :cmp_id ';
 	}
 
 
-	public function rechercherEntitesAssocieesCampagne( $sct_id, $cmp_id ) {
+	public function rechercherEntitesAssocieesCampagne( $sct_id, $cmp_id, $ent_id = '*' ) {
 		/**
 		 * Lister les Entites déclarées sur une Campagne
 		 *
@@ -456,20 +456,30 @@ WHERE act.cmp_id = :cmp_id ';
 		 */
 
 		if ( $_SESSION['idn_super_admin'] == TRUE ) {
-			$Request = 'SELECT ent.*, cmen.cmp_id AS "associe"
+			$Request = 'SELECT ent.*, cmen.cmp_id AS "associe", ppr_id_cpca, cmen_date_entretien_cpca, cmen_effectif_total, ppr.*
 				FROM ent_entites AS "ent"
-				LEFT JOIN (SELECT ent_id, cmp_id FROM cmen_cmp_ent WHERE cmp_id = :cmp_id) AS "cmen" ON cmen.ent_id = ent.ent_id
+				LEFT JOIN (SELECT ent_id, cmp_id, ppr_id_cpca, cmen_date_entretien_cpca, cmen_effectif_total FROM cmen_cmp_ent WHERE cmp_id = :cmp_id) AS "cmen" ON cmen.ent_id = ent.ent_id
 				LEFT JOIN cmp_campagnes AS "cmp" ON cmp.cmp_id = cmen.cmp_id
-				WHERE ent.sct_id = :sct_id
-				ORDER BY cmen.cmp_id, ent_nom ';
+				LEFT JOIN ppr_parties_prenantes AS "ppr" ON ppr.ppr_id = cmen.ppr_id_cpca ';
+			if ( $ent_id == '*' ) {
+				$Request .= 'WHERE ent.sct_id = :sct_id ';
+			} else {
+				$Request .= 'WHERE ent.sct_id = :sct_id AND ent.ent_id = :ent_id ';
+			}
+			$Request .= 'ORDER BY cmen.cmp_id, ent_nom ';
 		} else {
-			$Request = 'SELECT ent.*, cmen.cmp_id AS "associe"
+			$Request = 'SELECT ent.*, cmen.cmp_id AS "associe", ppr_id_cpca, cmen_date_entretien_cpca, cmen_effectif_total, ppr.*
 				FROM iden_idn_ent AS "iden"
 				LEFT JOIN ent_entites AS "ent" ON ent.ent_id = iden.ent_id
-				LEFT JOIN (SELECT ent_id, cmp_id FROM cmen_cmp_ent WHERE cmp_id = :cmp_id) AS "cmen" ON cmen.ent_id = ent.ent_id
+				LEFT JOIN (SELECT ent_id, cmp_id, ppr_id_cpca, cmen_date_entretien_cpca, cmen_effectif_total FROM cmen_cmp_ent WHERE cmp_id = :cmp_id) AS "cmen" ON cmen.ent_id = ent.ent_id
 				LEFT JOIN cmp_campagnes AS "cmp" ON cmp.cmp_id = cmen.cmp_id
-				WHERE ent.sct_id = :sct_id AND iden.idn_id = :idn_id
-				ORDER BY cmen.cmp_id, ent_nom ';
+				LEFT JOIN ppr_parties_prenantes AS "ppr" ON ppr.ppr_id = cmen.ppr_id_cpca ';
+			if ( $ent_id == '*' ) {
+				$Request .= 'WHERE ent.sct_id = :sct_id AND iden.idn_id = :idn_id ';
+			} else {
+				$Request .= 'WHERE ent.sct_id = :sct_id AND iden.idn_id = :idn_id AND iden.ent_id = :ent_id ';
+			}
+			$Request .= 'ORDER BY cmen.cmp_id, ent_nom ';
 		}
 
 		$Query = $this->prepareSQL( $Request );
@@ -477,10 +487,14 @@ WHERE act.cmp_id = :cmp_id ';
 		$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
 
+		if ( $ent_id != '*' ) {
+			$this->bindSQL( $Query, ':ent_id', $ent_id, PDO::PARAM_INT );
+		}
+
 		if ( $_SESSION['idn_super_admin'] == FALSE ) {
 			$this->bindSQL( $Query, ':idn_id', $_SESSION['idn_id'], PDO::PARAM_INT );
 		}
-		
+
 		$this->executeSQL( $Query );
 		
 		return $Query->fetchAll( PDO::FETCH_CLASS );
@@ -740,7 +754,102 @@ WHERE act.cmp_id = :cmp_id ';
 	}
 
 
-	public function associerEntiteCampagne( $cmp_id, $ent_id ) {
+	public function modifierEntiteCampagne( $cmp_id, $ent_id, $ppr_id_cpca, $cmen_date_entretien_cpca = null, $cmen_effectif_total = null ) {
+		/**
+		 * Modifiée l'association entre une Campagne et une Entité.
+		 *
+		 * \license Copyleft Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2025-04-01
+		 *
+		 * \param[in] $cmp_id Identifiant de la Campagne à utiliser pour associer
+		 * \param[in] $ent_id Identifiant de l'Entité à utiliser pour associer
+		 * \param[in] $ppr_id_cpca Identifiant de la Partie Prenante qui a le rôle de CPCA
+		 * \param[in] $cmen_date_entretien_cpca Date de l'entretien prévue avec le CPCA
+		 * \param[in] $cmen_effectif_total Effectif total de l'Entité
+		 *
+		 * \return Renvoi TRUE si l'association à créer. Lève une Exception en cas d'erreur.
+		 */
+
+		$Request = 'UPDATE cmen_cmp_ent SET ';
+
+		$Champs = '';
+
+		if ($ppr_id_cpca != '' && $ppr_id_cpca != null) {
+			$Champs = 'ppr_id_cpca = :ppr_id_cpca ';
+		}
+
+		if ($cmen_date_entretien_cpca != '' && $cmen_date_entretien_cpca != null) {
+			if ($Champs != '') {
+				$Champs .= ', ';
+			}
+			$Champs .= 'cmen_date_entretien_cpca = :cmen_date_entretien_cpca ';
+		}
+
+		if ($cmen_effectif_total != '' && $cmen_effectif_total != null) {
+			if ($Champs != '') {
+				$Champs .= ', ';
+			}
+			$Champs .= 'cmen_effectif_total = :cmen_effectif_total ';
+		}
+
+		$Request .= $Champs . 'WHERE cmp_id = :cmp_id AND ent_id = :ent_id ';
+
+		$Query = $this->prepareSQL( $Request );
+
+		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':ent_id', $ent_id, PDO::PARAM_INT );
+
+		if ($ppr_id_cpca != '' && $ppr_id_cpca != null) {
+			$this->bindSQL( $Query, ':ppr_id_cpca', $ppr_id_cpca, PDO::PARAM_INT );
+		}
+
+		if ($cmen_date_entretien_cpca != '' && $cmen_date_entretien_cpca != null) {
+			$this->bindSQL( $Query, ':cmen_date_entretien_cpca', $cmen_date_entretien_cpca, PDO::PARAM_STR, L_CMP_DATE );
+		}
+
+		if ($cmen_effectif_total != '' && $cmen_effectif_total != null) {
+			$this->bindSQL( $Query, ':cmen_effectif_total', $cmen_effectif_total, PDO::PARAM_INT );
+		}
+
+		$this->executeSQL( $Query );
+
+		return true;
+	}
+
+
+	public function modifierEffectifEntiteCampagne( $cmp_id, $ent_id, $cmen_effectif_total ) {
+		/**
+		 * Modifiée l'effectif total d'une Entité au moment de la Campagne.
+		 *
+		 * \license Copyleft Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2025-05-05
+		 *
+		 * \param[in] $cmp_id Identifiant de la Campagne à utiliser pour associer
+		 * \param[in] $ent_id Identifiant de l'Entité à utiliser pour associer
+		 * \param[in] $cmen_effectif_total Effectif total de l'Entité
+		 *
+		 * \return Renvoi TRUE si l'association à créer. Lève une Exception en cas d'erreur.
+		 */
+
+		$Request = 'UPDATE cmen_cmp_ent SET
+			cmen_effectif_total = :cmen_effectif_total
+			WHERE cmp_id = :cmp_id AND ent_id = :ent_id ';
+
+		$Query = $this->prepareSQL( $Request );
+
+		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':ent_id', $ent_id, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':cmen_effectif_total', $cmen_effectif_total, PDO::PARAM_INT );
+
+		$this->executeSQL( $Query );
+
+		return true;
+	}
+
+
+	public function associerEntiteCampagne( $cmp_id, $ent_id, $ppr_id_cpca = null, $cmen_date_entretien_cpca = null, $cmen_effectif_total = null ) {
 		/**
 		 * Crée l'association entre une Campagne et une Entité.
 		 *
@@ -750,20 +859,62 @@ WHERE act.cmp_id = :cmp_id ';
 		 *
 		 * \param[in] $cmp_id Identifiant de la Campagne à utiliser pour associer
 		 * \param[in] $ent_id Identifiant de l'Entité à utiliser pour associer
+		 * \param[in] $ppr_id_cpca Identifiant de la Partie Prenante qui a le rôle de CPCA
+		 * \param[in] $cmen_date_entretien_cpca Date de l'entretien prévue avec le CPCA
+		 * \param[in] $cmen_effectif_total Effectif total de l'Entité
 		 *
 		 * \return Renvoi TRUE si l'association à créer. Lève une Exception en cas d'erreur.
 		 */
-		$Request = 'INSERT INTO cmen_cmp_ent (cmp_id, ent_id)
-			VALUES (:cmp_id, :ent_id) ';
+		$Request = 'INSERT INTO cmen_cmp_ent (cmp_id, ent_id ';
+
+		if ($ppr_id_cpca != null) {
+			$Request .= ', ppr_id_cpca';
+		}
+
+		if ($cmen_date_entretien_cpca != null) {
+			$Request .= ', cmen_date_entretien_cpca';
+		}
+
+		if ($cmen_effectif_total != null) {
+			$Request .= ', cmen_effectif_total';
+		}
+
+		$Request .= ') VALUES (:cmp_id, :ent_id ';
+
+		if ($ppr_id_cpca != null) {
+			$Request .= ', :ppr_id_cpca';
+		}
+
+		if ($cmen_date_entretien_cpca != null) {
+			$Request .= ', :cmen_date_entretien_cpca';
+		}
+
+		if ($cmen_effectif_total != null) {
+			$Request .= ', :cmen_effectif_total';
+		}
+
+		$Request .= ') ';
 
 		$Query = $this->prepareSQL( $Request );
 
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':ent_id', $ent_id, PDO::PARAM_INT );
 
+		if ($ppr_id_cpca != null) {
+			$this->bindSQL( $Query, ':ppr_id_cpca', $ppr_id_cpca, PDO::PARAM_INT );
+		}
+
+		if ($cmen_date_entretien_cpca != null) {
+			$this->bindSQL( $Query, ':cmen_date_entretien_cpca', $cmen_date_entretien_cpca, PDO::PARAM_STR, L_CMP_DATE );
+		}
+
+		if ($cmen_effectif_total != null) {
+			$this->bindSQL( $Query, ':cmen_effectif_total', $cmen_effectif_total, PDO::PARAM_INT );
+		}
+
 		$this->executeSQL( $Query );
 
-		return TRUE;
+		return true;
 	}
 
 
@@ -1435,7 +1586,7 @@ WHERE act.cmp_id = :cmp_id ';
 		 * \return Renvoi TRUE si la cohérence est trouvée, sinon renvoie FALSE. Lève une Exception en cas d'erreur.
 		 */
 
-		$Request = 'SELECT app.app_id, app.app_nom, app.app_niveau_service, app.app_hebergement, MIN(ete.ete_poids) AS "dmia",
+		$Request = 'SELECT app.app_id, app.app_nom, app.app_niveau_service, app.app_hebergement, MIN(ete.ete_poids) AS "dmia", MIN(ete1.ete_poids) AS "pdma",
 STRING_AGG( ent.ent_nom || \' (\' || ent.ent_description || \') - \' || act.act_nom || \'###\'||act.act_id, \',<br>\' ORDER BY ent_nom, act_nom ) AS "act_nom",
 STRING_AGG( DISTINCT acap.acap_palliatif, \'##\' ) AS "acap_palliatif",
 STRING_AGG( DISTINCT acap.acap_donnees, \'##\' ) AS "acap_donnees",
@@ -1446,6 +1597,7 @@ RIGHT JOIN acap_act_app AS "acap" ON acap.act_id = act.act_id
 LEFT JOIN ent_entites AS "ent" ON ent.ent_id = act.ent_id
 LEFT JOIN app_applications AS "app" ON app.app_id = acap.app_id
 LEFT JOIN ete_echelle_temps AS "ete" ON ete.ete_id = acap.ete_id_dima
+LEFT JOIN ete_echelle_temps AS "ete1" ON ete1.ete_id = acap.ete_id_pdma
 WHERE act.cmp_id = :cmp_id ';
 
 		if ( $dmia != '*' ) {

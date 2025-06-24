@@ -206,7 +206,7 @@ switch( $Action ) {
 		'L_Consequence_Indisponibilite' => $L_Consequence_Indisponibilite,
 		'Liste_Civilites' => $objCivilites->rechercherCivilites(),
 		'Liste_Identites' => $objIdentites->rechercherIdentites( $_SESSION['s_sct_id'] ),
-		'Liste_Sites' => $objActivites->rechercherSitesAssociesActivite( $_SESSION['s_sct_id'], 0 ), //rechercherSitesCampagne( $_SESSION['s_cmp_id'] ),
+		'Liste_Sites' => $objActivites->rechercherSitesAssociesActivite( $_SESSION['s_cmp_id'], 0 ), //rechercherSitesCampagne( $_SESSION['s_cmp_id'] ),
 		'Liste_EchellesTemps' => $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_cmp_id']),
 		'Liste_Niveaux_Impact' => $objCampagnes->rechercherNiveauxImpactCampagne( $_SESSION['s_cmp_id'] ),
 		'Liste_Types_Impact' => $objCampagnes->rechercherTypesImpactCampagne( $_SESSION['s_cmp_id'] ),
@@ -226,7 +226,13 @@ switch( $Action ) {
 		'L_Dupliquer' => $L_Dupliquer,
 		'L_Nouveau_Nom' => $L_Nouveau_Nom,
 		'L_Informations_Complementaires_A_Dupliquer' => $L_Informations_Complementaires_A_Dupliquer,
-		'L_Tout_Cocher_Decocher' => $L_Tout_Cocher_Decocher
+		'L_Tout_Cocher_Decocher' => $L_Tout_Cocher_Decocher,
+		'L_Effectif_Total_Entite' => $PageHTML->getLibelle('__LRI_EFFECTIF_TOTAL_ENTITE'),
+		'L_Taux_Occupation' => $PageHTML->getLibelle('__LRI_TAUX_OCCUPATION'),
+		'L_Personnes_Prioritaires' => $PageHTML->getLibelle('__LRI_PERSONNES_PRIORITAIRES'),
+		'L_Description_Entraides' => $PageHTML->getLibelle('__LRI_DESCRITPION_ENTRAIDES_INTERNE_EXTERNE'),
+		'L_Description_Strategie_Montee_Charge' => $PageHTML->getLibelle('__LRI_DESCRITPION_STRATEGIE_MONTEE_CHARGE'),
+		'Total_Effectif_Entite' => $objEntites->recupererEffectifEntite( $_SESSION['s_cmp_id'], $_SESSION['s_ent_id'] )
 	);
 
 	if ( $Droit_Lecture === TRUE ) {
@@ -234,6 +240,7 @@ switch( $Action ) {
 			if ( $PageHTML->verifierActiviteAutorisee( $_POST['act_id'] ) ) {
 				$Libelles['Activite'] = $objActivites->rechercherActivites( $_SESSION['s_cmp_id'], $_SESSION['s_ent_id'], '', $_POST['act_id'] );
 				$Libelles['Liste_DMIA'] = $objActivites->recupererDMIA( $_SESSION['s_cmp_id'], $_POST['act_id'] );
+				$Libelles['Liste_Personnes_Prioritaires'] = $objActivites->recupererPersonnesPrioritaires( $_POST['act_id'] );
 				$Libelles['Liste_Personnes_Cles'] = $objActivites->rechercherPersonnesClesActivites( $_SESSION['s_sct_id'], $_POST['act_id'] );
 				$Libelles['Liste_Sites'] = $objActivites->rechercherSitesAssociesActivite( $_SESSION['s_cmp_id'], $_POST['act_id'] );
 				$Libelles['Liste_Applications'] = $objActivites->rechercherApplicationsActivites( $_POST['act_id'] );
@@ -353,13 +360,57 @@ switch( $Action ) {
 				exit();
 			}
 
+			$_POST['act_taux_occupation'] = $PageHTML->controlerTypeValeur( $_POST['act_taux_occupation'], 'ASCII' );
+			if ( $_POST['act_taux_occupation'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (act_taux_occupation)'
+				) );
+				
+				exit();
+			}
+
+			if ( isset($_POST['cmen_effectif_total']) ) {
+				$_POST['cmen_effectif_total'] = $PageHTML->controlerTypeValeur( $_POST['cmen_effectif_total'], 'NUMBER' );
+				if ( $_POST['cmen_effectif_total'] == -1 ) {
+					echo json_encode( array(
+						'statut' => 'error',
+						'texteMsg' => $L_Invalid_Value . ' (cmen_effectif_total)'
+					) );
+					
+					exit();
+				}
+			}
+
+			$_POST['act_description_entraides'] = $PageHTML->controlerTypeValeur( $_POST['act_description_entraides'], 'ASCII' );
+			if ( $_POST['act_description_entraides'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (act_description_entraides)'
+				) );
+				
+				exit();
+			}
+
+			$_POST['act_strategie_montee_en_charge'] = $PageHTML->controlerTypeValeur( $_POST['act_strategie_montee_en_charge'], 'ASCII' );
+			if ( $_POST['act_strategie_montee_en_charge'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (act_strategie_montee_en_charge)'
+				) );
+				
+				exit();
+			}
+			
+
 			try {
 				$_fonctionCourante = 'majActivite';
 				$objActivites->majActivite( '', $_SESSION['s_cmp_id'], $_SESSION['s_ent_id'], $_POST['ppr_id_responsable'],
 					$_POST['ppr_id_suppleant'], $_POST['act_nom'], $_POST['act_description'],
 					$_POST['act_effectifs_en_nominal'], $_POST['act_effectifs_a_distance'],
 					$_POST['act_teletravail'], $_POST['act_dependances_internes_amont'],
-					$_POST['act_dependances_internes_aval'], $_POST['act_justification_dmia']);
+					$_POST['act_dependances_internes_aval'], $_POST['act_justification_dmia'],
+					$_POST['act_taux_occupation'], $_POST['act_description_entraides'], $_POST['act_strategie_montee_en_charge'] );
 
 				$Id_Activite = $objActivites->LastInsertId;
 
@@ -370,26 +421,36 @@ switch( $Action ) {
 					'", act_teletravail="' . $_POST['act_teletravail'] .
 					'", act_dependances_internes_amont="' . $_POST['act_dependances_internes_amont'] .
 					'", act_dependances_internes_aval="' . $_POST['act_dependances_internes_aval'] .
-					'", act_justification_dmia="' . $_POST['act_justification_dmia'] . '"'
+					'", act_justification_dmia="' . $_POST['act_justification_dmia'] .
+					'", act_taux_occupation="' . $_POST['act_taux_occupation'] .
+					'", act_description_entraides="' . $_POST['act_description_entraides'] .
+					'", act_strategie_montee_en_charge="' . $_POST['act_strategie_montee_en_charge'] . '"'
 					);
 				
 
+				if ( $_POST['cmen_effectif_total'] != '' ) {
+					$objCampagnes->modifierEffectifEntiteCampagne($_SESSION['s_cmp_id'], $_SESSION['s_ent_id'], $_POST['cmen_effectif_total']);
 
-				$_fonctionCourante = 'ajouterSiteRattachementActivite';
-				foreach( $_POST['sites_a_ajouter'] as $Site ) {
-					$objActivites->ajouterSiteRattachementActivite( $_SESSION['s_cmp_id'], $Id_Activite, $Site[0], $Site[1] );
-
-					$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_ACTIVITE', 'cmp_id="' . $_SESSION['s_cmp_id'] . ', act_id="' . $Id_Activite .
-						'", sts_id_nominal="' . $Site[0] . '", acst_type_site="' . $Site[1] . '"' );
+					$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_ENTITE', 'cmp_id="' . $_SESSION['s_cmp_id'] . ', ent_id="' . $_SESSION['s_ent_id'] .
+						'", cmen_effectif_total="' . $_POST['cmen_effectif_total'] . '"' );
 				}
 
+				if ( isset($_POST['sites_a_ajouter']) ) {
+					$_fonctionCourante = 'ajouterSiteActivite';
+					foreach( $_POST['sites_a_ajouter'] as $Site ) {
+						$objActivites->ajouterSiteActivite( $_SESSION['s_cmp_id'], $Id_Activite, $Site[0], $Site[1] );
+	
+						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_ACTIVITE', 'cmp_id="' . $_SESSION['s_cmp_id'] . ', act_id="' . $Id_Activite .
+							'", sts_id_nominal="' . $Site[0] . '", acst_type_site="' . $Site[1] . '"' );
+					}
+				}
 
 				$_fonctionCourante = 'rechercherPartiesPrenantes';
 				$pprLibelle = $objPartiesPrenantes->rechercherPartiesPrenantes( $_SESSION['s_sct_id'], '', $_POST['ppr_id_responsable'] );
 
 
 				// Ajoute le DMIA à l'Activité
-				if ($_POST['total_dmia'] > 0 ) {
+				if ( isset($_POST['dmia_activite']) ) {
 					foreach($_POST['dmia_activite'] as $Element) {
 						$tElement = explode('=', $Element);
 						$ete_id = $tElement[0];
@@ -426,20 +487,24 @@ switch( $Action ) {
 						$app_id = $Element[0];
 						$ete_id_dima = $Element[1];
 						$ete_id_pdma = $Element[2];
-						$acap_palliatif = $Element[3];
+						$acap_donnees = $Element[3];
+						$acap_palliatif = $Element[4];
+						$acap_hebergement = $Element[5];
+						$acap_niveau_service = $Element[6];
 						
 						$_fonctionCourante = 'ajouterApplicationActivite';
 						$objActivites->ajouterApplicationActivite($Id_Activite,
-							$app_id, $ete_id_dima, $ete_id_pdma, $acap_palliatif);
+							$app_id, $ete_id_dima, $ete_id_pdma, $acap_donnees, $acap_palliatif, $acap_hebergement, $acap_niveau_service);
 						
 						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_ACTIVITE',
 							'act_id="' . $Id_Activite .
-							'", app_id="' . $app_id . '", ete_id_dima="' . $ete_id_dima . '"' .
-							', ete_id_pdma="' . $ete_id_pdma . '", acap_palliatif="' . $acap_palliatif . '"');
+							'", app_id="' . $app_id . '", ete_id_dima="' . $ete_id_dima . '", ete_id_pdma="' . $ete_id_pdma . '"' .
+							', acap_donnees="' . $acap_donnees . '", acap_palliatif="' . $acap_palliatif . '"' .
+							', acap_hebergement="' . $acap_hebergement . '", acap_niveau_service="' . $acap_niveau_service . '"' );
 					}
 				}
-				
-				
+
+
 				// Ajoute les Fournisseurs (si nécessaire)
 				if (isset($_POST['fournisseurs_a_ajouter']) and $_POST['fournisseurs_a_ajouter'] != []) {
 					foreach($_POST['fournisseurs_a_ajouter'] as $Element) {
@@ -447,11 +512,11 @@ switch( $Action ) {
 						$ete_id = $Element[1];
 						$acfr_consequence_indisponibilite = $Element[2];
 						$acfr_palliatif_tiers = $Element[3];
-						
+
 						$_fonctionCourante = 'ajouterFournisseurActivite';
 						$objActivites->ajouterFournisseurActivite($Id_Activite,
 							$frn_id, $ete_id, $acfr_consequence_indisponibilite, $acfr_palliatif_tiers);
-						
+
 						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_ACTIVITE',
 							'act_id="' . $Id_Activite .
 							'", frn_id="' . $frn_id . '", ete_id="' . $ete_id . '"' .
@@ -459,7 +524,24 @@ switch( $Action ) {
 							', acap_palliatif="' . $acfr_palliatif_tiers . '"');
 					}
 				}
-				
+
+
+				// Ajoute les Personnes Prioritaires (si nécessaire)
+				if (isset($_POST['personnes_prioritaires_a_ajouter']) && $_POST['personnes_prioritaires_a_ajouter'] != []) {
+					foreach($_POST['personnes_prioritaires_a_ajouter'] as $Element) {
+						$act_id = $Element[0];
+						$ete_id = $Element[1];
+						$rut_nbr_utilisateurs_a_redemarrer = $Element[2];
+
+						$_fonctionCourante = 'ajouterNombrePersonnesPrioritairesActivite';
+						$objActivites->ajouterNombrePersonnesPrioritairesActivite($Id_Activite, $ete_id, $rut_nbr_utilisateurs_a_redemarrer);
+
+						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_ACTIVITE',
+							'act_id="' . $Id_Activite . ', ete_id="' . $ete_id .
+							'", rut_nbr_utilisateurs_a_redemarrer="' . $rut_nbr_utilisateurs_a_redemarrer . '"' );
+					}
+				}
+
 
 				$Valeurs = new stdClass();
 				$Valeurs->act_id = $Id_Activite;
@@ -1006,13 +1088,53 @@ switch( $Action ) {
 				exit();
 			}
 
+			$_POST['act_taux_occupation'] = $PageHTML->controlerTypeValeur( $_POST['act_taux_occupation'], 'NUMERIC' );
+			if ( $_POST['act_taux_occupation'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (act_taux_occupation)'
+				) );
+				
+				exit();
+			}
+
+			$_POST['cmen_effectif_total'] = $PageHTML->controlerTypeValeur( $_POST['cmen_effectif_total'], 'NUMERIC' );
+			if ( $_POST['cmen_effectif_total'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (cmen_effectif_total)'
+				) );
+				
+				exit();
+			}
+
+			$_POST['act_strategie_montee_en_charge'] = $PageHTML->controlerTypeValeur( $_POST['act_strategie_montee_en_charge'], 'ASCII' );
+			if ( $_POST['act_strategie_montee_en_charge'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (act_strategie_montee_en_charge)'
+				) );
+				
+				exit();
+			}
+
+			$_POST['act_description_entraides'] = $PageHTML->controlerTypeValeur( $_POST['act_description_entraides'], 'ASCII' );
+			if ( $_POST['act_description_entraides'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (act_description_entraides)'
+				) );
+				
+				exit();
+			}
 
 			try {
 				$objActivites->majActivite( $_POST['act_id'], $_SESSION['s_cmp_id'], $_SESSION['s_ent_id'],
 					$_POST['ppr_id_responsable'], $_POST['ppr_id_suppleant'], $_POST['act_nom'], $_POST['act_description'],
 					$_POST['act_effectifs_en_nominal'], $_POST['act_effectifs_a_distance'],
 					$_POST['act_teletravail'], $_POST['act_dependances_internes_amont'],
-					$_POST['act_dependances_internes_aval'], $_POST['act_justification_dmia'] );
+					$_POST['act_dependances_internes_aval'], $_POST['act_justification_dmia'],
+					$_POST['act_taux_occupation'], $_POST['act_description_entraides'], $_POST['act_strategie_montee_en_charge'] );
 
 				$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_ACTIVITE', 'act_id="' . $_POST['act_id'] . '", ent_id="' .
 					$_SESSION['s_ent_id'] . '", ppr_id_responsable="' . $_POST['ppr_id_responsable'] .
@@ -1022,7 +1144,17 @@ switch( $Action ) {
 					'", act_teletravail="' . $_POST['act_teletravail'] .
 					'", act_dependances_internes_amont="' . $_POST['act_dependances_internes_amont'] .
 					'", act_dependances_internes_aval="' . $_POST['act_dependances_internes_aval'] .
-					'", act_justification_dmia="' . $_POST['act_justification_dmia'] . '"' );
+					'", act_justification_dmia="' . $_POST['act_justification_dmia'] .
+					'", act_taux_occupation="' . $_POST['act_taux_occupation'] .
+					'", act_strategie_montee_en_charge="' . $_POST['act_strategie_montee_en_charge'] .
+					'", act_description_entraides="' . $_POST['act_description_entraides'] . '"');
+
+					if ( $_POST['cmen_effectif_total'] != '' ) {
+						$objCampagnes->modifierEffectifEntiteCampagne($_SESSION['s_cmp_id'], $_SESSION['s_ent_id'], $_POST['cmen_effectif_total']);
+						
+						$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_ENTITE', 'cmp_id="' . $_SESSION['s_cmp_id'] . ', ent_id="' . $_SESSION['s_ent_id'] .
+							'", cmen_effectif_total="' . $_POST['cmen_effectif_total'] . '"' );
+					}
 			} catch (Exception $e) {
 				$Statut = 'error';
 				$Message = $e->getMessage() . ' (majActivite)';
@@ -1073,13 +1205,62 @@ switch( $Action ) {
 
 
 			try {
+				// Ajoute les Personnes Prioritaires (si nécessaire)
+				if (isset($_POST['personnes_prioritaires_a_ajouter']) && $_POST['personnes_prioritaires_a_ajouter'] != []) {
+					foreach($_POST['personnes_prioritaires_a_ajouter'] as $Element) {
+						$act_id = $Element[0];
+						$ete_id = $Element[1];
+						$rut_nbr_utilisateurs_a_redemarrer = $Element[2];
+						
+						$_fonctionCourante = 'ajouterNombrePersonnesPrioritairesActivite';
+						$objActivites->ajouterNombrePersonnesPrioritairesActivite($_POST['act_id'], $ete_id, $rut_nbr_utilisateurs_a_redemarrer);
+						
+						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_ACTIVITE',
+							'act_id="' . $_POST['act_id'] . ', ete_id="' . $ete_id .
+							'", rut_nbr_utilisateurs_a_redemarrer="' . $rut_nbr_utilisateurs_a_redemarrer . '"' );
+					}
+				}
+
+				// Modifie les Personnes Prioritaires (si nécessaire)
+				if (isset($_POST['personnes_prioritaires_a_modifier']) && $_POST['personnes_prioritaires_a_modifier'] != []) {
+					foreach($_POST['personnes_prioritaires_a_modifier'] as $Element) {
+						$act_id = $Element[0];
+						$ete_id = $Element[1];
+						$rut_nbr_utilisateurs_a_redemarrer = $Element[2];
+						
+						$_fonctionCourante = 'modifierNombrePersonnesPrioritairesActivite';
+						$objActivites->modifierNombrePersonnesPrioritairesActivite($_POST['act_id'], $ete_id, $rut_nbr_utilisateurs_a_redemarrer);
+						
+						$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_ACTIVITE',
+							'act_id="' . $_POST['act_id'] . ', ete_id="' . $ete_id .
+							'", rut_nbr_utilisateurs_a_redemarrer="' . $rut_nbr_utilisateurs_a_redemarrer . '"' );
+					}
+				}
+			} catch (Exception $e) {
+				$Statut = 'error';
+				$Message = $e->getMessage() . ' (' . $_fonctionCourante .')';
+				
+				if ( $e->getCode() == 23505 ) {
+					$Message = $L_ERR_DUPL_Activite;
+				}
+				
+				echo json_encode( array(
+					'statut' => $Statut,
+					'texteMsg' => $Message
+				) );
+				
+				exit();
+			}
+
+
+			try {
 				// Ajoute les Personnes Clés (si nécessaire)
 				if (isset($_POST['personnes_cles_a_ajouter']) && $_POST['personnes_cles_a_ajouter'] != []) {
 					foreach($_POST['personnes_cles_a_ajouter'] as $Element) {
 						$ppr_id = $Element[0];
 						$ppac_description = $Element[1];
 
-						$_fonctionCourante = 'modifierPersonneCleActivite';
+						$_fonctionCourante = 'ajouterPersonneCleActivite';
 						$objActivites->ajouterPersonneCleActivite($_SESSION['s_cmp_id'], $_POST['act_id'], $ppr_id, $ppac_description);
 
 						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_ACTIVITE',
@@ -1311,7 +1492,7 @@ switch( $Action ) {
 						$acst_type_site = $Element[1];
 						
 						$_fonctionCourante = 'modifierSiteActivite';
-						$objActivites->modifierSiteActivite($_POST['act_id'], $sts_id, $acst_type_site);
+						$objActivites->modifierSiteActivite($_SESSION['s_cmp_id'], $_POST['act_id'], $sts_id, $acst_type_site);
 
 						$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_ACTIVITE',
 							'cmp_id="' . $_SESSION['s_cmp_id'] . '", act_id="' . $_POST['act_id'] . '"' .

@@ -47,7 +47,7 @@ Dans le cas contraire, reportez vous sur des guides qui expliquent comment les i
     4. `postgres=# \i MySecDash-2-All-Tables-Constraints.sql`: ce script créé toutes les tables et contraintes
     5. `postgres=# \i MySecDash-3-Primary-Data.sql`: ce script créé les données de base nécessaires au bon fonctionnement de l'outil **MySecDash"**
     6. `postgres=# \i MySecDash-4-Primary-Labels.sql`: ce script créé les libellés de base nécessaires au bon fonctionnement de l'outil **MySecDash"**
-    7. `postgres=# \i MySecDash-5-Secondary-Labels.sql`: ce script créé les libellés de base nécessaires au bon fonctionnement de l'outil **MySecDash"**
+    7. `postgres=# \i MySecDash-5-Secondary-Labels.sql`: ce script créé les nouveaux libellés et qui vont remplacer tous les autres à termes dans l'outil **MySecDash"**
 6. Au niveau d'Apache, il est conseillé d'utiliser un `VHOST` spécifique. Il faudra également installer un certificat, car **MySecDash** force les communications en `HTPPS`
 
 ## En route

@@ -229,15 +229,23 @@ class Activites extends HBL_Connexioneur_BD {
 
 
 	public function dupliquerActivite( $act_id, $n_act_nom = NULL, $flag_dmia = TRUE, $flag_fournisseurs = FALSE,
-		$flag_applications = FALSE, $flag_parties_prenantes = FALSE, $flag_sites = FALSE, $n_cmp_id = NULL ) {
+		$flag_applications = FALSE, $flag_parties_prenantes = FALSE, $flag_sites = FALSE, $n_cmp_id = NULL, $flag_personnes_prioritaires = FALSE ) {
 			/**
 			 * Duplique une Activité.
 			 *
 			 * \license Copyright Loxense
 			 * \author Pierre-Luc MARY
-			 * \date 2024-10-21
+			 * \date 2025-06-26
 			 *
 			 * \param[in] $act_id Identifiant de l'Activité à dupliquer
+			 * \param[in] $n_act_nom Nouveau nom de l'activité dupliquée
+			 * \param[in] $flag_dmia Flag permettant de dupliquer les DMIA de l'Activité de base
+			 * \param[in] $flag_fournisseurs Flag permettant de dupliquer les Fournisseurs de l'Activité de base
+			 * \param[in] $flag_applications Flag permettant de dupliquer les Applications de l'Activité de base
+			 * \param[in] $flag_parties_prenantes Flag permettant de dupliquer les Parties Prenantes de l'Activité de base
+			 * \param[in] $flag_sites Flag permettant de dupliquer les sites de l'Activité de base
+			 * \param[in] $n_cmp_id Identifiant de la nouvelle Campagne
+			 * \param[in] $flag_personnes_prioritaires Flag permettant de dupliquer les Personnes Prioritaires de l'Activité de base
 			 *
 			 * \return Renvoi l'ID de la nouvelle Activité ou FALSE en cas d'erreur. Lève une exception si un problème est rencontré.
 			 */
@@ -455,8 +463,8 @@ class Activites extends HBL_Connexioneur_BD {
 
 				foreach( $Query->fetchAll( PDO::FETCH_CLASS ) as $Element ) {
 					$Request = 'INSERT INTO acst_act_sts
-						(act_id, sts_id, cmp_id, acst_type_site, acst_strategie_montee_charge, acst_description_entraides) VALUES
-						(:act_id, :sts_id, :cmp_id, :acst_type_site, :acst_strategie_montee_charge, :acst_description_entraides) ';
+						(act_id, sts_id, cmp_id, acst_type_site) VALUES
+						(:act_id, :sts_id, :cmp_id, :acst_type_site) ';
 
 					$Query = $this->prepareSQL( $Request );
 
@@ -468,8 +476,33 @@ class Activites extends HBL_Connexioneur_BD {
 						$this->bindSQL( $Query, ':cmp_id', $n_cmp_id, PDO::PARAM_INT );
 					}
 					$this->bindSQL( $Query, ':acst_type_site', $Element->acst_type_site, PDO::PARAM_INT );
-					$this->bindSQL( $Query, ':acst_strategie_montee_charge', $Element->acst_strategie_montee_charge, PDO::PARAM_LOB );
-					$this->bindSQL( $Query, ':acst_description_entraides', $Element->acst_description_entraides, PDO::PARAM_LOB );
+
+					$this->executeSQL( $Query );
+				}
+			}
+
+
+			if ( $flag_personnes_prioritaires == TRUE ) {
+				// ================================
+				// Duplique les Personnes Prioritaires.
+				$Request = 'SELECT * FROM rut_redemarrage_utilisateurs WHERE act_id = :act_id ';
+				
+				$Query = $this->prepareSQL( $Request );
+				
+				$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
+				
+				$this->executeSQL( $Query );
+				
+				foreach( $Query->fetchAll( PDO::FETCH_CLASS ) as $Element ) {
+					$Request = 'INSERT INTO rut_redemarrage_utilisateurs
+						(act_id, ete_id, rut_nbr_utilisateurs_a_redemarrer) VALUES
+						(:act_id, :ete_id, :rut_nbr_utilisateurs_a_redemarrer) ';
+
+					$Query = $this->prepareSQL( $Request );
+
+					$this->bindSQL( $Query, ':act_id', $n_act_id, PDO::PARAM_INT );
+					$this->bindSQL( $Query, ':ete_id', $Element->ete_id, PDO::PARAM_INT );
+					$this->bindSQL( $Query, ':rut_nbr_utilisateurs_a_redemarrer', $Element->rut_nbr_utilisateurs_a_redemarrer, PDO::PARAM_INT );
 
 					$this->executeSQL( $Query );
 				}

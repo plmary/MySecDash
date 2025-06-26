@@ -821,10 +821,20 @@ switch( $Action ) {
 				exit();
 			}
 
+			$_POST['flag_personnes_prioritaires'] = $PageHTML->controlerTypeValeur( $_POST['flag_personnes_prioritaires'], 'BOOLEAN' );
+			if ( $_POST['flag_personnes_prioritaires'] === -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (flag_personnes_prioritaires)'
+				) );
+				
+				exit();
+			}
+
 			try {
 				$n_act_id = $objActivites->dupliquerActivite( $_POST['act_id'], $_POST['n_act_nom'],
 					$_POST['flag_dmia'], $_POST['flag_fournisseurs'], $_POST['flag_applications'],
-					$_POST['flag_personnes_cles'], $_POST['flag_sites'] );
+					$_POST['flag_personnes_cles'], $_POST['flag_sites'], NULL, $_POST['flag_personnes_prioritaires'] );
 
 				$PageHTML->ecrireEvenement( 'ATP_DUPLICATION', 'OTP_ACTIVITE', 'act_id="' . $_POST['act_id'] . '" => n_act_id = "' . $n_act_id .'"' );
 

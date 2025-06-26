@@ -304,6 +304,12 @@ function ModalDupliquer( act_id ) {
 				   '<label class="form-check-label" for="flag_personnes_cles">' + reponse[ 'L_Personnes_Cles' ] + '</label>' +
 				  '</div>' +
 				 '</div>' +
+				 '<div class="col-lg-2">' +
+				  '<div class="form-check">' +
+				   '<input id="flag_personnes_prioritaires" class="form-check-input" type="checkbox">' +
+				   '<label class="form-check-label" for="flag_personnes_prioritaires">' + reponse[ 'L_Personnes_Prioritaires' ] + '</label>' +
+				  '</div>' +
+				 '</div>' +
 				'</div>';
 
 
@@ -312,7 +318,7 @@ function ModalDupliquer( act_id ) {
 				Corps,
 				'idBoutonAjouter', reponse['L_Dupliquer'],
 				true, reponse[ 'L_Fermer' ],
-				'formDupliquer', 'modal-xl' );
+				'formDupliquer', 'modal-xxl' );
 
 			$('#idModal').modal('show'); // Affiche la modale qui vient d'être créée
 

@@ -216,13 +216,14 @@ function DupliquerActivite( act_id ) {
 	var flag_fournisseurs = $('#flag_fournisseurs').is(':checked');
 	var flag_applications = $('#flag_applications').is(':checked');
 	var flag_personnes_cles = $('#flag_personnes_cles').is(':checked');
+	var flag_personnes_prioritaires = $('#flag_personnes_prioritaires').is(':checked');
 
 	$.ajax({
 		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Dupliquer',
 		type: 'POST',
 		data: $.param({'act_id': act_id, 'n_act_nom': n_act_nom, 'flag_dmia': flag_dmia, 'flag_sites': flag_sites,
 			'flag_fournisseurs': flag_fournisseurs, 'flag_applications': flag_applications,
-			'flag_personnes_cles': flag_personnes_cles}), // les paramètres sont protégés avant envoi
+			'flag_personnes_cles': flag_personnes_cles, 'flag_personnes_prioritaires': flag_personnes_prioritaires}), // les paramètres sont protégés avant envoi
 		dataType: 'json', // le résultat est transmit dans un objet JSON
 		success: function( reponse ) { // Le serveur n'a pas rencontré de problème lors de l'échange ou de l'exécution.
 			var statut = reponse['statut'];

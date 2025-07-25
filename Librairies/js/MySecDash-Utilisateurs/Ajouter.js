@@ -110,55 +110,44 @@ function ajouterUtilisateur() {
 
 
 function afficherZoneCreationCivilite() {
-	var Corps;
-
 	$.ajax({
 		url: Parameters['URL_BASE'] + '/MySecDash-Utilisateurs.php?Action=AJAX_Libeller', //Civilites
 		type: 'POST',
 		dataType: 'json',
 		success: function( reponse ) {
-			$('.modal-footer .btn').attr('disabled', 'disabled');
-			$('#zone_ajout_identite .btn').attr('disabled', 'disabled');
+			$('#insert-cvl_id').removeClass('d-none');
+			$('#select-cvl_id').addClass('d-none');
 
-			Corps = '<div class="zone_ajout_contextuel" id="zone_ajout_civilite">' +
-				'<h4 class="fg_couleur_3">' + reponse[ 'L_Civilite' ] + '</h4>' +
-				'<div class="row">' +
-				'<label class="col-lg-2 col-form-label" for="cvl_nom">' + reponse[ 'L_Nom' ] + '</label>' +
-				'<div class="col-lg-10">' +
-				'<input id="cvl_nom" class="form-control text-uppercase" type="text" autofocus required>' +
-				'</div>' +
-				'</div>' +
-				'<div class="row">' +
-				'<label class="col-lg-2 col-form-label" for="cvl_prenom">' + reponse[ 'L_Prenom' ] + '</label>' +
-				'<div class="col-lg-10">' +
-				'<input id="cvl_prenom" class="form-control text-capitalize" type="text" required>' +
-				'</div>' +
-				'</div>' +
-				'<div class="text-right">' +
-				'<a class="btn btn-outline-secondary" href="javascript:fermerZoneAjoutCivilite();">' + reponse['L_Fermer'] + '</a>&nbsp;&nbsp;' +
-				'<a class="btn btn-primary" href="javascript:sauverZoneAjoutCivilite(\''+reponse['L_Field_Mandatory']+'\');">' + reponse['L_Ajouter'] + '</a>' +
-				'</div>' +
-				'</div>' ;
+			$('#btn-fermer-civilite').on( 'click', function() {
+				fermerZoneAjoutCivilite();
+			});
 
-			$('.modal-body').prepend( Corps );
+			$('#btn-creer-civilite').on( 'click', function() {
+				sauverZoneAjoutCivilite(reponse['L_Field_Mandatory']);
+			});
+
+			$('#cvl_nom').focus();
 		}
 	});
-
-	$('#cvl_nom').focus();
 }
 
 
 function fermerZoneAjoutCivilite() {
-	$('#zone_ajout_civilite').remove();
-	$('.modal-footer .btn').removeAttr('disabled');
-	$('#zone_ajout_identite .btn').removeAttr('disabled');
+	$('#insert-cvl_id').addClass('d-none');
+	$('#select-cvl_id').removeClass('d-none');
+
+	$('#insert-cvl_id #cvl_nom').val('');
+	$('#insert-cvl_id #cvl_prenom').val('');
+
+
+	$('btn-fermer-civilite').off( 'click' );
 }
 
 
-function sauverZoneAjoutCivilite( L_Field_Mandatory ) {
+function sauverZoneAjoutCivilite(L_Field_Mandatory) {
 	var Fermer = true;
 
-	$('#zone_ajout_civilite input[required]').each( function() {
+	$('#insert-cvl_id input').each( function() {
 		if ( $(this).val() == '' ) {
 			$(this).focus();
 
@@ -206,9 +195,7 @@ function sauverZoneAjoutCivilite( L_Field_Mandatory ) {
 				var texteMsg = reponse['texteMsg'];
 
 				if ( statut == 'success' ) {
-					$('#zone_ajout_civilite').remove();
-					$('.modal-footer .btn').removeAttr('disabled');
-					$('#zone_ajout_identite .btn').removeAttr('disabled');
+					fermerZoneAjoutCivilite();
 
 					$('#cvl_id option').removeAttr( 'selected' );
 

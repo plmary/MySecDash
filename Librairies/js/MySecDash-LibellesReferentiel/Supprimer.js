@@ -19,13 +19,13 @@ function ModalSupprimer( Id_Referentiel ) {
 				'<div class="row">' +
 				'<label class="col-lg-3 col-form-label" for="lng_id">' + reponse[ 'L_Langue' ] + '</label>' +
 				'<div class="col-lg-2">' +
-				'<input id="lng_id" class="form-control" type="text" value="' + lng_id + '" disabled>' +
+				'<input id="lng_id" class="form-control" type="text" value="*" disabled>' +
 				'</div>' +
 				'</div> <!-- .row -->' +
 				'<div class="row">' +
 				'<label class="col-lg-3 col-form-label" for="lng_id">' + reponse[ 'L_Libelle' ] + '</label>' +
-				'<div class="col-lg-2">' +
-				'<input id="lng_id" class="form-control" type="text" value="' + lbr_libelle + '" disabled>' +
+				'<div class="col-lg-9">' +
+				'<input id="lng_id" class="form-control" type="text" value="' + reponse['L_Supprime_Tous_Libelles_Code'] + '" disabled>' +
 				'</div>' +
 				'</div> <!-- .row -->';
 
@@ -73,11 +73,13 @@ function ModalSupprimer( Id_Referentiel ) {
 						if ( statut == 'success' ) {
 							afficherMessage( texteMsg, statut, 'body' );
 
-							$('#LBR_'+ Id_Referentiel).remove();
+/*							$('#LBR_'+ Id_Referentiel).remove();
 
-							$('#totalOccurrences').text( reponse['total'] );
+							$('#totalOccurrences').text( reponse['total'] );*/
 
 							$('#idModalSupprimer').modal('hide'); // Cache la modale.
+
+							trier( $( 'div#entete_tableau div.row div:first'), false );
 						} else {
 							afficherMessage( texteMsg, statut, '#idModalSupprimer' );
 						}

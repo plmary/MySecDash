@@ -1,13 +1,13 @@
 <?php
 
 /**
-* Ce script gère les Applications Internes.
+* Ce script gère les Libellés du Référentiel Interne.
 *
 * \license Copyleft Loxense
 * \author Pierre-Luc MARY
 * \package MySecDash
 * \version 1.0
-* \date 2025-02-27
+* \date 2025-07-16
 */
 
 // Charge les constantes du projet.
@@ -33,11 +33,11 @@ $Format_Colonnes[ 'Prefixe' ] = 'LBR';
 $Format_Colonnes[ 'Fonction_Ouverture' ] = 'ouvrirChamp';
 $Format_Colonnes[ 'Id' ] = array( 'nom' => 'lbr_id' );
 $Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'lbr_code', 'titre' => $L_Code, 'taille' => '4',
-	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri ' => 'lbr_code', 'type' => 'input', 'modifiable' => 'oui' );
+	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'lbr_code', 'type' => 'input', 'modifiable' => 'non' );
 $Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'lng_id', 'titre' => $L_Langue, 'taille' => '1',
-	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'lng_id', 'type' => 'select', 'fonction' => 'listerLangues', 'modifiable' => 'oui' );
-$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'lbr_libelle', 'titre' => $L_Code, 'taille' => '5',
-	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri ' => 'lbr_libelle', 'type' => 'input', 'modifiable' => 'oui' );
+	'triable' => 'oui', 'sens_tri' => 'lng_id', 'type' => 'select', 'fonction' => 'listerLangues', 'modifiable' => 'non' );
+$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'lbr_libelle', 'titre' => $L_Libelle, 'taille' => '5',
+	'triable' => 'oui', 'sens_tri' => 'lbr_libelle', 'type' => 'input', 'modifiable' => 'oui' );
 $Format_Colonnes[ 'Actions' ] = array( 'taille' => '2', 'titre' => $L_Actions,
 	'boutons' => array( 'modifier' => $Droit_Modifier, 'supprimer' => $Droit_Supprimer ) );
 
@@ -99,6 +99,7 @@ switch( $Action ) {
 		'L_Code' => $PageHTML->getLibelle('__LRI_SYS_CODE'),
 		'L_Langue' => $PageHTML->getLibelle('__LRI_SYS_LANGUE'),
 		'L_Libelle' => $PageHTML->getLibelle('__LRI_SYS_LIBELLE'),
+		'L_Supprime_Tous_Libelles_Code' => $PageHTML->getLibelle('__LRI_SUPPRIME_TOUS_LIBELLES_CODE'),
 		'Liste_Langues' => $PageHTML->recupererLangues()
 		);
 
@@ -124,7 +125,7 @@ switch( $Action ) {
 		$Trier = $_POST[ 'trier' ];
 
 		try {
-			$ListeLibelles = $objLibelles->recupererLibellesReferentiel( '*', $_SESSION['s_lng_id'] );
+			$ListeLibelles = $objLibelles->recupererSimpleLibellesReferentiel( '*', $_SESSION['s_lng_id'], 'E', $Trier );
 			$Total = $objLibelles->RowCount;
 
 			$Texte_HTML = '';
@@ -269,12 +270,12 @@ switch( $Action ) {
 
  case 'AJAX_Supprimer':
 	if ( $Droit_Supprimer === true ) {
-		if ( isset($_POST['lbr_id']) ) {
+		if ( isset($_POST['lbr_code']) ) {
 			try  {
-				$objLibelles->supprimerLibelleReferentielParId( $_POST['lbr_id'] );
+				$objLibelles->supprimerLibelleReferentielParCode( $_POST['lbr_code'] );
 	
-				$PageHTML->ecrireEvenement( 'ATP_SUPPRESSION', 'OTP_LIBELLE_INTERNE', 'lbr_id="' . $_POST['lbr_id'] . '", ' .
-					'lbr_code="' . $_POST[ 'lbr_code' ] . '", lng_id="' . $_POST[ 'lng_id' ] . '" ' );
+				$PageHTML->ecrireEvenement( 'ATP_SUPPRESSION', 'OTP_LIBELLE_INTERNE',
+					'lbr_code="' . $_POST[ 'lbr_code' ] . '", lng_id="*" ' );
 	
 				$Resultat = array( 'statut' => 'success',
 					'titreMsg' => $PageHTML->getLibelle( '__LRI_ERR_SYS_SUCCES' ),

@@ -104,6 +104,7 @@ if ( isset($Permissions[ basename( $Script ) ]["rights"]) ) {
 // Récupère les droits de l'utilisateur sur tous les scripts.
 $Permissions = $PageHTML->permissionsGroupees();
 
+
 // Vérifie que l'utilisateur est habilité en lecture sur ce script.
 if ( $PageHTML->permission( $Script ) === false ) {
 	include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Autorisations.inc.php' );

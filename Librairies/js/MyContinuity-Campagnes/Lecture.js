@@ -66,9 +66,13 @@ function trier( myElement, changerTri ) {
 					}
 				}
 
+				// Postionne la couleur sur la colonne active sur le tri.
+				$('div#entete_tableau div.row div.triable').removeClass('active');
+				$(myElement).addClass('active');
+
 				$(myElement).attr( 'data-sens-tri', sens_recherche );
 
-				$('#totalOccurrences').text( ajouterZero(reponse[ 'total' ] ) );
+				$('#totalOccurrences').text( ajouterZero(reponse[ 'total' ]) );
 
 
 				// Vérifie s'il y a une limitation à la création des Entités.
@@ -228,7 +232,6 @@ function ModalMAJCampagne( cmp_id = '' ){
 				 '<div class="input-group mb-3 d-none" id="ZoneCreerEntite">' +
 				 '<input id="ent_nom" class="form-control" type="text" placeholder="' + reponse['L_Nom'] + '">' +
 				 '<input id="ent_description" class="form-control" type="text" placeholder="' + reponse['L_Description'] + '">' +
-				 '<input id="ppr_id_cpca" class="form-control" type="text" placeholder="' + reponse['L_CPCA'] + '">' +
 				 '<button id="btn-creer-entite" class="btn btn-outline-secondary" type="button">' + reponse['L_Ajouter'] + '</button>' +
 				 '<button id="btn-fermer-entite" class="btn btn-outline-secondary" type="button">' + reponse['L_Fermer'] + '</button>' +
 				 '</div> <!-- #ZoneCreerEntite -->' +
@@ -264,7 +267,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 					'</div>' +
 					'</div> <!-- .col-12 -->' +
 					'</div> <!-- .row -->' +
-					'<div class="row">' +
+					'<div class="row" id="titre-colonne-entites">' +
 					'<div class="col-5 fw-bold bg_vert">' + reponse['L_Entite'] + '</div> <!-- .col-5 -->' +
 					'<div class="col-1 fw-bold bg_vert">' + reponse['L_Effectif'] + '</div> <!-- .col-1 -->' +
 					'<div class="col-4 fw-bold bg_vert">' + reponse['L_CPCA'] + '</div> <!-- .col-4 -->' +
@@ -324,14 +327,14 @@ function ModalMAJCampagne( cmp_id = '' ){
 						'</div> <!-- .form-check -->' + 
 						'</div> <!-- .col-5 -->' +
 						'<div class="col-1">' +
-						'<input class="form-control" type="text" placeholder="Effectif total" value="'+v_cmen_effectif_total+'" data-old_value="'+v_cmen_effectif_total+'" id="cmen_effectif_total-'+Entite.ent_id+'">' +
+						'<input class="form-control" type="text" placeholder="'+reponse['L_Effectif_Total']+'" value="'+v_cmen_effectif_total+'" data-old_value="'+v_cmen_effectif_total+'" id="cmen_effectif_total-'+Entite.ent_id+'">' +
 						'</div> <!-- .col-1 -->' +
 						'<div class="col-4">' +
 						'<div id="x-select-ppr_id_cpca-'+Entite.ent_id+'" class="input-group">' +
 						'<select id="ppr_id_cpca-'+Entite.ent_id+'" class="form-select" data-old_value="'+Entite.ppr_id_cpca+'">' +
 						PartiesPrenantes +
 						'</select>' +
-						'<button class="btn btn-outline-secondary" id="btn-section-ajouter-partie_prenante" type="button" title="Créer"><i class="bi-plus"></i></button>' +
+						'<button class="btn btn-outline-secondary" id="btn-section-ajouter-partie_prenante-'+Entite.ent_id+'" type="button" title="Créer"><i class="bi-plus"></i></button>' +
 						'</div> <!-- .input-group -->' +
 						'</div> <!-- .col-4 -->' +
 						'<div class="col-2">' +
@@ -343,7 +346,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 
 
 				'<div id="zone-x-select-sites" class="d-none">' +
-					'<div class="form-check liste">' +
+					'<div class="form-check liste" id="titre-tout-cocher-sites">' +
 					'<input class="form-check-input" type="checkbox" id="tout-cocher-sts">' +
 					'<label class="form-check-label fw-bold fg_bleu" for="tout-cocher-sts">' + reponse['L_Tout_Cocher_Decocher'] + '</label>' +
 					'</div>';
@@ -509,7 +512,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 					return false;
 				});
 
-				$('#btn-section-ajouter-partie_prenante').off('click').on('click', function(){
+				$('button[id^="btn-section-ajouter-partie_prenante"]').off('click').on('click', function(){
 					$('#ZoneCreerPartiePrenante').removeClass('d-none');
 					$('#ZoneRecherche').addClass('d-none');
 
@@ -531,18 +534,50 @@ function ModalMAJCampagne( cmp_id = '' ){
 						success: function( reponse ) {
 							if ( reponse['statut'] == 'success' ) {
 								ent_id = reponse['ent_id'];
-								
+
 								Nom_Complet_Entite = ent_nom;
 								if (ent_description != '' && ent_description != null) {
 									Nom_Complet_Entite += ' ('+ ent_description + ')';
 								}
-			
-								Corps = '<div class="form-check liste">' + 
-									'<input class="form-check-input" type="checkbox" value="" data-old_value="0" id="entite-'+ent_id+'" checked>' +
-									'<label class="form-check-label" for="entite-'+ent_id+'">'+Nom_Complet_Entite+'</label>' +
-									'</div> <!-- .form-check -->';
+
+								var PartiesPrenantes = '<option value="">' + reponse['L_Aucun'] + '</option>';
+								for (let PartiePrenante of reponse['Liste_Parties_Prenantes']) {
+									if (PartiePrenante.ppr_interne == true) {
+										var Type_Partie_Prenante = reponse['L_Interne'];
+									} else {
+										var Type_Partie_Prenante = reponse['L_Externe'];
+									}
+
+									PartiesPrenantes += '<option value="'+PartiePrenante.ppr_id+'"'+'>'+PartiePrenante.ppr_nom+' '+PartiePrenante.ppr_prenom+' ('+Type_Partie_Prenante+')</option>';
+								}
+
+								Corps = '<div class="row liste">' +
+									 '<div class="col-5">' +
+									  '<div class="form-check">' + 
+									   '<input class="form-check-input" type="checkbox" value="" data-old_value="0" id="entite-'+ent_id+'" checked>' +
+									   '<label class="form-check-label" for="entite-'+ent_id+'">'+Nom_Complet_Entite+'</label>' +
+									  '</div> <!-- .form-check -->' +
+									 '</div> <!-- .col-5 -->' +
+									 '<div class="col-1">' +
+									  '<input id="cmen_effectif_total-'+ent_id+'" class="form-control" type="text" placeholder="'+reponse['L_Effectif_Total']+'" data-old_value="">' +
+									 '</div> <!-- .col-1 -->' +
+									 '<div class="col-4">' +
+									  '<div id="x-select-ppr_id_cpca-'+ent_id+'" class="input-group">' +
+									   '<select id="ppr_id_cpca-'+ent_id+'" class="form-select" data-old_value="">' +
+									   PartiesPrenantes +
+									   '</select>' +
+									   '<button id="btn-section-ajouter-partie_prenante-'+ent_id+'" class="btn btn-outline-secondary" type="button" title="'+reponse['L_Creer']+'">' +
+									    '<i class="bi-plus"></i>' +
+									   '</button>' +
+									  '</div> <!-- .input-group -->' +
+									 '</div> <!-- .col-4 -->' +
+									 '<div class="col-2">' +
+									  '<input id="cmen_date_entretien_cpca-'+ent_id+'" class="form-control" type="date" data-old_value="" value="">' +
+									 '</div> <!-- .col-2 -->' +
+									'</div> <!-- .row .liste -->';
 	
-								$('#zone-x-select-entites').prepend( Corps );
+								$('#titre-colonne-entites').after( Corps );
+								//alert(Corps);
 
 								afficherMessage( reponse['texteMsg'], reponse['statut'], 'body' );
 								$('#btn-fermer-entite').trigger('click');
@@ -641,7 +676,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 									'<label class="form-check-label" for="site-'+sts_id+'">'+Nom_Complet_Site+'</label>' +
 									'</div> <!-- .form-check -->';
 
-								$('#zone-x-select-sites').prepend( Corps );
+								$('#titre-tout-cocher-sites').after( Corps );
 
 								afficherMessage( reponse['texteMsg'], reponse['statut'], 'body' );
 								$('#btn-fermer-site').trigger('click');

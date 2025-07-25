@@ -343,13 +343,13 @@ function creerFournisseur() {
 
 	if (frn_nom == '') {
 		$('#frn_nom').focus();
-		afficherMessage( reponse['L_Champ_Obligatoire'], 'erreur', 'body' );
+		//afficherMessage( reponse['L_Champ_Obligatoire'], 'erreur', 'body' );
 		return -1;
 	}
 
 	if (tfr_id == '') {
 		$('#tfr_id').focus();
-		afficherMessage( reponse['L_Champ_Obligatoire'], 'erreur', 'body' );
+		//afficherMessage( reponse['L_Champ_Obligatoire'], 'erreur', 'body' );
 		return -1;
 	}
 
@@ -457,6 +457,10 @@ function creerApplication() {
 					Nom_Complet += ' [' + frn_nom + ']';
 				}
 
+				if (app_description != '' && app_description != null) {
+					Nom_Complet += ' [' + app_description + ']';
+				}
+
 				if (app_hebergement == null) app_hebergement = '';
 				if (app_hebergement == '') {
 					app_hebergement = reponse['L_Hebergement'];
@@ -471,10 +475,6 @@ function creerApplication() {
 				Nom_Complet += '<input type="text" class="form-control" id="acap_niveau_service-'+app_id+'" ' + 
 					'placeholder="' + app_niveau_service + '" value="">';
 
-				if (app_description != '' && app_description != null) {
-					Nom_Complet += ' [' + app_description + ']';
-				}
-
 				Corps = creerOccurrenceApplicationDansListe(app_id, Nom_Complet,
 					0, ' checked', reponse['Liste_EchellesTemps'], reponse['L_DMIA'], '',
 					reponse['L_PDMA'], '', reponse['L_Palliatif'], '', '', reponse['L_Aucun']);
@@ -484,7 +484,7 @@ function creerApplication() {
 				afficherMessage( reponse['texteMsg'], reponse['statut'], 'body' );
 				$('#btn-fermer-zone-application').trigger('click');
 			} else {
-				afficherMessage( texteMsg, statut, '#idModal', 0, 'n' );
+				afficherMessage( reponse['texteMsg'], reponse['statut'], '#idModal', 0, 'n' );
 			}
 		}
 	});

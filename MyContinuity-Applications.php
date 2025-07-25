@@ -434,9 +434,12 @@ switch( $Action ) {
 
 		$_SESSION['s_sct_id'] = $_POST['sct_id'];
 
+		$Liste_Campagnes = $objCampagnes->rechercherCampagnes($_POST['sct_id']);
+
 		$Resultat = array( 'statut' => 'success',
 			'texteMsg' => $L_Societe_Change,
-			'sct_id' => $_SESSION['s_sct_id']
+			'sct_id' => $_SESSION['s_sct_id'],
+			'Liste_Campagnes' => $Liste_Campagnes
 		);
 	} else {
 		$Resultat = array( 'statut' => 'error',

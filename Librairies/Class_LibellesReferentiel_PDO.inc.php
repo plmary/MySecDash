@@ -232,7 +232,7 @@ class LibellesReferentiel extends HBL_Connexioneur_BD {
 		$Resultat = $Requete->fetch(PDO::FETCH_NUM);
 
 		if ( $Resultat != false ) {
-			return $Resultat[0];
+			return htmlentities($Resultat[0]);
 		} else {
 			return '---*---';
 		}
@@ -331,6 +331,110 @@ class LibellesReferentiel extends HBL_Connexioneur_BD {
 		}
 
 		return $Resultat;
+	}
+	
+	
+	
+	public function recupererSimpleLibellesReferentiel( $Code, $Langue = '*', $TypeRecherche = 'E', $Trier = 'lbr_code' ) {
+		/**
+		 * Récupérer les libellés du référentiel à partir d'un ou des codes fournis
+		 *
+		 * \license Loxense
+		 * \author Pierre-Luc MARY
+		 *
+		 * \param[in] $Code Code du libellé du référenciel à rechercher
+		 * \param[in] $Langue la langue du libellé qui est recherhée (si $Langue = *, alors toutes les langues sont recherchées)
+		 * \param[in] $TypeRecherche Précise le type de recherche à réaliser ('E' = Egal à, 'D' = Débute par, 'T' = Termine par, 'C' = Contient)
+		 * \param[in] $Trier Précise la façon de trier la liste à afficher
+		 *
+		 * \return Renvoi les libellés trouvés ou une liste vide si aucune correspondance. Lève une Exception en cas d'erreur.
+		 */
+		if ( $Code == '' ) {
+			return '';
+		}
+
+		$Langue = mb_strtolower( trim( $Langue ) );
+		$TypeRecherche = mb_strtoupper( trim( $TypeRecherche ) );
+
+		$Code = mb_strtoupper( trim( $Code ) );
+
+		if ( $TypeRecherche == 'E' ) {
+			$OperateurRecherche = '=';
+		} else {
+			$OperateurRecherche = 'LIKE';
+		}
+
+		$Recherche = 'SELECT lbr_id, lbr_code, lng_id, lbr_libelle
+			FROM lbr_libelles_referentiel AS "lbr" ';
+
+		if ( $Code != '*' ) {
+			$Where = 'WHERE lbr_code ' . $OperateurRecherche . ' :Code ';
+		} else {
+			$Where = '';
+		}
+
+		if ( $Langue != '*' ) {
+			if ( $Where == '' ) {
+				$Where .= 'WHERE ';
+			} else {
+				$Where .= 'AND ';
+			}
+
+			$Where .= 'lng_id = :Langue ';
+		}
+
+		switch( $Trier ) {
+			default:
+			case 'lbr_code':
+				$Order_By = 'lbr_code, lng_id';
+				break;
+			case 'lbr_code-desc':
+				$Order_By = 'lbr_code DESC, lng_id';
+				break;
+
+			case 'lng_id':
+				$Order_By = 'lng_id, lbr_code';
+				break;
+			case 'lng_id-desc':
+				$Order_By = 'lng_id DESC, lbr_code';
+				break;
+
+			case 'lbr_libelle':
+				$Order_By = 'lbr_libelle, lng_id';
+				break;
+			case 'lbr_libelle-desc':
+				$Order_By = 'lbr_libelle DESC, lng_id';
+				break;
+		}
+
+		$Recherche .= $Where . 'ORDER BY ' . $Order_By . ' ';
+
+		$Requete = $this->prepareSQL( $Recherche );
+
+
+		if ( $Code != '*' ) {
+			switch( $TypeRecherche ) {
+				case 'D':
+					$Code = $Code . '%';
+					break;
+				case 'T':
+					$Code = '%' . $Code;
+					break;
+				case 'C':
+					$Code = '%' . $Code . '%';
+					break;
+			}
+
+			$this->bindSQL( $Requete, ':Code', $Code, self::LBR_CODE_T, self::LBR_CODE_L );
+		}
+
+		if ( $Langue != '*' ) {
+			$this->bindSQL( $Requete, ':Langue', $Langue, self::LNG_ID_T, self::LNG_ID_L );
+		}
+
+		$this->executeSQL( $Requete);
+
+		return $Requete->fetchAll( PDO::FETCH_CLASS );
 	}
 
 

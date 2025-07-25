@@ -12,7 +12,7 @@ INSERT INTO prs_parametres_systeme (prs_nom, prs_type, prs_valeur, prs_commentai
 ('authentification_type', 2, 'D', 'Type authentification', 'connexion', FALSE),
 ('expiration_time', 1, '10', 'Nombre de minutes avant expiration', 'connexion', FALSE),
 ('default_password', 2, '1CouRouCouCou!', 'Mot de passe par défaut', 'connexion', FALSE),
-('account_lifetime', 1, '6', 'Nombre de mois avant désactivation de l identité', 'connexion', FALSE),
+('account_lifetime', 1, '12', 'Nombre de mois avant désactivation de l identité', 'connexion', FALSE),
 ('max_attempt', 1, '10', 'Nombre maximum de tentative de connexion', 'connexion', FALSE),
 ('min_password_size', 1, '12', 'Taille minimum d''un mot de passe', 'connexion', FALSE),
 ('password_complexity', 1, '3', 'Complexité demandée à la création d un mot de passe', 'connexion', FALSE),
@@ -22,7 +22,7 @@ INSERT INTO prs_parametres_systeme (prs_nom, prs_type, prs_valeur, prs_commentai
 ('ldap_protocol_version', 1, '3', '', 'connexion', TRUE),
 ('ldap_organization', 2, 'dc=loxense,dc=fr', 'Précise l''organisation du RDN du LDAP', 'connexion', TRUE),
 ('ldap_rdn_prefix', 2, 'uid', 'Précise le préfixe du RDN du LDAP', 'connexion', TRUE),
-('ldap_ssl', 0, 'FALSE', 'Appel LDAP en SSL', 'connexion', TRUE),
+('ldap_ssl', 0, 'TRUE', 'Appel LDAP en SSL', 'connexion', TRUE),
 
 ('language_alert', 2, 'fr', 'Langue dans laquelle seront affichées les alertes', 'alerte', FALSE),
 ('syslog_alert', 0, 'TRUE', 'Alerter par syslog', 'alerte', TRUE),
@@ -176,12 +176,12 @@ INSERT INTO ain_applications_internes (ain_id, tap_id, ain_libelle, ain_localisa
 -- *** Gestion transverse des TAGS, pas encore opérationnel
 (26, 1, 'Gestion des étiquettes (tags)', 'MySecDash-Etiquettes.php'),
 
-(27, 1, 'Comparateur de DMIA sur Activités', 'MySecDash-ComparateurDMIAActivites.php'),
+(27, 1, 'Comparateur de DMIA sur Activités', 'MyContinuity-ComparateurDMIAActivites.php'),
 
 (28, 1, 'Gestion des Libellés du Référentiel', 'MySecDash-LibellesReferentiel.php');
 
 
-SELECT pg_catalog.setval('ain_applications_internes_ain_id_seq', 27, true);
+SELECT pg_catalog.setval('ain_applications_internes_ain_id_seq', 28, true);
 
 --(9,  1, 'Consultation des Matrices des Risques', 'MySecDash-MatricesRisques.php'),
 --(10, 1, 'Gestion de l''Appréciation des Risques', 'MySecDash-AppreciationRisques.php'),
@@ -354,6 +354,9 @@ INSERT INTO tpa_types_action (tpa_code_libelle) VALUES
 ('ATP_ALERTE'), -- Alert
 ('ATP_VALIDATION'); -- Validation
 
+SELECT pg_catalog.setval('tpa_types_action_tpa_id_seq', 11, true);
+
+
 --
 -- Création des Types d'Objet traçables dans l'outil.
 --
@@ -412,18 +415,7 @@ INSERT INTO tpo_types_objet (tpo_code_libelle) VALUES
 ('OTP_EFFECTIF'),
 ('OTP_SECURITE');
 
-
---
--- Types de Fournisseur.
---
-
-INSERT INTO tfr_types_fournisseur (tfr_nom_code) VALUES
-('Prestataire'),
-('Editeur de Solutions'),
-('On Premise'),
-('Infrastructure as a Service (IaaS)'),
-('Platform as a Service (PaaS)'),
-('Software as a Service (SaaS)');
+SELECT pg_catalog.setval('tpo_types_objet_tpo_id_seq', 52, true);
 
 
 --
@@ -538,21 +530,111 @@ INSERT INTO ete_echelle_temps (cmp_id, ete_poids, ete_nom_code) VALUES
 (1, 6, '2 semaines'),
 (1, 7, '1 mois');
 
+SELECT pg_catalog.setval('ete_echelle_temps_ete_id_seq', 7, true);
+
+
+--
+-- Types de Fournisseur.
+--
+
+INSERT INTO tfr_types_fournisseur (tfr_nom_code) VALUES
+('Prestataire'),
+('Editeur de Solutions'),
+('On Premise'),
+('Infrastructure as a Service (IaaS)'),
+('Platform as a Service (PaaS)'),
+('Software as a Service (SaaS)');
+
+SELECT pg_catalog.setval('tfr_types_fournisseur_tfr_id_seq', 6, true);
+
 
 --
 -- Chargement de quelques Type de Fournisseurs génériques
 --
 
-INSERT INTO frn_fournisseurs (tfr_id, frn_nom, frn_description) VALUES
-(2, 'Apple', ''),
-(2, 'Microsoft', '');
+INSERT INTO frn_fournisseurs (frn_id, tfr_id, frn_nom, frn_description) VALUES
+('1','2','Apple',''),
+('2','2','Microsoft',''),
+('3','2','Salesforce',''),
+('4','2','CSSF',''),
+('5','2','JASE Reporting Solutions',''),
+('6','2','AMF',''),
+('7','2','LSEG',''),
+('8','2','Fircosoft',''),
+('9','2','FIS',''),
+('10','2','Bloomberg',''),
+('11','2','OneWealthPlace',''),
+('12','2','Softfluent',''),
+('13','2','WeeFin',''),
+('14','2','TightVNC',''),
+('15','2','FileZilla',''),
+('16','2','Tradeweb Market Inc.',''),
+('17','2','Trade Smart',''),
+('18','2','CDC',''),
+('19','2','Bank ok New York',''),
+('20','2','BGL',''),
+('21','2','Fundinfo',''),
+('22','2','YooZ',''),
+('23','2','BNPP',''),
+('24','2','IZNES',''),
+('25','2','Walters Kluwer',''),
+('26','2','Docusign',''),
+('27','2','4TPM',''),
+('28','2','Atlassian',''),
+('29','2','StoneBranch',''),
+('30','2','TeamViewer',''),
+('31','2','Ninite',''),
+('32','2','Sage Group','')
+;
+
+SELECT pg_catalog.setval('frn_fournisseurs_frn_id_seq', 32, true);
 
 
 --
 -- Chargement de quelques Applications génériques
 --
 
-INSERT INTO app_applications (frn_id, app_nom, app_hebergement, app_niveau_service, app_description) VALUES
-(2, 'Azure', 'Cloud', '', 'Solution de Cloud de Microsoft'),
-(2, 'Office 365', 'SaaS', '', 'Suite bureautique (messagerie, tableur, traitement de texte...)'),
-(NULL, 'Salesforce', 'SaaS', '', 'Outil de CRM');
+INSERT INTO app_applications (app_id, frn_id, app_nom, app_hebergement, app_niveau_service, app_description, sct_id) VALUES
+('1','2','Azure','Cloud','','Solution de Cloud de Microsoft',NULL),
+('2','2','Office 365','SaaS','','Suite bureautique (messagerie, tableur, traitement de texte...)',NULL),
+('3','3','Salesforce','SaaS','','Outil de CRM',NULL),
+('4','4','LUXE TRUST','SaaS','','',NULL),
+('5','5','JASE','SaaS','','',NULL),
+('6','6','ROSA','SaaS','','',NULL),
+('7','7','Worldcheck refinitiv','SaaS','','',NULL),
+('8','8','Fircosoft','SaaS','','',NULL),
+('9','9','Fis Protegent','SaaS','','',NULL),
+('10','10','Bloomberg Vault','SaaS','','',NULL),
+('11','11','Air PM','PaaS','','','2'),
+('12','12','Phoenix','PaaS','','',NULL),
+('13','10','Bloomberg VNC','SaaS','','',NULL),
+('14','13','WeeFin','SaaS','','',NULL),
+('15','14','TightVNC','On Premise','','',NULL),
+('16','15','FileZilla','On Premise','','',NULL),
+('17','16','Tradeweb','SaaS','','',NULL),
+('18','17','Trading Screen','SaaS','','',NULL),
+('19','18','CDCNet','SaaS','','',NULL),
+('20','19','Nexen','SaaS','','',NULL),
+('21','20','ePortfolio','SaaS','','',NULL),
+('22','21','Adjuto','SaaS','','',NULL),
+('23','22','YooZ','SaaS','','',NULL),
+('24','11','Horizon Distrib','SaaS','','',NULL),
+('25','23','Neolink / Europagode','SaaS','','',NULL),
+('26','24','Iznes','SaaS','','',NULL),
+('27','25','Legisway','SaaS','','',NULL),
+('28','26','Docusign','SaaS','','',NULL),
+('29','27','Patio','SaaS','','',NULL),
+('30','2','SQL Server Management Studio','On Premise','','',NULL),
+('31','2','Visual Studio','On premise','','',NULL),
+('32','28','BitBucket','SaaS','','',NULL),
+('33','28','Jira / Confluence','SaaS','','',NULL),
+('34','29','StoneBranch','On Premise','','',NULL),
+('35','30','TeamViewer','On Premise','','',NULL),
+('36','31','Ninite Pro','On Premise','','',NULL),
+('37','2','MDT','On Premise','','',NULL),
+('38','2','Intune','On Premise','','',NULL),
+('39','2','Power BI / Report Server','On Premise','','',NULL),
+('40', '32','Sage 100 Cloud','','','',NULL)
+;
+
+SELECT pg_catalog.setval('app_applications_app_id_seq', 40, true);

@@ -37,7 +37,7 @@ class HBL_Profils extends HBL_Connexioneur_BD {
 	** Gestion des Profils
 	*/
 	
-	public function majProfil( $prf_id, $Label ) {
+	public function majProfil( $prf_id, $prf_libelle, $prf_description ) {
 	/**
 	* Créé ou actualise un Profil.
 	*
@@ -46,7 +46,8 @@ class HBL_Profils extends HBL_Connexioneur_BD {
 	* \date 2015-05-31
 	*
 	* \param[in] $prf_id Identifiant du Profil à mettre à jour s'il est précisé
-	* \param[in] $Label Libellé à donner au Profil
+	* \param[in] $prf_libelle Libellé à donner au Profil (obligatoire)
+	* \param[in] $prf_description Description du Profil
 	*
 	* \return Renvoi TRUE si le Profil a été créé ou mis à jour, sinon FALSE. Lève une exception en cas d'erreur.
 	*/
@@ -54,21 +55,23 @@ class HBL_Profils extends HBL_Connexioneur_BD {
 		if ( $prf_id == '' ) {
 			$Command = 'INSERT : ' ;
 
-			$Query = $this->prepareSQL( 'INSERT INTO prf_profils ' .
-				'( prf_libelle ) ' .
-				'VALUES ( :Label )' );
+			$Query = $this->prepareSQL( 'INSERT INTO prf_profils
+				( prf_libelle, prf_description )
+				VALUES ( :prf_libelle, :prf_description )' );
 		} else {
 			$Command = 'UPDATE : ' ;
 
-			$Query = $this->prepareSQL( 'UPDATE prf_profils SET ' .
-				'prf_libelle = :Label ' .
-				'WHERE prf_id = :prf_id' );
+			$Query = $this->prepareSQL( 'UPDATE prf_profils SET
+				prf_libelle = :prf_libelle,
+				prf_description = :prf_description
+				WHERE prf_id = :prf_id' );
 
 			$this->bindSQL( $Query, ':prf_id', $prf_id, PDO::PARAM_INT );
 		}
-		
-		$this->bindSQL( $Query, ':Label', $Label, PDO::PARAM_STR, L_PRF_LABEL );
-		
+
+		$this->bindSQL( $Query, ':prf_libelle', $prf_libelle, PDO::PARAM_STR, L_PRF_LABEL );
+		$this->bindSQL( $Query, ':prf_description', $prf_description, PDO::PARAM_LOB );
+
 		$this->executeSQL( $Query );
 
 
@@ -83,6 +86,62 @@ class HBL_Profils extends HBL_Connexioneur_BD {
 		if ( $this->RowCount == 0 ) {
 			return FALSE;
 		}
+		
+		return TRUE;
+	}
+	
+	
+	public function majProfilParChamp( $ID, $Source, $Valeur ) {
+		/**
+		 * Modifier juste un champ du Profil.
+		 *
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2025-07-11
+		 *
+		 * \param[in] $ID Identifiant du Profil à modifier
+		 * \param[in] $Source Nom du champ à modifier
+		 * \param[in] $Valeur Valeur à affecter au champ.
+		 *
+		 * \return Renvoi TRUE si le Profil a été mis à jour, FALSE si le Profil n'existe pas. Lève une Exception en cas d'erreur.
+		 */
+		if ( $ID == '' ) return FALSE;
+		
+		$Request = 'UPDATE prf_profils SET ';
+		
+		switch ( $Source ) {
+			case 'prf_libelle':
+				$Request .= 'prf_libelle = :Valeur ';
+				break;
+				
+			case 'prf_description':
+				$Request .= 'prf_description = :Valeur ';
+				break;
+		}
+		
+		$Request .= 'WHERE prf_id = :ID ';
+		
+		$Query = $this->prepareSQL( $Request );
+		
+		$this->bindSQL( $Query, ':ID', $ID, PDO::PARAM_INT );
+		
+		
+		switch ( $Source ) {
+			case 'prf_libelle':
+				$this->bindSQL( $Query, ':Valeur', $Valeur, PDO::PARAM_STR, L_PRF_LABEL );
+				break;
+				
+			case 'prf_description':
+				$this->bindSQL( $Query, ':Valeur', $Valeur, PDO::PARAM_LOB );
+				break;
+		}
+		
+		$this->executeSQL( $Query );
+		
+		if ( $this->RowCount == 0 ) {
+			return FALSE;
+		}
+		
 		
 		return TRUE;
 	}
@@ -102,17 +161,25 @@ class HBL_Profils extends HBL_Connexioneur_BD {
 	* \return Renvoi un tableau des Profils trouvés, sinon un tableau vide. Lève une Exception en cas d'erreur.
 	*/
 		$Request = 'SELECT ' .
-		 'prf_id, prf_libelle ' .
+		 '* ' .
 		 'FROM prf_profils ' ;
 		
 		switch ( $order ) {
 		 default:
-		 case 'label':
+		 case 'prf_libelle':
 			$Request .= 'ORDER BY prf_libelle ';
 			break;
 			
-		 case 'label-desc':
+		 case 'prf_libelle-desc':
 			$Request .= 'ORDER BY prf_libelle DESC ';
+			break;
+
+		 case 'prf_description':
+			$Request .= 'ORDER BY prf_description ';
+			break;
+			
+		 case 'prf_description-desc':
+			$Request .= 'ORDER BY prf_description DESC ';
 			break;
 		}
 
@@ -145,7 +212,7 @@ class HBL_Profils extends HBL_Connexioneur_BD {
 	* \return Renvoi l'instance du Profil trouvé, sinon une instance vide. Lève une Exception en cas d'erreur.
 	*/
 		$Request = 'SELECT ' .
-		 'prf_libelle ' .
+		 'prf_libelle, prf_description ' .
 		 'FROM prf_profils ' .
 		 'WHERE prf_id = :prf_id ';
 		 
@@ -371,7 +438,7 @@ class HBL_Profils_Controles_Acces extends HBL_Connexioneur_BD {
 	}
 
 
-	public function rechercherApplicationsParProfil( $Id_Profil ) {
+	public function rechercherApplicationsParProfil( $prf_id ) {
 	/**
 	* Liste les Applications d'un Profil.
 	*
@@ -384,22 +451,99 @@ class HBL_Profils_Controles_Acces extends HBL_Connexioneur_BD {
 	* \return Renvoi un tableau d'occurrences d'Applications associées au Profil,
 	*  sinon retourne un tableau vide
 	*/
-		$Query = $this->prepareSQL( 'SELECT ' .
-		 't1.ain_id, t1.drt_id, t2.app_code, t2.app_libelle, t3.drt_code_libelle ' .
-		 'FROM caa_controle_acces_application_interne AS t1 ' .
-		 'LEFT JOIN ain_applications_internes AS t2 ON t1.ain_id = t2.ain_id ' .
-		 'LEFT JOIN drt_droits AS t3 ON t1.drt_id = t3.drt_id ' .
-		 'WHERE prf_id = :prf_id ' );
+		$Query = $this->prepareSQL( 'SELECT ain.ain_id, ain_libelle, ain_localisation, caa.prf_id, caa.drt_id, drt.drt_code_libelle
+FROM ain_applications_internes AS "ain"
+LEFT JOIN (SELECT prf_id, drt_id, ain_id FROM caa_controle_acces_application_interne WHERE prf_id = :prf_id) AS "caa" ON caa.ain_id = ain.ain_id
+LEFT JOIN drt_droits AS "drt" ON drt.drt_id = caa.drt_id
+ORDER BY ain.ain_libelle, drt.drt_code_libelle ' );
 		
-		$this->bindSQL( $Query, ':prf_id', $Id_Profil, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':prf_id', $prf_id, PDO::PARAM_INT );
 		
 		$this->executeSQL( $Query );
- 
- 		return $Query->fetchAll( PDO::FETCH_CLASS );
+
+		return $Query->fetchAll( PDO::FETCH_CLASS );
 	}
 
 
-	public function rechercherControleAcces( $prf_id = '', $ain_id = '', $drt_id = '', $order = 'profil' ) {
+	public function rechercherControleAccesApplications( $prf_id = '', $order = 'prv_libelle' ) {
+		/**
+		 * Lister les Contrôles d'Accès aux Applications.
+		 *
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2015-05-31
+		 *
+		 * \param[in] $prf_id Recherche les contrôles d'accès liés à un Profil.
+		 * \param[in] $order Permet de trier le résultat selon un nom de colonne.
+		 *
+		 * \return Renvoi un tableau des Contrôles d'Accès trouvés, sinon un tableau vide
+		 */
+
+
+		$Request = 'SELECT
+ caa.prf_id, prf.prf_libelle, caa.ain_id, ain.ain_libelle, ain.ain_localisation, caa.drt_id, drt.drt_code_libelle, lbr.lbr_libelle AS "drt_libelle"
+ FROM caa_controle_acces_application_interne AS caa
+ LEFT JOIN prf_profils AS prf ON caa.prf_id = prf.prf_id
+ LEFT JOIN ain_applications_internes AS ain ON caa.ain_id = ain.ain_id
+ LEFT JOIN drt_droits AS drt ON caa.drt_id = drt.drt_id
+ LEFT JOIN lbr_libelles_referentiel AS lbr ON lbr_code = drt.drt_code_libelle
+ WHERE lbr.lng_id = \'' . $_SESSION['Language'] . '\' ';
+		
+		if ( $prf_id != '' ) {
+			$Request .= 'AND caa.prf_id = :prf_id ';
+		}
+		
+		if ( $ain_id != '' ) {
+			$Request .= 'AND caa.ain_id = :ain_id ';
+		}
+		
+		if ( $drt_id != '' ) {
+			$Request .= 'AND caa.drt_id = :drt_id ';
+		}
+		
+		
+		switch ( $order ) {
+			default:
+			case 'prf_libelle':
+				$Request .= 'ORDER BY prf_libelle, caa.drt_id ';
+				break;
+				
+			case 'prf_libelle-desc':
+				$Request .= 'ORDER BY prf_libelle DESC, caa.drt_id ';
+				break;
+				
+			case 'ain_libelle':
+				$Request .= 'ORDER BY ain_libelle, caa.drt_id ';
+				break;
+				
+			case 'ain_libelle-desc':
+				$Request .= 'ORDER BY ain_libelle DESC, caa.drt_id ';
+				break;
+				
+			case 'drt_code_libelle':
+				$Request .= 'ORDER BY drt_code_libelle ';
+				break;
+				
+			case 'drt_code_libelle-desc':
+				$Request .= 'ORDER BY drt_code_libelle DESC ';
+				break;
+		}
+		
+		$Query = $this->prepareSQL( $Request );
+		
+		if ( $prf_id != '' ) $this->bindSQL( $Query, ':prf_id', $prf_id, PDO::PARAM_INT );
+		
+		if ( $app_id != '' ) $this->bindSQL( $Query, ':app_id', $app_id, PDO::PARAM_INT );
+		
+		if ( $drt_id != '' ) $this->bindSQL( $Query, ':drt_id', $drt_id, PDO::PARAM_INT );
+		
+		$this->executeSQL( $Query );
+		
+		return $Query->fetchAll( PDO::FETCH_CLASS );
+	}
+
+
+	public function rechercherControleAcces( $prf_id = '', $ain_id = '', $drt_id = '', $order = 'prf_libelle' ) {
 	/**
 	* Lister les Contrôles d'Accès.
 	*
@@ -414,51 +558,51 @@ class HBL_Profils_Controles_Acces extends HBL_Connexioneur_BD {
 	*
 	* \return Renvoi un tableau des Contrôles d'Accès trouvés, sinon un tableau vide
 	*/
-		$Request = 'SELECT ' .
-		 't1.prf_id, t2.prf_libelle, t1.ain_id, t3.app_libelle, t1.drt_id, t4.drt_code_libelle, rlb.lbr_libelle ' .
-		 'FROM caa_controle_acces_application_interne AS t1 ' .
-		 'LEFT JOIN prf_profils AS t2 ON t1.prf_id = t2.prf_id ' .
-		 'LEFT JOIN ain_applications_internes AS t3 ON t1.ain_id = t3.ain_id ' .
-		 'LEFT JOIN drt_droits AS t4 ON t1.drt_id = t4.drt_id ' .
-		 'LEFT JOIN lbr_libelles_referentiel AS lbr ON lbr_code = t4.drt_code_libelle ' .
-		 'WHERE rlb.lng_id = \'' . $_SESSION['Language'] . '\' ';
+		$Request = 'SELECT
+ caa.prf_id, prf.prf_libelle, caa.ain_id, ain.ain_libelle, ain.ain_localisation, caa.drt_id, drt.drt_code_libelle, lbr.lbr_libelle AS "drt_libelle"
+ FROM caa_controle_acces_application_interne AS caa
+ LEFT JOIN prf_profils AS prf ON caa.prf_id = prf.prf_id
+ LEFT JOIN ain_applications_internes AS ain ON caa.ain_id = ain.ain_id
+ LEFT JOIN drt_droits AS drt ON caa.drt_id = drt.drt_id
+ LEFT JOIN lbr_libelles_referentiel AS lbr ON lbr_code = drt.drt_code_libelle
+ WHERE lbr.lng_id = \'' . $_SESSION['Language'] . '\' ';
 		
 		if ( $prf_id != '' ) {
-			$Request .= 'AND t1.prf_id = :prf_id ';
+			$Request .= 'AND caa.prf_id = :prf_id ';
 		}
 
 		if ( $ain_id != '' ) {
-			$Request .= 'AND t1.ain_id = :ain_id ';
+			$Request .= 'AND caa.ain_id = :ain_id ';
 		}
 
 		if ( $drt_id != '' ) {
-			$Request .= 'AND t1.drt_id = :drt_id ';
+			$Request .= 'AND caa.drt_id = :drt_id ';
 		}
 
 
 		switch ( $order ) {
 		 default:
-		 case 'profil':
-			$Request .= 'ORDER BY prf_libelle ';
+		 case 'prf_libelle':
+			$Request .= 'ORDER BY prf_libelle, caa.drt_id ';
 			break;
 			
-		 case 'profil-desc':
-			$Request .= 'ORDER BY prf_libelle DESC ';
+		 case 'prf_libelle-desc':
+			$Request .= 'ORDER BY prf_libelle DESC, caa.drt_id ';
 			break;
 
-		 case 'application':
-			$Request .= 'ORDER BY app_libelle ';
+		 case 'ain_libelle':
+			$Request .= 'ORDER BY ain_libelle, caa.drt_id ';
 			break;
 			
-		 case 'application-desc':
-			$Request .= 'ORDER BY app_libelle DESC ';
+		 case 'ain_libelle-desc':
+			$Request .= 'ORDER BY ain_libelle DESC, caa.drt_id ';
 			break;
 
-		 case 'right':
+		 case 'drt_code_libelle':
 			$Request .= 'ORDER BY drt_code_libelle ';
 			break;
 			
-		 case 'right-desc':
+		 case 'drt_code_libelle-desc':
 			$Request .= 'ORDER BY drt_code_libelle DESC ';
 			break;
 		}
@@ -473,7 +617,7 @@ class HBL_Profils_Controles_Acces extends HBL_Connexioneur_BD {
 		
 		$this->executeSQL( $Query );
 
- 		return $Query->fetchAll( PDO::FETCH_CLASS );
+		return $Query->fetchAll( PDO::FETCH_CLASS );
 	}
 
 

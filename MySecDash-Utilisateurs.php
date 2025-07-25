@@ -116,6 +116,7 @@ switch( $Action ) {
 		'L_Titre_Ajouter' => $L_Ajouter_Utilisateur,
 		'L_Titre_Modifier' => $L_Modifier_Utilisateur,
 		'L_Titre_Supprimer' => $L_Supprimer_Utilisateur,
+		'L_Creer' => $L_Creer,
 		'L_Ajouter' => $L_Ajouter,
 		'L_Modifier' => $L_Modify,
 		'L_Supprimer' => $L_Delete,

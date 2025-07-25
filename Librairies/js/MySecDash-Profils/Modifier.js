@@ -56,25 +56,53 @@ function ModalModifierProfil( Id_Profil, Libelle ) {
 }
 
 
-function sauverModificationModal( Id_Profil, Libelle ) {
+function ModifierProfil( Id_Profil ) {
+	var prf_libelle = $('#prf_libelle').val();
+	var prf_description = $('#prf_description').val();
+
+
+	var Liste_Droits_Ajouter = [];
+
+	$('a.droit').each(function(index, element){
+		if ($(element).hasClass('desactive') == false ) {
+			if ( $(element).attr('data-old_value') == 0) {
+				Liste_Droits_Ajouter.push($(element).attr('id'));
+			}
+		}
+	});
+
+
+	var Liste_Droits_Supprimer = [];
+
+	$('a.droit').each(function(index, element){
+		if ($(element).hasClass('desactive') == true ) {
+			if ( $(element).attr('data-old_value') == 1) {
+				Liste_Droits_Supprimer.push($(element).attr('id'));
+			}
+		}
+	});
+
 	$.ajax({
 		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Modifier_Profil',
 		type: 'POST',
 		async: false,
 		dataType: 'json', // le résultat est transmit dans un objet JSON
-		data: $.param({'id_profil': Id_Profil, 'libelle': Libelle}),
+		data: $.param({'prf_id': Id_Profil, 'prf_libelle': prf_libelle, 'prf_description': prf_description,
+			'Liste_Droits_Ajouter': Liste_Droits_Ajouter, 'Liste_Droits_Supprimer': Liste_Droits_Supprimer}),
 		success: function( reponse ){
 			var statut = reponse['statut'];
 			var texteMsg = reponse['texteMsg'];
 
-			afficherMessage( texteMsg, statut, '#idModalProfil', 0, 'n' );
-
 			if( statut == 'success' ){
+				$('div#PRF_'+Id_Profil+' div[data-src="prf_libelle"] span').text( prf_libelle );
+				$('div#PRF_'+Id_Profil+' div[data-src="prf_description"] span').text( prf_description );
+
 				// Supprime la fenêtre modale.
 				$('#idModalProfil').modal('hide');
 
-				// Modifie le libellé.
-				$('div.row.profils div.col-lg-1[data-id="' + Id_Profil + '"]').find('a.modifiable').html( Libelle );
+				afficherMessage( texteMsg, statut, 'body' );
+			} else {
+				afficherMessage( texteMsg, statut, '#idModalProfil', 0, 'n' );
 			}
 		}
 	});

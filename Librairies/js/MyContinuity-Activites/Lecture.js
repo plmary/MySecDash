@@ -186,7 +186,7 @@ function trier( myElement, changerTri ) {
 							sens_recherche = Element[ 0 ] + '-desc';
 						}
 					}
-	
+
 					// Postionne la couleur sur la colonne active sur le tri.
 					$('div#entete_tableau div.row div.triable').removeClass('active');
 					$(myElement).addClass('active');
@@ -571,21 +571,21 @@ function ModalAjouterModifier( act_id = '' ) {
 
 				 '<div id="ZoneCreerApplication" class="input-group mb-3 d-none">' +
 				  '<input type="text" class="form-control" placeholder="' + reponse['L_Nom'] + '" id="app_nom">' +
-				  '<select class="form-select" id="frn_id">' +
-				  ' <option value="">' + reponse['L_Aucun'] + '</option>';
-			var _Description;
-			for (let Fournisseur of reponse['Liste_Fournisseurs']) {
-				if ( Fournisseur.frn_description != '' ) {
-					_Description = ' (' + Fournisseur.frn_description + ')';
-				} else {
-					_Description = '';
-				}
-				Corps += '<option value="' + Fournisseur.frn_id + '">' + Fournisseur.frn_nom + _Description + '</option>';
-			}
-			Corps += '</select>' +
-				  '<input type="text" class="form-control" placeholder="' + reponse['L_Hebergement'] + '" id="app_hebergement">' +
-				  '<input type="text" class="form-control" placeholder="' + reponse['L_Niveau_Service'] + '" id="app_niveau_service">' +
 				  '<input type="text" class="form-control" placeholder="' + reponse['L_Description'] + '" id="app_description">' +
+				  '<input type="text" class="form-control" placeholder="' + reponse['L_Hebergement'] + '" id="app_hebergement">' +
+				  	  '<select class="form-select" id="frn_id">' +
+				  	  ' <option value="">' + reponse['L_Aucun'] + '</option>';
+				  var _Description;
+				  for (let Fournisseur of reponse['Liste_Fournisseurs']) {
+				  	if ( Fournisseur.frn_description != '' ) {
+				  		_Description = ' (' + Fournisseur.frn_description + ')';
+				  	} else {
+				  		_Description = '';
+				  	}
+				  	Corps += '<option value="' + Fournisseur.frn_id + '">' + Fournisseur.frn_nom + _Description + '</option>';
+				  }
+				  Corps += '</select>' +
+				  '<input type="text" class="form-control" placeholder="' + reponse['L_Niveau_Service'] + '" id="app_niveau_service">' +
 				  '<button type="button" class="btn btn-outline-secondary" id="btn-creer-application">' + reponse['L_Creer'] + '</button>' +
 				  '<button type="button" class="btn btn-outline-secondary" id="btn-fermer-zone-application">' + reponse['L_Fermer'] + '</button>' +
 				 '</div> <!-- #ZoneCreerApplication -->' +
@@ -1785,8 +1785,8 @@ function creerOccurrenceSiteDansListe( sts_id, Nom_Complet, Old_Value, Checked, 
 	Corps = '<div class="row liste mt-1">' +
 		'<div class="col-6">' +
 		'<div class="form-check">' +
-		'<input type="checkbox" class="form-check-input" id="sts_id-' + sts_id + '" data-old_value="' + Old_Value + '" ' + Checked + '>' +
-		'<label class="form-check-label" for="sts_id-' + sts_id + '">' + Nom_Complet + '</label>' +
+		'<input type="checkbox" class="form-check-input" id="sts-' + sts_id + '" data-old_value="' + Old_Value + '" ' + Checked + '>' +
+		'<label class="form-check-label" for="sts-' + sts_id + '">' + Nom_Complet + '</label>' +
 		'</div> <!-- .form-check -->' +
 		'</div> <!-- .col-6 -->' +
 		'<div class="col-2">' +

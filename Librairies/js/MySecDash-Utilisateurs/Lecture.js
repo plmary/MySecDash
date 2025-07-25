@@ -311,7 +311,7 @@ function ModalAjouterModifier( Id ){
 				}
 
 				Corps +='</div>' +
-					'<div class="row">' +
+					'<div class="row" id="select-cvl_id">' +
 					'<label class="col-lg-2 col-form-label" for="cvl_id">' + reponse[ 'L_Civilite' ] + '</label>' +
 					'<div class="col-lg-9">' +
 					'<select id="cvl_id" class="form-select" required>' +
@@ -339,7 +339,17 @@ function ModalAjouterModifier( Id ){
 					}
 				}
 
-				Corps += '</div>' +
+				Corps += '</div> <!-- .row #select-cvl_id -->' +
+					'<div class="row d-none" id="insert-cvl_id">' +
+					'<div class="input-group">' +
+					'<span class="input-group-text" id="addon-wrapping">' + reponse[ 'L_Civilite' ] + '</span>' +
+					'<input type="text" class="form-control text-uppercase" placeholder="' + reponse[ 'L_Nom' ] + '" id="cvl_nom">' +
+					'<input type="text" class="form-control text-capitalize" placeholder="' + reponse[ 'L_Prenom' ] + '" id="cvl_prenom">' +
+					'<button class="btn btn-outline-secondary" type="button" id="btn-creer-civilite">' + reponse['L_Creer'] + '</button>' +
+					'<button class="btn btn-primary" type="button" id="btn-fermer-civilite">' + reponse['L_Fermer'] + '</button>' +
+					'</div> <!-- .input-group -->' +
+					'</div> <!-- .row #insert-cvl_id -->' +
+
 					'<div class="row">' +
 					 '<label class="col-lg-2 col-form-label" for="sct_id">' + reponse[ 'L_Societe' ] + '</label>' +
 					 '<div class="col-lg-9">' +
@@ -544,6 +554,10 @@ function ModalAjouterModifier( Id ){
 						} else {
 							$('input[id^="chk-PRF-"]').prop('checked', false);
 						}
+					} );
+
+					$("#btn-fermer-civilite").on( 'click', function() {
+						
 					} );
 				});
 

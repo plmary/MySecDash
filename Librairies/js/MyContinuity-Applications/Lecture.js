@@ -31,7 +31,7 @@ $(function() {
 
 					afficherMessage(texteMsg, statut);
 
-					trier( $( 'div#entete_tableau div.row div:first'), true );
+					trier( $( 'div#entete_tableau div.row div:first'), false );
 				} else {
 					var texteMsg = reponse['texteMsg'];
 

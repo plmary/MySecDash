@@ -98,9 +98,13 @@ function trier( myElement, changerTri ) {
 					}
 				}
 
+				// Postionne la couleur sur la colonne active sur le tri.
+				$('div#entete_tableau div.row div.triable').removeClass('active');
+				$(myElement).addClass('active');
+
 				$(myElement).attr( 'data-sens-tri', sens_recherche );
 
-				$('#totalOccurrences').text( ajouterZero(reponse[ 'total' ] ) );
+				$('#totalOccurrences').text( ajouterZero(reponse[ 'total' ]) );
 
 				if ( reponse[ 'droit_modifier' ] == 1 ) {
 					// Assigne l'événement "click" sur tous les boutons de Modification

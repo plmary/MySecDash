@@ -5,6 +5,7 @@ use PhpOffice\PhpWord\Element\TextRun;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Ods;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -171,7 +172,9 @@ switch( $Action ) {
 		'L_Toutes' => $L_Toutes,
 		'L_Planning' => $PageHTML->getLibelle('__LRI_PLANNING'),
 		'L_Liste_Personnes_Prioritaires' => $PageHTML->getLibelle('__LRI_LISTE_PERSONNES_PRIORITAIRES'),
-		'L_Liste_Interdependances' => $PageHTML->getLibelle('__LRI_LISTE_INTERDEPENDANCES')
+		'L_Liste_Interdependances' => $PageHTML->getLibelle('__LRI_LISTE_INTERDEPENDANCES'),
+		'L_Formats_Proprietaires' => $PageHTML->getLibelle('__LRI_FORMATS_PROPRIETAIRES'),
+		'L_Formats_Ouverts' => $PageHTML->getLibelle('__LRI_FORMATS_OUVERTS')
 		);
 
 	if ( isset( $_POST['cmp_id'] ) ) {
@@ -1637,7 +1640,7 @@ switch( $Action ) {
 			$objWriter->save( $Nom_Fichier_Complet );
 			break;
 		}
-	} elseif ($_POST['format_edition'] == 'xlsx') { // Edition Excel
+	} elseif ($_POST['format_edition'] == 'xlsx' || $_POST['format_edition'] == 'ods') { // Edition Excel
 		// *****************************************************************
 		// -----------------------------------------------------------------
 		// ********* EXCEL *********
@@ -1650,7 +1653,7 @@ switch( $Action ) {
 
 		$Numero_Onglet = 0;
 
-		$Nom_Fichier = $Nom_Fichier . '.xlsx';
+		$Nom_Fichier = $Nom_Fichier . '.' . $_POST['format_edition'];
 		$Nom_Fichier_Complet = DIR_RAPPORTS . '/' . $Nom_Fichier;
 
 		// -----------------------------------------
@@ -2083,7 +2086,11 @@ switch( $Action ) {
 						$fontCourant = $fontTexteTableau;
 					}
 
-					$activeWorksheet->setCellValue('A' . $Ligne, $Entite->ent_nom . ' - ' . $Entite->ent_description);
+					$Nom_Complet = $Entite->ent_nom;
+					if ( $Entite->ent_description != '' ) {
+						$Nom_Complet .= ' (' . $Entite->ent_description . ')';
+					}
+					$activeWorksheet->setCellValue('A' . $Ligne, $Nom_Complet);
 					$activeWorksheet->getStyle('A'. $Ligne)->applyFromArray($fontCourant);
 
 					$activeWorksheet->setCellValue('B'. $Ligne, ($Entite->cmen_effectif_total == '' ? '-' : $Entite->cmen_effectif_total));
@@ -2152,7 +2159,12 @@ switch( $Action ) {
 					$fontCourant = $fontTexteTableau;
 				}
 
-				$activeWorksheet->setCellValue('A' . $Ligne, $Activite->ent_nom . ' - ' . $Activite->ent_description);
+				$Nom_Complet = $Entite->ent_nom;
+				if ( $Entite->ent_description != '' ) {
+					$Nom_Complet .= ' (' . $Entite->ent_description . ')';
+				}
+
+				$activeWorksheet->setCellValue('A' . $Ligne, $Nom_Complet);
 				$activeWorksheet->getStyle('A'. $Ligne)->applyFromArray($fontCourant);
 
 				$activeWorksheet->setCellValue('B' . $Ligne, $Activite->act_nom);
@@ -2287,7 +2299,12 @@ switch( $Action ) {
 					$fontCourant = $fontTexteTableau;
 				}
 
-				$activeWorksheet->setCellValue('A' . $Ligne, $Activite->ent_nom . ' - ' . $Activite->ent_description);
+				$Nom_Complet = $Entite->ent_nom;
+				if ( $Entite->ent_description != '' ) {
+					$Nom_Complet .= ' (' . $Entite->ent_description . ')';
+				}
+
+				$activeWorksheet->setCellValue('A' . $Ligne, $Nom_Complet);
 				$activeWorksheet->getStyle('A'. $Ligne)->applyFromArray($fontCourant);
 
 				$activeWorksheet->setCellValue('B' . $Ligne, $Activite->act_nom);
@@ -2403,7 +2420,12 @@ switch( $Action ) {
 //					$activeWorksheet->getStyle('E1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 				}
 
-				$activeWorksheet->setCellValue('A'.$Ligne, $Personne->ent_nom . ' (' . $Personne->ent_description . ')');
+				$Nom_Complet = $Entite->ent_nom;
+				if ( $Entite->ent_description != '' ) {
+					$Nom_Complet .= ' (' . $Entite->ent_description . ')';
+				}
+
+				$activeWorksheet->setCellValue('A'.$Ligne, $Nom_Complet);
 				$activeWorksheet->getStyle('A'.$Ligne)->applyFromArray($fontCourant);
 
 				$activeWorksheet->setCellValue('B'.$Ligne, $Personne->ppr_prenom);
@@ -2508,7 +2530,12 @@ switch( $Action ) {
 					$fontCourant = $fontTexteTableau;
 				}
 
-				$activeWorksheet->setCellValue('A' . $Ligne, $Activite->ent_nom . ' - ' . $Activite->ent_description);
+				$Nom_Complet = $Entite->ent_nom;
+				if ( $Entite->ent_description != '' ) {
+					$Nom_Complet .= ' (' . $Entite->ent_description . ')';
+				}
+
+				$activeWorksheet->setCellValue('A' . $Ligne, $Nom_Complet);
 				$activeWorksheet->getStyle('A'. $Ligne)->applyFromArray($fontCourant);
 
 				$activeWorksheet->setCellValue('B' . $Ligne, $Activite->act_nom);
@@ -2594,6 +2621,8 @@ switch( $Action ) {
 
 				$line = explode('###', array_shift($textlines));
 				$_act_nom = $line[0];
+				$_tmp = explode('+++', $_act_nom);
+				$_act_nom = $_tmp[0].($_tmp[1] == '' ? '' : ' ('.$_tmp[1].')').$_tmp[2];
 				$_act_id = $line[1];
 
 				$textRun = $richText->createTextRun($_act_nom . ' ');
@@ -2621,6 +2650,8 @@ switch( $Action ) {
 				foreach($textlines as $line) {
 					$line = explode('###', $line);
 					$_act_nom = $line[0];
+					$_tmp = explode('+++', $_act_nom);
+					$_act_nom = $_tmp[0].($_tmp[1] == '' ? '' : ' ('.$_tmp[1].')').$_tmp[2];
 					$_act_id = $line[1];
 
 					$textRun = $richText->createTextRun("\n");
@@ -2730,7 +2761,7 @@ switch( $Action ) {
 
 		// *************************
 		// =========================
-		// Gestion des fournisseurs
+		// Gestion des Fournisseurs
 		if ( $_POST['flag_liste_frn'] == 'true' ) {
 			// Affichage des Fournisseurs de cette Campagne.
 			$Liste_Fournisseurs = $objCampagnes->rechercherFournisseursCampagne( $_POST['cmp_id'], '*', $_POST['entite_a_editer'] );
@@ -2772,7 +2803,12 @@ switch( $Action ) {
 				$activeWorksheet->setCellValue('B'.$Ligne, $Fournisseur->tfr_nom_code);
 				$activeWorksheet->getStyle('B'.$Ligne)->applyFromArray($fontCourant);
 				
-				$activeWorksheet->setCellValue('C'.$Ligne, $Fournisseur->ent_nom . ' (' . $Fournisseur->ent_description . ')');
+				$Nom_Complet = $Entite->ent_nom;
+				if ( $Entite->ent_description != '' ) {
+					$Nom_Complet .= ' (' . $Entite->ent_description . ')';
+				}
+				
+				$activeWorksheet->setCellValue('C'.$Ligne, $Nom_Complet);
 				$activeWorksheet->getStyle('C'.$Ligne)->applyFromArray($fontCourant);
 				
 				$textlines = explode('<br>', $Fournisseur->act_nom);
@@ -2864,7 +2900,12 @@ switch( $Action ) {
 					$fontCourant = $fontTexteTableau;
 				}
 				
-				$activeWorksheet->setCellValue('A' . $Ligne, $Activite->ent_nom . ' - ' . $Activite->ent_description);
+				$Nom_Complet = $Entite->ent_nom;
+				if ( $Entite->ent_description != '' ) {
+					$Nom_Complet .= ' (' . $Entite->ent_description . ')';
+				}
+				
+				$activeWorksheet->setCellValue('A' . $Ligne, $Nom_Complet);
 				$activeWorksheet->getStyle('A'. $Ligne)->applyFromArray($fontCourant);
 				
 				$activeWorksheet->setCellValue('B' . $Ligne, $Activite->act_nom);
@@ -2974,8 +3015,8 @@ switch( $Action ) {
 					} else {
 						$Description = '';
 					}
-					if ( str_contains($Description, '<ul>') ) {
-						$Description = str_replace(['<ul>', '</ul>', '<li>', '<br>'], ['', '', '', ''], $Description);
+					if ( str_contains($Description, '<ul>') || str_contains($Description, '<p>') ) {
+						$Description = str_replace(['<ul>', '</ul>', '<li>', '<p>- ', '<p>', '</p>', '<br>'], ['', '', '', '', '', '',''], $Description);
 
 						$textlines = explode('</li>', $Description);
 
@@ -3032,7 +3073,12 @@ switch( $Action ) {
 		// =============================================
 		// Sauvegarde des données dans un fichier Excel
 
-		$writer = new Xlsx($spreadsheet);
+		if ($_POST['format_edition'] == 'xlsx' ) {
+			$writer = new Xlsx($spreadsheet);
+		}
+		if ( $_POST['format_edition'] == 'ods' ) {
+			$writer = new Ods($spreadsheet);
+		}
 		$writer->save($Nom_Fichier_Complet);
 	}
 

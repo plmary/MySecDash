@@ -62,11 +62,16 @@ CREATE SEQUENCE public.prf_profils_prf_id_seq;
 CREATE TABLE public.prf_profils (
                 prf_id BIGINT NOT NULL DEFAULT nextval('public.prf_profils_prf_id_seq'),
                 prf_libelle VARCHAR(40) NOT NULL,
+                prf_description TEXT,
                 CONSTRAINT prf_profils_pk PRIMARY KEY (prf_id)
 );
 
 
 ALTER SEQUENCE public.prf_profils_prf_id_seq OWNED BY public.prf_profils.prf_id;
+
+CREATE UNIQUE INDEX prf_profils_u1
+ ON public.prf_profils
+ ( prf_libelle );
 
 CREATE SEQUENCE public.tpa_types_action_tpa_id_seq;
 
@@ -90,7 +95,7 @@ CREATE TABLE public.tap_types_application (
 
 ALTER SEQUENCE public.tap_types_application_tap_id_seq OWNED BY public.tap_types_application.tap_id;
 
-CREATE UNIQUE INDEX tap_application_types_u1
+CREATE UNIQUE INDEX tap_types_application_u1
  ON public.tap_types_application
  ( tap_code_libelle );
 

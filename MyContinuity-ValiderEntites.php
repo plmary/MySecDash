@@ -220,7 +220,7 @@ switch( $Action ) {
 		$Trier = $_POST[ 'trier' ];
 
 		try {
-			$Entites = $objCampagnes->rechercherEntitesCampagne( $_SESSION['s_cmp_id'] );
+			$Entites = $objCampagnes->rechercherEntitesCampagne( $_SESSION['s_cmp_id'], '', $Trier );
 			$Total = $objCampagnes->RowCount;
 
 			$Texte_HTML = '';

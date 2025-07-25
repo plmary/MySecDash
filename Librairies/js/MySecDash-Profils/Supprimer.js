@@ -1,33 +1,13 @@
 function ModalSupprimer( Id, Libelle ) {
-	var Message = 'zzz';
-	var Erreur = false;
-
-	$.ajax({
-		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Verifier_Associer',
-		type: 'POST',
-		dataType: 'json',
-		data: $.param({'id': Id, 'libelle': Libelle}),
-		async: false,
-		success: function( reponse ) {
-			if ( reponse['statut'] == 'success' ) {
-				Message = reponse['texteMsg'];
-			} else {
-				afficherMessage( reponse['texteMsg'], reponse['statut'], 'body', true );
-				Erreur = true;
-			}
-		}
-	});
-
-	if ( Erreur === true ) return false;
-
 	$.ajax({
 		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Libeller',
 		type: 'POST',
+		data: $.param({'id': Id, 'libelle': Libelle, 'action': 'supprimer'}), // les paramètres sont protégés avant envoi
 		dataType: 'json',
 		success: function( reponse ) {
 			var Corps =
 				'<div id="PRF-SUPR">' +
-				Message +
+				reponse['texteMsg'] +
 				'</div>';
 
 			construireModal( 'idModalSupprimer',
@@ -72,6 +52,9 @@ function activerBoutonsSuppression() {
 
 
 function supprimerProfil( Id_Profil, Libelle ) {
+	var total = $( '#totalOccurrences' ).text();
+	total = Number(total) - 1;
+
 	$.ajax({
 		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Supprimer_Profil',
 		type: 'POST',
@@ -88,21 +71,10 @@ function supprimerProfil( Id_Profil, Libelle ) {
 				// Supprime la fenêtre modale
 				$('#idModalSupprimer').modal('hide');
 
-				// Supprime visuellement l'élément de l'entête
-				$('div#entete_tableau div.profils div[data-id="' + Id_Profil + '"]').remove();
+				$( '#totalOccurrences' ).text( ajouterZero( total ) );
 
-				// Supprime visuellement l'élément de toutes les occurrences du corps
-				$('div#corps_tableau div.row div[data-prf="' + Id_Profil + '"]').remove();
-
-				Total_Profils = $('div#entete_tableau div.row div.titre').attr('data-total_prf');
-				Total_Profils = Number(Total_Profils) - 1;
-				$('div#entete_tableau div.row div.titre').attr('data-total_prf', Total_Profils);
-
-				if ( Total_Profils >= reponse['limitation'] ) {
-					$('button.btn-ajouter').attr('disabled', 'disabled');
-				} else {
-					$('button.btn-ajouter').removeAttr('disabled');
-				}
+				// Supprime visuellement l'élément
+				$('div#PRF_' + Id_Profil).remove();
 			}
 		}
 	});

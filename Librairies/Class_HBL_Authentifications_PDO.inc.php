@@ -138,7 +138,7 @@ class HBL_Authentifications extends HBL_Autorisations {
 					$ldap_c = ldap_connect( $_LDAP_Server, $_LDAP_Port );
 
 					if ( $ldap_c ) {
-/* Non compatible avec un AD (à suivre).
+						/* Non compatible avec un AD (à suivre).
  						if ( ldap_set_option( $ldap_c, LDAP_OPT_PROTOCOL_VERSION, $_LDAP_Protocol_Version ) === FALSE ) {
 							throw new Exception( ldap_error( $ldap_c ), ldap_errno( $ldap_c ) );
 						} */
@@ -204,14 +204,16 @@ class HBL_Authentifications extends HBL_Autorisations {
 		/* ----------------------------------------
 		** Vérifie si l'utilisateur n'a pas expiré.
 		** Date d'expiration dépassée.
+		** L'utilisateur "root" fait exception à cette règle.
 		*/
-		if ( $Occurrence->idn_date_expiration != '0000-00-00 00:00:00' && $Type != 'L' ) {
-			if ( $Occurrence->idn_date_expiration < date( 'Y-m-d' ) ) {
-				throw new Exception( $L_Utilisateur_Expire . '<br/>' .
-				 $L_Date_Expiration_Atteinte, -1 );
+		if ( strtolower($Login) != 'root' ) {
+			if ( $Occurrence->idn_date_expiration != '0000-00-00 00:00:00' && $Type != 'L' ) {
+				if ( $Occurrence->idn_date_expiration < date( 'Y-m-d' ) ) {
+					throw new Exception( $L_Utilisateur_Expire . '<br/>' .
+					 $L_Date_Expiration_Atteinte, -1 );
+				}
 			}
 		}
-		
 		
 		/* -----------------------------------------------------------------
 		** Vérifie si le nombre de tentative de connexion n'est pas dépassé.

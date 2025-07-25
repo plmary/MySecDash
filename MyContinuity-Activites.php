@@ -1838,6 +1838,18 @@ switch( $Action ) {
 				exit();
 			}
 
+			if ( $_POST['frn_id'] != '' ) {
+				$_POST['frn_id'] = $PageHTML->controlerTypeValeur( $_POST['frn_id'], 'NUMBER' );
+				if ( $_POST['frn_id'] == -1 ) {
+					echo json_encode( array(
+						'statut' => 'error',
+						'texteMsg' => $L_Invalid_Value . ' (frn_id)'
+					) );
+	
+					exit();
+				}
+			}
+
 			$_POST['app_hebergement'] = $PageHTML->controlerTypeValeur( $_POST['app_hebergement'], 'ASCII' );
 			if ( $_POST['app_hebergement'] == -1 ) {
 				echo json_encode( array(
@@ -1870,7 +1882,7 @@ switch( $Action ) {
 
 			try {
 				$_Internal_Function = 'majApplication';
-				$objApplications->majApplication( '', $_POST['app_nom'], $_POST['app_hebergement'],
+				$objApplications->majApplication( '', $_POST['app_nom'], $_POST['frn_id'], $_POST['app_hebergement'],
 					$_POST['app_niveau_service'], $_POST['app_description'] );
 
 				$app_id = $objApplications->LastInsertId;
@@ -1889,7 +1901,9 @@ switch( $Action ) {
 				'L_DMIA' => $L_DMIA,
 				'L_PDMA' => $L_PDMA,
 				'L_Palliatif' => $L_Palliatif,
-				'L_Aucun' => $L_Neither
+				'L_Aucun' => $L_Neither,
+				'L_Hebergement' => $L_Hebergement,
+				'L_Niveau_Service' => $L_Niveau_Service
 			);
 
 			echo json_encode( $Resultat );

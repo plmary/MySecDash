@@ -232,7 +232,6 @@ class HBL_Autorisations extends HBL_Securite {
 				 "WHERE t2.idn_id = :idn_id ";
 
 				if ( $Script != '' ) $Request .= "AND t3.ain_localisation = :script ";
-
 			} else {
 				$Request = "SELECT DISTINCT " .
 				 "t3.ain_libelle, t3.ain_localisation, t4.drt_code_libelle " .
@@ -814,7 +813,7 @@ WHERE iden.idn_id = ' . $_SESSION['idn_id'] . ' AND idn.idn_id = :idn_id ';
 		if ( $_SESSION['jeton_session'] == $New_Jeton ) {
 			return TRUE;
 		} else {
-			print($_SESSION['jeton_session'].' == '.$New_Jeton);
+			//print($_SESSION['jeton_session'].' == '.$New_Jeton);
 			return FALSE;
 		}
 	}

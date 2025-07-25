@@ -113,19 +113,19 @@ function ModalChoixImpression( Id ) {
 				'<div class="well">' +
 				 '<div class="row">' +
 				  '<div class="col-lg-4"><strong>' + reponse['L_Societe'] + '</strong></div>' +
-				  '<div class="col-lg-5"><strong>' + reponse['L_Campagne'] + '</strong></div>' +
+				  '<div class="col-lg-8"><strong>' + reponse['L_Campagne'] + '</strong></div>' +
 				 '</div> <!-- .row -->' +
 
 				 '<div class="row">' +
 				  '<div class="col-lg-4 bg_couleur_2">' + sct_nom + '</div>' +
-				  '<div class="col-lg-5 bg_couleur_2">' + cmp_date + '</div>' +
+				  '<div class="col-lg-8 bg_couleur_2">' + cmp_date + '</div>' +
 				 '</div> <!-- .row -->' +
 				'</div> <!-- .well -->' +
 
 				'<div class="well corps_onglet" style="max-height: 450px;">' +
 					 '<div class="row">' +
 					  '<label class="col-lg-4 col-form-label" for="editer_entite">' + reponse[ 'L_Entite' ] + '</label>' +
-					  '<div class="col-lg-5">' +
+					  '<div class="col-lg-8">' +
 					   '<select id="editer_entite" class="form-select" required>' +
 					    '<option value="*">' + reponse['L_Toutes'] + '</option>';
 
@@ -141,12 +141,17 @@ function ModalChoixImpression( Id ) {
 					 '</div> <!-- .row -->' +
 				 '<div class="row">' +
 				  '<label class="col-lg-4 col-form-label" for="format_edition">' + reponse[ 'L_Format_Edition' ] + '</label>' +
-				  '<div class="col-lg-2">' +
+				  '<div class="col-lg-5">' +
 				   '<select id="format_edition" class="form-select" required>' +
-				    '<option value="docx">Word</option>' +
-				    '<option value="odt">OpenOffice</option>' +
-				    '<option value="html">HTML</option>' +
-				    '<option value="xlsx">Excel</option>' +
+				    '<optgroup label="' + reponse['L_Formats_Proprietaires'] + '">' +
+				     '<option value="docx">Microsoft Word (.docx)</option>' +
+				     '<option value="xlsx">Microsoft Excel (.xlsx)</option>' +
+				    '</optgroup>' +
+				    '<optgroup label="' + reponse['L_Formats_Ouverts'] + '">' +
+				     '<option value="odt">Open Document Text (.odt)</option>' +
+				     '<option value="ods">Open Document Spreadsheet (.ods)</option>' +
+				     '<option value="html">HTML (.html)</option>' +
+				    '</optgroup>' +
 				   '</select>' +
 				  '</div>' +
 				 '</div> <!-- .row -->' +

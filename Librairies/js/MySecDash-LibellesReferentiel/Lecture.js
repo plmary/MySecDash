@@ -24,16 +24,23 @@ $(function() {
 
 	// Charge les données du tableau.
 	trier( $( 'div#entete_tableau div.row div:first'), true );
+
+	// Active l'écoute du "click" sur les libellés de l'entête du tableau.
+	$('.triable').click( function() {
+		trier( this, true );
+	});
 });
 
 
 
-function trier( myElement, changerTri ) {
+function trier( myElement, changerTri = false ) {
+	var sens_recherche = $( myElement ).attr( 'data-sens-tri' );
+
 	$.ajax({
 		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Trier',
 		type: 'POST',
 		dataType: 'json',
-		data: $.param({'trier': changerTri}),
+		data: $.param({'trier': sens_recherche}),
 		success: function( reponse ){
 			var statut = reponse['statut'];
 
@@ -43,6 +50,21 @@ function trier( myElement, changerTri ) {
 				$('#corps_tableau').html( Texte );
 
 				$('#totalOccurrences').text( reponse[ 'total' ] );
+
+				if ( changerTri == true ) {
+					var Element = sens_recherche.split('-');
+					if ( Element[ Element.length - 1 ] == 'desc' ) {
+						sens_recherche = Element[ 0 ];
+					} else {
+						sens_recherche = Element[ 0 ] + '-desc';
+					}
+				}
+
+				// Postionne la couleur sur la colonne active sur le tri.
+				$('div#entete_tableau div.row div.triable').removeClass('active');
+				$(myElement).addClass('active');
+
+				$(myElement).attr( 'data-sens-tri', sens_recherche );
 
 				if ( reponse[ 'droit_modifier' ] == 1 ) {
 					// Assigne l'événement "click" sur tous les boutons de Modification
@@ -79,10 +101,12 @@ function ModalAjouterModifier( Id = '' ) {
 		var lbr_code = $('#LBR_'+ Id + ' div[data-src="lbr_code"] span').text();
 		var lng_id = $('#LBR_'+ Id + ' div[data-src="lng_id"] span').text();
 		var lbr_libelle = $('#LBR_'+ Id + ' div[data-src="lbr_libelle"] span').text();
+		var type_chp_code = 'disabled';
 	} else {
 		var lbr_code = '';
 		var lng_id = '';
 		var lbr_libelle = '';
+		var type_chp_code = '';
 	}
 
 	$.ajax({
@@ -94,7 +118,7 @@ function ModalAjouterModifier( Id = '' ) {
 			var code_HTML = '<div class="row">' +
 				'<label class="col-lg-3 col-form-label" for="lbr_code">' + reponse[ 'L_Code' ] + '</label>' +
 				'<div class="col-lg-9">' +
-				'<input id="lbr_code" class="form-control" type="text" maxlength="60" required value="' + lbr_code + '">' +
+				'<input id="lbr_code" class="form-control" type="text" maxlength="60" required value="' + lbr_code + '" ' + type_chp_code + '>' +
 				'</div> <!-- .col-lg-9 -->' +
 				'</div> <!-- .row -->' +
 				'<div class="row" style="margin-top: 21px;">' +
@@ -122,7 +146,7 @@ function ModalAjouterModifier( Id = '' ) {
 
 				code_HTML += '<div class="row">' +
 					'<div class="col-lg-3">' +
-					'<select id="lbr_langue-' + Id + '" class="form-select">';
+					'<select id="lbr_langue-' + Id + '" class="form-select" disabled>';
 
 				for (const Langue in reponse['Liste_Langues']) {
 					if (reponse['Liste_Langues'][Langue]['lng_id'] == lng_id) {

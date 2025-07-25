@@ -56,10 +56,10 @@ $Format_Colonnes[ 'Fonction_Ouverture' ] = 'ouvrirChamp';
 $Format_Colonnes[ 'Id' ] = array( 'nom' => 'cmp_id' );
 $Format_Colonnes[ 'Colonnes' ][] = array(
 	'nom' => 'cmp_date', 'titre' => $L_Date, 'taille' => '2', 'maximum' => '10',
-	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'cmp_date-desc', 'type' => 'input-date', 'modifiable' => 'oui' );
+	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'cmp_date-desc', 'type' => 'input-date', 'modifiable' => 'oui' );
 $Format_Colonnes[ 'Colonnes' ][] = array(
 	'nom' => 'cmp_flag_validation', 'titre' => $L_Validation, 'taille' => '2', 'triable' => 'oui',
-	'tri_actif' => 'oui', 'sens_tri' => 'cmp_date-desc', 'type' => 'select', 'liste' => '0='.$L_No.';1='.$L_Yes, 'modifiable' => 'oui' );
+	'tri_actif' => 'non', 'sens_tri' => 'cmp_date-desc', 'type' => 'select', 'liste' => '0='.$L_No.';1='.$L_Yes, 'modifiable' => 'oui' );
 $Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'associations', 'titre' => $L_Associations, 'affichage' => 'img',
 	'taille' => '6' );
 $Format_Colonnes[ 'Actions' ] = array( 'taille' => '2', 'titre' => $L_Actions,
@@ -156,6 +156,7 @@ switch( $Action ) {
 		'L_Interne' => $PageHTML->getLibelle('__LRI_INTERNE'),
 		'L_Externe' => $PageHTML->getLibelle('__LRI_EXTERNE'),
 		'L_Effectif' => $PageHTML->getLibelle('__LRI_EFFECTIF'),
+		'L_Effectif_Total' => $PageHTML->getLibelle('__LRI_EFFECTIF_TOTAL'),
 		'Liste_Parties_Prenantes' => $objPartiesPrenantes->rechercherPartiesPrenantes( $_SESSION['s_sct_id'] )
 	);
 
@@ -913,8 +914,7 @@ switch( $Action ) {
 			}
 
 			try {
-				$objEntites->majEntite( $_SESSION['s_sct_id'], '', $_POST[ 'ent_nom' ],
-						$_POST[ 'ent_description' ] );
+				$objEntites->majEntite( $_SESSION['s_sct_id'], '', $_POST[ 'ent_nom' ], $_POST[ 'ent_description' ] );
 				$Id_Entite = $objEntites->LastInsertId;
 			} catch( Exception $e ) {
 				echo json_encode( array(
@@ -927,7 +927,14 @@ switch( $Action ) {
 			echo json_encode( array(
 				'statut' => 'success',
 				'texteMsg' => $L_Entite_Cree,
-				'ent_id' => $Id_Entite
+				'ent_id' => $Id_Entite,
+				'L_Aucun' => $L_Neither,
+				'L_Aucun' => $PageHTML->getLibelle('__LRI_AUCUN'),
+				'L_Interne' => $PageHTML->getLibelle('__LRI_INTERNE'),
+				'L_Externe' => $PageHTML->getLibelle('__LRI_EXTERNE'),
+				'L_Effectif' => $PageHTML->getLibelle('__LRI_EFFECTIF'),
+				'L_Effectif_Total' => $PageHTML->getLibelle('__LRI_EFFECTIF_TOTAL'),
+				'Liste_Parties_Prenantes' => $objPartiesPrenantes->rechercherPartiesPrenantes( $_SESSION['s_sct_id'] )
 			) );
 		}
 	} else {

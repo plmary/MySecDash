@@ -17,6 +17,7 @@ include( 'Constants.inc.php' );
 include( DIR_LIBRAIRIES . '/Loxense-Entete-Standard.php' );
 
 // Charge les libellés en fonction de la langue sélectionnée.
+include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_referentiels.php' );
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_' . basename( $Script ) );
 
 // Charge les classes utiles à cet écran.
@@ -31,6 +32,17 @@ $objProfiles_Access_Control = new HBL_Profils_Controles_Acces();
 $objSocietes = new HBL_Societes();
 
 
+// Définit le format des colonnes du tableau central.
+$Format_Colonnes[ 'Prefixe' ] = 'PRF';
+$Format_Colonnes[ 'Fonction_Ouverture' ] = 'ouvrirChamp';
+$Format_Colonnes[ 'Id' ] = array( 'nom' => 'prf_id' );
+$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'prf_libelle', 'titre' => $L_Nom, 'taille' => '4',
+	'triable' => 'oui', 'sens_tri' => 'prf_libelle', 'type' => 'input', 'modifiable' => 'oui' );
+$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'prf_description', 'titre' => $L_Description, 'taille' => '6',
+	'triable' => 'oui', 'sens_tri' => 'prf_description', 'type' => 'textarea', 'modifiable' => 'oui' );
+$Format_Colonnes[ 'Actions' ] = array( 'taille' => '2', 'titre' => $L_Actions,
+	'boutons' => array( 'modifier' => $Droit_Modifier, 'supprimer' => $Droit_Supprimer ) );
+
 
 // Exécute l'action identifie
 switch( $Action ) {
@@ -42,28 +54,16 @@ switch( $Action ) {
 	} else {
 		$Boutons_Alternatifs = '';
 	}
-	
+
 	print( $PageHTML->construireEnteteHTML( $L_Gestion_Profils, $Fichiers_JavaScript ) .
-	$PageHTML->construireNavbarJson('Logo-MySecDash.svg', 'nav-items.json') .
+		$PageHTML->construireNavbarJson('Logo-MySecDash.svg', 'nav-items.json') .
 		$PageHTML->construireTitreEcran( $L_Gestion_Profils, '', $Boutons_Alternatifs )
 	);
 
 
 	if ( $Droit_Lecture === TRUE ) {
 		// Construit le tableau central.
-		print(
-			"<div id=\"entete_tableau\" class=\"container-fluid\">\n" .
-			" <div class=\"row\">\n" .
-			"  <div class=\"col-lg-3\">&nbsp;</div>\n" .
-			"  <div class=\"col-lg-9 titre\">" . $L_Profils . "</div>\n" .
-			" </div> <!-- Fin : row -->\n" .
-			" <div class=\"row profils\">\n" .
-			"  <div class=\"col-lg-3 titre\">" . $L_Applications . "</div>\n" .
-			" </div> <!-- Fin : row -->\n" .
-			"</div> <!-- Fin : entete_tableau -->\n" .
-			"<div id=\"corps_tableau\" class=\"container-fluid\">\n" .
-			"</div> <!-- Fin : corps_tableau -->\n"
-			);
+		print( $PageHTML->contruireTableauVide( $Format_Colonnes ) );
 	}
 
 	print( $PageHTML->construireFooter( TRUE ) .
@@ -77,7 +77,7 @@ switch( $Action ) {
  */
 
  case 'AJAX_Libeller':
-	print( json_encode( array(
+	$Libelles = array(
 		'Statut' => 'success',
 		'L_Fermer' => $L_Fermer,
 		'Titre' => $L_Ajouter_Profil,
@@ -86,10 +86,112 @@ switch( $Action ) {
 		'L_Ajouter' => $L_Ajouter,
 		'L_Modifier' => $L_Modify,
 		'L_Supprimer' => $L_Delete,
-		'L_Libelle' => $L_Label
-		) ) );
+		'L_Libelle' => $L_Label,
+		'L_Description' => $L_Description,
+		'L_Applications' => $L_Applications,
+		'L_Nom' => $L_Nom,
+		'L_Droits' => $L_Rights,
+		'L_Localisation' => $L_Localisation,
+		'L_Lecture' => $L_Right_1,
+		'L_Ecriture' => $L_Right_2,
+		'L_Modifier' => $L_Right_3,
+		'L_Supprimer' => $L_Right_4
+		);
+
+	if ( ! isset( $_POST['prf_id'] ) ) {
+		$_POST['prf_id'] = 0;
+		
+		$Libelles['prf_libelle'] = '';
+		$Libelles['prf_description'] = '';
+	} else {
+		if ( $_POST['prf_id'] == 0 ) {
+			$Libelles['prf_libelle'] = '';
+			$Libelles['prf_description'] = '';
+		} else {
+			$Profil = $objProfils->detaillerProfil( $_POST['prf_id'] );
 	
+			$Libelles['prf_libelle'] = $Profil->prf_libelle;
+			$Libelles['prf_description'] = $Profil->prf_description;
+		}
+	}
+
+	$Libelles['Liste_Applications'] = $objProfiles_Access_Control->rechercherApplicationsParProfil( $_POST['prf_id'] );
+
+	if ( isset( $_POST['action'] ) ) {
+		if ( $_POST['action'] == 'supprimer' ) {
+			if ( isset($_POST['id']) ) {
+				try {
+					$Compteurs = $objProfils->testerAssociationProfil( $_POST['id'] );
+					
+					$CodeHTML = '';
+					
+					if ( $Compteurs->total_idn ) {
+						$CodeHTML .= sprintf( $L_Confirmation_Suppression_Profil_Associe, $_POST['libelle'] ) .
+						'<ul style="margin-top: 10px;">';
+						
+						if ( $Compteurs->total_idn > 1 ) $Libelle = $L_Identities;
+						else $Libelle = $L_Identity;
+						
+						$CodeHTML .= '<li><span class="orange_moyen">' . $Compteurs->total_idn . '</span> ' . $Libelle . '</li>' .
+							'</ul>' . $L_Cascading_Delete;
+					} else {
+						$CodeHTML .= sprintf( $L_Confirmation_Suppression_Profil, $_POST['libelle'] );
+					}
+					
+					$Libelles['statut'] = 'success';
+					$Libelles['texteMsg'] = $CodeHTML;
+				} catch( Exception $e ) {
+					$Libelles['statut'] = 'error';
+					$Libelles['texteMsg'] = $e->getMessage();
+				}
+			} else {
+				$Libelles['statut'] = 'error';
+				$Libelles['texteMsg'] = $L_ERR_Champs_Obligatoires;
+			}
+		}
+	}
+
+	print( json_encode( $Libelles ) );
+
 	exit();
+
+
+	
+	
+ case 'AJAX_Trier':
+	if ( $Droit_Lecture === TRUE ) {
+		$Trier = $_POST[ 'trier' ];
+
+		try {
+			$Profils = $objProfils->rechercherProfils( $Trier );
+			$Total = $objProfils->RowCount;
+
+			$Texte_HTML = '';
+
+			foreach ($Profils as $Occurrence) {
+				$Texte_HTML .= $PageHTML->creerOccurrenceCorpsTableau( $Occurrence->prf_id, $Occurrence, $Format_Colonnes );
+			}
+
+			echo json_encode( array(
+				'statut' => 'success',
+				'texteHTML' => $Texte_HTML,
+				'total' => $Total,
+				'droit_modifier' => $Droit_Modifier,
+				'droit_supprimer' => $Droit_Supprimer
+			) );
+		} catch( Exception $e ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $e->getMessage()
+			) );
+		}
+	} else {
+		echo json_encode( array(
+			'statut' => 'error',
+			'texteMsg' => $L_No_Authorize
+		) );
+	}
+	break;
 
 
  case 'AJAX_Lister_Applications':
@@ -220,8 +322,8 @@ switch( $Action ) {
 
  case 'AJAX_Ajouter':
 	if ( $Droit_Ajouter === TRUE ) {
-		if (isset($_POST['libelle'])) {
-			if ($_POST['libelle'] == '') {
+		if (isset($_POST['prf_libelle'])) {
+			if ($_POST['prf_libelle'] == '') {
 				$Resultat = array( 'statut' => 'error',
 					'titreMsg' => $L_Error,
 					'texteMsg' => $L_Field_Mandatory );
@@ -230,22 +332,61 @@ switch( $Action ) {
 				exit();
 			}
 
+			$_POST['prf_libelle'] = $PageHTML->controlerTypeValeur( $_POST['prf_libelle'], 'ASCII' );
+			if ( $_POST['prf_libelle'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (prf_libelle)'
+				) );
+				
+				exit();
+			}
+
+			$_POST['prf_description'] = $PageHTML->controlerTypeValeur( $_POST['prf_description'], 'ASCII' );
+			if ( $_POST['prf_description'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (prf_description)'
+				) );
+				
+				exit();
+			}
+
 			try {
-				$objProfils->majProfil( '', $_POST[ 'libelle' ] );
+				$objProfils->majProfil( '', $_POST[ 'prf_libelle' ], $_POST[ 'prf_description' ] );
 				$Id_Profil = $objProfils->LastInsertId;
 
-				$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_PROFIL', 'prf_id="' . $Id_Profil . '", prf_libelle="' . $_POST[ 'libelle' ] . '"' );
+				$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_PROFIL', 'prf_id="' . $Id_Profil . '", prf_libelle="' . $_POST[ 'prf_libelle' ] . 
+					'", prf_libelle="' . $_POST[ 'prf_libelle' ] . '"' );
 
 				$Limitation = $PageHTML->recupererParametre('limitation_profils');
-				$Libelles = $objProfiles_Access_Control->rechercherLibellesDroits();
+				//$Libelles = $objProfiles_Access_Control->rechercherLibellesDroits();
+
+
+				// Ajoute tous les Droits au Profil.
+				if ( isset( $_POST['Liste_Droits_Ajouter'] ) ) {
+					foreach( $_POST['Liste_Droits_Ajouter'] as $Element ) {
+						$Droit = explode( '-', $Element );
+						$objProfiles_Access_Control->ajouterControleAcces( $Id_Profil, $Droit[0], $Droit[1] );
+					}
+				}
+
+
+				$Occurrence = new stdClass();
+				$Occurrence->prf_id = $Id_Profil;
+				$Occurrence->prf_libelle = $_POST[ 'prf_libelle' ];
+				$Occurrence->prf_description = $_POST[ 'prf_description' ];
 
 				$Resultat = array( 'statut' => 'success',
 					'texteMsg' => $L_Profil_Cree,
 					'id' => $Id_Profil,
 					'limitation' => $Limitation,
 					'libelle_limitation' => $L_Limitation_Licence,
-					'libelles_droits' => $Libelles,
-					'libelle_delete_profil' => $L_Supprimer_Profil
+					//'libelles_droits' => $Libelles,
+					'libelle_delete_profil' => $L_Supprimer_Profil,
+					'droit_supprimer' => $Droit_Supprimer,
+					'droit_modifier' => $Droit_Modifier,
+					'texteHTML' => $PageHTML->creerOccurrenceCorpsTableau( $Occurrence->prf_id, $Occurrence, $Format_Colonnes )
 					);
 
 			} catch (Exception $e) {
@@ -260,6 +401,49 @@ switch( $Action ) {
 					'statut' => $Statut,
 					'texteMsg' => $Message
 					);
+			}
+
+			echo json_encode( $Resultat );
+		} else {
+			$Resultat = array(
+				'statut' => 'error',
+				'texteMsg' => $L_ERR_Champs_Obligatoires
+			);
+
+			echo json_encode( $Resultat );
+		}
+	} else {
+		echo json_encode( array(
+			'statut' => 'error',
+			'texteMsg' => $L_No_Authorize
+		) );
+	}
+	break;
+
+
+ case 'AJAX_Modifier_Champ':
+	if ( $Droit_Modifier === TRUE ) {
+		if ( isset($_POST['id']) && isset($_POST['source']) && isset($_POST['valeur']) ) {
+			try {
+				$objProfils->majProfilParChamp($_POST['id'], $_POST['source'], $_POST['valeur']);
+
+				$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_PROFIL', $_POST[ 'source' ] . '="' . $_POST['valeur'] . '"' );
+
+				$Resultat = array(
+					'statut' => 'success',
+					'texteMsg' => $L_Profil_Modifie
+				);
+			} catch (Exception $e) {
+				$Message = $e->getMessage();
+
+				if ( $e->getCode() == 23505 ) { // Cas d'un doublon
+					$Message = $L_ERR_DUPL_Profil;
+				}
+
+				$Resultat = array(
+					'statut' => 'error',
+					'texteMsg' => $Message
+				);
 			}
 
 			echo json_encode( $Resultat );
@@ -309,72 +493,119 @@ switch( $Action ) {
 
 
  case 'AJAX_Modifier_Profil':
-	if ( $Droit_Supprimer === TRUE ) {
-		try {
-			$objProfils->majProfil( $_POST[ 'id_profil' ], $_POST[ 'libelle' ] );
-
-			$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_PROFIL', 'prf_id="' . $_POST['id_profil'] . '", prf_libelle="' . $_POST[ 'libelle' ] . '"' );
-
-			$Resultat = array( 'statut' => 'success',
-				'texteMsg' => $L_Profil_Modifie
-				);
-
-		} catch (Exception $e) {
-			$Statut = 'error';
-			$Message = $e->getMessage();
-
-			if ( $e->getCode() == 23505 ) { // Gestion des doublons
-				$Message = $L_ERR_DUPL_Profil;
+	if ( $Droit_Modifier === TRUE ) {
+		if (isset($_POST['prf_libelle'])) {
+			if ($_POST['prf_libelle'] == '') {
+				$Resultat = array( 'statut' => 'error',
+					'titreMsg' => $L_Error,
+					'texteMsg' => $L_Field_Mandatory );
+				
+				echo json_encode( $Resultat );
+				exit();
 			}
 
-			$Resultat = array(
-				'statut' => $Statut,
-				'texteMsg' => $Message
-				);
-		}
+			$_POST['prf_id'] = $PageHTML->controlerTypeValeur( $_POST['prf_id'], 'NUMBER' );
+			if ( $_POST['prf_id'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (prf_id)'
+				) );
+				
+				exit();
+			}
 
-		echo json_encode( $Resultat );
+			$_POST['prf_libelle'] = $PageHTML->controlerTypeValeur( $_POST['prf_libelle'], 'ASCII' );
+			if ( $_POST['prf_libelle'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (prf_libelle)'
+				) );
+				
+				exit();
+			}
+
+			$_POST['prf_description'] = $PageHTML->controlerTypeValeur( $_POST['prf_description'], 'ASCII' );
+			if ( $_POST['prf_description'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (prf_description)'
+				) );
+				
+				exit();
+			}
+
+			try {
+				$objProfils->majProfil( $_POST[ 'prf_id' ], $_POST[ 'prf_libelle' ], $_POST[ 'prf_description' ] );
+				
+				$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_PROFIL', 'prf_id="' . $_POST[ 'prf_id' ] . '", prf_libelle="' . $_POST[ 'prf_libelle' ] .
+					'", prf_libelle="' . $_POST[ 'prf_libelle' ] . '"' );
+
+				$Limitation = $PageHTML->recupererParametre('limitation_profils');
+				//$Libelles = $objProfiles_Access_Control->rechercherLibellesDroits();
+
+
+				// Ajoute les Droits au Profil.
+				if ( isset( $_POST['Liste_Droits_Ajouter'] ) ) {
+					foreach( $_POST['Liste_Droits_Ajouter'] as $Element ) {
+						$Droit = explode( '-', $Element );
+						$objProfiles_Access_Control->ajouterControleAcces( $_POST[ 'prf_id' ], $Droit[0], $Droit[1] );
+					}
+				}
+
+				// Supprime les Droits au Profil.
+				if ( isset( $_POST['Liste_Droits_Supprimer'] ) ) {
+					foreach( $_POST['Liste_Droits_Supprimer'] as $Element ) {
+						$Droit = explode( '-', $Element );
+						$objProfiles_Access_Control->SupprimerControleAcces( $_POST[ 'prf_id' ], $Droit[0], $Droit[1] );
+					}
+				}
+
+
+				$Occurrence = new stdClass();
+				$Occurrence->prf_id = $_POST[ 'prf_id' ];
+				$Occurrence->prf_libelle = $_POST[ 'prf_libelle' ];
+				$Occurrence->prf_description = $_POST[ 'prf_description' ];
+
+				$Resultat = array( 'statut' => 'success',
+					'texteMsg' => $L_Profil_Modifie,
+					'id' => $_POST[ 'prf_id' ],
+					'limitation' => $Limitation,
+					'libelle_limitation' => $L_Limitation_Licence,
+					//'libelles_droits' => $Libelles,
+					'libelle_delete_profil' => $L_Supprimer_Profil,
+					'droit_supprimer' => $Droit_Supprimer,
+					'droit_modifier' => $Droit_Modifier
+				);
+
+			} catch (Exception $e) {
+				$Statut = 'error';
+				$Message = $e->getMessage();
+
+				if ( $e->getCode() == 23505 ) { // Gestion des doublons
+					$Message = $L_ERR_DUPL_Profil;
+				}
+
+				$Resultat = array(
+					'statut' => $Statut,
+					'texteMsg' => $Message
+				);
+			}
+
+			echo json_encode( $Resultat );
+		} else {
+			$Resultat = array(
+				'statut' => 'error',
+				'texteMsg' => $L_ERR_Champs_Obligatoires
+			);
+
+			echo json_encode( $Resultat );
+		}
 	} else {
 		echo json_encode( array(
 			'statut' => 'error',
 			'texteMsg' => $L_No_Authorize
 		) );
 	}
-	break;
-
-
- case 'AJAX_Verifier_Associer':
-	if ( isset($_POST['id']) ) {
-		try { 
-			$Compteurs = $objProfils->testerAssociationProfil( $_POST['id'] );
-
-			$CodeHTML = '';
-
-			if ( $Compteurs->total_idn ) {
-				$CodeHTML .= sprintf( $L_Confirmation_Suppression_Profil_Associe, $_POST['libelle'] ) .
-					'<ul style="margin-top: 10px;">';
-
-				if ( $Compteurs->total_idn > 1 ) $Libelle = $L_Identities;
-				else $Libelle = $L_Identity;
-
-				$CodeHTML .= '<li><span class="orange_moyen">' . $Compteurs->total_idn . '</span> ' . $Libelle . '</li>' .
-					'</ul>' . $L_Cascading_Delete;
-			} else {
-				$CodeHTML .= sprintf( $L_Confirmation_Suppression_Profil, $_POST['libelle'] );
-			}
-
-			$Resultat = array( 'statut' => 'success',
-				'texteMsg' => $CodeHTML );
-		} catch( Exception $e ) {
-			$Resultat = array( 'statut' => 'error',
-				'texteMsg' => $e->getMessage() );
-		}
-	} else {
-		$Resultat = array( 'statut' => 'error',
-			'texteMsg' => $L_ERR_Champs_Obligatoires );
-	}
-
-	echo json_encode( $Resultat );
 	break;
 }
 

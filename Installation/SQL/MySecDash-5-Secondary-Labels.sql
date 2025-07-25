@@ -108,4 +108,8 @@ INSERT INTO lbr_libelles_referentiel (lbr_code, lng_id, lbr_libelle) VALUES
 ('__LRI_SYS_SUPPRIMER','en','Delete'),
 ('__LRI_SYS_SUPPRIMER','fr','Supprimer'),
 ('__LRI_TAUX_OCCUPATION','en','Occupancy rate'),
-('__LRI_TAUX_OCCUPATION','fr','Taux d''occupation');
+('__LRI_TAUX_OCCUPATION','fr','Taux d''occupation'),
+('__LRI_FORMATS_OUVERTS','en','Open formats'),
+('__LRI_FORMATS_OUVERTS','fr','Formats ouverts'),
+('__LRI_FORMATS_PROPRIETAIRES', 'fr', 'Formats propriétaires'),
+('__LRI_FORMATS_PROPRIETAIRES', 'en', 'Proprietary formats');

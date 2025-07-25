@@ -501,7 +501,7 @@ WHERE act.cmp_id = :cmp_id ';
 	}
 
 
-	public function rechercherEntitesCampagne( $cmp_id, $ent_id = '' ) {
+	public function rechercherEntitesCampagne( $cmp_id, $ent_id = '*', $trier = 'ent_nom' ) {
 		/**
 		 * Lister les Entites déclarées sur une Campagne
 		 *
@@ -525,14 +525,47 @@ WHERE act.cmp_id = :cmp_id ';
 			LEFT JOIN cmp_campagnes AS "cmp" ON cmp.cmp_id = cmen.cmp_id
 			LEFT JOIN idn_identites AS "idn" ON idn.idn_id = cmen.idn_id_validation
 			LEFT JOIN cvl_civilites AS "cvl" ON cvl.cvl_id = idn.cvl_id
-			WHERE cmen.cmp_id = :cmp_id ' . $Where .
-			'ORDER BY ent_nom ';
-		
+			WHERE cmen.cmp_id = :cmp_id ' . $Where;
+
+
+		switch( $trier ) {
+			default:
+			case 'ent_nom':
+				$Order_By = 'ent_nom';
+				break;
+			case 'ent_nom-desc':
+				$Order_By = 'ent_nom DESC';
+				break;
+
+			case 'ent_description':
+				$Order_By = 'ent_description';
+				break;
+			case 'ent_description-desc':
+				$Order_By = 'ent_description DESC';
+				break;
+
+			case 'cmen_date_validation':
+				$Order_By = 'cmen_date_validation, ent_nom';
+				break;
+			case 'cmen_date_validation-desc':
+				$Order_By = 'cmen_date_validation DESC, ent_nom';
+				break;
+
+			case 'idn_id_validation':
+				$Order_By = 'cvl_nom, cvl_prenom';
+				break;
+			case 'idn_id_validation-desc':
+				$Order_By = 'cvl_nom DESC, cvl_prenom';
+				break;
+		}
+
+		$Request = $Request . ' ORDER BY ' . $Order_By . ' ';
+
 		$Query = $this->prepareSQL( $Request );
-		
+
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
 
-		if ( $ent_id != '' ) $this->bindSQL( $Query, ':ent_id', $ent_id, PDO::PARAM_INT );
+		if ( $ent_id != '' && $ent_id != '*' ) $this->bindSQL( $Query, ':ent_id', $ent_id, PDO::PARAM_INT );
 
 		$this->executeSQL( $Query );
 
@@ -1587,7 +1620,7 @@ WHERE act.cmp_id = :cmp_id ';
 		 */
 
 		$Request = 'SELECT app.app_id, app.app_nom, app.app_niveau_service, app.app_hebergement, MIN(ete.ete_poids) AS "dmia", MIN(ete1.ete_poids) AS "pdma",
-STRING_AGG( ent.ent_nom || \' (\' || ent.ent_description || \') - \' || act.act_nom || \'###\'||act.act_id, \',<br>\' ORDER BY ent_nom, act_nom ) AS "act_nom",
+STRING_AGG( ent.ent_nom || \'+++\' || ent.ent_description || \'+++ - \' || act.act_nom || \'###\'||act.act_id, \',<br>\' ORDER BY ent_nom, act_nom ) AS "act_nom",
 STRING_AGG( DISTINCT acap.acap_palliatif, \'##\' ) AS "acap_palliatif",
 STRING_AGG( DISTINCT acap.acap_donnees, \'##\' ) AS "acap_donnees",
 STRING_AGG( DISTINCT acap.acap_hebergement, \'##\' ) AS "acap_hebergement",

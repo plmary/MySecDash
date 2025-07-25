@@ -37,6 +37,9 @@ $objMatriceImpacts = new MatriceImpacts();
 // Exécute l'action identifie
 switch( $Action ) {
  default:
+	if ( ! isset( $_SESSION['s_cmp_id'] ) ) {
+		$_SESSION['s_cmp_id'] = '';
+	}
 
 	$Liste_Societes = $objSocietes->rechercherSocietes();
 	if ( isset($_SESSION['s_sct_id']) ) {

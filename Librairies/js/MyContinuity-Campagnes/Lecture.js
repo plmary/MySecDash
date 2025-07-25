@@ -164,19 +164,33 @@ function ModalMAJCampagne( cmp_id = '' ){
 			}
 
 
-			function rechercherObjetsDansOnglet() {
+			function rechercherObjetsDansOnglet( occurrence_a_traiter, parent='' ) {
 				chp_rechercher_objet = new RegExp($('#chp-rechercher-objet').val(), 'i');
-			
-				$('.form-check.liste').each( function( index ){
+				
+				if ( $('#chp-rechercher-objet').val() == '' ) {
+					$('#titre-tout-cocher-sites').show();
+					$('#titre-tout-cocher-entites').show();
+				} else {
+					$('#titre-tout-cocher-sites').hide();
+					$('#titre-tout-cocher-entites').hide();
+				}
+
+				$(occurrence_a_traiter).each( function( index ){
+					if (parent == '') {
+						var monObjet = this;
+					} else {
+						var monObjet = $(this).parent().parent().parent();
+					}
+
 					Valeur = $( this ).text();
-			
+
 					if (chp_rechercher_objet == '') {
-						$( this ).show();
+						$( monObjet ).show();
 					} else {
 						if (Valeur.search(chp_rechercher_objet) >= 0) {
-							$( this ).show();
+							$( monObjet ).show();
 						} else {
-							$( this ).hide();
+							$( monObjet ).hide();
 						}
 					}
 				});
@@ -259,7 +273,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 				'<div id="onglets_utilisateur" style="height: 520px;">' +
 				
 				'<div id="zone-x-select-entites" class="d-none">' +
-					'<div class="row">' +
+					'<div class="row liste" id="titre-tout-cocher-entites">' +
 					'<div class="col-12">' +
 					'<div class="form-check">' +
 					'<input class="form-check-input" type="checkbox" id="tout-cocher-ent">' +
@@ -319,7 +333,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 						v_cmen_effectif_total = '';
 					}
 
-					Corps += '<div class="row liste">' +
+					Corps += '<div class="row liste occurrence">' +
 						'<div class="col-5">' +
 						'<div class="form-check">' + 
 						'<input class="form-check-input" type="checkbox" value="" data-old_value="'+Old_Value+'" id="entite-'+Entite.ent_id+'"'+Associe+'>' +
@@ -346,7 +360,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 
 
 				'<div id="zone-x-select-sites" class="d-none">' +
-					'<div class="form-check liste" id="titre-tout-cocher-sites">' +
+					'<div class="form-check" id="titre-tout-cocher-sites">' +
 					'<input class="form-check-input" type="checkbox" id="tout-cocher-sts">' +
 					'<label class="form-check-label fw-bold fg_bleu" for="tout-cocher-sts">' + reponse['L_Tout_Cocher_Decocher'] + '</label>' +
 					'</div>';
@@ -428,9 +442,9 @@ function ModalMAJCampagne( cmp_id = '' ){
 					if ( eventKey.which == 13) return false;
 				});
 
-				$('#chp-rechercher-objet').off('keyup').on('keyup', function( eventKey){
+/*				$('#chp-rechercher-objet').off('keyup').on('keyup', function( eventKey){
 					rechercherObjetsDansOnglet();
-				});
+				}); */
 
 				$('#btn-fermer-entite').off('click').on('click', function(){
 					$('#ZoneCreerEntite').addClass('d-none');
@@ -498,7 +512,11 @@ function ModalMAJCampagne( cmp_id = '' ){
 				}
 
 				$('#chp-rechercher-objet').val('');
-				rechercherObjetsDansOnglet();
+				rechercherObjetsDansOnglet('.row.liste.occurrence label', 'parent');
+
+				$('#chp-rechercher-objet').off('keyup').on('keyup', function( eventKey){
+					rechercherObjetsDansOnglet('.row.liste.occurrence label', 'parent');
+				});
 
 				$('div[id^="zone-x-select-"]').addClass('d-none');
 				$('#zone-x-select-entites').removeClass('d-none');
@@ -551,7 +569,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 									PartiesPrenantes += '<option value="'+PartiePrenante.ppr_id+'"'+'>'+PartiePrenante.ppr_nom+' '+PartiePrenante.ppr_prenom+' ('+Type_Partie_Prenante+')</option>';
 								}
 
-								Corps = '<div class="row liste">' +
+								Corps = '<div class="row liste occurrence">' +
 									 '<div class="col-5">' +
 									  '<div class="form-check">' + 
 									   '<input class="form-check-input" type="checkbox" value="" data-old_value="0" id="entite-'+ent_id+'" checked>' +
@@ -638,7 +656,11 @@ function ModalMAJCampagne( cmp_id = '' ){
 				}
 
 				$('#chp-rechercher-objet').val('');
-				rechercherObjetsDansOnglet();
+				rechercherObjetsDansOnglet('.form-check.liste');
+
+				$('#chp-rechercher-objet').off('keyup').on('keyup', function( eventKey){
+					rechercherObjetsDansOnglet('.form-check.liste');
+				});
 
 				$('div[id^="zone-x-select-"]').addClass('d-none');
 				$('#zone-x-select-sites').removeClass('d-none');

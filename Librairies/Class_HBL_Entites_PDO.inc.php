@@ -179,7 +179,7 @@ class HBL_Entites extends HBL_Connexioneur_BD {
 		$Where = '';
 
 		if ( $_SESSION['idn_super_admin'] == FALSE ) {
-			$Request = 'SELECT ent.*
+			$Request = 'SELECT ' . $specificColumns . '
 				FROM iden_idn_ent AS "iden"
 				LEFT JOIN ent_entites AS "ent" ON ent.ent_id = iden.ent_id ';
 			$Where .= 'WHERE iden.idn_id = ' . $_SESSION['idn_id'] . ' ';
@@ -191,20 +191,20 @@ class HBL_Entites extends HBL_Connexioneur_BD {
 		}
 
 		if ( $sct_id != '*' && $sct_id != '' ) {
-			if ( $Where == '' ) $Request .= 'WHERE ';
-			else $Request .= 'AND ';
+			if ( $Where == '' ) $Where .= 'WHERE ';
+			else $Where .= 'AND ';
 
-			$Request .= 'ent.sct_id = :sct_id ';
+			$Where .= 'ent.sct_id = :sct_id ';
 		}
 
-		
 		if ( $search != '' ) {
-			if ( $Where == '' ) $Request .= 'WHERE ';
-			else $Request .= 'AND ';
+			if ( $Where == '' ) $Where .= 'WHERE ';
+			else $Where .= 'AND ';
 			
-			$Request .= 'ent_libelle like :Search ';
+			$Where .= 'ent_libelle like :Search ';
 		}
 
+		$Request .= $Where;
 
 		switch( $orderBy ) {
 		 default:
@@ -217,7 +217,7 @@ class HBL_Entites extends HBL_Connexioneur_BD {
 			break;
 		}
 
-		//print('<hr>'.$Request.' : sct_id='.$sct_id.'<hr>');
+//print('<hr>'.$Request.' : sct_id='.$sct_id.'<hr>');
 		$Query = $this->prepareSQL( $Request );
 
 		if ( $search != '' ) {

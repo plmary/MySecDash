@@ -2180,19 +2180,20 @@ switch( $Action ) {
 				if ( $Activite->sites != [] && $Activite->sites != '' ) {
 					foreach(explode('###', $Activite->sites) as $tSite) {
 						$Site = explode('---', $tSite);
-						if ($Sites != '') $Sites .= '\n';
+						if ($Sites != '') $Sites .= "\n";
 						$Sites .= ($Site[2] == 0 ? $L_Site_Nominal : $L_Site_Secours).' : ' . $Site[0] . ($Site[1] != '' ? ' ('. $Site[1].')':'');
 					}
 				}
 				$activeWorksheet->setCellValue('C' . $Ligne, $Sites);
 				$activeWorksheet->getStyle('C'. $Ligne)->applyFromArray($fontCourant);
-				
+				$activeWorksheet->getStyle('C'. $Ligne)->getAlignment()->setWrapText(true);
+
 				$activeWorksheet->setCellValue('D' . $Ligne, ($Activite->act_effectifs_en_nominal == '' ? '-' : $Activite->act_effectifs_en_nominal));
 				$activeWorksheet->getStyle('D'. $Ligne)->applyFromArray($fontCourant);
-				
+
 				$activeWorksheet->setCellValue('E' . $Ligne, ($Activite->act_effectifs_a_distance == '' ? '-' : $Activite->act_effectifs_a_distance));
 				$activeWorksheet->getStyle('E'. $Ligne)->applyFromArray($fontCourant);
-				
+
 				$Ligne += 1;
 			}
 
@@ -2326,12 +2327,13 @@ switch( $Action ) {
 				if ( $Activite->sites != [] && $Activite->sites != '' ) {
 					foreach(explode('###', $Activite->sites) as $tSite) {
 						$Site = explode('---', $tSite);
-						if ($Sites != '') $Sites .= '\n';
+						if ($Sites != '') $Sites .= "\n";
 						$Sites .= ($Site[2] == 0 ? $L_Site_Nominal : $L_Site_Secours).' : ' . $Site[0] . ($Site[1] != '' ? ' ('. $Site[1].')':'');
 					}
 				}
 				$activeWorksheet->setCellValue('E' . $Ligne, $Sites);
 				$activeWorksheet->getStyle('E'. $Ligne)->applyFromArray($fontCourant);
+				$activeWorksheet->getStyle('E'. $Ligne)->getAlignment()->setWrapText(true);
 
 				$activeWorksheet->setCellValue('F' . $Ligne, $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_numero.' - '.$Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code);
 				$activeWorksheet->getStyle('F'. $Ligne)->applyFromArray($fontCourant);

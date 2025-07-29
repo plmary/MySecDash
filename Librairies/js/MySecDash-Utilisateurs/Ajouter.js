@@ -30,17 +30,21 @@ function ajouterUtilisateur() {
 
 	// Récupère toutes les sociétés qui ont été cochés.
 	$('div#liste-societes input:checked').each(function( Index ) {
-		liste_societes[Index] = $(this).attr('id').split('-')[2];
+		if ( $(this).attr('id').indexOf('chk-SCT-') != -1 ) {
+			liste_societes[Index] = $(this).attr('id').split('-')[2];
+		}
 	});
 
 	// Récupère toutes les entités qui ont été cochées.
 	$('div#liste-entites input:checked').each(function( Index ) {
-		_Id = $(this).attr('id').split('-')[2];
-
-		if ( $(this).attr('id').split('-')[1].search('ADM') == -1 ) {
-			liste_entites[Index] = { 'ent_id': _Id, 'admin': false };			
-		} else {
-			liste_entites[Index-1] = { 'ent_id': _Id, 'admin': true};
+		if ( $(this).attr('id').indexOf('chk-ENT-') != -1 ) {
+			_Id = $(this).attr('id').split('-')[2];
+	
+			if ( $(this).attr('id').split('-')[1].search('ADM') == -1 ) {
+				liste_entites[Index] = { 'ent_id': _Id, 'admin': false };			
+			} else {
+				liste_entites[Index-1] = { 'ent_id': _Id, 'admin': true};
+			}
 		}
 	});
 

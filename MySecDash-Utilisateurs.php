@@ -293,10 +293,12 @@ switch( $Action ) {
 				// Créé les relations entre les Entités et l'Identité (si nécessaire).
 				if ( isset($_POST['liste_entites']) and $_POST['liste_entites'] != '' ) {
 					foreach ( $_POST['liste_entites'] as $Entite ) {
-						$objIdentites_Entites->ajouterEntiteIdentite( $Id_Identity, $Entite['ent_id'], $Entite['admin'] );
+						if ( isset($Entite['ent_id']) ) {
+							$objIdentites_Entites->ajouterEntiteIdentite( $Id_Identity, $Entite['ent_id'], $Entite['admin'] );
 
-						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_IDENTITE', 'idn_id = "' . $Id_Identity . '" <=> ' .
-							'ent_id="' . $Entite['ent_id'] . '", ent_admin="' . $Entite['admin'] . '"' );
+							$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_IDENTITE', 'idn_id = "' . $Id_Identity . '" <=> ' .
+								'ent_id="' . $Entite['ent_id'] . '", ent_admin="' . $Entite['admin'] . '"' );
+						}
 					}
 				}
 			} catch (Exception $e) {
@@ -320,10 +322,10 @@ switch( $Action ) {
 				// Créé les relations entre les Sociétés et l'Identité (si nécessaire).
 				if ( isset($_POST['liste_societes']) and $_POST['liste_societes'] != '' ) {
 					foreach ( $_POST['liste_societes'] as $Societe ) {
-						$objIdentites_Societes->ajouterSocieteIdentite( $Id_Identity, $_SESSION['s_sct_id'] );
+						$objIdentites_Societes->ajouterSocieteIdentite( $Id_Identity, $Societe );
 						
 						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_IDENTITE', 'idn_id = "' . $Id_Identity . '" <=> ' .
-							'sct_id="' . $_SESSION['s_sct_id'] . '"' );
+							'sct_id="' . $Societe . '"' );
 					}
 				}
 			} catch (Exception $e) {

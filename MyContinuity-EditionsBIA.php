@@ -281,8 +281,14 @@ switch( $Action ) {
 		$_Nom_Entite = $L_Toutes;
 		$_ID_Entite = '';
 	} else {
-		$_Nom_Entite = substr( $_POST['nom_entite_a_editer'], 0, stripos($_POST['nom_entite_a_editer'], ' - ') );
-		$_Nom_Entite = str_replace([':', '/', '\\'], '-', $_Nom_Entite);
+		$_t_Nom_Entite = explode(' - ', $_POST['nom_entite_a_editer']);
+
+		if ( count( $_t_Nom_Entite ) == 1 ) {
+			$_Nom_Entite = $_t_Nom_Entite[0];
+		} else {
+			$_Nom_Entite = $_t_Nom_Entite[1];
+		}
+		$_Nom_Entite = str_replace([':', '/', '\\', '&', '|'], '-', $_Nom_Entite);
 		$_ID_Entite = $_POST['entite_a_editer'];
 	}
 	
@@ -1778,7 +1784,7 @@ switch( $Action ) {
 				$activeWorksheet = $spreadsheet->createSheet();
 			}
 			$Numero_Onglet += 1;
-			$activeWorksheet->setTitle($L_Synthese);
+			$activeWorksheet->setTitle(html_entity_decode($L_Synthese));
 
 			$activeWorksheet->mergeCells('A1:B1');
 			$activeWorksheet->setCellValue('A1', $L_Synthese_Manageriale_Globale);
@@ -2053,7 +2059,7 @@ switch( $Action ) {
 				$activeWorksheet = $spreadsheet->createSheet();
 			}
 			$Numero_Onglet += 1;
-			$activeWorksheet->setTitle( $PageHTML->getLibelle('__LRI_PLANNING') );
+			$activeWorksheet->setTitle( html_entity_decode($PageHTML->getLibelle('__LRI_PLANNING')) );
 
 			$activeWorksheet->mergeCells('A1:D1');
 			$activeWorksheet->setCellValue('A1', $L_Entites);
@@ -2061,16 +2067,16 @@ switch( $Action ) {
 
 			// ------------------
 			// Entête du tableau
-			$activeWorksheet->setCellValue('A3', $L_Entite);
+			$activeWorksheet->setCellValue('A3', html_entity_decode($L_Entite));
 			$activeWorksheet->getStyle('A3')->applyFromArray($fontTitreTableau);
 
-			$activeWorksheet->setCellValue('B3', $PageHTML->getLibelle('__LRI_EFFECTIF'));
+			$activeWorksheet->setCellValue('B3', html_entity_decode($PageHTML->getLibelle('__LRI_EFFECTIF')));
 			$activeWorksheet->getStyle('B3')->applyFromArray($fontTitreTableau);
 
-			$activeWorksheet->setCellValue('C3', $L_CPCA);
+			$activeWorksheet->setCellValue('C3', html_entity_decode($L_CPCA));
 			$activeWorksheet->getStyle('C3')->applyFromArray($fontTitreTableau);
 
-			$activeWorksheet->setCellValue('D3', $PageHTML->getLibelle('__LRI_DATE_ENTRETIEN'));
+			$activeWorksheet->setCellValue('D3', html_entity_decode($PageHTML->getLibelle('__LRI_DATE_ENTRETIEN')));
 			$activeWorksheet->getStyle('D3')->applyFromArray($fontTitreTableau);
 
 			// -----------------
@@ -2159,9 +2165,9 @@ switch( $Action ) {
 					$fontCourant = $fontTexteTableau;
 				}
 
-				$Nom_Complet = $Entite->ent_nom;
-				if ( $Entite->ent_description != '' ) {
-					$Nom_Complet .= ' (' . $Entite->ent_description . ')';
+				$Nom_Complet = $Activite->ent_nom;
+				if ( $Activite->ent_description != '' ) {
+					$Nom_Complet .= ' (' . $Activite->ent_description . ')';
 				}
 
 				$activeWorksheet->setCellValue('A' . $Ligne, $Nom_Complet);
@@ -2299,9 +2305,9 @@ switch( $Action ) {
 					$fontCourant = $fontTexteTableau;
 				}
 
-				$Nom_Complet = $Entite->ent_nom;
-				if ( $Entite->ent_description != '' ) {
-					$Nom_Complet .= ' (' . $Entite->ent_description . ')';
+				$Nom_Complet = $Activite->ent_nom;
+				if ( $Activite->ent_description != '' ) {
+					$Nom_Complet .= ' (' . $Activite->ent_description . ')';
 				}
 
 				$activeWorksheet->setCellValue('A' . $Ligne, $Nom_Complet);
@@ -2420,9 +2426,9 @@ switch( $Action ) {
 //					$activeWorksheet->getStyle('E1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 				}
 
-				$Nom_Complet = $Entite->ent_nom;
-				if ( $Entite->ent_description != '' ) {
-					$Nom_Complet .= ' (' . $Entite->ent_description . ')';
+				$Nom_Complet = $Personne->ent_nom;
+				if ( $Personne->ent_description != '' ) {
+					$Nom_Complet .= ' (' . $Personne->ent_description . ')';
 				}
 
 				$activeWorksheet->setCellValue('A'.$Ligne, $Nom_Complet);
@@ -2530,9 +2536,9 @@ switch( $Action ) {
 					$fontCourant = $fontTexteTableau;
 				}
 
-				$Nom_Complet = $Entite->ent_nom;
-				if ( $Entite->ent_description != '' ) {
-					$Nom_Complet .= ' (' . $Entite->ent_description . ')';
+				$Nom_Complet = $Activite->ent_nom;
+				if ( $Activite->ent_description != '' ) {
+					$Nom_Complet .= ' (' . $Activite->ent_description . ')';
 				}
 
 				$activeWorksheet->setCellValue('A' . $Ligne, $Nom_Complet);
@@ -2803,9 +2809,9 @@ switch( $Action ) {
 				$activeWorksheet->setCellValue('B'.$Ligne, $Fournisseur->tfr_nom_code);
 				$activeWorksheet->getStyle('B'.$Ligne)->applyFromArray($fontCourant);
 				
-				$Nom_Complet = $Entite->ent_nom;
-				if ( $Entite->ent_description != '' ) {
-					$Nom_Complet .= ' (' . $Entite->ent_description . ')';
+				$Nom_Complet = $Fournisseur->ent_nom;
+				if ( $Fournisseur->ent_description != '' ) {
+					$Nom_Complet .= ' (' . $Fournisseur->ent_description . ')';
 				}
 				
 				$activeWorksheet->setCellValue('C'.$Ligne, $Nom_Complet);
@@ -2900,9 +2906,9 @@ switch( $Action ) {
 					$fontCourant = $fontTexteTableau;
 				}
 				
-				$Nom_Complet = $Entite->ent_nom;
-				if ( $Entite->ent_description != '' ) {
-					$Nom_Complet .= ' (' . $Entite->ent_description . ')';
+				$Nom_Complet = $Activite->ent_nom;
+				if ( $Activite->ent_description != '' ) {
+					$Nom_Complet .= ' (' . $Activite->ent_description . ')';
 				}
 				
 				$activeWorksheet->setCellValue('A' . $Ligne, $Nom_Complet);

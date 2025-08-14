@@ -62,14 +62,14 @@ $(function() {
 								_Selected = '';
 							}
 
-							$('#s_ent_id').append('<option value="' + element.ent_id + '"' + _Selected + '>' + element.ent_nom + '</option>');
+							$('#s_ent_id').append('<option value="' + element.ent_id + '"' + _Selected + '>' + element.ent_nom + ' (' + element.total_activites + ' ' + (element.total_activites > 1 ? reponse['L_Activites'] : reponse['L_Activite']) + ')</option>');
 						}
 					}
 
 					if ( reponse['sct_id'] != '---' && reponse['sct_id'] != ''
 					 && reponse['cmp_id'] != '---' && reponse['cmp_id'] != ''
 					 && reponse['ent_id'] != '---' && reponse['ent_id'] != '' ) {
-						trier( $( 'div#entete_tableau div.row div:first'), true );
+						trier( $( 'div#entete_tableau div.row div:first'), false );
 					}
 				} else {
 					var texteMsg = reponse['texteMsg'];
@@ -104,14 +104,14 @@ $(function() {
 					} else {
 						// Mise à jour de la liste déroulante des Campagnes associées à la Société
 						for (let element of reponse['Liste_Entites']) {
-							$('#s_ent_id').append('<option value="' + element.ent_id + '">' + element.ent_nom + '</option>');
+							$('#s_ent_id').append('<option value="' + element.ent_id + '">' + element.ent_nom + ' (' + element.total_activites + ' ' + (element.total_activites > 1 ? reponse['L_Activites'] : reponse['L_Activite']) + ')</option>');
 						}
 					}
 					var texteMsg = reponse['texteMsg'];
 
 					afficherMessage(texteMsg, statut);
 
-					trier( $( 'div#entete_tableau div.row div:first'), true );
+					trier( $( 'div#entete_tableau div.row div:first'), false );
 				} else {
 					var texteMsg = reponse['texteMsg'];
 
@@ -128,13 +128,13 @@ $(function() {
 
 	// Active l'écoute du "select" sur le changement d'Entité.
 	$('#s_ent_id').change(function() {
-		//var sens_recherche = $( 'div#entete_tableau div.row div:first' ).attr( 'data-sens-tri' );
+		var sens_recherche = $( 'div#entete_tableau div.row div:first' ).attr( 'data-sens-tri' );
 		var ent_id = $('#s_ent_id').val();
 
 		$.ajax({
 			url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Selectioner_Entite',
 			type: 'POST',
-			data: $.param({/*'trier': sens_recherche,*/ 'ent_id': ent_id }),
+			data: $.param({'trier': sens_recherche, 'ent_id': ent_id }),
 			dataType: 'json', // le résultat est transmit dans un objet JSON
 			success: function(reponse) {
 				var statut = reponse['statut'];
@@ -144,7 +144,7 @@ $(function() {
 
 					afficherMessage(texteMsg, statut);
 
-					trier( $( 'div#entete_tableau div.row div:first'), true );
+					trier( $( 'div#entete_tableau div.row div:first'), false );
 				} else {
 					var texteMsg = reponse['texteMsg'];
 

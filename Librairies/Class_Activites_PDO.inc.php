@@ -1994,17 +1994,21 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 */
 
 		if ( $_SESSION['idn_super_admin'] === TRUE ) {
-			$Request = 'SELECT ent.*
+			$Request = 'SELECT ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description, COUNT(DISTINCT act_id) AS "total_activites"
 				FROM cmen_cmp_ent AS "cmen"
 				LEFT JOIN ent_entites AS "ent" ON ent.ent_id = cmen.ent_id
+				LEFT JOIN act_activites AS "act" ON act.ent_id = ent.ent_id
 				WHERE cmen.cmp_id = :cmp_id
+				GROUP BY ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description
 				ORDER BY ent_nom ';
 		} else {
-			$Request = 'SELECT ent.*
+			$Request = 'SELECT ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description, COUNT(DISTINCT act_id) AS "total_activites"
 				FROM iden_idn_ent AS "iden"
 				LEFT JOIN cmen_cmp_ent AS "cmen" ON cmen.ent_id = iden.ent_id
 				LEFT JOIN ent_entites AS "ent" ON ent.ent_id = cmen.ent_id
+				LEFT JOIN act_activites AS "act" ON act.ent_id = ent.ent_id
 				WHERE iden.idn_id = :idn_id AND cmen.cmp_id = :cmp_id
+				GROUP BY ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description
 				ORDER BY ent_nom ';
 		}
 

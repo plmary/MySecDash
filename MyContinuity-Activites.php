@@ -63,7 +63,7 @@ $Format_Colonnes[ 'Prefixe' ] = 'ACT';
 $Format_Colonnes[ 'Fonction_Ouverture' ] = 'ouvrirChamp';
 $Format_Colonnes[ 'Id' ] = array( 'nom' => 'act_id' );
 $Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'act_nom', 'titre' => $L_Nom, 'taille' => '4',
-	'maximum' => 100, 'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'act_nom', 'type' => 'input',
+	'maximum' => 100, 'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'act_nom-desc', 'type' => 'input',
 	'modifiable' => 'oui' );
 //$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'ppr_id_responsable', 'titre' => $L_CPCA, 'taille' => '3',
 //	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'ppr_id_responsable', 'type' => 'select', 'modifiable' => 'oui', 'fonction' => 'listerPartiesPrenantes' );
@@ -123,7 +123,7 @@ switch( $Action ) {
 
 	if ( $Liste_Entites != '' ) {
 		foreach( $Liste_Entites AS $Entite ) {
-			$Choix_Entites['options'][] = array('id' => $Entite->ent_id, 'nom' => $Entite->ent_nom );
+			$Choix_Entites['options'][] = array('id' => $Entite->ent_id, 'nom' => $Entite->ent_nom . ' (' . $Entite->total_activites . ' ' . ($Entite->total_activites > 1 ? $PageHTML->getLibelle('__LRI_ACTIVITES') : $PageHTML->getLibelle('__LRI_ACTIVITE') ) . ')' );
 		}
 	}
 //print_r($Choix_Entites);
@@ -2040,7 +2040,9 @@ switch( $Action ) {
 			'L_Campagne_Sans_Entite' => $L_Campagne_Sans_Entite,
 			'L_Gestion_Entites' => $L_Gestion_Entites,
 			'Liste_Campagnes' => $Liste_Campagnes,
-			'Liste_Entites' => $Liste_Entites
+			'Liste_Entites' => $Liste_Entites,
+			'L_Activite' => $PageHTML->getLibelle('__LRI_ACTIVITE'),
+			'L_Activites' => $PageHTML->getLibelle('__LRI_ACTIVITES')
 		);
 	} else {
 		$Resultat = array( 'statut' => 'error',
@@ -2080,7 +2082,9 @@ switch( $Action ) {
 			'sct_id' => $_SESSION['s_sct_id'],
 			'cmp_id' => $_SESSION['s_cmp_id'],
 			'ent_id' => $_SESSION['s_ent_id'],
-			'Liste_Entites' => $Liste_Entites
+			'Liste_Entites' => $Liste_Entites,
+			'L_Activite' => $PageHTML->getLibelle('__LRI_ACTIVITE'),
+			'L_Activites' => $PageHTML->getLibelle('__LRI_ACTIVITES')
 		);
 	} else {
 		$Resultat = array( 'statut' => 'error',
@@ -2109,7 +2113,9 @@ switch( $Action ) {
 			'texteMsg' => $L_Entite_Change,
 			'sct_id' => $_SESSION['s_sct_id'],
 			'cmp_id' => $_SESSION['s_cmp_id'],
-			'ent_id' => $_SESSION['s_ent_id']
+			'ent_id' => $_SESSION['s_ent_id'],
+			'L_Activite' => $PageHTML->getLibelle('__LRI_ACTIVITE'),
+			'L_Activites' => $PageHTML->getLibelle('__LRI_ACTIVITES')
 		);
 	} else {
 		$Resultat = array( 'statut' => 'error',

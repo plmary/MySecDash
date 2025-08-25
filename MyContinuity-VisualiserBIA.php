@@ -177,7 +177,7 @@ switch( $Action ) {
 			'texteMsg' => $L_Campagne_Change,
 			'sct_id' => $_SESSION['s_sct_id'],
 			'cmp_id' => $_SESSION['s_cmp_id'],
-			'ent_id' => $_SESSION['s_ent_id'],
+			'ent_id' => ($_SESSION['s_ent_id'] == '' ? '*' : $_SESSION['s_ent_id']),
 			'L_Toutes' => $L_Toutes,
 			'Liste_Entites' => $Liste_Entites
 		);
@@ -1197,8 +1197,9 @@ function actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $objActivit
 	if ( ! isset( $_SESSION['s_ent_id'] ) ) {
 		$_SESSION['s_ent_id'] = '*';
 	}
+//var_dump($Liste_Entites); print('<hr>'); var_dump($_SESSION['s_ent_id']); print('<hr>');
 
-	if ( $Liste_Entites == [] && $_SESSION['s_ent_id'] != '*' ) {
+	if ( ($Liste_Entites == [] || $Liste_Entites == '') ) { //&& $_SESSION['s_ent_id'] != '*' ) {
 		$_SESSION['s_ent_id'] = '';
 	} else {
 		if ( ! isset($_SESSION['s_ent_id']) || $_SESSION['s_ent_id'] == '' ) { // or $_SESSION['s_ent_id'] == '*' ) {

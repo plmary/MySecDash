@@ -1442,8 +1442,13 @@ WHERE act.cmp_id = :cmp_id ';
 
 		// ==========================================================================
 		// Récupère le nombre de BIA en cours.
-		$Request = 'SELECT COUNT(ent_id) AS "total" FROM cmen_cmp_ent AS "cmen" WHERE cmen.cmp_id = :cmp_id
-			AND cmen.idn_id_validation IS NULL ';
+		$Request = 'SELECT ent.ent_nom, COUNT(DISTINCT act.act_id) AS "total"
+			FROM cmen_cmp_ent AS "cmen"
+			LEFT JOIN ent_entites AS "ent" ON ent.ent_id = cmen.ent_id
+			LEFT JOIN act_activites AS "act" ON act.ent_id = ent.ent_id
+			WHERE cmen.cmp_id = :cmp_id
+			AND cmen.idn_id_validation IS NULL
+			GROUP BY ent.ent_nom ';
 		
 		$Query = $this->prepareSQL( $Request );
 		
@@ -1451,10 +1456,18 @@ WHERE act.cmp_id = :cmp_id ';
 		
 		$this->executeSQL( $Query );
 		
-		$Resultat = $Query->fetchObject();
+//		$Resultat = $Query->fetchObject();
 		
-		$Donnees['total_bia_en_cours'] = $Resultat->total;
+//		$Donnees['total_bia_en_cours'] = $Resultat->total;
 
+		$Donnees['total_bia_en_cours'] = 0;
+		
+		foreach( $Query->fetchAll( PDO::FETCH_CLASS ) as $Occurrence ) {
+			if ( $Occurrence->total > 1 ) {
+				$Donnees['total_bia_en_cours'] += 1;
+			}
+		}
+		
 
 		// ==========================================================================
 		// Récupère le nombre total d'Activité.

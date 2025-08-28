@@ -28,12 +28,14 @@ include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_MyContinuity-Rapport
 include( DIR_LIBRAIRIES . '/Class_HBL_Societes_PDO.inc.php' );
 include( DIR_LIBRAIRIES . '/Class_Campagnes_PDO.inc.php' );
 include( DIR_LIBRAIRIES . '/Class_HBL_Entites_PDO.inc.php' );
+include( DIR_LIBRAIRIES . '/Class_PartiesPrenantes_PDO.inc.php' );
 
 
 // Crée l'instance de l'objet Entites.
 $objEntites = new HBL_Entites();
 $objSocietes = new HBL_Societes();
 $objCampagnes = new Campagnes();
+$objPartiesPrenantes = new PartiesPrenantes();
 
 
 // Définit le format des colonnes du tableau central.
@@ -52,8 +54,8 @@ $Format_Colonnes[ 'Colonnes' ][] = array(
 	'nom' => 'cmen_date_validation', 'titre' => $L_Date_Validation, 'taille' => '2',
 	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'cmen_date_validation', 'type' => 'input', 'modifiable' => 'non' );
 $Format_Colonnes[ 'Colonnes' ][] = array(
-	'nom' => 'idn_id_validation', 'titre' => $L_Valideur, 'taille' => '2',
-	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'idn_id_validation', 'type' => 'input', 'modifiable' => 'non' );
+	'nom' => 'ppr_id_validation', 'titre' => $L_Valideur, 'taille' => '2',
+	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'ppr_id_validation', 'type' => 'input', 'modifiable' => 'non' );
 $Format_Colonnes[ 'Actions' ] = array( 'taille' => '2', 'titre' => $L_Actions,
 	'boutons' => array( 'valider' => $Droit_Modifier ) );
 
@@ -139,9 +141,11 @@ switch( $Action ) {
 				exit();
 			}
 
-			$Libelles['infos_validation'] = $objCampagnes->informationsValidationEntite($_SESSION['s_cmp_id'], $_SESSION['s_cmp_id']);
+			$Libelles['infos_validation'] = $objCampagnes->informationsValidationEntite($_SESSION['s_cmp_id'], $_POST['ent_id']);
 
 			$_SESSION['s_ent_id'] = $_POST['ent_id'];
+
+			$Libelles['liste_parties_prenantes'] = $objPartiesPrenantes->rechercherPartiesPrenantes($_SESSION['s_sct_id']);
 		}
 	}
 	
@@ -172,11 +176,30 @@ switch( $Action ) {
 				exit();
 			}
 
-			try {
-				$objCampagnes->modifierValidationEntite( $_SESSION['s_cmp_id'], $_POST['ent_id'] );
-				$Id_Entity = $objEntites->LastInsertId;
+			$_POST['ppr_id_validation'] = $PageHTML->controlerTypeValeur( $_POST['ppr_id_validation'], 'NUMBER' );
+			if ( $_POST['ppr_id_validation'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (ppr_id_validation)'
+				) );
 
-				$PageHTML->ecrireEvenement( 'ATP_VALIDATION', 'OTP_ENTITE', 'ent_id="' . $Id_Entity . '", ' . $L_Entite_Validee );
+				exit();
+			}
+
+			$_POST['cmen_date_validation'] = $PageHTML->controlerTypeValeur( $_POST['cmen_date_validation'], 'ASCII' );
+			if ( $_POST['cmen_date_validation'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (cmen_date_validation)'
+				) );
+
+				exit();
+			}
+
+			try {
+				$objCampagnes->modifierValidationEntite( $_SESSION['s_cmp_id'], $_POST['ent_id'], $_POST['ppr_id_validation'], $_POST['cmen_date_validation'] );
+
+				$PageHTML->ecrireEvenement( 'ATP_VALIDATION', 'OTP_ENTITE', 'ent_id="' . $_POST['ent_id'] . '", ' . $L_Entite_Validee );
 
 				$Infos_Validation = $objCampagnes->informationsValidationEntite($_SESSION['s_cmp_id'], $_POST['ent_id']);
 				
@@ -227,10 +250,10 @@ switch( $Action ) {
 
 			foreach ($Entites as $Occurrence) {
 				if ($Occurrence->ent_description == NULL) $Occurrence->ent_description = '';
-				if ($Occurrence->idn_id_validation != NULL) {
-					$Occurrence->idn_id_validation = $Occurrence->cvl_nom . ' ' . $Occurrence->cvl_prenom;
+				if ($Occurrence->ppr_id_validation != NULL) {
+					$Occurrence->ppr_id_validation = $Occurrence->ppr_nom . ' ' . $Occurrence->ppr_prenom;
 				} else {
-					$Occurrence->idn_id_validation = '';
+					$Occurrence->ppr_id_validation = '';
 				}
 				
 				$Texte_HTML .= $PageHTML->creerOccurrenceCorpsTableau( $Occurrence->ent_id, $Occurrence, $Format_Colonnes );

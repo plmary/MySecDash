@@ -148,22 +148,50 @@ function ModalValiderEntite( ent_id ){
 				'</tr>' +
 				'</theader>';
 
-			if ( reponse['infos_validation'].cmen_date_validation == null ) {
-				Tableau_Infos_Validation += '<tbody>' +
-					'<tr>' +
-					'<td class="text-center" colspan="2"><span class="fs-5 fw-bold fg_couleur_3">' + reponse['L_Aucune'] + '</span></td>' +
-					'</tr>' +
-					'</tbody>' +
-					'</table>';
-			} else {
-				Tableau_Infos_Validation += '<tbody>' +
-					'<tr>' +
-					'<td class="fg_couleur_3">' + reponse['infos_validation'].cvl_nom + ' ' + reponse['infos_validation'].cvl_prenom + '</td>' +
-					'<td class="fg_couleur_3">' + reponse['infos_validation'].cmen_date_validation + '</td>' +
-					'</tr>' +
-					'</tbody>' +
-					'</table>';
+			if ( reponse['infos_validation'].ppr_nom == undefined ) {
+				reponse['infos_validation'].ppr_nom = '';
 			}
+
+			if ( reponse['infos_validation'].ppr_prenom == undefined ) {
+				reponse['infos_validation'].ppr_prenom = '';
+			}
+
+
+			if ( reponse['infos_validation'].cmen_date_validation == null ) {
+				var dateJour = new Date();
+				_cmen_date_validation = dateJour.getFullYear() + '-' + ('0' + (dateJour.getMonth() + 1)).slice(-2) + '-' + ('0' + dateJour.getDate()).slice(-2);
+			} else {
+				_cmen_date_validation = reponse['infos_validation'].cmen_date_validation;
+			}
+
+
+
+			_Liste_Parties_Prenantes = '<select class="form-select" id="ppr_id_validation">';
+			for (var i = 0; i < reponse['liste_parties_prenantes'].length; i++) {
+				_selection = '';
+				if ( reponse['liste_parties_prenantes'][i].ppr_id == reponse['infos_validation'].ppr_id_validation ) {
+					_selection = ' selected';
+				}
+
+				if ( reponse['infos_validation'].ppr_id_validation == null ) {
+					if ( reponse['liste_parties_prenantes'][i].ppr_id == reponse['infos_validation'].ppr_id_cpca ) {
+						_selection = ' selected';
+					}
+				}
+
+				_Liste_Parties_Prenantes += '<option value="' + reponse['liste_parties_prenantes'][i].ppr_id + '"' + _selection + '>' +
+					reponse['liste_parties_prenantes'][i].ppr_nom + ' ' + reponse['liste_parties_prenantes'][i].ppr_prenom + '</option>';
+			}
+			_Liste_Parties_Prenantes += '</select>';
+
+			Tableau_Infos_Validation += '<tbody>' +
+				'<tr>' +
+//				'<td class="fg_couleur_3">' + reponse['infos_validation'].ppr_nom + ' ' + reponse['infos_validation'].ppr_prenom + '</td>' +
+				'<td class="fg_couleur_3">' + _Liste_Parties_Prenantes + '</td>' +
+				'<td class="fg_couleur_3"><input type="date" class="form-control" style="width:155px" id="cmen_date_validation" value="' + _cmen_date_validation + '"></td>' +
+				'</tr>' +
+				'</tbody>' +
+				'</table>';
 
 			$.ajax({
 				url: Parameters['URL_BASE'] + '/MyContinuity-VisualiserBIA.php?Action=AJAX_Synthese_Specifique',

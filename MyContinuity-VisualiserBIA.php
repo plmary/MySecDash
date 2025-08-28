@@ -716,7 +716,7 @@ switch( $Action ) {
 		} else {
 			$Corps_HTML .= '<tbody>' .
 				'<tr>' .
-				'<td class="fg_couleur_3">' . $Informations_Validation->cvl_nom . ' ' . $Informations_Validation->cvl_prenom . '</td>' .
+				'<td class="fg_couleur_3">' . $Informations_Validation->ppr_nom . ' ' . $Informations_Validation->ppr_prenom . '</td>' .
 				'<td class="fg_couleur_3">' . $Informations_Validation->cmen_date_validation . '</td>' .
 				'</tr>' .
 				'</tbody>' .

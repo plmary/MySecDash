@@ -262,7 +262,7 @@ switch( $Action ) {
 	
 			// Construit le corps de l'écran.
 			$Corps_HTML .= '<table class="table table-bordered">' .
-				'<caption>' . $L_Activites_Non_Critiques_Non_Abordees . '</caption>' .
+				//'<caption>' . $L_Activites_Non_Critiques_Non_Abordees . '</caption>' .
 				'<thead>' .
 				'<tr><th colspan="2" class="text-center">';
 	

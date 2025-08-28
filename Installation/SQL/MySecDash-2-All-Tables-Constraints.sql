@@ -628,7 +628,7 @@ CREATE TABLE public.cmen_cmp_ent (
                 cmp_id BIGINT NOT NULL,
                 ppr_id_cpca BIGINT,
                 cmen_date_entretien_cpca DATE,
-                idn_id_validation BIGINT,
+                ppr_id_validation BIGINT,
                 cmen_date_validation DATE,
                 cmen_effectif_total INTEGER,
                 CONSTRAINT cmen_cmp_ent_pk PRIMARY KEY (ent_id, cmp_id)

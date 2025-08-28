@@ -682,7 +682,7 @@ switch( $Action ) {
 			$table->addCell(3750)->addText($L_Entite, $fontTitreTableau, $styleParagrapheTableau);
 			$table->addCell(3750)->addText($PageHTML->getLibelle('__LRI_EFFECTIF'), $fontTitreTableau, $styleParagrapheTableau);
 			$table->addCell(3750)->addText($PageHTML->getLibelle('__LRI_CORRESPONDANT_PCA'), $fontTitreTableau, $styleParagrapheTableau);
-			$table->addCell(3750)->addText($PageHTML->getLibelle('__LRI_DATE_ENTRETIEN'), $fontTitreTableau, $styleParagrapheTableau);
+			$table->addCell(3750)->addText(html_entity_decode($PageHTML->getLibelle('__LRI_DATE_ENTRETIEN')), $fontTitreTableau, $styleParagrapheTableau);
 	
 			foreach($Liste_Entites as $Entite) {
 				$table->addRow();
@@ -1087,7 +1087,7 @@ switch( $Action ) {
 				} else {
 					$table->addRow(null, ['tblHeader' => true]);
 					$table->addCell(7500)
-						->addText($Informations_Validation->cvl_nom . ' ' . $Informations_Validation->cvl_prenom, $fontTexteTableau, $styleParagrapheTableau);
+						->addText($Informations_Validation->ppr_nom . ' ' . $Informations_Validation->ppr_prenom, $fontTexteTableau, $styleParagrapheTableau);
 					$table->addCell(7500)
 						->addText($Informations_Validation->cmen_date_validation, $fontTexteTableau, $styleParagrapheTableau);
 				}
@@ -1939,7 +1939,7 @@ switch( $Action ) {
 
 			$richText = new \PhpOffice\PhpSpreadsheet\RichText\RichText();
 
-			$textRun = $richText->createTextRun($Donnees['total_act_3_4'].' '.$_Sujet);
+			$textRun = $richText->createTextRun($Donnees['total_act_4'].' '.$_Sujet);
 			$textRun->getFont()->setBold(true);
 			$textRun->getFont()->getColor()->setARGB('FFC34A36'); // Rouge
 			$textRun->getFont()->setSize(16);
@@ -1948,7 +1948,8 @@ switch( $Action ) {
 			$textRun = $richText->createTextRun($_Type);
 			$textRun->getFont()->getColor()->setARGB('FFC34A36');
 			$textRun->getFont()->setBold(true);
-			$textRun = $richText->createTextRun(' '.$L_T_Def_Activites_Essentielles);
+			$textRun->getFont()->setSize(16);
+			$textRun = $richText->createTextRun(' '.$L_T_Def_Activites_Vitales);
 			$textRun->getFont()->setSize(16);
 			
 			$activeWorksheet->getCell('B4')->setValue($richText);

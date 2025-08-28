@@ -31,7 +31,7 @@ public function __construct() {
 * \date 2015-07-22
 *
 */
-	$this->Version_Outil = '1.3-8'; // Version de l'outil
+	$this->Version_Outil = '1.3-9'; // Version de l'outil
 	
 	$this->Nom_Outil = '<span style="color: #717D11;">My</span><span style="color: #C34A36;">Sec</span><span style="color: #44808A;">Dash</span>';
 	$this->Nom_Outil_TXT = 'MySecDash';

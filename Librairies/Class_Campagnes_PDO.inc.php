@@ -523,8 +523,7 @@ WHERE act.cmp_id = :cmp_id ';
 			FROM cmen_cmp_ent AS "cmen"
 			LEFT JOIN ent_entites AS "ent" ON ent.ent_id = cmen.ent_id
 			LEFT JOIN cmp_campagnes AS "cmp" ON cmp.cmp_id = cmen.cmp_id
-			LEFT JOIN idn_identites AS "idn" ON idn.idn_id = cmen.idn_id_validation
-			LEFT JOIN cvl_civilites AS "cvl" ON cvl.cvl_id = idn.cvl_id
+			LEFT JOIN ppr_parties_prenantes AS "ppr" ON ppr.ppr_id = cmen.ppr_id_validation
 			WHERE cmen.cmp_id = :cmp_id ' . $Where;
 
 
@@ -551,10 +550,10 @@ WHERE act.cmp_id = :cmp_id ';
 				$Order_By = 'cmen_date_validation DESC, ent_nom';
 				break;
 
-			case 'idn_id_validation':
+			case 'ppr_id_validation':
 				$Order_By = 'cvl_nom, cvl_prenom';
 				break;
-			case 'idn_id_validation-desc':
+			case 'ppr_id_validation-desc':
 				$Order_By = 'cvl_nom DESC, cvl_prenom';
 				break;
 		}
@@ -1426,8 +1425,8 @@ WHERE act.cmp_id = :cmp_id ';
 
 		// ==========================================================================
 		// Récupère le nombre de BIA validés.
-		$Request = 'SELECT COUNT(idn_id_validation) AS "total" FROM cmen_cmp_ent AS "cmen" WHERE cmen.cmp_id = :cmp_id
-			AND cmen.idn_id_validation IS NOT NULL ';
+		$Request = 'SELECT COUNT(ppr_id_validation) AS "total" FROM cmen_cmp_ent AS "cmen" WHERE cmen.cmp_id = :cmp_id
+			AND cmen.ppr_id_validation IS NOT NULL ';
 		
 		$Query = $this->prepareSQL( $Request );
 		
@@ -1447,7 +1446,7 @@ WHERE act.cmp_id = :cmp_id ';
 			LEFT JOIN ent_entites AS "ent" ON ent.ent_id = cmen.ent_id
 			LEFT JOIN act_activites AS "act" ON act.ent_id = ent.ent_id
 			WHERE cmen.cmp_id = :cmp_id
-			AND cmen.idn_id_validation IS NULL
+			AND cmen.ppr_id_validation IS NULL
 			GROUP BY ent.ent_nom ';
 		
 		$Query = $this->prepareSQL( $Request );
@@ -1847,9 +1846,8 @@ ORDER BY ete.ete_poids, ent.ent_nom, tfr.tfr_nom_code, frn.frn_nom ';
 		 * \return Renvoi un tableau qui contient la date de validation et le nom du valideur. Lève une Exception en cas d'erreur.
 		 */
 
-		$Request = 'SELECT cmen.*, cvl.*, idn.idn_login FROM cmen_cmp_ent AS "cmen"
-			LEFT JOIN idn_identites AS "idn" ON idn.idn_id = cmen.idn_id_validation
-			LEFT JOIN cvl_civilites AS "cvl" ON cvl.cvl_id = idn.cvl_id
+		$Request = 'SELECT cmen.*, ppr.* FROM cmen_cmp_ent AS "cmen"
+			LEFT JOIN ppr_parties_prenantes AS "ppr" ON ppr.ppr_id = cmen.ppr_id_validation
 			WHERE ent_id = :ent_id AND cmp_id = :cmp_id ';
 
 		$Query = $this->prepareSQL( $Request );
@@ -1863,7 +1861,7 @@ ORDER BY ete.ete_poids, ent.ent_nom, tfr.tfr_nom_code, frn.frn_nom ';
 	}
 
 
-	public function modifierValidationEntite( $cmp_id, $ent_id ) {
+	public function modifierValidationEntite( $cmp_id, $ent_id, $ppr_id_validation, $cmen_date_validation ) {
 		/**
 		 * Modifie les informations de validation d'une Entité dans une Campagne.
 		 *
@@ -1878,7 +1876,7 @@ ORDER BY ete.ete_poids, ent.ent_nom, tfr.tfr_nom_code, frn.frn_nom ';
 		 */
 
 		$Request = 'UPDATE cmen_cmp_ent SET
-			idn_id_validation = :idn_id_validation,
+			ppr_id_validation = :ppr_id_validation,
 			cmen_date_validation = :cmen_date_validation
 			WHERE ent_id = :ent_id AND cmp_id = :cmp_id ';
 
@@ -1886,8 +1884,8 @@ ORDER BY ete.ete_poids, ent.ent_nom, tfr.tfr_nom_code, frn.frn_nom ';
 
 		$this->bindSQL( $Query, ':ent_id', $ent_id, PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
-		$this->bindSQL( $Query, ':idn_id_validation', $_SESSION['idn_id'], PDO::PARAM_INT );
-		$this->bindSQL( $Query, ':cmen_date_validation', date('Y-m-d'), PDO::PARAM_STR, L_CMP_DATE );
+		$this->bindSQL( $Query, ':ppr_id_validation', $ppr_id_validation, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':cmen_date_validation', $cmen_date_validation, PDO::PARAM_STR, L_CMP_DATE );
 
 		$this->executeSQL( $Query );
 

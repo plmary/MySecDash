@@ -487,7 +487,7 @@ function ModalAjouterModifier( act_id = '' ) {
 		function rechercherObjetsDansOnglet(Id_Zone = '') {
 			chp_rechercher_objet = new RegExp($('#chp-rechercher-objet').val(), 'i');
 
-			$(Id_Zone+'.liste').each( function( index, valeur ){alert(valeur);
+			$(Id_Zone+'.liste').each( function( index, valeur ){
 				Valeur = $( this ).text();
 
 				if (chp_rechercher_objet == '') {

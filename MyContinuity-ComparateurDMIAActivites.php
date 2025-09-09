@@ -211,9 +211,10 @@ switch( $Action ) {
 		try {
 			$ListeActivites = $objActivites->listerActivitesUtilisateur( $Trier, $_SESSION['s_cmp_id'] );
 			$Liste_EchellesTemps = $objEchellesTemps->rechercherEchellesTemps( $_SESSION['s_cmp_id'] );
-			$_largeur = 100 / count( $Liste_EchellesTemps );
 
 			if ( $ListeActivites != [] ) {
+				$_largeur = 100 / count( $Liste_EchellesTemps );
+
 				$_Ligne_1 = '';
 				$_Ligne_2 = '';
 				$_Ligne_3 = '';

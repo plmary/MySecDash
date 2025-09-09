@@ -195,6 +195,9 @@ function trier( myElement, changerTri ) {
 					}*/
 				}
 
+				$('#rech_dmia').addClass('d-none');
+				$('.btn-rechercher').trigger('click');
+
 				redimensionnerWindow();
 			} else {
 				var texteMsg = reponse['texteMsg'];

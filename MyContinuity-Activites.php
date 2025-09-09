@@ -63,7 +63,7 @@ $Format_Colonnes[ 'Prefixe' ] = 'ACT';
 $Format_Colonnes[ 'Fonction_Ouverture' ] = 'ouvrirChamp';
 $Format_Colonnes[ 'Id' ] = array( 'nom' => 'act_id' );
 $Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'act_nom', 'titre' => $L_Nom, 'taille' => '4',
-	'maximum' => 100, 'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'act_nom-desc', 'type' => 'input',
+	'maximum' => 100, 'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'act_nom', 'type' => 'input',
 	'modifiable' => 'oui' );
 //$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'ppr_id_responsable', 'titre' => $L_CPCA, 'taille' => '3',
 //	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'ppr_id_responsable', 'type' => 'select', 'modifiable' => 'oui', 'fonction' => 'listerPartiesPrenantes' );

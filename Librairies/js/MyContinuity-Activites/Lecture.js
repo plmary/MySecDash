@@ -1,6 +1,6 @@
 $(function() {
 	// Charge les données du tableau.
-	trier( $( 'div#entete_tableau div.row div:first'), true );
+	trier( $( 'div#entete_tableau div.row div:first'), false );
 
 	// Active l'écoute du "click" sur les libellés de l'entête du tableau.
 	$('.triable').click( function() {
@@ -487,7 +487,7 @@ function ModalAjouterModifier( act_id = '' ) {
 		function rechercherObjetsDansOnglet(Id_Zone = '') {
 			chp_rechercher_objet = new RegExp($('#chp-rechercher-objet').val(), 'i');
 
-			$(Id_Zone+'.liste').each( function( index ){
+			$(Id_Zone+'.liste').each( function( index, valeur ){alert(valeur);
 				Valeur = $( this ).text();
 
 				if (chp_rechercher_objet == '') {
@@ -496,7 +496,9 @@ function ModalAjouterModifier( act_id = '' ) {
 					if (Valeur.search(chp_rechercher_objet) >= 0) {
 						$( this ).show();
 					} else {
-						$( this ).hide();
+						if ( $(this).find(':checkbox').is(':checked') == false ) {
+							$( this ).hide();
+						}
 					}
 				}
 			});
@@ -1394,6 +1396,8 @@ function ModalAjouterModifier( act_id = '' ) {
 						$('#zone-btn-creer-objet').addClass('d-none');
 					}
 
+					$('#chp-rechercher-objet').val('');
+					rechercherObjetsDansOnglet('div#zone-sites ');
 
 					// ---------
 					// Gestion de la zone "Action" de l'Onglet
@@ -1444,6 +1448,9 @@ function ModalAjouterModifier( act_id = '' ) {
 					} else {
 						$('#zone-btn-creer-objet').addClass('d-none');
 					}
+
+					$('#chp-rechercher-objet').val('');
+					rechercherObjetsDansOnglet('div#zone-personnes_cles ');
 
 					$('#chp-rechercher-objet').off('keyup').on('keyup', function( eventKey){
 						rechercherObjetsDansOnglet('div#zone-personnes_cles ');
@@ -1507,6 +1514,9 @@ function ModalAjouterModifier( act_id = '' ) {
 						$('#zone-btn-creer-objet').addClass('d-none');
 					}
 
+					$('#chp-rechercher-objet').val('');
+					rechercherObjetsDansOnglet('div#zone-applications ');
+
 					$('#chp-rechercher-objet').off('keyup').on('keyup', function( eventKey){
 						rechercherObjetsDansOnglet('div#zone-applications ');
 					});
@@ -1568,6 +1578,9 @@ function ModalAjouterModifier( act_id = '' ) {
 					$('#zone-action').removeClass('d-none');
 					$('div[id^="ZoneCreer"]').addClass('d-none');
 					$('div[id^="ZoneRecherche"]').removeClass('d-none');
+
+					$('#chp-rechercher-objet').val('');
+					rechercherObjetsDansOnglet('div#zone-fournisseurs ');
 
 					$('#chp-rechercher-objet').off('keyup').on('keyup', function( eventKey){
 						rechercherObjetsDansOnglet('div#zone-fournisseurs ');

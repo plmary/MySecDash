@@ -824,7 +824,7 @@ LEFT JOIN sts_sites AS "sts" ON sts.sts_id = cmst.sts_id
 LEFT JOIN (SELECT act_id, sts_id, acst_type_site
 	FROM acst_act_sts WHERE act_id = :act_id ) AS "acst" ON acst.sts_id = sts.sts_id
 WHERE cmst.cmp_id = :cmp_id
-ORDER BY sts_nom ';
+ORDER BY acst.act_id, sts_nom ';
 //print str_replace([':act_id', ':cmp_id'], [$act_id, $cmp_id], $Request).'<hr>';
 
 		$Query = $this->prepareSQL( $Request );

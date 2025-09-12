@@ -726,12 +726,24 @@ switch( $Action ) {
 						$table->addCell(3000)->addText($L_Niveau_Impact, $fontTitreTableau, $styleParagrapheTableau);
 					}
 				}
-	
+
+				if ( isset( $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur ) ) {
+					$__nim_couleur = $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur;
+				} else {
+					$__nim_couleur = 'ACACAC';
+				}
+
+				if ( isset( $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code ) ) {
+					$__nim_nom_code = $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code;
+				} else {
+					$__nim_nom_code = '';
+				}
+
 				$table->addRow();
 				$table->addCell(7000)->addText($Activite->act_nom, $fontTexteTableau, $styleParagrapheTableau);
 				$table->addCell(5000)->addText(($Activite->ent_description != '' ? $Activite->ent_description : $Activite->ent_nom), $fontTexteTableau, $styleParagrapheTableau);
-				$table->addCell(3000, ['bgColor' => $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur])
-				->addText($Activite->nim_poids . ' - ' . $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code, ['size' => 10, 'bold' => true, 'color' => 'ffffff'],
+				$table->addCell(3000, ['bgColor' => $__nim_couleur])
+				->addText($Activite->nim_poids . ' - ' . $__nim_nom_code, ['size' => 10, 'bold' => true, 'color' => 'ffffff'],
 						array_merge($styleParagrapheTableau, ['alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER]));
 			}
 		}
@@ -2336,10 +2348,28 @@ switch( $Action ) {
 				$activeWorksheet->getStyle('E'. $Ligne)->applyFromArray($fontCourant);
 				$activeWorksheet->getStyle('E'. $Ligne)->getAlignment()->setWrapText(true);
 
-				$activeWorksheet->setCellValue('F' . $Ligne, $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_numero.' - '.$Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code);
-				$activeWorksheet->getStyle('F'. $Ligne)->applyFromArray($fontCourant);
-				$activeWorksheet->getStyle('F' . $Ligne)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()
-					->setARGB('FF'.$Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur);
+
+				if ( isset( $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_numero ) ) {
+					$__nim_numero = $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_numero;
+				} else {
+					$__nim_numero = '';
+				}
+
+				if ( isset( $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur ) ) {
+					$__nim_couleur = $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur;
+				} else {
+					$__nim_couleur = 'ACACAC';
+				}
+
+				if ( isset( $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code ) ) {
+					$__nim_nom_code = $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code;
+				} else {
+					$__nim_nom_code = '';
+				}
+
+				$activeWorksheet->setCellValue('F' . $Ligne, $__nim_numero . ' - ' . $__nim_nom_code);
+				$activeWorksheet->getStyle('F' . $Ligne)->applyFromArray($fontCourant);
+				$activeWorksheet->getStyle('F' . $Ligne)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('FF'.$__nim_couleur);
 				$activeWorksheet->getStyle('F' . $Ligne)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
 				$activeWorksheet->setCellValue('G' . $Ligne, ($Activite->ete_poids == '' ? '-' : $Liste_EchellesTemps_Poids[$Activite->ete_poids]->ete_nom_code));

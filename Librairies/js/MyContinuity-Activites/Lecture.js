@@ -877,7 +877,7 @@ function ModalAjouterModifier( act_id = '' ) {
 
 			// =====================================
 			// *************************************
-			Corps += '<div id="zone-sites" class="overflow-y-scroll d-none">';
+			Corps += '<div id="zone-sites" class="overflow-y-scroll d-none" style="height: 550px">';
 
 			for (let Site of reponse['Liste_Sites']) {
 				if (Site.associe !== null) {
@@ -925,7 +925,7 @@ function ModalAjouterModifier( act_id = '' ) {
 
 			// =====================================
 			// *************************************
-			Corps += '<div id="zone-personnes_cles" class="d-none overflow-y-scroll" style="height: 300px;">';
+			Corps += '<div id="zone-personnes_cles" class="d-none overflow-y-scroll" style="height: 550px;">';
 			if (reponse['Liste_Personnes_Cles'] != []) {
 				for (let Personne_Cle of reponse['Liste_Personnes_Cles']) {
 					if (Personne_Cle.associe != null) {
@@ -1000,7 +1000,7 @@ function ModalAjouterModifier( act_id = '' ) {
 				 '<div class="col-3">'+reponse['L_Donnees']+'</div>' +
 				 '<div class="col-2">'+reponse['L_Palliatif']+'</div>' +
 				'</div> <!-- .row .titre -->' +
-				'<div id="liste-donnees" class="overflow-y-scroll" style="height: 250px;">';
+				'<div id="liste-donnees" class="overflow-y-scroll" style="height: 530px;">';
 
 				for (let Application of reponse['Liste_Applications']) {
 					if (Application.associe != null) {
@@ -1071,7 +1071,7 @@ function ModalAjouterModifier( act_id = '' ) {
 				 '<div class="col-3">'+reponse['L_Consequence_Indisponibilite']+'</div>' +
 				 '<div class="col-3">'+reponse['L_Palliatif']+'</div>' +
 				'</div> <!-- .row .titre -->' +
-				'<div id="liste-donnees" class="overflow-y-scroll" style="height: 250px;">';
+				'<div id="liste-donnees" class="overflow-y-scroll" style="height: 530px;">';
 
 				for (let Fournisseur of reponse['Liste_Fournisseurs']) {
 					if (Fournisseur.associe != null) {

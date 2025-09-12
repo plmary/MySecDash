@@ -685,10 +685,22 @@ switch( $Action ) {
 				$_ete_nom_code = '';
 			}
 
+			if ( isset( $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur ) ) {
+				$__nim_couleur = $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur;
+			} else {
+				$__nim_couleur = 'ACACAC';
+			}
+
+			if ( isset( $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code ) ) {
+				$__nim_nom_code = $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code;
+			} else {
+				$__nim_nom_code = '';
+			}
+
 			$Corps_HTML .= '<tr>' .
 			//'<td><a href="#ACT_' . $Compteur . '">' . $Activite->act_nom . '</a></td>' .
 			'<td>' . $Activite->act_nom . '</td>' .
-			'<td class="text-center" style="color: white; background-color: #'.$Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_couleur.'">' . $Activite->nim_poids . ' - ' . $Liste_Niveaux_Impact_Poids[$Activite->nim_poids]->nim_nom_code . '</td>' .
+			'<td class="text-center" style="color: white; background-color: #'.$__nim_couleur.'">' . $Activite->nim_poids . ' - ' . $__nim_nom_code . '</td>' .
 			'<td>' . $_ete_nom_code . '</td>' .
 			'</tr>';
 		}

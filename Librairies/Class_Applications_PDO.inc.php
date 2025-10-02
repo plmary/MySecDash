@@ -138,11 +138,6 @@ class Applications extends HBL_Connexioneur_BD {
 				
 			case 'sct_id':
 				$Request .= 'sct_id = :Value ';
-				if ( $Value == 1 ) {
-					$Value = $_SESSION['s_sct_id'];
-				} else {
-					$Value = NULL;
-				}
 				break;
 				
 			case 'app_hebergement':
@@ -229,26 +224,47 @@ class Applications extends HBL_Connexioneur_BD {
 	*
 	* \return Renvoi une liste d'Applications ou une liste vide
 	*/
-		$Where = '';
-		
-		$Request = 'SELECT
-			*
-			FROM app_applications AS "app" 
-			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id 
-			WHERE app.sct_id IS NULL ';
 
+		$Where = '';
+
+		if ($sct_id == '*') {
+			$Request = 'SELECT
+				*
+				FROM app_applications AS "app" 
+				LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id 
+				LEFT JOIN sct_societes AS "sct" ON sct.sct_id = app.sct_id ';
+
+			if (! $_SESSION['idn_super_admin']) {
+				$Where = 'WHERE app.sct_id IS NULL ';
+			}
+/*
+			if ($sct_id != '') {
+				$Where .= 'OR app.sct_id = :sct_id ';
+			}
+*/
+		} else {
+			$Request = 'SELECT DISTINCT app.*, frn.*, sct.*
+				FROM ent_entites AS "ent"
+				LEFT JOIN act_activites AS "act" ON act.ent_id = ent.ent_id
+				LEFT JOIN acap_act_app AS "acap" ON acap.act_id = act.act_id
+				LEFT JOIN app_applications AS "app" ON app.app_id = acap.app_id
+				LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id
+				LEFT JOIN sct_societes AS "sct" ON sct.sct_id = app.sct_id ';
+
+			$Where = 'WHERE ent.sct_id = :sct_id and app.app_nom != \'\' ';
+		}
 
 		if ($app_id != '') {
-			$Where .= 'AND app.app_id = :app_id ';
+			if ($Where == '') {
+				$Where .= 'WHERE ';
+			} else {
+				$Where .= 'AND ';
+			}
+			$Where .= 'app.app_id = :app_id ';
 		}
-
-		if ($sct_id != '') {
-			$Where .= 'OR app.sct_id = :sct_id ';
-		}
-
 
 		$Request = $Request . $Where;
-
+//print($Request);
 
 		switch ( $Order ) {
 		 default:
@@ -258,6 +274,14 @@ class Applications extends HBL_Connexioneur_BD {
 
 		 case 'app_nom-desc':
 			$Request .= 'ORDER BY app_nom DESC ';
+			break;
+
+		 case 'frn_nom':
+			$Request .= 'ORDER BY frn_nom ';
+			break;
+
+		 case 'frn_nom-desc':
+			$Request .= 'ORDER BY frn_nom DESC ';
 			break;
 
 		 case 'app_hebergement':
@@ -283,17 +307,23 @@ class Applications extends HBL_Connexioneur_BD {
 		 case 'app_description-desc':
 			$Request .= 'ORDER BY app_description DESC ';
 			break;
+
+		 case 'sct_id':
+			$Request .= 'ORDER BY sct_id ';
+			break;
+
+		 case 'sct_id-desc':
+			$Request .= 'ORDER BY sct_id DESC ';
+			break;
 		}
 
-
 		$Query = $this->prepareSQL( $Request );
-
 
 		if ($app_id != '') {
 			$this->bindSQL( $Query, ':app_id', $app_id, PDO::PARAM_INT ) ;
 		}
 
-		if ($sct_id != '') {
+		if ($sct_id != '*') {
 			$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT ) ;
 		}
 

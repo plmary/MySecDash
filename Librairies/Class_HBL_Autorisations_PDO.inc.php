@@ -419,17 +419,19 @@ WHERE idsc.idn_id = ' . $_SESSION['idn_id'] . ' ';
 		 * \return Retourne "0" si pas autorisé, sinon supérieur "0" si autorisé.
 		 */
 		if ( $_SESSION['idn_super_admin'] == TRUE ) return 1;
-		
+
+		if ( $sct_id == '*' ) return 0;
+
 		$Request = 'SELECT count(idsc.sct_id) AS "autorise"
 FROM idsc_idn_sct AS "idsc"
 WHERE idsc.idn_id = ' . $_SESSION['idn_id'] . ' AND idsc.sct_id = :sct_id ';
-		
+
 		$Query = $this->prepareSQL( $Request );
-		
+
 		$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT );
-		
+
 		$this->executeSQL( $Query );
-		
+
 		return $Query->fetchObject()->autorise;
 	}
 

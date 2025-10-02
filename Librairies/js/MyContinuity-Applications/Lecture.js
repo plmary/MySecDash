@@ -233,17 +233,11 @@ function ModalAjouterModifier( app_id = '' ){
 				'</div>' + // .row
 
 				'<div class="row">' +
-				 '<label class="col-lg-2 col-form-label" for="sct_id">' + reponse[ 'L_Specifique_A' ] + ' ' + $('#s_sct_id option:selected').text() + '</label>' +
-				 '<div class="col-lg-2">' +
-				  '<select id="sct_id" class="form-select">';
-			if ( sct_id == null ) {
-				Corps += '<option value="0" selected>' + reponse['L_Non'] + '</option>' +
-					'<option value="1">' + reponse['L_Oui'] + '</option>';
-			} else {
-				Corps += '<option value="0">' + reponse['L_Non'] + '</option>' +
-					'<option value="1" selected>' + reponse['L_Oui'] + '</option>';
-			}
-			Corps += '</select>' +
+				 '<label class="col-lg-2 col-form-label" for="sct_id">' + reponse[ 'L_Specifique_A' ] + '</label>' +
+				 '<div class="col-lg-4">' +
+				  '<select id="sct_id" class="form-select">' +
+				   reponse['Liste_Societes'] +
+				  '</select>' +
 				'</div>' + // .col-lg-9
 				'</div>' + // .row
 

@@ -40,7 +40,7 @@ $objFournisseurs = new Fournisseurs();
 $Format_Colonnes[ 'Prefixe' ] = 'APP';
 $Format_Colonnes[ 'Fonction_Ouverture' ] = 'ouvrirChamp';
 $Format_Colonnes[ 'Id' ] = array( 'nom' => 'app_id' );
-$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_nom', 'titre' => $L_Nom, 'taille' => '2',
+$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_nom', 'titre' => $L_Nom, 'taille' => '3',
 	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'app_nom', 'type' => 'input', 'modifiable' => 'oui' );
 $Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'frn_id', 'titre' => $L_Fournisseur, 'taille' => '2',
 	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'frn_nom', 'type' => 'select', 'fonction' => 'listerFournisseurs', 'modifiable' => 'oui', );
@@ -48,10 +48,10 @@ $Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_hebergement', 'titre' =>
 	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'app_hebergement', 'type' => 'input', 'modifiable' => 'oui', );
 $Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_niveau_service', 'titre' => $L_Niveau_Service, 'taille' => '2',
 	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'app_niveau_service', 'type' => 'input', 'modifiable' => 'oui' );
-$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_description', 'titre' => $L_Description, 'taille' => '2',
-	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'app_description', 'type' => 'textarea', 'modifiable' => 'oui' );
-$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'sct_id', 'titre' => $L_Specifique, 'taille' => '1',
-	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'sct_id', 'type' => 'select', 'liste' => '0='.$L_No.';1='.$L_Yes, 'modifiable' => 'oui' );
+//$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_description', 'titre' => $L_Description, 'taille' => '2',
+//	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'app_description', 'type' => 'textarea', 'modifiable' => 'oui' );
+$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'sct_id', 'titre' => $L_Specifique, 'taille' => '2',
+	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'sct_id', 'type' => 'select', 'fonction' => 'listerSocietes', 'modifiable' => 'oui' );
 $Format_Colonnes[ 'Actions' ] = array( 'taille' => '1', 'titre' => $L_Actions,
 	'boutons' => array( 'modifier' => $Droit_Modifier, 'supprimer' => $Droit_Supprimer ) );
 
@@ -63,17 +63,15 @@ switch( $Action ) {
  default:
 	if ( $_SESSION['idn_super_admin'] === TRUE ) {
 		$Liste_Societes = $objSocietes->rechercherSocietes();
+
+		$objTemp = new stdClass();
+		$objTemp->sct_id = "*";
+		$objTemp->sct_nom = $L_Toutes;
+		$objTemp->sct_description = "";
+
+		$Liste_Societes[] = $objTemp;
 	} else {
 		$Liste_Societes = $objSocietes->rechercherSocietes('', '', $_SESSION['idn_id'] );
-	}
-
-	$Choix_Societe['id'] = 's_sct_id';
-	$Choix_Societe['libelle'] = $L_Specifique_A;
-	
-	if ( $Liste_Societes != '' ) {
-		foreach( $Liste_Societes AS $Societe ) {
-			$Choix_Societe['options'][] = array('id' => $Societe->sct_id, 'nom' => $Societe->sct_nom );
-		}
 	}
 
 	if ( $Droit_Ajouter === TRUE ) {
@@ -81,10 +79,10 @@ switch( $Action ) {
 	}
 	$Boutons_Alternatifs[] = ['class'=>'btn-rechercher', 'libelle'=>$L_Rechercher, 'glyph'=>'search'];
 
-	print $PageHTML->construireEnteteHTML( $L_Gestion_Applications, $Fichiers_JavaScript, 3 ) .
+	print( $PageHTML->construireEnteteHTML( $L_Gestion_Applications, $Fichiers_JavaScript, '3' ) .
 		$PageHTML->construireNavbarJson('Logo-MyContinuity.svg', 'nav-items.json') .
-		$PageHTML->construireTitreEcran( $L_Gestion_Applications, '', $Boutons_Alternatifs, '', '', $Choix_Societe );
-
+		$PageHTML->construireTitreEcran( $L_Gestion_Applications, $Liste_Societes, $Boutons_Alternatifs )
+		);
 
 	if ( $Droit_Lecture === TRUE ) {
 		// Construit un tableau central vide.
@@ -133,8 +131,10 @@ switch( $Action ) {
 			$Application = $objApplications->rechercherApplications( 'app_nom', $_POST['app_id'], $_SESSION['s_sct_id'] );
 			$Libelles['Application'] = $Application[0];
 			$Libelles['Liste_Fournisseurs'] = listerFournisseurs($Application[0]->frn_id);
+			$Libelles['Liste_Societes'] = listerSocietes($Application[0]->sct_id);
 		} else {
 			$Libelles['Liste_Fournisseurs'] = listerFournisseurs();
+			$Libelles['Liste_Societes'] = listerSocietes();
 		}
 	}
 
@@ -272,7 +272,7 @@ switch( $Action ) {
 					'statut' => 'error',
 					'texteMsg' => $L_Invalid_Value . ' (act_id=' . $_POST['id'] . ')'
 				) );
-				
+
 				exit();
 			}
 
@@ -282,7 +282,7 @@ switch( $Action ) {
 					'statut' => 'error',
 					'texteMsg' => $L_Invalid_Value . ' (' . $_POST['source'] . ')'
 				) );
-				
+
 				exit();
 			}
 
@@ -292,7 +292,7 @@ switch( $Action ) {
 					'statut' => 'error',
 					'texteMsg' => $L_Invalid_Value . ' (' . $_POST['valeur'] . ')'
 				) );
-				
+
 				exit();
 			}
 
@@ -384,16 +384,23 @@ switch( $Action ) {
 			$Total = $objApplications->RowCount;
 
 			$Texte_HTML = '';
-			
+
 			foreach ($ListeApplications as $Occurrence) {
 				$Occurrence->frn_id = $Occurrence->frn_nom;
 
-				if ( $Occurrence->sct_id == NULL ) {
-					$Occurrence->sct_id = $L_No;
+				if ($Occurrence->sct_id != '') {
+					$Occurrence->sct_id = $Occurrence->sct_nom;
 				} else {
-					$Occurrence->sct_id = $L_Yes;
+					$Occurrence->sct_id = $L_Neither;
 				}
+
 				$Texte_HTML .= $PageHTML->creerOccurrenceCorpsTableau( $Occurrence->app_id, $Occurrence, $Format_Colonnes );
+			}
+
+			if ( $_SESSION['idn_super_admin'] === TRUE ) {
+				$Flag_Admin = TRUE;
+			} else {
+				$Flag_Admin = FALSE;
 			}
 
 			echo json_encode( array(
@@ -401,7 +408,8 @@ switch( $Action ) {
 				'texteHTML' => $Texte_HTML,
 				'total' => $Total,
 				'droit_modifier' => $Droit_Modifier,
-				'droit_supprimer' => $Droit_Supprimer
+				'droit_supprimer' => $Droit_Supprimer,
+				'flag_admin' => $Flag_Admin
 				) );
 		} catch( Exception $e ) {
 			echo json_encode( array(
@@ -414,7 +422,7 @@ switch( $Action ) {
 			'statut' => 'error',
 			'texteMsg' => $L_No_Authorize
 		);
-		
+
 		echo json_encode( $Resultat );
 		exit();
 	}	
@@ -507,7 +515,7 @@ switch( $Action ) {
 					exit();
 				}
 
-				$_POST['sct_id'] = $PageHTML->controlerTypeValeur( $_POST['sct_id'], 'BOOLEAN' );
+				$_POST['sct_id'] = $PageHTML->controlerTypeValeur( $_POST['sct_id'], 'NUMERIC' );
 				if ( $_POST['sct_id'] == -1 ) {
 					echo json_encode( array(
 						'statut' => 'error',
@@ -515,12 +523,6 @@ switch( $Action ) {
 					) );
 
 					exit();
-				} else {
-					if ( $_POST['sct_id'] == 1 ) {
-						$_POST['sct_id'] = $_SESSION['s_sct_id'];
-					} else {
-						$_POST['sct_id'] = NULL;
-					}
 				}
 
 				$_POST['app_hebergement'] = $PageHTML->controlerTypeValeur( $_POST['app_hebergement'], 'ASCII' );
@@ -555,11 +557,12 @@ switch( $Action ) {
 
 				try {
 				$objApplications->majApplication( $_POST['app_id'], $_POST['app_nom'], $_POST['frn_id'], $_POST['app_hebergement'],
-					$_POST['app_niveau_service'], $_POST['app_description']);
+					$_POST['app_niveau_service'], $_POST['app_description'], $_POST['sct_id']);
 
 				$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_APPLICATION', 'app_id="' . $_POST['app_id'] . '", ' .
-					'app_nom="' . $_POST[ 'app_nom' ] . '", app_hebergement="' . $_POST[ 'app_hebergement' ] . '", ' .
-					'app_niveau_service="' . $_POST[ 'app_niveau_service' ] . '", app_description="' . $_POST[ 'app_description' ] . '"' );
+					'app_nom="' . $_POST[ 'app_nom' ] . '", frn_id="' . $_POST[ 'frn_id' ] . '", app_hebergement="' . $_POST[ 'app_hebergement' ] . '", ' .
+					'app_niveau_service="' . $_POST[ 'app_niveau_service' ] . '", app_description="' . $_POST[ 'app_description' ] . '", ' .
+					'sct_id="' . $_POST['app_id'] . '"');
 
 				$Resultat = array( 'statut' => 'success',
 					'texteMsg' => $L_Application_Modifiee
@@ -668,6 +671,26 @@ switch( $Action ) {
 	}
 
 
+ case 'AJAX_listerSocietes':
+	if ( $Droit_Lecture === TRUE ) {
+		$Resultat = array(
+			'statut' => 'success',
+			'texteMsg' => listerSocietes( $_POST['id'], $_POST['libelle'] )
+		);
+
+		echo json_encode( $Resultat );
+		exit();
+	} else {
+		$Resultat = array(
+			'statut' => 'error',
+			'texteMsg' => $L_No_Authorize
+		);
+
+		echo json_encode( $Resultat );
+		exit();
+	}
+
+
  case 'AJAX_Ajouter_Fournisseur':
 	if ( $Droit_Lecture === TRUE ) {
 		try {
@@ -746,5 +769,33 @@ function listerFournisseurs( $Init_Id = '', $Init_Libelle = '' ) {
 	
 	return $Code_HTML;
 }
+
+
+function listerSocietes( $Init_Id = '', $Init_Libelle = '' ) {
+	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
+
+	$objSocietes = new HBL_Societes();
+
+	$Liste = $objSocietes->rechercherSocietes();
+
+	$Code_HTML = '<option value="">' . $L_Neither . '</option>';
+
+	foreach ($Liste as $Occurrence) {
+		if ( $Init_Id != '' ) {
+			if ( $Init_Id == $Occurrence->sct_id or $Init_Libelle == $Occurrence->sct_nom ) {
+				$Selected = ' selected';
+			} else {
+				$Selected = '';
+			}
+		} else {
+			$Selected = '';
+		}
+
+		$Code_HTML .= '<option value="' . $Occurrence->sct_id . '"' . $Selected . '>' . $Occurrence->sct_nom . '</option>' ;
+	}
+
+	return $Code_HTML;
+}
+
 
 ?>

@@ -161,6 +161,8 @@ $L_Gestion_Profils = "Gestion des " . mb_lcfirst( $L_Profils );
 $L_Applications = "Applications";
 $L_Application = "Application";
 $L_Gestion_Applications = "Gestion des " . mb_lcfirst( $L_Applications );
+$L_Gestion_Applications_SI = "Gestion des applications (vision du SI)";
+$L_Applications_SI = "Applications (vision du SI)";
 
 $L_Gestion_ApplicationsInternes = "Gestion des applications internes";
 $L_ApplicationsInternes = 'Applications internes';
@@ -542,9 +544,11 @@ $L_Details = 'Détails';
 
 $L_DMIA_Long = 'Durée d\'Interruption Maximale Admissible';
 $L_DMIA_Court = 'DMIA';
+$L_DMIA_SI = 'DMIA SI';
 
 $L_PDMA_Long = 'Perte de Données Maximale Admissible';
 $L_PDMA_Court = 'PDMA';
+$L_PDMA_SI = 'PDMA SI';
 
 $L_Gestion_Effectifs = 'Gestion de l\'effectifs';
 $L_Gestion_Activites = 'Gestion des activités';

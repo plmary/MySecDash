@@ -178,10 +178,11 @@ INSERT INTO ain_applications_internes (ain_id, tap_id, ain_libelle, ain_localisa
 
 (27, 1, 'Comparateur de DMIA sur Activités', 'MyContinuity-ComparateurDMIAActivites.php'),
 
-(28, 1, 'Gestion des Libellés du Référentiel', 'MySecDash-LibellesReferentiel.php');
+(28, 1, 'Gestion des Libellés du Référentiel', 'MySecDash-LibellesReferentiel.php'),
+(29, 1, 'Gestion des Applications par le SI', 'MyContinuity-ApplicationsSI.php');
 
 
-SELECT pg_catalog.setval('ain_applications_internes_ain_id_seq', 28, true);
+SELECT pg_catalog.setval('ain_applications_internes_ain_id_seq', 29, true);
 
 --(9,  1, 'Consultation des Matrices des Risques', 'MySecDash-MatricesRisques.php'),
 --(10, 1, 'Gestion de l''Appréciation des Risques', 'MySecDash-AppreciationRisques.php'),
@@ -274,6 +275,10 @@ INSERT INTO caa_controle_acces_application_interne (prf_id, ain_id, drt_id) VALU
 (1, 25, 2),
 (1, 25, 3),
 (1, 25, 4),
+(1, 29, 1),
+(1, 29, 2),
+(1, 29, 3),
+(1, 29, 4),
 
 -- Profil 2 = Gest. BIA
 (2, 4, 1),

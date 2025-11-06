@@ -20,6 +20,7 @@ include( DIR_LIBRAIRIES . '/Loxense-Entete-Standard.php' );
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
 include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Generiques.inc.php' );
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MyContinuity-Fournisseurs.php' );
+#include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MyContinuity-Applications.php' );
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_' . basename( $Script ) );
 
 // Charge les classes utiles à cet écran.
@@ -35,26 +36,27 @@ $objCampagnes = new Campagnes();
 $objSocietes = new HBL_Societes();
 $objApplications = new Applications();
 $objFournisseurs = new Fournisseurs();
+$objEchellesTemps = new EchellesTemps();
 
 
 // Définit le format des colonnes du tableau central.
 $Format_Colonnes[ 'Prefixe' ] = 'APP';
 $Format_Colonnes[ 'Fonction_Ouverture' ] = 'ouvrirChamp';
 $Format_Colonnes[ 'Id' ] = array( 'nom' => 'app_id' );
-$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_nom', 'titre' => $L_Nom, 'taille' => '3',
+$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_nom', 'titre' => $L_Nom, 'taille' => '2',
 	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'app_nom', 'type' => 'input', 'modifiable' => 'oui' );
-$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'frn_id', 'titre' => $L_Fournisseur, 'taille' => '2',
-	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'frn_nom', 'type' => 'select', 'fonction' => 'listerFournisseurs', 'modifiable' => 'oui', );
-$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_hebergement', 'titre' => $L_Hebergement, 'taille' => '2',
-	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'app_hebergement', 'type' => 'input', 'modifiable' => 'oui', );
-//$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'ete_id_dima', 'titre' => $L_DMIA_Court, 'taille' => '2',
-//	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'ete_id_dima', 'type' => 'select', 'fonction' => 'listerEchelleTemps', 'modifiable' => 'oui' );
-$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_niveau_service', 'titre' => $L_Niveau_Service, 'taille' => '2',
-	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'app_niveau_service', 'type' => 'input', 'modifiable' => 'oui' );
-//$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_description', 'titre' => $L_Description, 'taille' => '2',
-//	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'app_description', 'type' => 'textarea', 'modifiable' => 'oui' );
-$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'sct_id', 'titre' => $L_Specifique, 'taille' => '2',
-	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'sct_id', 'type' => 'select', 'fonction' => 'listerSocietes', 'modifiable' => 'oui' );
+$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'app_nom_alias', 'titre' => $L_Alias, 'taille' => '2',
+	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'app_nom_alias', 'type' => 'input', 'modifiable' => 'oui' );
+$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'act_noms', 'titre' => $L_Activites, 'taille' => '5',
+	'triable' => 'oui', 'tri_actif' => 'non', 'sens_tri' => 'act_noms', 'type' => 'textarea', 'modifiable' => 'non', 'affichage' => 'img' );
+/*$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'ete_nom_dima', 'titre' => $L_DMIA_Court, 'taille' => '1',
+	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'ete_nom_code_dima', 'type' => 'input', 'modifiable' => 'non', );
+$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'ete_nom_pdma', 'titre' => $L_PDMA_Court, 'taille' => '1',
+	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'ete_nom_code_pdma', 'type' => 'input', 'modifiable' => 'non', );*/
+$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'ete_nom_dima_dsi', 'titre' => $L_DMIA_SI, 'taille' => '1',
+	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'ete_nom_code_dima_dsi', 'type' => 'select', 'modifiable' => 'oui', 'fonction' => 'listerEchelleTemps');
+$Format_Colonnes[ 'Colonnes' ][] = array( 'nom' => 'ete_nom_pdma_dsi', 'titre' => $L_PDMA_SI, 'taille' => '1',
+	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'ete_nom_code_pdma_dsi', 'type' => 'select', 'modifiable' => 'oui', 'fonction' => 'listerEchelleTemps' );
 $Format_Colonnes[ 'Actions' ] = array( 'taille' => '1', 'titre' => $L_Actions,
 	'boutons' => array( 'modifier' => $Droit_Modifier, 'supprimer' => $Droit_Supprimer ) );
 
@@ -64,17 +66,15 @@ $Droit_Ajouter_Fournisseurs = $PageHTML->controlerPermission('MyContinuity-Fourn
 // Exécute l'action identifie
 switch( $Action ) {
  default:
-	if ( $_SESSION['idn_super_admin'] === TRUE ) {
-		$Liste_Societes = $objSocietes->rechercherSocietes();
+	$Liste_Societes = '';
+	$Liste_Campagnes = '';
 
-		$objTemp = new stdClass();
-		$objTemp->sct_id = "*";
-		$objTemp->sct_nom = $L_Toutes;
-		$objTemp->sct_description = "";
-
-		$Liste_Societes[] = $objTemp;
-	} else {
-		$Liste_Societes = $objSocietes->rechercherSocietes('', '', $_SESSION['idn_id'] );
+	// Initialise les listes déroulantes : Sociétés, Campagnes et Entités
+	try {
+		list($Liste_Societes, $Liste_Campagnes) = actualiseSocieteCampagne($objSocietes, $objCampagnes);
+	} catch( Exception $e ) {
+		print('<h1 class="text-urgent">' . $e->getMessage() . '</h1>');
+		break;
 	}
 
 	if ( $Droit_Ajouter === TRUE ) {
@@ -82,9 +82,18 @@ switch( $Action ) {
 	}
 	$Boutons_Alternatifs[] = ['class'=>'btn-rechercher', 'libelle'=>$L_Rechercher, 'glyph'=>'search'];
 
-	print( $PageHTML->construireEnteteHTML( $L_Gestion_Applications, $Fichiers_JavaScript, '3' ) .
+	$Choix_Campagnes['id'] = 's_cmp_id';
+	$Choix_Campagnes['libelle'] = $L_Campagnes;
+
+	if ( $Liste_Campagnes != '' ) {
+		foreach( $Liste_Campagnes AS $Campagne ) {
+			$Choix_Campagnes['options'][] = array('id' => $Campagne->cmp_id, 'nom' => $Campagne->cmp_date );
+		}
+	}
+
+	print( $PageHTML->construireEnteteHTML( $L_Gestion_Applications_SI, $Fichiers_JavaScript, '3' ) .
 		$PageHTML->construireNavbarJson('Logo-MyContinuity.svg', 'nav-items.json') .
-		$PageHTML->construireTitreEcran( $L_Gestion_Applications, $Liste_Societes, $Boutons_Alternatifs )
+		$PageHTML->construireTitreEcran( $L_Gestion_Applications_SI, $Liste_Societes, $Boutons_Alternatifs, $Choix_Campagnes )
 		);
 
 	if ( $Droit_Lecture === TRUE ) {
@@ -126,12 +135,15 @@ switch( $Action ) {
 		'Droit_Ajouter_Fournisseurs' => $Droit_Ajouter_Fournisseurs,
 		'L_Specifique_A' => $L_Specifique_A,
 		'L_Oui' => $L_Yes,
-		'L_Non' => $L_No
+		'L_Non' => $L_No,
+		'L_Alias' => $L_Alias,
+		'L_DMIA' => $L_DMIA_Court,
+		'L_PDMA' => $L_PDMA_Court
 		);
 
 	if ( $Droit_Modifier === TRUE ) {
 		if ( isset($_POST['app_id']) and $_POST['app_id'] != '') {
-			$Application = $objApplications->rechercherApplications( 'app_nom', $_POST['app_id'], $_SESSION['s_sct_id'] );
+			$Application = $objApplications->rechercherApplicationsSI( 'app_nom', $_SESSION['s_sct_id'], $_POST['app_id'] );
 			$Libelles['Application'] = $Application[0];
 			$Libelles['Liste_Fournisseurs'] = listerFournisseurs($Application[0]->frn_id);
 			$Libelles['Liste_Societes'] = listerSocietes($Application[0]->sct_id);
@@ -139,6 +151,7 @@ switch( $Action ) {
 			$Libelles['Liste_Fournisseurs'] = listerFournisseurs();
 			$Libelles['Liste_Societes'] = listerSocietes();
 		}
+		$Libelles['Liste_Echelles'] = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_cmp_id']);
 	}
 
 	print( json_encode( $Libelles ) );
@@ -156,7 +169,17 @@ switch( $Action ) {
 					'statut' => 'error',
 					'texteMsg' => $L_Invalid_Value . ' (app_nom)'
 				) );
-				
+
+				exit();
+			}
+
+			$_POST['app_nom_alias'] = $PageHTML->controlerTypeValeur( $_POST['app_nom_alias'], 'ASCII' );
+			if ( $_POST['app_nom_alias'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (app_nom_alias)'
+				) );
+
 				exit();
 			}
 
@@ -166,7 +189,7 @@ switch( $Action ) {
 					'statut' => 'error',
 					'texteMsg' => $L_Invalid_Value . ' (frn_id)'
 				) );
-				
+
 				exit();
 			}
 
@@ -176,7 +199,7 @@ switch( $Action ) {
 					'statut' => 'error',
 					'texteMsg' => $L_Invalid_Value . ' (app_hebergement)'
 				) );
-				
+
 				exit();
 			}
 
@@ -186,7 +209,7 @@ switch( $Action ) {
 					'statut' => 'error',
 					'texteMsg' => $L_Invalid_Value . ' (app_niveau_service)'
 				) );
-				
+
 				exit();
 			}
 
@@ -196,37 +219,104 @@ switch( $Action ) {
 					'statut' => 'error',
 					'texteMsg' => $L_Invalid_Value . ' (app_description)'
 				) );
-				
+
+				exit();
+			}
+
+			$_POST['ete_id_dima_dsi'] = $PageHTML->controlerTypeValeur( $_POST['ete_id_dima_dsi'], 'NUMERIC' );
+			if ( $_POST['ete_id_dima_dsi'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (ete_id_dima_dsi)'
+				) );
+
+				exit();
+			}
+
+			$_POST['libelle_ete_id_dima_dsi'] = $PageHTML->controlerTypeValeur( $_POST['libelle_ete_id_dima_dsi'], 'ASCII' );
+			if ( $_POST['libelle_ete_id_dima_dsi'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (libelle_ete_id_dima_dsi)'
+				) );
+
+				exit();
+			}
+
+			$_POST['scap_description_dima'] = $PageHTML->controlerTypeValeur( $_POST['scap_description_dima'], 'ASCII' );
+			if ( $_POST['cmap_description_dima'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (cmap_description_dima)'
+				) );
+
+				exit();
+			}
+
+			$_POST['ete_id_pdma_dsi'] = $PageHTML->controlerTypeValeur( $_POST['ete_id_pdma_dsi'], 'NUMERIC' );
+			if ( $_POST['ete_id_pdma_dsi'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (ete_id_pdma_dsi)'
+				) );
+
+				exit();
+			}
+
+			$_POST['libelle_ete_id_pdma_dsi'] = $PageHTML->controlerTypeValeur( $_POST['libelle_ete_id_pdma_dsi'], 'ASCII' );
+			if ( $_POST['libelle_ete_id_pdma_dsi'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (libelle_ete_id_pdma_dsi)'
+				) );
+
+				exit();
+			}
+
+			$_POST['scap_description_pdma'] = $PageHTML->controlerTypeValeur( $_POST['scap_description_pdma'], 'ASCII' );
+			if ( $_POST['cmap_description_pdma'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (cmap_description_pdma)'
+				) );
+
 				exit();
 			}
 
 
 			try {
 				$objApplications->majApplication( '', $_POST['app_nom'], $_POST['frn_id'], $_POST['app_hebergement'],
-					$_POST['app_niveau_service'], $_POST['app_description'] );
+					$_POST['app_niveau_service'], $_POST['app_description'], $_POST['sct_id'], $_POST['app_nom_alias']);
 
-				$Id_Application = $objApplications->LastInsertId;
+				$_POST['app_id'] = $objApplications->LastInsertId;
 
-				$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_APPLICATION', 'app_id="' . $Id_Application .
-					'", app_nom="' . $_POST[ 'app_nom' ] .
-					'", frn_nom="' . $_POST[ 'frn_nom' ] .
-					'", app_hebergement="' . $_POST['app_hebergement'] .
-					'", app_niveau_service="' . $_POST['app_niveau_service'] .
-					'", app_description="' . $_POST['app_description'] . '"' );
+				$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_APPLICATION', 'app_id="' . $_POST['app_id'] . '", ' .
+					'app_nom="' . $_POST[ 'app_nom' ] . '" app_nom_alias="' . $_POST[ 'app_nom_alias' ] . '", frn_id="' . $_POST[ 'frn_id' ] . '", app_hebergement="' . $_POST[ 'app_hebergement' ] . '", ' .
+					'app_niveau_service="' . $_POST[ 'app_niveau_service' ] . '", app_description="' . $_POST[ 'app_description' ] . '", ' .
+					'sct_id="' . $_POST['app_id'] . '"');
+
+				$objApplications->majApplicationSI( $_POST['app_id'], $_SESSION['s_cmp_id'],
+					$_POST['ete_id_dima_dsi'], $_POST['scap_description_dima'],
+					$_POST['ete_id_pdma_dsi'], $_POST['scap_description_pdma']);
+
+				$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_APPLICATION', 'app_id="' . $_POST['app_id'] . '", ' .
+					'cmp_id="' . $_SESSION[ 's_cmp_id' ] . '" ete_id_dima_dsi="' . $_POST[ 'ete_id_dima_dsi' ] . '", ' .
+					'scap_description_dima="' . $_POST[ 'scap_description_dima' ] . '", ete_id_pdma_dsi="' . $_POST[ 'ete_id_pdma_dsi' ] . '", ' .
+					'scap_description_pdma="' . $_POST[ 'scap_description_pdma' ] . '"');
 
 				$Valeurs = new stdClass();
 				$Valeurs->app_nom = $_POST[ 'app_nom' ];
-				$Valeurs->frn_id = $_POST[ 'frn_nom' ];
-				$Valeurs->app_hebergement = $_POST['app_hebergement'];
-				$Valeurs->app_niveau_service = $_POST['app_niveau_service'];
-				$Valeurs->app_description = $_POST['app_description'];
+				$Valeurs->app_nom_alias = $_POST[ 'app_nom_alias' ];
+				$Valeurs->act_noms = '';
+				$Valeurs->ete_nom_dima_dsi = $_POST['libelle_ete_id_dima_dsi'];
+				$Valeurs->ete_nom_pdma_dsi = $_POST['libelle_ete_id_pdma_dsi'];
 
-				$Occurrence = $PageHTML->creerOccurrenceCorpsTableau( $Id_Application, $Valeurs, $Format_Colonnes );
+				$Occurrence = $PageHTML->creerOccurrenceCorpsTableau( $_POST['app_id'], $Valeurs, $Format_Colonnes );
 
 				$Resultat = array( 'statut' => 'success',
 					'texteMsg' => $L_Application_Cree,
 					'texte' => $Occurrence,
-					'id' => $Id_Application,
+					'id' => $_POST['app_id'],
 					'droit_modifier' => $Droit_Modifier,
 					'droit_supprimer' => $Droit_Supprimer
 					);
@@ -300,7 +390,7 @@ switch( $Action ) {
 			}
 
 			try {
-				$objApplications->majApplicationParChamp($_POST['id'], $_POST['source'], $_POST['valeur']);
+				$objApplications->majApplicationSIParChamp($_POST['id'], $_POST['source'], $_POST['valeur']);
 
 				$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_APPLICATION', $_POST[ 'source' ] . ' = "' . $_POST['valeur'] . '"' );
 
@@ -383,18 +473,51 @@ switch( $Action ) {
 		$Trier = $_POST[ 'trier' ];
 		
 		try {
-			$ListeApplications = $objApplications->rechercherApplications( $Trier, '', $_SESSION['s_sct_id'] );
+			$ListeApplications = $objApplications->rechercherApplicationsSI( $Trier, $_SESSION['s_sct_id'] );
 			$Total = $objApplications->RowCount;
+
+			$Liste_Echelles = $objEchellesTemps->rechercherEchellesTemps( $_SESSION['s_sct_id'] );
+			foreach( $Liste_Echelles as $Occurrence ) {
+				$Liste_Echelles[$Occurrence->ete_poids] = $Occurrence;
+			}
 
 			$Texte_HTML = '';
 
 			foreach ($ListeApplications as $Occurrence) {
-				$Occurrence->frn_id = $Occurrence->frn_nom;
+				$Afficher_Activites = '';
 
-				if ($Occurrence->sct_id != '') {
-					$Occurrence->sct_id = $Occurrence->sct_nom;
+				if ( $Occurrence->act_noms != '' ) {
+					foreach( explode('###', $Occurrence->act_noms) as $Activite ) {
+						if ($Afficher_Activites != '') $Afficher_Activites .= ', ';
+	
+						$t_Activite = explode('===', $Activite);
+						$t_Niveau = explode('---', $t_Activite[1]);
+	
+						$Afficher_Activites .= $t_Activite[0] . ' (<span class="fw-bold" style="color: #' . $t_Niveau[2] . '">' . $t_Niveau[0] . ' - ' . $t_Niveau[1] . '</span> / ' . $t_Activite[2] . ')';
+					}
+	
+					$Occurrence->act_noms = $Afficher_Activites;
+				}
+
+				if ($Occurrence->ete_poids_dima != NULL) {
+					$Occurrence->ete_nom_dima = $Liste_Echelles[$Occurrence->ete_poids_dima]->ete_nom_code;
 				} else {
-					$Occurrence->sct_id = $L_Neither;
+					$Occurrence->ete_nom_dima = '';
+				}
+				if ($Occurrence->ete_poids_pdma != NULL) {
+					$Occurrence->ete_nom_pdma = $Liste_Echelles[$Occurrence->ete_poids_pdma]->ete_nom_code;
+				} else {
+					$Occurrence->ete_nom_pdma = '';
+				}
+				if ($Occurrence->ete_poids_dima_dsi != NULL) {
+					$Occurrence->ete_nom_dima_dsi = $Liste_Echelles[$Occurrence->ete_poids_dima_dsi]->ete_nom_code;
+				} else {
+					$Occurrence->ete_nom_dima_dsi = '';
+				}
+				if ($Occurrence->ete_poids_pdma_dsi != NULL) {
+					$Occurrence->ete_nom_pdma_dsi = $Liste_Echelles[$Occurrence->ete_poids_pdma_dsi]->ete_nom_code;
+				} else {
+					$Occurrence->ete_nom_pdma_dsi = '';
 				}
 
 				$Texte_HTML .= $PageHTML->creerOccurrenceCorpsTableau( $Occurrence->app_id, $Occurrence, $Format_Colonnes );
@@ -495,78 +618,157 @@ switch( $Action ) {
 
  case 'AJAX_Modifier':
 	if ( $Droit_Modifier === TRUE ) {
-		if ( isset($_POST['app_id']) and isset($_POST['app_nom']) and isset($_POST['app_hebergement'])
-			and isset($_POST['app_niveau_service']) and isset($_POST['app_description']) ) {
+		if ( isset($_POST['app_id']) && isset($_POST['app_nom']) ) {
 
-				$_POST['app_nom'] = $PageHTML->controlerTypeValeur( $_POST['app_nom'], 'ASCII' );
-				if ( $_POST['app_nom'] == -1 ) {
-					echo json_encode( array(
-						'statut' => 'error',
-						'texteMsg' => $L_Invalid_Value . ' (app_nom)'
-					) );
+			$_POST['app_nom'] = $PageHTML->controlerTypeValeur( $_POST['app_nom'], 'ASCII' );
+			if ( $_POST['app_nom'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (app_nom)'
+				) );
 
-					exit();
-				}
+				exit();
+			}
 
-				$_POST['frn_id'] = $PageHTML->controlerTypeValeur( $_POST['frn_id'], 'NUMERIC' );
-				if ( $_POST['frn_id'] == -1 ) {
-					echo json_encode( array(
-						'statut' => 'error',
-						'texteMsg' => $L_Invalid_Value . ' (frn_id)'
-					) );
+			$_POST['app_nom_alias'] = $PageHTML->controlerTypeValeur( $_POST['app_nom_alias'], 'ASCII' );
+			if ( $_POST['app_nom_alias'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (app_nom_alias)'
+				) );
+				
+				exit();
+			}
 
-					exit();
-				}
+			$_POST['frn_id'] = $PageHTML->controlerTypeValeur( $_POST['frn_id'], 'NUMERIC' );
+			if ( $_POST['frn_id'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (frn_id)'
+				) );
 
-				$_POST['sct_id'] = $PageHTML->controlerTypeValeur( $_POST['sct_id'], 'NUMERIC' );
-				if ( $_POST['sct_id'] == -1 ) {
-					echo json_encode( array(
-						'statut' => 'error',
-						'texteMsg' => $L_Invalid_Value . ' (sct_id)'
-					) );
+				exit();
+			}
 
-					exit();
-				}
+			$_POST['sct_id'] = $PageHTML->controlerTypeValeur( $_POST['sct_id'], 'NUMERIC' );
+			if ( $_POST['sct_id'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (sct_id)'
+				) );
 
-				$_POST['app_hebergement'] = $PageHTML->controlerTypeValeur( $_POST['app_hebergement'], 'ASCII' );
-				if ( $_POST['app_hebergement'] == -1 ) {
-					echo json_encode( array(
-						'statut' => 'error',
-						'texteMsg' => $L_Invalid_Value . ' (app_hebergement)'
-					) );
-					
-					exit();
-				}
+				exit();
+			}
 
-				$_POST['app_niveau_service'] = $PageHTML->controlerTypeValeur( $_POST['app_niveau_service'], 'ASCII' );
-				if ( $_POST['app_niveau_service'] == -1 ) {
-					echo json_encode( array(
-						'statut' => 'error',
-						'texteMsg' => $L_Invalid_Value . ' (app_niveau_service)'
-					) );
-					
-					exit();
-				}
+			$_POST['app_hebergement'] = $PageHTML->controlerTypeValeur( $_POST['app_hebergement'], 'ASCII' );
+			if ( $_POST['app_hebergement'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (app_hebergement)'
+				) );
+				
+				exit();
+			}
 
-				$_POST['app_description'] = $PageHTML->controlerTypeValeur( $_POST['app_description'], 'ASCII' );
-				if ( $_POST['app_description'] == -1 ) {
-					echo json_encode( array(
-						'statut' => 'error',
-						'texteMsg' => $L_Invalid_Value . ' (app_description)'
-					) );
+			$_POST['app_niveau_service'] = $PageHTML->controlerTypeValeur( $_POST['app_niveau_service'], 'ASCII' );
+			if ( $_POST['app_niveau_service'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (app_niveau_service)'
+				) );
+				
+				exit();
+			}
 
-					exit();
-				}
+			$_POST['app_description'] = $PageHTML->controlerTypeValeur( $_POST['app_description'], 'ASCII' );
+			if ( $_POST['app_description'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (app_description)'
+				) );
 
-				try {
+				exit();
+			}
+
+			$_POST['ete_id_dima_dsi'] = $PageHTML->controlerTypeValeur( $_POST['ete_id_dima_dsi'], 'NUMERIC' );
+			if ( $_POST['ete_id_dima_dsi'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (ete_id_dima_dsi)'
+				) );
+				
+				exit();
+			}
+
+			$_POST['libelle_ete_id_dima_dsi'] = $PageHTML->controlerTypeValeur( $_POST['libelle_ete_id_dima_dsi'], 'ASCII' );
+			if ( $_POST['libelle_ete_id_dima_dsi'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (libelle_ete_id_dima_dsi)'
+				) );
+				
+				exit();
+			}
+
+			$_POST['scap_description_dima'] = $PageHTML->controlerTypeValeur( $_POST['scap_description_dima'], 'ASCII' );
+			if ( $_POST['scap_description_dima'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (scap_description_dima)'
+				) );
+				
+				exit();
+			}
+
+			$_POST['ete_id_pdma_dsi'] = $PageHTML->controlerTypeValeur( $_POST['ete_id_pdma_dsi'], 'NUMERIC' );
+			if ( $_POST['ete_id_pdma_dsi'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (ete_id_pdma_dsi)'
+				) );
+				
+				exit();
+			}
+
+			$_POST['libelle_ete_id_pdma_dsi'] = $PageHTML->controlerTypeValeur( $_POST['libelle_ete_id_pdma_dsi'], 'ASCII' );
+			if ( $_POST['libelle_ete_id_pdma_dsi'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (libelle_ete_id_pdma_dsi)'
+				) );
+				
+				exit();
+			}
+
+			$_POST['scap_description_pdma'] = $PageHTML->controlerTypeValeur( $_POST['scap_description_pdma'], 'ASCII' );
+			if ( $_POST['scap_description_pdma'] == -1 ) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $L_Invalid_Value . ' (scap_description_pdma)'
+				) );
+				
+				exit();
+			}
+
+
+			try {
 				$objApplications->majApplication( $_POST['app_id'], $_POST['app_nom'], $_POST['frn_id'], $_POST['app_hebergement'],
-					$_POST['app_niveau_service'], $_POST['app_description'], $_POST['sct_id']);
+					$_POST['app_niveau_service'], $_POST['app_description'], $_POST['sct_id'], $_POST['app_nom_alias']);
 
 				$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_APPLICATION', 'app_id="' . $_POST['app_id'] . '", ' .
-					'app_nom="' . $_POST[ 'app_nom' ] . '", frn_id="' . $_POST[ 'frn_id' ] . '", app_hebergement="' . $_POST[ 'app_hebergement' ] . '", ' .
+					'app_nom="' . $_POST[ 'app_nom' ] . '" app_nom_alias="' . $_POST[ 'app_nom_alias' ] . '", frn_id="' . $_POST[ 'frn_id' ] . '", app_hebergement="' . $_POST[ 'app_hebergement' ] . '", ' .
 					'app_niveau_service="' . $_POST[ 'app_niveau_service' ] . '", app_description="' . $_POST[ 'app_description' ] . '", ' .
 					'sct_id="' . $_POST['app_id'] . '"');
 
+				$objApplications->majApplicationSI( $_POST['app_id'], $_SESSION['s_cmp_id'],
+					$_POST['ete_id_dima_dsi'], $_POST['scap_description_dima'],
+					$_POST['ete_id_pdma_dsi'], $_POST['scap_description_pdma']);
+				
+				$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_APPLICATION', 'app_id="' . $_POST['app_id'] . '", ' .
+					'cmp_id="' . $_SESSION[ 's_cmp_id' ] . '" ete_id_dima_dsi="' . $_POST[ 'ete_id_dima_dsi' ] . '", ' .
+					'scap_description_dima="' . $_POST[ 'scap_description_dima' ] . '", ete_id_pdma_dsi="' . $_POST[ 'ete_id_pdma_dsi' ] . '", ' .
+					'scap_description_pdma="' . $_POST[ 'scap_description_pdma' ] . '"');
+				
 				$Resultat = array( 'statut' => 'success',
 					'texteMsg' => $L_Application_Modifiee
 					);
@@ -841,11 +1043,115 @@ function listerEchelleTemps( $Init_Id = '', $Init_Libelle = '' ) {
 			$Selected = '';
 		}
 		
-		$Code_HTML .= '<option value="' . $Occurrence->sct_id . '"' . $Selected . '>' . $Occurrence->sct_nom . '</option>' ;
+		$Code_HTML .= '<option value="' . $Occurrence->ete_id . '"' . $Selected . '>' . $Occurrence->ete_nom_code . '</option>' ;
 	}
 	
 	return $Code_HTML;
 }
 
+
+function actualiseSocieteCampagne($objSocietes, $objCampagnes, $forcer=0) {
+	/**
+	 * Actualise les listes Sociétés et Campagnes à l'entrée dans l'écran et en cas de changement.
+	 *
+	 * \license Copyleft Loxense
+	 * \author Pierre-Luc MARY
+	 * \date 2024-10-01
+	 *
+	 * \param[in] $objSocietes Objet permettant d'accéder aux fonctions de gestion des Sociétés
+	 * \param[in] $objCampagnes Objet permettant d'accéder aux fonctions de gestion des Campagnes
+	 * \param[in] $forcer Flag permettant de forcer le résultat (0=Tout charger, 1=Changer Société, 2=Changer Campagne, 3=Changer Entité)
+	 *
+	 * \return Renvoi un tableau d'objet ou un tableau vide si pas de données trouvées. Lève une exception en cas d'erreur.
+	 */
+	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
+
+	$Liste_Societes = [];
+	$Liste_Campagnes = [];
+
+
+	switch ( $forcer ) {
+		case 1:
+			// Comme on vient de change de Société, on efface les variables de Session qui pointaient :
+			//  sur une Campagne.
+			// Ainsi, on forcera le repositionnement sur la première occurrence de Campagne.
+			unset($_SESSION['s_cmp_id']);
+			break;
+	}
+
+
+	// Récupère les Sociétés accessibles pour l'Utilisateur
+	if ( $_SESSION['idn_super_admin'] === TRUE ) {
+		$Liste_Societes = $objSocietes->rechercherSocietes();
+		if ( $Liste_Societes == [] ) {
+			// Si pas de société, alors on efface tout et on lève une exception.
+			$_SESSION['s_sct_id'] = '';
+			$_SESSION['s_cmp_id'] = '';
+			
+			throw new Exception($L_Plus_De_Societe, 0);
+		} else {
+			// Si la variable de Session n'est pas initialisé, alors on l'initialise sur la première occurrence de notre résultat.
+			if ( ! isset($_SESSION['s_sct_id']) or $_SESSION['s_sct_id'] == '' ) {
+				$_SESSION['s_sct_id'] = $Liste_Societes[0]->sct_id;
+			}
+		}
+	} else {
+		$Liste_Societes = $objSocietes->rechercherSocietes('', '', $_SESSION['idn_id']);
+		if ( $Liste_Societes == [] ) {
+			// Si pas de société, alors on efface tout et on lève une exception.
+			$_SESSION['s_sct_id'] = '';
+			$_SESSION['s_cmp_id'] = '';
+			
+			throw new Exception($L_Pas_Societe_Autorisee_Pour_Utilisateur, 0);
+		} else {
+			if ( ! isset($_SESSION['s_sct_id']) or $_SESSION['s_sct_id'] == '' ) {
+				$_SESSION['s_sct_id'] = $Liste_Societes[0]->sct_id;
+			} else {
+				// On contrôle que l'utilisateur a encore accès à cette Société, sinon on lève une exception.
+				$_Autorise = 0;
+				foreach ($Liste_Societes as $_Tmp) {
+					if ( $_Tmp->sct_id == $_SESSION['s_sct_id'] ) {
+						$_Autorise = 1;
+						break;
+					}
+				}
+
+				if ( $_Autorise == 0 ) {
+					throw new Exception($L_Societe_Plus_Autorisee_Pour_Utilisateur, 0);
+				}
+			}
+		}
+	}
+
+	// Récupère les Campagnes associées à la Société Sélectionnée.
+	$Liste_Campagnes = $objCampagnes->rechercherCampagnes($_SESSION['s_sct_id'], 'cmp_date-desc');
+	if ( $Liste_Campagnes == [] ) {
+		$_SESSION['s_cmp_id'] = '';
+
+		throw new Exception($L_Pas_Campagne_Pour_Societe, 0);
+	} else {
+		if ( ! isset($_SESSION['s_cmp_id']) or $_SESSION['s_cmp_id'] == '' ) {
+			$_SESSION['s_cmp_id'] = $Liste_Campagnes[0]->cmp_id;
+		} else {
+			// On contrôle que l'utilisateur a encore accès à cette Société.
+			$_Autorise = 0;
+
+			foreach ($Liste_Campagnes as $_Tmp) {
+				if ( $_Tmp->cmp_id == $_SESSION['s_cmp_id'] ) {
+					$_Autorise = 1;
+					break;
+				}
+			}
+
+			if ( $_Autorise == 0 ) {
+				$_SESSION['s_cmp_id'] = $Liste_Campagnes[0]->cmp_id;
+			}
+		}
+	}
+
+	//print($_SESSION['s_sct_id'].' - '.$_SESSION['s_cmp_id'].' - '.$_SESSION['s_ent_id'].'<hr>');
+
+	return [$Liste_Societes, $Liste_Campagnes];
+}
 
 ?>

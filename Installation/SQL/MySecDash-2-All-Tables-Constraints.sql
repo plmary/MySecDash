@@ -1,12 +1,11 @@
 --
 -- Auteur  : Pierre-Luc MARY
--- Date    : 2025-04-28
+-- Date    : 2025-10-25
 -- Package : MySecDash
 --
 -- Commentaire :
 -- Ce script crée toutes les tables et toutes les contraintes de la base de données "mysecdash".
--- Modèle SQL : 2.3
-
+-- Modèle SQL : 2.5
 
 
 CREATE SEQUENCE public.tgs_tags_tgs_id_seq;
@@ -317,6 +316,28 @@ CREATE UNIQUE INDEX sct_u_nom_idx
  ON public.sct_societes
  ( sct_nom );
 
+CREATE SEQUENCE public.ete_echelle_temps_ete_id_seq;
+
+CREATE TABLE public.ete_echelle_temps (
+                ete_id BIGINT NOT NULL DEFAULT nextval('public.ete_echelle_temps_ete_id_seq'),
+                ete_poids SMALLINT NOT NULL,
+                ete_nom_code VARCHAR(60) NOT NULL,
+                sct_id BIGINT NOT NULL,
+                CONSTRAINT ete_echelle_temps_pk PRIMARY KEY (ete_id)
+);
+COMMENT ON COLUMN public.ete_echelle_temps.ete_poids IS 'Plus le poids est grand et plus le temps de reprise est long';
+
+
+ALTER SEQUENCE public.ete_echelle_temps_ete_id_seq OWNED BY public.ete_echelle_temps.ete_id;
+
+CREATE INDEX ete_u_nom_idx
+ ON public.ete_echelle_temps
+ ( ete_nom_code );
+
+CREATE UNIQUE INDEX ete_u_poids_idx
+ ON public.ete_echelle_temps
+ ( ete_poids );
+
 CREATE TABLE public.sctg_sct_tgs (
                 tgs_id BIGINT NOT NULL,
                 sct_id BIGINT NOT NULL,
@@ -523,6 +544,24 @@ CREATE UNIQUE INDEX act_u_nom_idx
  ON public.act_activites
  ( act_nom, ent_id, cmp_id );
 
+CREATE TABLE public.rut_redemarrage_utilisateurs (
+                ete_id BIGINT NOT NULL,
+                act_id BIGINT NOT NULL,
+                rut_nbr_utilisateurs_a_redemarrer INTEGER NOT NULL,
+                CONSTRAINT rut_redemarrage_utilisateurs_pk PRIMARY KEY (ete_id, act_id)
+);
+
+
+CREATE TABLE public.acfr_act_frn (
+                act_id BIGINT NOT NULL,
+                frn_id BIGINT NOT NULL,
+                ete_id BIGINT NOT NULL,
+                acfr_consequence_indisponibilite TEXT,
+                acfr_palliatif_tiers TEXT,
+                CONSTRAINT acfr_act_frn_pk PRIMARY KEY (act_id, frn_id)
+);
+
+
 CREATE TABLE public.actg_act_tgs (
                 tgs_id BIGINT NOT NULL,
                 act_id BIGINT NOT NULL,
@@ -623,6 +662,20 @@ CREATE TABLE public.ppac_ppr_act (
 );
 
 
+CREATE SEQUENCE public.dma_dmia_activite_dma_id_seq;
+
+CREATE TABLE public.dma_dmia_activite (
+                dma_id BIGINT NOT NULL DEFAULT nextval('public.dma_dmia_activite_dma_id_seq'),
+                act_id BIGINT NOT NULL,
+                ete_id BIGINT NOT NULL,
+                mim_id BIGINT NOT NULL,
+                cmp_id BIGINT NOT NULL,
+                CONSTRAINT dma_dmia_activite_pk PRIMARY KEY (dma_id)
+);
+
+
+ALTER SEQUENCE public.dma_dmia_activite_dma_id_seq OWNED BY public.dma_dmia_activite.dma_id;
+
 CREATE TABLE public.cmen_cmp_ent (
                 ent_id BIGINT NOT NULL,
                 cmp_id BIGINT NOT NULL,
@@ -657,60 +710,6 @@ CREATE UNIQUE INDEX pac_u_nom_idx
  ON public.pac_plan_actions
  ( cmp_id, pac_nom );
 
-CREATE SEQUENCE public.ete_echelle_temps_ete_id_seq;
-
-CREATE TABLE public.ete_echelle_temps (
-                ete_id BIGINT NOT NULL DEFAULT nextval('public.ete_echelle_temps_ete_id_seq'),
-                cmp_id BIGINT NOT NULL,
-                ete_poids SMALLINT NOT NULL,
-                ete_nom_code VARCHAR(60) NOT NULL,
-                CONSTRAINT ete_echelle_temps_pk PRIMARY KEY (ete_id)
-);
-COMMENT ON COLUMN public.ete_echelle_temps.ete_poids IS 'Plus le poids est grand et plus le temps de reprise est long';
-
-
-ALTER SEQUENCE public.ete_echelle_temps_ete_id_seq OWNED BY public.ete_echelle_temps.ete_id;
-
-CREATE INDEX ete_u_nom_idx
- ON public.ete_echelle_temps
- ( cmp_id, ete_nom_code );
-
-CREATE UNIQUE INDEX ete_u_poids_idx
- ON public.ete_echelle_temps
- ( cmp_id, ete_poids );
-
-CREATE TABLE public.rut_redemarrage_utilisateurs (
-                ete_id BIGINT NOT NULL,
-                act_id BIGINT NOT NULL,
-                rut_nbr_utilisateurs_a_redemarrer INTEGER NOT NULL,
-                CONSTRAINT rut_redemarrage_utilisateurs_pk PRIMARY KEY (ete_id, act_id)
-);
-
-
-CREATE TABLE public.acfr_act_frn (
-                act_id BIGINT NOT NULL,
-                frn_id BIGINT NOT NULL,
-                ete_id BIGINT NOT NULL,
-                acfr_consequence_indisponibilite TEXT,
-                acfr_palliatif_tiers TEXT,
-                CONSTRAINT acfr_act_frn_pk PRIMARY KEY (act_id, frn_id)
-);
-
-
-CREATE SEQUENCE public.dma_dmia_activite_dma_id_seq;
-
-CREATE TABLE public.dma_dmia_activite (
-                dma_id BIGINT NOT NULL DEFAULT nextval('public.dma_dmia_activite_dma_id_seq'),
-                act_id BIGINT NOT NULL,
-                ete_id BIGINT NOT NULL,
-                mim_id BIGINT NOT NULL,
-                cmp_id BIGINT NOT NULL,
-                CONSTRAINT dma_dmia_activite_pk PRIMARY KEY (dma_id)
-);
-
-
-ALTER SEQUENCE public.dma_dmia_activite_dma_id_seq OWNED BY public.dma_dmia_activite.dma_id;
-
 CREATE SEQUENCE public.app_applications_app_id_seq;
 
 CREATE TABLE public.app_applications (
@@ -718,6 +717,7 @@ CREATE TABLE public.app_applications (
                 frn_id BIGINT,
                 sct_id BIGINT,
                 app_nom VARCHAR(100) NOT NULL,
+                app_nom_alias VARCHAR(100),
                 app_hebergement VARCHAR(100),
                 app_niveau_service VARCHAR(100),
                 app_description TEXT,
@@ -730,6 +730,17 @@ ALTER SEQUENCE public.app_applications_app_id_seq OWNED BY public.app_applicatio
 CREATE UNIQUE INDEX app_u_nom_idx
  ON public.app_applications
  ( app_nom );
+
+CREATE TABLE public.scap_sct_app (
+                app_id BIGINT NOT NULL,
+                sct_id BIGINT NOT NULL,
+                ete_id_dima_dsi BIGINT,
+                ete_id_pdma_dsi BIGINT,
+                cmap_description_dima TEXT,
+                cmap_description_pdma TEXT,
+                CONSTRAINT scap_sct_app_pk PRIMARY KEY (app_id, sct_id)
+);
+
 
 CREATE TABLE public.acap_act_app (
                 act_id BIGINT NOT NULL,
@@ -964,6 +975,69 @@ ON DELETE SET NULL
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
+ALTER TABLE public.scap_sct_app ADD CONSTRAINT sct_scap_fk
+FOREIGN KEY (sct_id)
+REFERENCES public.sct_societes (sct_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.ete_echelle_temps ADD CONSTRAINT sct_societes_ete_echelle_temps_fk
+FOREIGN KEY (sct_id)
+REFERENCES public.sct_societes (sct_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.acap_act_app ADD CONSTRAINT ete_tcap_dima_fk
+FOREIGN KEY (ete_id_dima)
+REFERENCES public.ete_echelle_temps (ete_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.acap_act_app ADD CONSTRAINT ete_tcap_pdma_fk
+FOREIGN KEY (ete_id_pdma)
+REFERENCES public.ete_echelle_temps (ete_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.dma_dmia_activite ADD CONSTRAINT ete_dma_fk
+FOREIGN KEY (ete_id)
+REFERENCES public.ete_echelle_temps (ete_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.acfr_act_frn ADD CONSTRAINT ete_fret_fk
+FOREIGN KEY (ete_id)
+REFERENCES public.ete_echelle_temps (ete_id)
+ON DELETE NO ACTION
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.rut_redemarrage_utilisateurs ADD CONSTRAINT ete_rut_fk
+FOREIGN KEY (ete_id)
+REFERENCES public.ete_echelle_temps (ete_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.scap_sct_app ADD CONSTRAINT ete_scap_dima_fk
+FOREIGN KEY (ete_id_dima_dsi)
+REFERENCES public.ete_echelle_temps (ete_id)
+ON DELETE SET NULL
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.scap_sct_app ADD CONSTRAINT ete_scap_pdma_fk
+FOREIGN KEY (ete_id_pdma_dsi)
+REFERENCES public.ete_echelle_temps (ete_id)
+ON DELETE SET NULL
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
 ALTER TABLE public.idsc_idn_sct ADD CONSTRAINT idn_idsc_fk
 FOREIGN KEY (idn_id)
 REFERENCES public.idn_identites (idn_id)
@@ -1073,13 +1147,6 @@ ALTER TABLE public.act_activites ADD CONSTRAINT ppr_act_supp_fk
 FOREIGN KEY (ppr_id_suppleant)
 REFERENCES public.ppr_parties_prenantes (ppr_id)
 ON DELETE SET NULL
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
-
-ALTER TABLE public.ete_echelle_temps ADD CONSTRAINT cmp_ete_fk
-FOREIGN KEY (cmp_id)
-REFERENCES public.cmp_campagnes (cmp_id)
-ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
@@ -1223,41 +1290,6 @@ ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE public.acap_act_app ADD CONSTRAINT ete_tcap_dima_fk
-FOREIGN KEY (ete_id_dima)
-REFERENCES public.ete_echelle_temps (ete_id)
-ON DELETE CASCADE
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
-
-ALTER TABLE public.acap_act_app ADD CONSTRAINT ete_tcap_pdma_fk
-FOREIGN KEY (ete_id_pdma)
-REFERENCES public.ete_echelle_temps (ete_id)
-ON DELETE CASCADE
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
-
-ALTER TABLE public.dma_dmia_activite ADD CONSTRAINT ete_dma_fk
-FOREIGN KEY (ete_id)
-REFERENCES public.ete_echelle_temps (ete_id)
-ON DELETE NO ACTION
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
-
-ALTER TABLE public.acfr_act_frn ADD CONSTRAINT ete_fret_fk
-FOREIGN KEY (ete_id)
-REFERENCES public.ete_echelle_temps (ete_id)
-ON DELETE NO ACTION
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
-
-ALTER TABLE public.rut_redemarrage_utilisateurs ADD CONSTRAINT ete_rut_fk
-FOREIGN KEY (ete_id)
-REFERENCES public.ete_echelle_temps (ete_id)
-ON DELETE CASCADE
-ON UPDATE NO ACTION
-NOT DEFERRABLE;
-
 ALTER TABLE public.aptg_app_tgs ADD CONSTRAINT app_aptg_fk
 FOREIGN KEY (app_id)
 REFERENCES public.app_applications (app_id)
@@ -1266,6 +1298,13 @@ ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
 ALTER TABLE public.acap_act_app ADD CONSTRAINT app_acap_fk
+FOREIGN KEY (app_id)
+REFERENCES public.app_applications (app_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.scap_sct_app ADD CONSTRAINT app_scap_fk
 FOREIGN KEY (app_id)
 REFERENCES public.app_applications (app_id)
 ON DELETE CASCADE

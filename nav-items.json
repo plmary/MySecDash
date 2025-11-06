@@ -32,6 +32,7 @@
 				{"LibelleItem": "", "Type" : "separator"},
 				{"LibelleItem": "L_Sites", "Type" : "option", "Lien" : "MyContinuity-Sites.php"},
 				{"LibelleItem": "L_Applications", "Type" : "option", "Lien" : "MyContinuity-Applications.php"},
+				{"LibelleItem": "L_Applications_SI", "Type" : "option", "Lien" : "MyContinuity-ApplicationsSI.php"},
 				{"LibelleItem": "L_Fournisseurs", "Type" : "option", "Lien" : "MyContinuity-Fournisseurs.php"},
 				{"LibelleItem": "L_Parties_Prenantes", "Type" : "option", "Lien" : "MyContinuity-PartiesPrenantes.php"},
 				{"LibelleItem": "L_Echelles_Temps", "Type" : "option", "Lien" : "MyContinuity-EchellesTemps.php"},

@@ -204,14 +204,13 @@ class Campagnes extends HBL_Connexioneur_BD {
 				count(DISTINCT cmen.ent_id) AS "total_ent",
 				count(DISTINCT cmst.sts_id) AS "total_sts",
 				count(DISTINCT mim.mim_id) AS "total_mim",
-				count(DISTINCT ete_id) AS "total_ete",
 				count(DISTINCT tim.tim_id) AS "total_tim",
 				count(DISTINCT nim.nim_id) AS "total_nim"
 				FROM cmp_campagnes AS "cmp"
 				LEFT JOIN tim_types_impact AS "tim" ON tim.cmp_id = cmp.cmp_id
 				LEFT JOIN nim_niveaux_impact AS "nim" ON nim.cmp_id = cmp.cmp_id
 				LEFT JOIN mim_matrice_impacts AS "mim" ON mim.cmp_id = cmp.cmp_id
-				LEFT JOIN ete_echelle_temps AS "ete" ON ete.cmp_id = cmp.cmp_id
+				--LEFT JOIN ete_echelle_temps AS "ete" ON ete.cmp_id = cmp.cmp_id
 				LEFT JOIN cmen_cmp_ent AS "cmen" ON cmen.cmp_id = cmp.cmp_id
 				LEFT JOIN cmst_cmp_sts AS "cmst" ON cmst.cmp_id = cmp.cmp_id ';
 		} else {
@@ -220,7 +219,6 @@ class Campagnes extends HBL_Connexioneur_BD {
 				count(DISTINCT cmen.ent_id) AS "total_ent",
 				count(DISTINCT cmst.sts_id) AS "total_sts",
 				count(DISTINCT mim.mim_id) AS "total_mim",
-				count(DISTINCT ete_id) AS "total_ete",
 				count(DISTINCT tim.tim_id) AS "total_tim",
 				count(DISTINCT nim.nim_id) AS "total_nim"
 				FROM idsc_idn_sct AS "idsc"
@@ -228,7 +226,6 @@ class Campagnes extends HBL_Connexioneur_BD {
 				LEFT JOIN tim_types_impact AS "tim" ON tim.cmp_id = cmp.cmp_id
 				LEFT JOIN nim_niveaux_impact AS "nim" ON nim.cmp_id = cmp.cmp_id
 				LEFT JOIN mim_matrice_impacts AS "mim" ON mim.cmp_id = cmp.cmp_id
-				LEFT JOIN ete_echelle_temps AS "ete" ON ete.cmp_id = cmp.cmp_id
 				LEFT JOIN cmen_cmp_ent AS "cmen" ON cmen.cmp_id = cmp.cmp_id
 				LEFT JOIN cmst_cmp_sts AS "cmst" ON cmst.cmp_id = cmp.cmp_id ';
 
@@ -603,7 +600,7 @@ WHERE act.cmp_id = :cmp_id ';
 	}
 
 
-	public function rechercherEchelleTempsCampagne( $cmp_id = '' ) {
+	public function rechercherEchelleTemps( $sct_id = '' ) {
 		/**
 		 * Lister l'Echelle de Temps déclarée sur une Campagne
 		 *
@@ -616,17 +613,17 @@ WHERE act.cmp_id = :cmp_id ';
 		 * \return Renvoi un tableau d'objet ou un tableau vide si pas de données trouvées. Lève une exception en cas d'erreur.
 		 */
 		
-		if ( $cmp_id == '' ) return '';
+		if ( $sct_id == '' ) return '';
 		
 		$Request = 'SELECT ete.*, lbr_libelle AS "ete_nom"
 		FROM ete_echelle_temps AS "ete"
 		LEFT JOIN lbr_libelles_referentiel AS "lbr" ON lbr.lbr_code = ete.ete_nom_code AND lng_id = \'' . $_SESSION['Language'] . '\' 
-		WHERE ete.cmp_id = :cmp_id 
+		WHERE ete.sct_id = :sct_id 
 		ORDER BY ete_poids, ete_nom_code ';
 		
 		$Query = $this->prepareSQL( $Request );
 		
-		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT );
 		
 		$this->executeSQL( $Query );
 		
@@ -659,31 +656,25 @@ WHERE act.cmp_id = :cmp_id ';
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
 		$this->executeSQL( $Query );
 		$Compteurs->total_mim = $Query->fetchObject()->total;
-		
+
 		$Request = 'SELECT COUNT(ent_id) AS "total" FROM cmen_cmp_ent WHERE cmp_id = :cmp_id ';
 		$Query = $this->prepareSQL( $Request );
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
 		$this->executeSQL( $Query );
 		$Compteurs->total_ent = $Query->fetchObject()->total;
-		
-		$Request = 'SELECT COUNT(ete_id) AS "total" FROM ete_echelle_temps WHERE cmp_id = :cmp_id ';
-		$Query = $this->prepareSQL( $Request );
-		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
-		$this->executeSQL( $Query );
-		$Compteurs->total_ete = $Query->fetchObject()->total;
-		
+
 		$Request = 'SELECT COUNT(act_id) AS "total" FROM act_activites WHERE cmp_id = :cmp_id ';
 		$Query = $this->prepareSQL( $Request );
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
 		$this->executeSQL( $Query );
 		$Compteurs->total_act = $Query->fetchObject()->total;
-		
+
 		$Request = 'SELECT COUNT(ppr_id) AS "total" FROM ppac_ppr_act WHERE cmp_id = :cmp_id ';
 		$Query = $this->prepareSQL( $Request );
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
 		$this->executeSQL( $Query );
 		$Compteurs->total_ppr = $Query->fetchObject()->total;
-		
+
 		$Request = 'SELECT COUNT(sts_id) AS "total" FROM cmst_cmp_sts WHERE cmp_id = :cmp_id ';
 		$Query = $this->prepareSQL( $Request );
 		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
@@ -1306,38 +1297,18 @@ WHERE act.cmp_id = :cmp_id ';
 
 		foreach( $Query->fetchAll( PDO::FETCH_CLASS ) as $Occurrence ) {
 			$Request = 'INSERT INTO cmen_cmp_ent
-				(cmp_id, ent_id) VALUES
-				(:cmp_id, :ent_id) ';
+				(cmp_id, ent_id, ppr_id_cpca, cmen_date_entretien_cpca, ppr_id_validation, cmen_date_validation, cmen_effectif_total) VALUES
+				(:cmp_id, :ent_id, :ppr_id_cpca, :cmen_date_entretien_cpca, :ppr_id_validation, :cmen_date_validation, :cmen_effectif_total) ';
 
 			$Query = $this->prepareSQL( $Request );
 
 			$this->bindSQL( $Query, ':cmp_id', $cmp_id_new, PDO::PARAM_INT );
 			$this->bindSQL( $Query, ':ent_id', $Occurrence->ent_id, PDO::PARAM_INT );
-
-			$this->executeSQL( $Query );
-		}
-
-
-		// ===================================
-		// Duplication des Echelles de Temps.
-		$Request = 'SELECT * FROM ete_echelle_temps WHERE cmp_id = :cmp_id ';
-
-		$Query = $this->prepareSQL( $Request );
-
-		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
-
-		$this->executeSQL( $Query );
-
-		foreach( $Query->fetchAll( PDO::FETCH_CLASS ) as $Occurrence ) {
-			$Request = 'INSERT INTO ete_echelle_temps
-				(cmp_id, ete_poids, ete_nom_code) VALUES
-				(:cmp_id, :ete_poids, :ete_nom_code) ';
-
-			$Query = $this->prepareSQL( $Request );
-
-			$this->bindSQL( $Query, ':cmp_id', $cmp_id_new, PDO::PARAM_INT );
-			$this->bindSQL( $Query, ':ete_poids', $Occurrence->ete_poids, PDO::PARAM_INT );
-			$this->bindSQL( $Query, ':ete_nom_code', $Occurrence->ete_nom_code, PDO::PARAM_STR, 60 );
+			$this->bindSQL( $Query, ':ppr_id_cpca', $Occurrence->ppr_id_cpca, PDO::PARAM_INT );
+			$this->bindSQL( $Query, ':cmen_date_entretien_cpca', $Occurrence->cmen_date_entretien_cpca, PDO::PARAM_STR, L_CMP_DATE );
+			$this->bindSQL( $Query, ':ppr_id_validation', $Occurrence->ppr_id_validation, PDO::PARAM_INT );
+			$this->bindSQL( $Query, ':cmen_date_validation', $Occurrence->cmen_date_validation, PDO::PARAM_STR, L_CMP_DATE );
+			$this->bindSQL( $Query, ':cmen_effectif_total', $Occurrence->cmen_effectif_total, PDO::PARAM_INT );
 			
 			$this->executeSQL( $Query );
 		}
@@ -1379,6 +1350,32 @@ WHERE act.cmp_id = :cmp_id ';
 
 		foreach( $Query->fetchAll( PDO::FETCH_CLASS ) as $Occurrence ) {
 			$objActivites->dupliquerActivite($Occurrence->act_id, NULL, TRUE, TRUE, TRUE, TRUE, TRUE, $cmp_id_new);
+		}
+
+
+		// ===================================
+		// Duplication des Parties Prenantes.
+		$Request = 'SELECT * FROM ppac_ppr_act WHERE cmp_id = :cmp_id ';
+		
+		$Query = $this->prepareSQL( $Request );
+		
+		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
+		
+		$this->executeSQL( $Query );
+		
+		foreach( $Query->fetchAll( PDO::FETCH_CLASS ) as $Occurrence ) {
+			$Request = 'INSERT INTO ppac_ppr_act
+				(ppr_id, act_id, cmp_id, ppac_description) VALUES
+				(:ppr_id, :act_id, :cmp_id, :ppac_description) ';
+
+			$Query = $this->prepareSQL( $Request );
+
+			$this->bindSQL( $Query, ':ppr_id', $Occurrence->ppr_id, PDO::PARAM_INT );
+			$this->bindSQL( $Query, ':act_id', $Occurrence->act_id, PDO::PARAM_INT );
+			$this->bindSQL( $Query, ':cmp_id', $cmp_id_new, PDO::PARAM_INT );
+			$this->bindSQL( $Query, ':ppac_description', $Occurrence->ppac_description, PDO::PARAM_LOB );
+
+			$this->executeSQL( $Query );
 		}
 
 
@@ -1789,18 +1786,19 @@ ORDER BY ent.ent_nom, ppr.ppr_prenom, ppr.ppr_nom ';
 		 * \return Renvoi TRUE si la cohérence est trouvée, sinon renvoie FALSE. Lève une Exception en cas d'erreur.
 		 */
 
+
 		$Request = 'SELECT frn.frn_nom, frn.frn_description, tfr.tfr_nom_code,
-	ent.ent_nom, ent.ent_description,
-	ete.ete_poids, ete.ete_nom_code,
-	acfr.acfr_consequence_indisponibilite, acfr.acfr_palliatif_tiers,
-	STRING_AGG( act.act_nom, \',<br>\' ) AS "act_nom"
-FROM acfr_act_frn AS "acfr"
-LEFT JOIN act_activites AS "act"  ON acfr.act_id = act.act_id
-LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = acfr.frn_id
-LEFT JOIN tfr_types_fournisseur AS "tfr" ON tfr.tfr_id = frn.tfr_id
-LEFT JOIN ent_entites AS "ent" ON ent.ent_id = act.ent_id
-LEFT JOIN ete_echelle_temps AS "ete" ON ete.ete_id = acfr.ete_id
-WHERE act.cmp_id = :cmp_id ';
+			ent.ent_nom, ent.ent_description,
+			ete.ete_poids, ete.ete_nom_code,
+			acfr.acfr_consequence_indisponibilite, acfr.acfr_palliatif_tiers,
+			STRING_AGG( act.act_nom || \'###\'||act.act_id, \',<br>\' ORDER BY ent_nom, act_nom ) AS "act_nom"
+			FROM acfr_act_frn AS "acfr"
+			LEFT JOIN act_activites AS "act"  ON acfr.act_id = act.act_id
+			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = acfr.frn_id
+			LEFT JOIN tfr_types_fournisseur AS "tfr" ON tfr.tfr_id = frn.tfr_id
+			LEFT JOIN ent_entites AS "ent" ON ent.ent_id = act.ent_id
+			LEFT JOIN ete_echelle_temps AS "ete" ON ete.ete_id = acfr.ete_id
+			WHERE act.cmp_id = :cmp_id ';
 
 		if ( $dmia != '*' ) {
 			$Request .= 'AND acfr.ete_id = :ete_id ';

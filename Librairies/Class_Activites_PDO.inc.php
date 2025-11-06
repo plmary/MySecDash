@@ -271,46 +271,52 @@ class Activites extends HBL_Connexioneur_BD {
 			// ===============================================================================
 			// Création de la nouvelle Activité à partir des informations de celle d'origine.
 			$Request = 'INSERT INTO act_activites 
-				(ent_id, cmp_id, ppr_id_responsable, ppr_id_suppleant, act_nom, act_teletravail, act_description, ';
-
-			if ( $flag_dmia == TRUE ) {
-				$Request .= 'act_justification_dmia, ';
-			}
-
-			$Request .= 'act_dependances_internes_amont, act_dependances_internes_aval, act_effectifs_en_nominal, act_effectifs_a_distance) VALUES
-				(:ent_id, :cmp_id, :ppr_id_responsable, :ppr_id_suppleant, :act_nom, :act_teletravail, :act_description, ';
-
-			if ( $flag_dmia == TRUE ) {
-				$Request .= ':act_justification_dmia, ';
-			}
-
-			$Request .= ':act_dependances_internes_amont, :act_dependances_internes_aval,
-				 :act_effectifs_en_nominal, :act_effectifs_a_distance) ';
+				(ent_id, cmp_id, ppr_id_responsable, ppr_id_suppleant, act_nom, act_teletravail, act_effectifs_en_nominal, act_taux_occupation, 
+				act_effectifs_a_distance, act_justification_dmia, act_description, act_dependances_internes_amont, act_dependances_internes_aval,
+				act_description_entraides, act_strategie_montee_en_charge) VALUES
+				(:ent_id, :cmp_id, :ppr_id_responsable, :ppr_id_suppleant, :act_nom, :act_teletravail, :act_effectifs_en_nominal, :act_taux_occupation,
+				:act_effectifs_a_distance, :act_justification_dmia, :act_description, :act_dependances_internes_amont, :act_dependances_internes_aval,
+				:act_description_entraides, :act_strategie_montee_en_charge) ';
 
 			$Query = $this->prepareSQL( $Request );
 
 			$this->bindSQL( $Query, ':ent_id', $O_Activite->ent_id, PDO::PARAM_INT );
+
 			if ( $n_cmp_id == NULL ) {
 				$this->bindSQL( $Query, ':cmp_id', $O_Activite->cmp_id, PDO::PARAM_INT );
 			} else {
 				$this->bindSQL( $Query, ':cmp_id', $n_cmp_id, PDO::PARAM_INT );
 			}
+
 			$this->bindSQL( $Query, ':ppr_id_responsable', $O_Activite->ppr_id_responsable, PDO::PARAM_INT );
+
 			$this->bindSQL( $Query, ':ppr_id_suppleant', $O_Activite->ppr_id_suppleant, PDO::PARAM_INT );
+
 			if ( $n_act_nom == NULL ) {
 				$this->bindSQL( $Query, ':act_nom', $O_Activite->act_nom, PDO::PARAM_STR, L_NOM );
 			} else {
 				$this->bindSQL( $Query, ':act_nom', $n_act_nom, PDO::PARAM_STR, L_NOM );
 			}
+
 			$this->bindSQL( $Query, ':act_teletravail', $O_Activite->act_teletravail, PDO::PARAM_BOOL );
-			$this->bindSQL( $Query, ':act_description', $O_Activite->act_description, PDO::PARAM_LOB );
-			if ( $flag_dmia == TRUE ) {
-				$this->bindSQL( $Query, ':act_justification_dmia', $O_Activite->act_justification_dmia, PDO::PARAM_LOB );
-			}
-			$this->bindSQL( $Query, ':act_dependances_internes_amont', $O_Activite->act_dependances_internes_amont, PDO::PARAM_LOB );
-			$this->bindSQL( $Query, ':act_dependances_internes_aval', $O_Activite->act_dependances_internes_aval, PDO::PARAM_LOB );
+
 			$this->bindSQL( $Query, ':act_effectifs_en_nominal', $O_Activite->act_effectifs_en_nominal, PDO::PARAM_INT );
+
+			$this->bindSQL( $Query, ':act_taux_occupation', $O_Activite->act_taux_occupation, PDO::PARAM_INT );
+
 			$this->bindSQL( $Query, ':act_effectifs_a_distance', $O_Activite->act_effectifs_a_distance, PDO::PARAM_INT );
+
+			$this->bindSQL( $Query, ':act_justification_dmia', $O_Activite->act_justification_dmia, PDO::PARAM_LOB );
+
+			$this->bindSQL( $Query, ':act_description', $O_Activite->act_description, PDO::PARAM_LOB );
+
+			$this->bindSQL( $Query, ':act_dependances_internes_amont', $O_Activite->act_dependances_internes_amont, PDO::PARAM_LOB );
+
+			$this->bindSQL( $Query, ':act_dependances_internes_aval', $O_Activite->act_dependances_internes_aval, PDO::PARAM_LOB );
+
+			$this->bindSQL( $Query, ':act_description_entraides', $O_Activite->act_description_entraides, PDO::PARAM_LOB );
+
+			$this->bindSQL( $Query, ':act_strategie_montee_en_charge', $O_Activite->act_strategie_montee_en_charge, PDO::PARAM_LOB );
 
 			$this->executeSQL( $Query );
 
@@ -351,7 +357,7 @@ class Activites extends HBL_Connexioneur_BD {
 					} else {
 						$this->bindSQL( $Query, ':cmp_id', $n_cmp_id, PDO::PARAM_INT );
 					}
-					
+
 					$this->executeSQL( $Query );
 				}
 			}
@@ -1790,20 +1796,23 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 *
 		 * \return Renvoi l'occurrence listant les associations du Site ou FALSE si pas d'entité. Lève une Exception en cas d'erreur.
 		 */
-		$Request = 'SELECT app.*, frn.*, acap.act_id AS "associe", acap.ete_id_dima, acap.ete_id_pdma, 
+		$Request = 'SELECT app.*, frn.*, acap.act_id AS "associe", acap.ete_id_dima, acap.ete_id_pdma, scap.ete_id_dima_dsi, scap.ete_id_pdma_dsi, 
 			acap.acap_donnees, acap.acap_palliatif, acap.acap_hebergement, acap.acap_niveau_service
 			FROM app_applications AS "app"
 			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id
 			LEFT JOIN
 				(SELECT app_id, act_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif, acap_hebergement, acap_niveau_service
 					FROM acap_act_app WHERE act_id = :act_id) AS "acap" ON acap.app_id = app.app_id
+			LEFT JOIN act_activites AS "act" ON act.act_id = acap.act_id
+			LEFT JOIN scap_sct_app AS "scap" ON scap.app_id = app.app_id AND scap.sct_id = :sct_id
 			ORDER BY acap.act_id, app.app_nom ';
 
 
 		$Query = $this->prepareSQL( $Request );
 
 		$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
-
+		$this->bindSQL( $Query, ':sct_id', $_SESSION['s_sct_id'], PDO::PARAM_INT );
+		
 		$this->executeSQL( $Query );
 
 		if ( $this->RowCount == 0 ) {
@@ -1995,19 +2004,17 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 
 		if ( $_SESSION['idn_super_admin'] === TRUE ) {
 			$Request = 'SELECT ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description, COUNT(DISTINCT act_id) AS "total_activites"
-				FROM cmen_cmp_ent AS "cmen"
-				LEFT JOIN ent_entites AS "ent" ON ent.ent_id = cmen.ent_id
-				LEFT JOIN act_activites AS "act" ON act.ent_id = ent.ent_id
-				WHERE cmen.cmp_id = :cmp_id
+				FROM act_activites AS "act"
+				LEFT JOIN ent_entites AS "ent" ON ent.ent_id = act.ent_id
+				WHERE act.cmp_id = :cmp_id
 				GROUP BY ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description
 				ORDER BY ent_nom ';
 		} else {
 			$Request = 'SELECT ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description, COUNT(DISTINCT act_id) AS "total_activites"
 				FROM iden_idn_ent AS "iden"
-				LEFT JOIN cmen_cmp_ent AS "cmen" ON cmen.ent_id = iden.ent_id
-				LEFT JOIN ent_entites AS "ent" ON ent.ent_id = cmen.ent_id
-				LEFT JOIN act_activites AS "act" ON act.ent_id = ent.ent_id
-				WHERE iden.idn_id = :idn_id AND cmen.cmp_id = :cmp_id
+				LEFT JOIN act_activites AS "act" ON act.ent_id = iden.ent_id
+				LEFT JOIN ent_entites AS "ent" ON ent.ent_id = iden.ent_id
+				WHERE iden.idn_id = :idn_id AND act.cmp_id = :cmp_id
 				GROUP BY ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description
 				ORDER BY ent_nom ';
 		}

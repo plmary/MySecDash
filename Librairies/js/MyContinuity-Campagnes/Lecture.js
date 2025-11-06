@@ -226,7 +226,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 			Corps += '<ul class="nav nav-tabs">' +
 				'<li><a id="lister_chk_entites" class="nav-link" href="#">' + reponse[ 'L_Entites'] + '</a></li>' +
 				'<li><a id="lister_chk_sites" class="nav-link" href="#">' + reponse[ 'L_Sites'] + '</a></li>' +
-				'<li><a id="lister_chk_echelle_temps" class="nav-link" href="#">' + reponse[ 'L_Echelle_Temps'] + '</a></li>' +
+				//'<li><a id="lister_chk_echelle_temps" class="nav-link" href="#">' + reponse[ 'L_Echelle_Temps'] + '</a></li>' +
 				'<li><a id="lister_chk_matrice_impacts" class="nav-link" href="#">' + reponse[ 'L_Matrice_Impacts'] + '</a></li>' +
 				'</ul>' +
 

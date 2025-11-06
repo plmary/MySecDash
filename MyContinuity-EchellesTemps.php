@@ -53,11 +53,6 @@ switch( $Action ) {
 		} else {
 			$_SESSION['s_sct_id'] = $sct_id = $Liste_Societes[0]->sct_id;
 		}
-
-		$Liste_Campagnes = $objCampagnes->rechercherCampagnes($sct_id, 'cmp_date-desc');
-		if ($Liste_Campagnes != '' && $Liste_Campagnes != []) {
-			$_SESSION['s_cmp_id'] = $Liste_Campagnes[0]->cmp_id;
-		}
 	} else {
 		$Liste_Societes = $objSocietes->rechercherSocietes('', '', $_SESSION['idn_id']);
 		if ( isset($_SESSION['s_sct_id']) ) {
@@ -65,18 +60,6 @@ switch( $Action ) {
 		} else {
 			$sct_id = $Liste_Societes[0]->sct_id;
 		}
-
-		$Liste_Campagnes = $objCampagnes->rechercherCampagnes($sct_id, 'cmp_date-desc');
-		if ( ! isset($_SESSION['s_cmp_id']) ) {
-			$_SESSION['s_cmp_id'] = $Liste_Campagnes[0]->cmp_id;
-		}
-	}
-
-	$Choix_Campagnes['id'] = 's_cmp_id';
-	$Choix_Campagnes['libelle'] = $L_Campagnes;
-
-	foreach( $Liste_Campagnes AS $Campagne ) {
-		$Choix_Campagnes['options'][] = array('id' => $Campagne->cmp_id, 'nom' => $Campagne->cmp_date );
 	}
 
 	if ( $Droit_Ajouter === TRUE ) {
@@ -89,7 +72,7 @@ switch( $Action ) {
 
 	print( $PageHTML->construireEnteteHTML( $L_Gestion_Echelles_Temps, $Fichiers_JavaScript ) .
 		$PageHTML->construireNavbarJson('Logo-MyContinuity.svg', 'nav-items.json') .
-		$PageHTML->construireTitreEcran( $L_Gestion_Echelles_Temps, $Liste_Societes, $Boutons_Alternatifs, $Choix_Campagnes )
+		$PageHTML->construireTitreEcran( $L_Gestion_Echelles_Temps, $Liste_Societes, $Boutons_Alternatifs )
 	);
 
 
@@ -125,7 +108,7 @@ switch( $Action ) {
 
 	if ( $Droit_Lecture === TRUE ) {
 		if ( isset($_POST['ete_id']) and $_POST['ete_id'] != '') {
-			$EchelleTemps = $objEchellesTemps->rechercherEchellesTemps( $_SESSION['s_cmp_id'], '', $_POST['ete_id'] );
+			$EchelleTemps = $objEchellesTemps->rechercherEchellesTemps( $_SESSION['s_sct_id'], '', $_POST['ete_id'] );
 			$Libelles['EchelleTemps'] = $EchelleTemps[0];
 		}
 	}
@@ -325,8 +308,8 @@ switch( $Action ) {
 		
 		try {
 			$Texte_HTML = '';
-			if ( isset( $_SESSION['s_cmp_id'] ) && $_SESSION['s_cmp_id'] != '' ) {
-				$ListeEchellesTemps = $objEchellesTemps->rechercherEchellesTemps( $_SESSION['s_cmp_id'], $Trier );
+			if ( isset( $_SESSION['s_sct_id'] ) && $_SESSION['s_sct_id'] != '' ) {
+				$ListeEchellesTemps = $objEchellesTemps->rechercherEchellesTemps( $_SESSION['s_sct_id'], $Trier );
 				$Total = $objEchellesTemps->RowCount;
 
 				foreach ($ListeEchellesTemps as $Occurrence) {

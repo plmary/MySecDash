@@ -312,7 +312,7 @@ switch( $Action ) {
 			$Liste_Niveaux_Impact_Poids[$Element->nim_poids] = $Element;
 		}
 		
-		$Liste_Echelles_Temps = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_cmp_id']);
+		$Liste_Echelles_Temps = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']);
 		$Liste_Echelles_Temps_Poids = [];
 		foreach ($Liste_Echelles_Temps as $Element) {
 			$Liste_Echelles_Temps_Poids[$Element->ete_poids] = $Element;
@@ -436,7 +436,17 @@ switch( $Action ) {
 					$_ete_poids = '';
 				}
 
-				if ($_Activites_Detaillees != '') { $_Activites_Detaillees .= ',<br>'; }
+				if ($_Activites_Detaillees != '') {
+					$_Activites_Detaillees .= ',<br>';
+				}
+
+				$t_act_nom = explode('+++', $_act_nom);
+				$_act_nom = '<span class="fw-lighter fst-italic">' . $t_act_nom[0];
+				if ($t_act_nom[1] != '') {
+					$_act_nom .= ' (' . $t_act_nom[1] . ')';
+				}
+				$_act_nom .= '</span> <span class="fst-normal">' . $t_act_nom[2] . '</span>';
+
 				$_Activites_Detaillees .= $_act_nom . ' (' . $_nim_poids . $_ete_poids . ')';
 			}
 
@@ -637,7 +647,7 @@ switch( $Action ) {
 	if ( $Droit_Lecture === TRUE ) {
 		$Entite = $objEntites->detaillerEntite($_SESSION['s_ent_id']);
 		$Activites = $objActivites->rechercherActivites($_SESSION['s_cmp_id'], $_SESSION['s_ent_id']);
-		$Liste_EchellesTemps = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_cmp_id']);
+		$Liste_EchellesTemps = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']);
 		$Liste_Niveaux_Impact = $objCampagnes->rechercherNiveauxImpactCampagne( $_SESSION['s_cmp_id'] );
 		$Liste_Types_Impact = $objCampagnes->rechercherTypesImpactCampagne( $_SESSION['s_cmp_id'] );
 		$Liste_Matrice_Impacts = $objMatriceImpacts->rechercherMatriceImpactsParID( $_SESSION['s_cmp_id'] );
@@ -876,7 +886,7 @@ switch( $Action ) {
 				// Affichage du niveau retenu.
 				$_Row_2 .= '<td class="border border-secondary-subtle cellule-echelle" id="echelle-1-'.$_EchelleTemps->ete_id.'" ' .
 				'data-ete_id="'.$_EchelleTemps->ete_id.'" ' .
-				'data-cmp_id="'.$_EchelleTemps->cmp_id.'" ' .
+				'data-sct_id="'.$_EchelleTemps->sct_id.'" ' .
 				'data-ete_poids="'.$_EchelleTemps->ete_poids.'" ' .
 				$Poids_Niveau_Impact .
 				$Couleur_Echelle .

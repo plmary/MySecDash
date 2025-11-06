@@ -34,9 +34,12 @@ $Format_Colonnes[ 'Prefixe' ] = 'SCT';
 $Format_Colonnes[ 'Fonction_Ouverture' ] = 'ouvrirChamp';
 $Format_Colonnes[ 'Id' ] = array( 'nom' => 'sct_id' );
 $Format_Colonnes[ 'Colonnes' ][] = array(
-	'nom' => 'sct_nom', 'titre' => $L_Societe, 'taille' => '6', 'maximum' => '100',
-	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'label', 'type' => 'input', 'modifiable' => 'oui' );
-$Format_Colonnes[ 'Actions' ] = array( 'taille' => '6', 'titre' => $L_Actions,
+	'nom' => 'sct_nom', 'titre' => $L_Societe, 'taille' => '4', 'maximum' => '100',
+	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'sct_nom', 'type' => 'input', 'modifiable' => 'oui' );
+$Format_Colonnes[ 'Colonnes' ][] = array(
+	'nom' => 'sct_description', 'titre' => $L_Description, 'taille' => '6',
+	'triable' => 'oui', 'tri_actif' => 'oui', 'sens_tri' => 'sct_description', 'type' => 'textarea', 'modifiable' => 'oui' );
+$Format_Colonnes[ 'Actions' ] = array( 'taille' => '2', 'titre' => $L_Actions,
 	'boutons' => array( 'modifier' => $Droit_Modifier, 'supprimer' => $Droit_Supprimer ) );
 
 

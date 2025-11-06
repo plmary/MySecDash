@@ -186,7 +186,7 @@ switch( $Action ) {
 			//$Libelles['Liste_Matrice_Impacts'] = $objCampagnes->rechercherMatriceImpactsCampagne( $_POST['cmp_id'] );
 			$Libelles['Liste_Entites'] = $objCampagnes->rechercherEntitesAssocieesCampagne( $_SESSION['s_sct_id'], $_POST['cmp_id'] );
 			$Libelles['Liste_Sites'] = $objCampagnes->rechercherSitesCampagne( $_SESSION['s_sct_id'], $_POST['cmp_id'] );
-			$Libelles['Liste_Echelle_Temps'] = $objCampagnes->rechercherEchelleTempsCampagne( $_POST['cmp_id'] );
+			$Libelles['Liste_Echelle_Temps'] = $objCampagnes->rechercherEchelleTemps( $_SESSION['s_sct_id'] );
 //			$Libelles['Liste_Applications'] = $objCampagnes->rechercherApplicationsCampagne( $_POST['cmp_id'] );
 //			$Libelles['Liste_Fournisseurs'] = $objCampagnes->rechercherFournisseursCampagne( $_POST['cmp_id'] );
 			$Libelles['Liste_Types_Fournisseur'] = $objFournisseurs->rechercherTypesFournisseur();
@@ -295,7 +295,7 @@ switch( $Action ) {
 	$Nom_Fichier = 'Restitution - '.$_POST['sct_nom'].' - '.$_POST['cmp_date'].' - '.$_Nom_Entite.' '.date('[Y-m-d - H\hi\ms\s]');
 
 	$Liste_Entites = $objCampagnes->rechercherEntitesCampagne($_POST['cmp_id'], $_ID_Entite);
-	$Liste_EchellesTemps = $objEchellesTemps->rechercherEchellesTemps($_POST['cmp_id']);
+	$Liste_EchellesTemps = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']);
 	$Liste_Niveaux_Impact = $objCampagnes->rechercherNiveauxImpactCampagne( $_POST['cmp_id'] );
 	$Liste_Types_Impact = $objCampagnes->rechercherTypesImpactCampagne( $_POST['cmp_id'] );
 	$Liste_Matrice_Impacts = $objMatriceImpacts->rechercherMatriceImpactsParID( $_POST['cmp_id'] );
@@ -657,7 +657,7 @@ switch( $Action ) {
 			$Liste_Niveaux_Impact_Poids[$Element->nim_poids] = $Element;
 		}
 		
-		$Liste_Echelles_Temps = $objEchellesTemps->rechercherEchellesTemps($_POST['cmp_id']);
+		$Liste_Echelles_Temps = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']);
 		$Liste_Echelles_Temps_Poids = [];
 		foreach ($Liste_Echelles_Temps as $Element) {
 			$Liste_Echelles_Temps_Poids[$Element->ete_poids] = $Element;
@@ -787,7 +787,20 @@ switch( $Action ) {
 				$_act_nom = $line[0];
 				$_act_id = $line[1];
 
-				$textrun->addText($_act_nom . ' ', $fontTexteTableau, $styleParagrapheTableau);
+				// Découpage du nom de l'activité
+				$t_act_nom = explode('+++', $_act_nom);
+
+				$textrun->addText($t_act_nom[0] . ' ',
+					['size' => 9, 'italic' => true],
+					$styleParagrapheTableau);
+				if ($t_act_nom[1] != '') {
+					$textrun->addText('(' . $t_act_nom[1] . ') ',
+						['size' => 9, 'italic' => true],
+						$styleParagrapheTableau);
+				}
+				$textrun->addText($t_act_nom[2] . ' ', $fontTexteTableau, $styleParagrapheTableau);
+
+				//$textrun->addText($_act_nom . ' ', $fontTexteTableau, $styleParagrapheTableau);
 
 				if ( array_key_exists($_act_id, $Liste_Activites_ID) ) {
 					$textrun->addText('(', $fontTexteTableau, $styleParagrapheTableau);
@@ -816,8 +829,20 @@ switch( $Action ) {
 					$_act_nom = $line[0];
 					$_act_id = $line[1];
 
-					$textrun->addText($_act_nom . ' ', $fontTexteTableau, $styleParagrapheTableau);
+					// Découpage du nom de l'activité
+					$t_act_nom = explode('+++', $_act_nom);
 
+					$textrun->addText($t_act_nom[0] . ' ',
+						['size' => 9, 'italic' => true],
+						$styleParagrapheTableau);
+					if ($t_act_nom[1] != '') {
+						$textrun->addText('(' . $t_act_nom[1] . ') ',
+							['size' => 9, 'italic' => true],
+							$styleParagrapheTableau);
+					}
+					$textrun->addText($t_act_nom[2] . ' ', $fontTexteTableau, $styleParagrapheTableau);
+
+					// Ajout de l'impact et du DIMA de l'Activité
 					if ( array_key_exists($_act_id, $Liste_Activites_ID) ) {
 						$textrun->addText('(', $fontTexteTableau, $styleParagrapheTableau);
 
@@ -1240,6 +1265,7 @@ switch( $Action ) {
 					$table->addRow(null, ['tblHeader' => true]);
 	
 					// Affichage du type d'impact retenu
+					$Nom_Type_Impact = '';
 					foreach ($Liste_EchellesTemps as $_EchelleTemps) {
 						if (isset($Liste_DMIA) and $Liste_DMIA != []) {
 							foreach ($Liste_DMIA as $_DetailEchelle) {
@@ -2802,6 +2828,14 @@ switch( $Action ) {
 		// =========================
 		// Gestion des Fournisseurs
 		if ( $_POST['flag_liste_frn'] == 'true' ) {
+			// Affichage des Activités à redémarrer par période.
+			$Liste_Activites = $objActivites->rechercherSyntheseActivites( $_POST['cmp_id'], $_POST['entite_a_editer'], '', 'ete_poids' );
+
+			$Liste_Activites_ID = [];
+			foreach( $Liste_Activites as $Occurrence ) {
+				$Liste_Activites_ID[$Occurrence->act_id] = $Occurrence;
+			}
+
 			// Affichage des Fournisseurs de cette Campagne.
 			$Liste_Fournisseurs = $objCampagnes->rechercherFournisseursCampagne( $_POST['cmp_id'], '*', $_POST['entite_a_editer'] );
 
@@ -2826,7 +2860,16 @@ switch( $Action ) {
 
 			$activeWorksheet->setCellValue('D'.$Ligne, $L_Activites);
 			$activeWorksheet->getStyle('D'.$Ligne)->applyFromArray($fontTitreTableau);
-
+			
+			$activeWorksheet->setCellValue('E'.$Ligne, $L_DMIA);
+			$activeWorksheet->getStyle('E'.$Ligne)->applyFromArray($fontTitreTableau);
+			
+			$activeWorksheet->setCellValue('F'.$Ligne, $L_Consequence_Indisponibilite);
+			$activeWorksheet->getStyle('F'.$Ligne)->applyFromArray($fontTitreTableau);
+			
+			$activeWorksheet->setCellValue('G'.$Ligne, $L_Palliatif);
+			$activeWorksheet->getStyle('G'.$Ligne)->applyFromArray($fontTitreTableau);
+			
 			$Ligne += 1;
 
 			foreach($Liste_Fournisseurs as $Fournisseur) {
@@ -2835,40 +2878,100 @@ switch( $Action ) {
 				} else {
 					$fontCourant = $fontTexteTableau;
 				}
-				
+
 				$activeWorksheet->setCellValue('A'.$Ligne, $Fournisseur->frn_nom);
 				$activeWorksheet->getStyle('A'.$Ligne)->applyFromArray($fontCourant);
-				
+
 				$activeWorksheet->setCellValue('B'.$Ligne, $Fournisseur->tfr_nom_code);
 				$activeWorksheet->getStyle('B'.$Ligne)->applyFromArray($fontCourant);
-				
+
 				$Nom_Complet = $Fournisseur->ent_nom;
 				if ( $Fournisseur->ent_description != '' ) {
 					$Nom_Complet .= ' (' . $Fournisseur->ent_description . ')';
 				}
-				
+
 				$activeWorksheet->setCellValue('C'.$Ligne, $Nom_Complet);
 				$activeWorksheet->getStyle('C'.$Ligne)->applyFromArray($fontCourant);
-				
-				$textlines = explode('<br>', $Fournisseur->act_nom);
+
 				$richText = new \PhpOffice\PhpSpreadsheet\RichText\RichText();
-				$textrun = $richText->createTextRun(array_shift($textlines));
-				
-				foreach($textlines as $line) {
-					$textrun = $richText->createTextRun("\n");
-					$textrun = $richText->createTextRun($line);
+
+				$textlines = explode(',<br>', $Fournisseur->act_nom);
+
+				$line = explode('###', array_shift($textlines));
+				$_act_nom = $line[0];
+				$_act_id = $line[1];
+
+				$textRun = $richText->createTextRun($_act_nom . ' ');
+
+				if ( array_key_exists($_act_id, $Liste_Activites_ID) ) {
+					$textRun = $richText->createTextRun('(');
+
+					$_nim_poids = $Liste_Activites_ID[$_act_id]->nim_poids;
+
+					$textRun = $richText->createTextRun($_nim_poids . ' - ' . $Liste_Niveaux_Impact_Poids[$_nim_poids]->nim_nom_code);
+					$textRun->getFont()->setBold(true);
+					$textRun->getFont()->getColor()->setARGB('FF'.$Liste_Niveaux_Impact_Poids[$_nim_poids]->nim_couleur);
+
+					if ( $_nim_poids > 2 ) {
+						$_ete_poids = $Liste_Activites_ID[$_act_id]->ete_poids;
+						if ($_ete_poids != '') {
+							$textRun = $richText->createTextRun(' / ' . $Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
+							$textRun->getFont()->setBold(true);
+						}
+					}
+
+					$textRun = $richText->createTextRun(')');
 				}
+
+				foreach($textlines as $line) {
+					$line = explode('###', $line);
+					$_act_nom = $line[0];
+					$_act_id = $line[1];
+
+					$textRun = $richText->createTextRun("\n");
+					$textRun = $richText->createTextRun($_act_nom . ' ');
+
+					if ( array_key_exists($_act_id, $Liste_Activites_ID) ) {
+						$textRun = $richText->createTextRun('(');
+
+						$_nim_poids = $Liste_Activites_ID[$_act_id]->nim_poids;
+
+						$textRun = $richText->createTextRun($_nim_poids . ' - ' . $Liste_Niveaux_Impact_Poids[$_nim_poids]->nim_nom_code);
+						$textRun->getFont()->setBold(true);
+						$textRun->getFont()->getColor()->setARGB('FF'.$Liste_Niveaux_Impact_Poids[$_nim_poids]->nim_couleur);
+
+						if ( $_nim_poids > 2 ) {
+							$_ete_poids = $Liste_Activites_ID[$_act_id]->ete_poids;
+							if ($_ete_poids != '') {
+								$textRun = $richText->createTextRun(' / ' . $Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
+								$textRun->getFont()->setBold(true);
+							}
+						}
+
+						$textRun = $richText->createTextRun(')');
+					}
+				}
+
 				$activeWorksheet->setCellValue('D'.$Ligne, $richText);
 				$activeWorksheet->getStyle('D'.$Ligne)->applyFromArray($fontCourant);
 				$activeWorksheet->getStyle('D'.$Ligne)->getAlignment()->setWrapText(true);
-				
+
+				$activeWorksheet->setCellValue('E'.$Ligne, $Fournisseur->ete_nom_code);
+				$activeWorksheet->getStyle('E'.$Ligne)->applyFromArray($fontCourant);
+
+				$activeWorksheet->setCellValue('F'.$Ligne, $Fournisseur->acfr_consequence_indisponibilite);
+				$activeWorksheet->getStyle('F'.$Ligne)->applyFromArray($fontCourant);
+
+				$activeWorksheet->setCellValue('G'.$Ligne, $Fournisseur->acfr_palliatif_tiers);
+				$activeWorksheet->getStyle('G'.$Ligne)->applyFromArray($fontCourant);
+
 				$Ligne += 1;
 			}
 
 
 			// ------------------------------------------------------------------
 			// Ajuste la taille des colonnes en fonction du contenu de celles-ci
-			for( $_tmp = 1; $_tmp <= 4; $_tmp++) {
+			for( $_tmp = 1; $_tmp <= 7; $_tmp++) {
 				$LettreColonne1 = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($_tmp);
 				$activeWorksheet->getColumnDimension($LettreColonne1)->setAutoSize(true);
 			}

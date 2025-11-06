@@ -167,7 +167,6 @@ switch( $Action ) {
 				$Libelles['Liste_Campagnes'] = $objCampagnes->rechercherCampagnes( $_SESSION['s_sct_id'], 'cmp_date-desc' );
 				$Libelles['Liste_Entites'] = $objCampagnes->rechercherEntitesAssocieesCampagne( $_SESSION['s_sct_id'], $_POST['cmp_id'] );
 				$Libelles['Liste_Sites'] = $objCampagnes->rechercherSitesCampagne( $_SESSION['s_sct_id'], $_POST['cmp_id'] );
-				$Libelles['Liste_Echelle_Temps'] = $objCampagnes->rechercherEchelleTempsCampagne( $_POST['cmp_id'] );
 				$Libelles['Liste_Types_Fournisseur'] = $objFournisseurs->rechercherTypesFournisseur();
 				$Libelles['Liste_Niveaux_Impact'] = $objCampagnes->rechercherNiveauxImpactCampagne( $_POST['cmp_id'] );
 				$Libelles['Liste_Types_Impact'] = $objCampagnes->rechercherTypesImpactCampagne( $_POST['cmp_id'] );
@@ -391,7 +390,7 @@ switch( $Action ) {
 					
 				$Occurrence->associations = '<button type="button" class="btn btn-warning btn-sm btn-espace btn-entites" title="' . $L_Entites . '">' . sprintf('%02d', $Occurrence->total_ent) . '</button>' .
 					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-sites" title="' . $L_Sites . '">' . sprintf('%02d', $Occurrence->total_sts) . '</button>' .
-					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-echelles-temps" title="' . $L_Echelles_Temps . '">' . sprintf('%02d', $Occurrence->total_ete) . '</button>' .
+//					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-echelles-temps" title="' . $L_Echelles_Temps . '">' . sprintf('%02d', $Occurrence->total_ete) . '</button>' .
 					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-matrices-impacts" title="' . $L_Matrices_Impacts . '">' . sprintf('%02d', $Occurrence->total_mim) . '</button>' .
 					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-activites" title="' . $L_Activites . '">' . sprintf('%02d', $Occurrence->total_act) . '</button>';
 					
@@ -748,7 +747,7 @@ switch( $Action ) {
 				
 				$Occurrence->associations = '<button type="button" class="btn btn-warning btn-sm btn-espace btn-entites" title="' . $L_Entites . '">' . sprintf('%02d', $Occurrence->total_ent) . '</button>' .
 					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-sites" title="' . $L_Sites . '">' . sprintf('%02d', $Occurrence->total_sts) . '</button>' .
-					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-echelles-temps" title="' . $L_Echelles_Temps . '">' . sprintf('%02d', $Occurrence->total_ete) . '</button>' .
+//					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-echelles-temps" title="' . $L_Echelles_Temps . '">' . sprintf('%02d', $Occurrence->total_ete) . '</button>' .
 					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-matrices-impacts" title="' . $L_Matrices_Impacts . '">' . sprintf('%02d', $Occurrence->total_mim) . '</button>' .
 					'<button type="button" class="btn btn-warning btn-sm btn-espace btn-activites" title="' . $L_Activites . '">' . sprintf('%02d', $Occurrence->total_act) . '</button>';
 					
@@ -786,7 +785,6 @@ switch( $Action ) {
 
 			if ( $Compteurs->total_dma > 0 || $Compteurs->total_sts > 0
 			|| $Compteurs->total_ppr > 0 || $Compteurs->total_mim > 0
-			|| $Compteurs->total_ete > 0
 			|| $Compteurs->total_act > 0 || $Compteurs->total_ent > 0 ) {
 				$CodeHTML .= sprintf( $L_Campagne_Est_Associee, $_POST['libelle'] ) .
 					'<ul style="margin-top: 10px;">';
@@ -826,13 +824,6 @@ switch( $Action ) {
 					$CodeHTML .= '<li><span class="orange_moyen">' . $Compteurs->total_ent . '</span> ' . $Libelle . '</li>';
 				}
 
-				if ( isset( $Compteurs->total_ete ) ) {
-					if ( $Compteurs->total_ete > 1 ) $Libelle = $L_Echelles_Temps;
-					else $Libelle = $L_Echelle_Temps;
-
-					$CodeHTML .= '<li><span class="orange_moyen">' . $Compteurs->total_ete . '</span> ' . $Libelle . '</li>';
-				}
-				
 				if ( isset( $Compteurs->total_app ) ) {
 					if ( $Compteurs->total_app > 1 ) $Libelle = $L_Applications;
 					else $Libelle = $L_Application;

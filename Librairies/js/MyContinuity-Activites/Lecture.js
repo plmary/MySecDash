@@ -1054,7 +1054,8 @@ function ModalAjouterModifier( act_id = '' ) {
 						Associe, reponse['Liste_EchellesTemps'], reponse['L_DMIA'], t_ete_id_dima,
 						reponse['L_PDMA'], t_ete_id_pdma, reponse['L_Palliatif'], Application.acap_donnees,
 						Application.acap_palliatif,
-						reponse['L_Aucun']);
+						reponse['L_Aucun'], Application.ete_id_dima_dsi, Application.ete_id_pdma_dsi,
+						reponse['L_DMIA_SI'], reponse['L_PDMA_SI']);
 				}
 				Corps += '</div> <!-- #liste-donnees -->';
 			}
@@ -1676,7 +1677,7 @@ function afficherMessageCorps(Libelle_Message, Libelle_Bouton) {
 
 function creerOccurrenceApplicationDansListe(ID_Application, Nom_Application, Flag_Selection_Origine,
 	Selection_Actuelle, Liste_EchellesTemps, Libelle_DMIA, ID_DIMA, Libelle_PDMA, ID_PDMA,
-	Libelle_Palliatif, Donnees, Palliatif, Libelle_Aucun) {
+	Libelle_Palliatif, Donnees, Palliatif, Libelle_Aucun, ID_DIMA_DSI, ID_PDMA_DSI, Libelle_DMIA_SI, Libelle_PDMA_SI) {
 	if (Selection_Actuelle != '') {
 		var Champ_Obligatoire = 'required';
 	} else {
@@ -1706,9 +1707,24 @@ function creerOccurrenceApplicationDansListe(ID_Application, Nom_Application, Fl
 		Corps += '<option value="'+EchelleTemps.ete_id+'"'+Selectionne+'>'+EchelleTemps.ete_nom_code+'</option>';
 	}
 
-	Corps += '</select>' +
-		 '</div> <!-- .col-2 -->' +
+	Corps += '</select>';
 
+	ete_libelle = ' ';
+
+	if (ID_DIMA_DSI != '' && ID_DIMA_DSI != null) {
+		for (let EchelleTemps of Liste_EchellesTemps) {
+			if (EchelleTemps.ete_id == ID_DIMA_DSI) {
+				ete_libelle = EchelleTemps.ete_nom_code;
+			}
+		}
+	}
+
+	Corps += '<div class="form-floating mt-2">' +
+		'  <input type="text" class="form-control" id="ID_DIMA_DSI" placeholder="DIMA" value="' + ete_libelle + '" disabled>' +
+		'  <label for="floatingInput">' + Libelle_DMIA_SI + '</label>' +
+		'</div>';
+
+	Corps += '</div> <!-- .col-2 -->' +
 		 '<div class="col-2">' +
 		  '<select id="ete_id_pdma-'+ID_Application+'" class="form-select" data-old="'+ID_PDMA+'"'+Champ_Obligatoire+'>' +
 		  '<option value="">'+Libelle_Aucun+'</option>';
@@ -1723,7 +1739,22 @@ function creerOccurrenceApplicationDansListe(ID_Application, Nom_Application, Fl
 		Corps += '<option value="'+EchelleTemps.ete_id+'"'+Selectionne+'>'+EchelleTemps.ete_nom_code+'</option>';
 	}
 	
-	Corps += '</select>' +
+	Corps += '</select>';
+
+	ete_libelle = ' ';
+
+	if (ID_PDMA_DSI != '' && ID_PDMA_DSI != null) {
+		for (let EchelleTemps of Liste_EchellesTemps) {
+			if (EchelleTemps.ete_id == ID_PDMA_DSI) {
+				ete_libelle = EchelleTemps.ete_nom_code;
+			}
+		}
+	}
+
+	Corps += '<div class="form-floating mt-2">' +
+		'  <input type="text" class="form-control" id="ID_PDMA_DSI" placeholder="PDMA" value="' + ete_libelle + '" disabled>' +
+		'  <label for="floatingInput">' + Libelle_PDMA_SI + '</label>' +
+		'</div>' +
 		 '</div> <!-- .col-2 -->' +
 		 '<div class="col-3">' +
 		  '<textarea class="form-control" type="checkbox" id="acap_donnees-'+ID_Application+'" rows="3">' +

@@ -210,7 +210,7 @@ switch( $Action ) {
 
 		try {
 			$ListeActivites = $objActivites->listerActivitesUtilisateur( $Trier, $_SESSION['s_cmp_id'] );
-			$Liste_EchellesTemps = $objEchellesTemps->rechercherEchellesTemps( $_SESSION['s_cmp_id'] );
+			$Liste_EchellesTemps = $objEchellesTemps->rechercherEchellesTemps( $_SESSION['s_sct_id'] );
 
 			if ( $ListeActivites != [] ) {
 				$_largeur = 100 / count( $Liste_EchellesTemps );

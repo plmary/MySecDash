@@ -119,7 +119,9 @@ $L_Profils = "Profiles";
 $L_Profil = "Profile";
 
 $L_Gestion_Applications = "Applications management";
+$L_Gestion_Applications_SI = "Application management (IT perspective)";
 $L_Applications = 'Applications';
+$L_Applications_SI = 'Applications (IT perspective)';
 $L_Application = "Application";
 
 $L_Gestion_ApplicationsInternes = "Internal application management";
@@ -486,9 +488,11 @@ $L_Details = 'Details';
 
 $L_DMIA_Long = 'Recovery Time Objective';
 $L_DMIA_Court = 'RTO';
+$L_DMIA_SI = 'RTO IT';
 
 $L_PDMA_Long = 'Recovery Point Objective';
 $L_PDMA_Court = 'RPO';
+$L_PDMA_SI = 'RPO IT';
 
 $L_Gestion_Effectifs = 'People management';
 $L_Gestion_Activites = 'Activities management';

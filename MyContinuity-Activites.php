@@ -175,6 +175,8 @@ switch( $Action ) {
 		'L_Besoins_Continuite_Activite' => $L_Besoins_Continuite_Activite,
 		'L_DMIA' => $L_DMIA,
 		'L_PDMA' => $L_PDMA,
+		'L_DMIA_SI' => $L_DMIA_SI,
+		'L_PDMA_SI' => $L_PDMA_SI,
 		'L_Libelle_DMIA' => $L_Libelle_DMIA,
 		'L_Libelle_PDMA' => $L_Libelle_PDMA,
 		'L_Palliatif' => $L_Palliatif,
@@ -207,7 +209,7 @@ switch( $Action ) {
 		'Liste_Civilites' => $objCivilites->rechercherCivilites(),
 		'Liste_Identites' => $objIdentites->rechercherIdentites( $_SESSION['s_sct_id'] ),
 		'Liste_Sites' => $objActivites->rechercherSitesAssociesActivite( $_SESSION['s_cmp_id'], 0 ), //rechercherSitesCampagne( $_SESSION['s_cmp_id'] ),
-		'Liste_EchellesTemps' => $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_cmp_id']),
+		'Liste_EchellesTemps' => $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']),
 		'Liste_Niveaux_Impact' => $objCampagnes->rechercherNiveauxImpactCampagne( $_SESSION['s_cmp_id'] ),
 		'Liste_Types_Impact' => $objCampagnes->rechercherTypesImpactCampagne( $_SESSION['s_cmp_id'] ),
 		'Liste_Matrice_Impacts' => $objMatriceImpacts->rechercherMatriceImpactsParID( $_SESSION['s_cmp_id'] ),
@@ -929,7 +931,7 @@ switch( $Action ) {
 				$Total = $objActivites->RowCount;
 
 				$ListeMatriceImpactParChamp = $objMatriceImpacts->rechercherMatriceImpactsParChamp( $_SESSION['s_cmp_id'], 'nim_poids' );
-				$ListeEchelleTempsParChamp = $objEchellesTemps->rechercherEchellesTempsParChamp( $_SESSION['s_cmp_id'], 'ete_poids' );
+				$ListeEchelleTempsParChamp = $objEchellesTemps->rechercherEchellesTempsParChamp( $_SESSION['s_sct_id'], 'ete_poids' );
 
 				foreach ($ListeActivites as $Occurrence) {
 					if ($Occurrence->nim_poids != NULL && $Occurrence->nim_poids != '') {

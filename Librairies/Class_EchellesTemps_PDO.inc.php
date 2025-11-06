@@ -41,13 +41,13 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 	*/
 		if ( $ete_id == '' ) {
 			$Request = 'INSERT INTO ete_echelle_temps
-				( cmp_id, ete_poids, ete_nom_code ) VALUES
-				( :cmp_id, :ete_poids, :ete_nom_code )';
+				( sct_id, ete_poids, ete_nom_code ) VALUES
+				( :sct_id, :ete_poids, :ete_nom_code )';
 
 			$Query = $this->prepareSQL( $Request );
 		} else {
 			$Request = 'UPDATE ete_echelle_temps SET 
-				cmp_id = :cmp_id,
+				sct_id = :sct_id,
 				ete_poids = :ete_poids,
 				ete_nom_code = :ete_nom_code
 				WHERE ete_id = :ete_id ';
@@ -57,7 +57,7 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 			$this->bindSQL( $Query, ':ete_id', $ete_id, PDO::PARAM_INT );
 		}
 
-		$this->bindSQL( $Query, ':cmp_id', $_SESSION['s_cmp_id'], PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':sct_id', $_SESSION['s_sct_id'], PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':ete_poids', $ete_poids, PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':ete_nom_code', $ete_nom_code, PDO::PARAM_STR, L_ETE_NOM );
 		
@@ -147,7 +147,7 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 	}
 
 
-	public function rechercherEchellesTemps( $cmp_id, $Order = 'ete_poids', $ete_id = '' ) {
+	public function rechercherEchellesTemps( $sct_id, $Order = 'ete_poids', $ete_id = '' ) {
 	/**
 	* Lister les Echelles Temps.
 	*
@@ -155,7 +155,7 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 	* \author Pierre-Luc MARY
 	* \date 2024-02-21
 	*
-	* \param[in] $cmp_id Identification de la Campagne de rattachement
+	* \param[in] $sct_id Identification de la Campagne de rattachement
 	* \param[in] $Order Permet de gérer l'ordre d'affichage
 	* \param[in] $ete_id Permet de limiter la recherche à un élément de l'échelle de temps
 	*
@@ -164,7 +164,7 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 		$Request = 'SELECT
 			ete.*
 			FROM ete_echelle_temps AS "ete"
-			WHERE ete.cmp_id = :cmp_id ';
+			WHERE ete.sct_id = :sct_id ';
 
 		if ($ete_id != '') {
 			$Request .= 'AND ete_id = :ete_id ';
@@ -194,7 +194,7 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 			$this->bindSQL( $Query, ':ete_id', $ete_id, PDO::PARAM_INT ) ;
 		}
 
-		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT ) ;
+		$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT ) ;
 
 		$this->executeSQL( $Query );
 
@@ -202,7 +202,35 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 	}
 
 
-	public function rechercherEchellesTempsParChamp( $cmp_id, $NomChamp = 'ete_id' ) {
+	public function rechercherEchellesTempsSI( $sct_id ) {
+		/**
+		 * Lister les Echelles Temps.
+		 *
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2024-02-21
+		 *
+		 * \param[in] $sct_id Identification de la Société de rattachement
+		 *
+		 * \return Renvoi une liste d'éléments de l'échelle de temps ou une liste vide
+		 */
+		$Request = 'SELECT
+			ete.*
+			FROM ete_echelle_temps AS "ete"
+			WHERE ete.sct_id = :sct_id AND ete.cmp_id = (SELECT sct_id FROM cmp_campagnes AS "cmp" WHERE cmp_date = (SELECT MAX(cmp_date) FROM cmp_campagnes WHERE sct_id = :sct_id))
+			ORDER BY ete_poids ';
+
+		$Query = $this->prepareSQL( $Request );
+
+		$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT ) ;
+
+		$this->executeSQL( $Query );
+
+		return $Query->fetchAll( PDO::FETCH_CLASS );
+	}
+
+
+	public function rechercherEchellesTempsParChamp( $sct_id, $NomChamp = 'ete_id' ) {
 		/**
 		 * Lister les "Echelles de Temps" regrouper par un "Nom de Champ".
 		 *
@@ -210,7 +238,7 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 		 * \author Pierre-Luc MARY
 		 * \date 2024-08-22
 		 *
-		 * \param[in] $cmp_id Identification de la Campagne de rattachement
+		 * \param[in] $sct_id Identification de la Société de rattachement
 		 * \param[in] $NomChamp Nom du champ à utiliser pour regrouper le résultat
 		 *
 		 * \return Renvoi une liste d'éléments de l'échelle de temps ou une liste vide
@@ -218,12 +246,12 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 		$Request = 'SELECT
 			*
 			FROM ete_echelle_temps AS "ete"
-			WHERE ete.cmp_id = :cmp_id
+			WHERE ete.sct_id = :sct_id
 			ORDER BY ete_poids ';
 
 		$Query = $this->prepareSQL( $Request );
 
-		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT ) ;
+		$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT ) ;
 
 		$this->executeSQL( $Query );
 
@@ -305,62 +333,9 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 	}
 
 
-	public function controlerSiCampagneAEchelleTemps( $cmp_id ) {
+	public function initialiserEchelleTempsDefautACampagne( $sct_id ) {
 		/**
-		 * Vérifie si une Campagne à une Echelle de Temps associée.
-		 *
-		 * \license Copyright Loxense
-		 * \author Pierre-Luc MARY
-		 * \date 2024-08-29
-		 *
-		 * \param[in] $cmp_id Identifiant de la Campagne à contrôler
-		 *
-		 * \return Renvoi un tableau (1er élément = flag association, 2ème élément = Date de la Campagne). Lève une Exception en cas d'erreur.
-		 */
-		$Request = 'SELECT cmp_date, COUNT(ete_id) as "total"
-			FROM ete_echelle_temps AS "ete"
-			LEFT JOIN cmp_campagnes AS "cmp" ON cmp.cmp_id = ete.cmp_id
-			WHERE ete.cmp_id = :cmp_id
-			GROUP BY cmp_date ';
-		
-		
-		$Query = $this->prepareSQL( $Request );
-		
-		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
-		
-		$this->executeSQL( $Query );
-		
-		$Resultat = $Query->fetchObject();
-
-		if ( $Resultat == '' ) {
-			$Request = 'SELECT cmp_date
-			FROM cmp_campagnes AS "cmp"
-			WHERE cmp.cmp_id = :cmp_id ';
-			
-			$Query = $this->prepareSQL( $Request );
-			
-			$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
-			
-			$this->executeSQL( $Query );
-			
-			$Resultat = $Query->fetchObject();
-
-			return [FALSE, $Resultat->cmp_date];
-		}
-		
-		if ( $Resultat->total > 0 ) {
-			return [TRUE, $Resultat->cmp_date];
-		} elseif ( $Resultat->total == 0 ) {
-			return [FALSE, $Resultat->cmp_date];
-		} else {
-			return [-1, 'internal error'];
-		}
-	}
-	
-	
-	public function initialiserEchelleTempsDefautACampagne( $cmp_id ) {
-		/**
-		 * Initialise une Echelle de Temps par défaut à une Campagne.
+		 * Initialise une Echelle de Temps par défaut à une Société.
 		 *
 		 * \license Copyright Loxense
 		 * \author Pierre-Luc MARY
@@ -370,27 +345,28 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 		 *
 		 * \return Renvoi TRUE si l'échelle de temps par défaut à bien était créés. Lève une Exception en cas d'erreur.
 		 */
-		$Request = 'INSERT INTO ete_echelle_temps (cmp_id, ete_poids, ete_nom_code) VALUES
-			(:cmp_id, 1, \'4 heures\'),
-			(:cmp_id, 2, \'1 jour\'),
-			(:cmp_id, 3, \'2 jours\'),
-			(:cmp_id, 4, \'3 jours\'),
-			(:cmp_id, 5, \'1 semaine\'),
-			(:cmp_id, 6, \'2 semaines\'),
-			(:cmp_id, 7, \'1 mois\') ';
-		
-		
+
+		$Request = 'INSERT INTO ete_echelle_temps (sct_id, ete_poids, ete_nom_code) VALUES
+			(:sct_id, 1, \'< 1 heure\'),
+			(:sct_id, 2, \'1/2 jour\'),
+			(:sct_id, 3, \'1 jour\'),
+			(:sct_id, 4, \'2 jours\'),
+			(:sct_id, 5, \'3 jours\'),
+			(:sct_id, 6, \'1 semaine\'),
+			(:sct_id, 7, \'2 semaines\'),
+			(:sct_id, 8, \'1 mois\') ';
+
 		$Query = $this->prepareSQL( $Request );
-		
-		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
-		
+
+		$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT );
+
 		$this->executeSQL( $Query );
-		
+
 		return TRUE;
 	}
 	
 
-	public function totalEchellesTemps() {
+	public function totalEchellesTemps( $sct_id = '' ) {
 	/**
 	* Calcul le nombre total d'Echelles de Temps.
 	*
@@ -405,12 +381,20 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 		 'count(*) AS total ' .
 		 'FROM ete_echelle_temps ' ;
 
+		if ( $sct_id != '' ) {
+			$Request .= 'WHERE sct_id = :sct_id ';
+		}
+
 		$Query = $this->prepareSQL( $Request );
 
+		if ( $sct_id != '' ) {
+			$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT );
+		}
+
 		$this->executeSQL( $Query );
-		
+
 		$Occurrence = $Query->fetchObject() ;
-		
+
 		return $Occurrence->total;
 	}
 	

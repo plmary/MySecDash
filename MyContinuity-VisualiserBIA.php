@@ -897,7 +897,7 @@ switch( $Action ) {
 				// Affichage du type d'impact retenu
 			}
 
-			$Corps_HTML .= '<table class="table-visu table-bordered">' .
+			$Corps_HTML .= '<table class="table-visu table-bordered" style="margin-bottom: 9px">' .
 				'<thead class="text-center">' .
 				'<tr><th colspan="' . $Nombre_Echelle . '" class="bg-gris-normal">' . $L_DMIA . '</th></tr>' .
 				'<tr>' . $_Row_1 . '</tr></thead>' .
@@ -905,9 +905,11 @@ switch( $Action ) {
 				'<tr>' . $_Row_2 . '</tr>' .
 				'<tr>' . $_Row_3 . '</tr>' .
 				'</tbody>' .
-				'</table>';
-
-
+				'</table>' .
+				'<table class="table-visu table-bordered" style="margin-top: 0px; margin-bottom: 30px">' .
+				'<tr><td width="20%" class="bg-gris-clair"><i class="bi bi-info-circle-fill" style="font-size: 20px; color: cornflowerblue;"></i>&nbsp;' . $L_Justification_DMIA . '</td><td width="80%" class="fw-bold">' . $Activite->act_justification_dmia . '</td></tr>' .
+				'</table>' .
+				
 			// =============================
 			// Personnes Clés de l'Activité
 			$Corps_HTML .= '<table class="table-visu table-bordered">' .

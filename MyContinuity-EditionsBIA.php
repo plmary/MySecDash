@@ -1277,11 +1277,28 @@ switch( $Action ) {
 	
 						$table->addCell($_largeur_colonne)->addText($Nom_Type_Impact, $fontTexteTableau, array_merge($styleParagrapheTableau, ['alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER]));
 					}
-	
-	
+
+					// ----------------------
+					// Justification du DMIA
+					$section->addTextBreak(1);
+
+/*					$table = $section->addTable(['borderSize' => 6, 'borderColor' => '006699', 'topFromText' => 20,
+						'bottomFromText' => 60, 'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER,
+						'cellMargin' => 160]);*/
+
+					$table = $section->addTable(['borderSize' => 6, 'borderColor' => '006699',
+						'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 'cellMargin' => 160]);
+
+					$table->addRow();
+
+					$table->addCell(1000, ['valign' => \PhpOffice\PhpWord\SimpleType\VerticalJc::CENTER])->addImage(DIR_IMAGES . DIRECTORY_SEPARATOR .
+						'info_15260.png', ['bgColor' => 'F0F0F0']);
+					$table->addCell(4000, ['valign' => \PhpOffice\PhpWord\SimpleType\VerticalJc::CENTER])->addText($L_Justification_DMIA, $fontStyle12);
+					$table->addCell(10000, ['valign' => \PhpOffice\PhpWord\SimpleType\VerticalJc::CENTER])->addText($Activite->act_justification_dmia, $fontStyle12Fort); //, ['spaceBefore' => 60, 'spaceAfter' => 60]);
+
 					// ==============================
 					// Affichage des Personnes Clés.
-	
+
 					// Gestion de l'entête du tableau
 					$section->addTextBreak(1);
 					$table = $section->addTable(['borderSize' => 6, 'borderColor' => '006699', 'topFromText' => 20,

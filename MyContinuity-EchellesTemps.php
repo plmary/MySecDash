@@ -567,20 +567,10 @@ switch( $Action ) {
 
 
  case 'AJAX_Verifier_Avant_Initialisation':
-	if ( $Droit_Lecture === TRUE && isset($_SESSION['s_cmp_id']) && $_SESSION['s_cmp_id'] != '' ) {
-		$Resultat = $objEchellesTemps->controlerSiCampagneAEchelleTemps( $_SESSION['s_cmp_id'] );
-		
-		if ( $Resultat[0] === TRUE ) {
-			$Message = sprintf( $L_Confirmer_Reinitialiser_Echelle_Temps, $Resultat[1] );
-			$Titre = $L_Reinitialiser_Echelle_Temps_Campagne;
-			$Bouton = $L_Reinitialiser;
-		} elseif ( $Resultat[0] === FALSE ) {
-			$Message = sprintf( $L_Confirmer_Initialiser_Echelle_Temps_Defaut, $Resultat[1] );
-			$Titre = $L_Initialiser_Echelle_Temps_Campagne;
-			$Bouton = $L_Initialiser;
-		} else {
-			$Message = $Resultat[1];
-		}
+	if ( $Droit_Lecture === TRUE && isset($_SESSION['s_sct_id']) && $_SESSION['s_sct_id'] != '' ) {
+		$Message = sprintf( $L_Confirmer_Initialiser_Echelle_Temps_Defaut, $_POST['libelle_societe'] );
+		$Titre = $L_Initialiser_Echelle_Temps_Campagne;
+		$Bouton = $L_Initialiser;
 
 		$Resultat = array( 'statut' => 'success',
 			'texteMsg' => $Message,

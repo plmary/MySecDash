@@ -33,6 +33,6 @@ $L_Confirmer_Suppression_Echelle_Temps_Associee = 'Please note that the time sca
 $L_Confirmer_Reinitialiser_Echelle_Temps = 'Do you want to reset the Campaign time scale "<span class="fg_couleur_1 fw-bold">%s</span>"?';
 $L_Initialiser_Echelle_Temps_Campagne = 'Initialize a default time scale';
 $L_Confirmer_Reinitialiser_Echelle_Temps = 'Do you want to reset the Campaign time scale "<span class="fg_couleur_1 fw-bold">%s</span>"?';
-$L_Confirmer_Initialiser_Echelle_Temps_Defaut = 'Would you like to define a default time scale for this campaign "<span class="fg_couleur_1 fw-bold">%s</span>"?';
+$L_Confirmer_Initialiser_Echelle_Temps_Defaut = 'Would you like to define a default time scale for the compagny "<span class="fg_couleur_1 fw-bold">%s</span>"?';
 
 ?>

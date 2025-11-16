@@ -65,10 +65,12 @@ function AjouterEchelleTemps() {
 
 
 function ModalInitialiserEchelleTemps() {
+	var libelleSociete = $('#s_sct_id :selected').text();
+
 	$.ajax({
 		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Verifier_Avant_Initialisation',
 		type: 'POST',
-		//data: $.param({'ete_id': ete_id}), // les paramètres sont protégés avant envoi
+		data: $.param({'libelle_societe': libelleSociete}), // les paramètres sont protégés avant envoi
 		dataType: 'json',
 		success: function( reponse ) {
 			Titre = reponse['L_Titre'];

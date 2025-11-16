@@ -70,3 +70,9 @@ ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
 ALTER TABLE public.ete_echelle_temps DROP COLUMN cmp_id;
+
+ALTER TABLE public.app_applications ADD COLUMN app_nom_alias VARCHAR(100);
+
+ALTER TABLE scap_sct_app RENAME COLUMN cmap_description_dima TO scap_description_dima;
+ALTER TABLE scap_sct_app RENAME COLUMN cmap_description_pdma TO scap_description_pdma;
+

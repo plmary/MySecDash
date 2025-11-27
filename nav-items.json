@@ -19,27 +19,32 @@
 			{"LibelleItem": "", "Type" : "separator"},
 			{"LibelleItem": "L_Historique", "Type" : "option", "Lien" : "MySecDash-Historiques.php"}
 		]},
-		{"LibelleItemPrincipale": "L_Gestion", "Items": [
-			{"LibelleItem": "L_Continuite", "Type" : "sous-menu", "Items": [
-				{"LibelleItem": "L_Accueil", "Type" : "option", "Lien" : "MyContinuity-Principal.php"},
-				{"LibelleItem": "", "Type" : "separator"},
-				{"LibelleItem": "L_Campagnes", "Type" : "option", "Lien" : "MyContinuity-Campagnes.php"},
-				{"LibelleItem": "", "Type" : "separator"},
+		{"LibelleItemPrincipale": "L_Continuite", "Items": [
+			{"LibelleItem": "L_Accueil", "Type" : "option", "Lien" : "MyContinuity-Principal.php"},
+			{"LibelleItem": "", "Type" : "separator"},
+			{"LibelleItem": "L_Campagnes", "Type" : "option", "Lien" : "MyContinuity-Campagnes.php"},
+			{"LibelleItem": "", "Type" : "separator"},
+			{"LibelleItem": "__LRI_BIA", "Type" : "sous-menu", "Items" : [
 				{"LibelleItem": "L_Activites", "Type" : "option", "Lien" : "MyContinuity-Activites.php"},
 				{"LibelleItem": "L_M_Comparateur_DMIA_Activites", "Type" : "option", "Lien" : "MyContinuity-ComparateurDMIAActivites.php"},
-				{"LibelleItem": "", "Type" : "separator"},
-				{"LibelleItem": "L_Valider_BIA", "Type" : "option", "Lien" : "MyContinuity-ValiderEntites.php"},
-				{"LibelleItem": "", "Type" : "separator"},
-				{"LibelleItem": "L_Sites", "Type" : "option", "Lien" : "MyContinuity-Sites.php"},
-				{"LibelleItem": "L_Applications", "Type" : "option", "Lien" : "MyContinuity-Applications.php"},
-				{"LibelleItem": "L_Applications_SI", "Type" : "option", "Lien" : "MyContinuity-ApplicationsSI.php"},
-				{"LibelleItem": "L_Fournisseurs", "Type" : "option", "Lien" : "MyContinuity-Fournisseurs.php"},
-				{"LibelleItem": "L_Parties_Prenantes", "Type" : "option", "Lien" : "MyContinuity-PartiesPrenantes.php"},
-				{"LibelleItem": "L_Echelles_Temps", "Type" : "option", "Lien" : "MyContinuity-EchellesTemps.php"},
-				{"LibelleItem": "L_Matrice_Impacts", "Type" : "option", "Lien" : "MyContinuity-MatriceImpacts.php"}
-			]}
+				{"LibelleItem": "L_Valider_BIA", "Type" : "option", "Lien" : "MyContinuity-ValiderEntites.php"}
+			]},
+			{"LibelleItem": "", "Type" : "separator"},
+			{"LibelleItem": "__LRI_PCM", "Type" : "sous-menu", "Items" : [
+				{"LibelleItem": "__LRI_INDISPO_PERSONNEL", "Type" : "option", "Lien" : "MyContinuity-IndispoPersonnel.php"},
+				{"LibelleItem": "__LRI_INDISPO_FOURNISSEURS", "Type" : "option", "Lien" : "MyContinuity-IndispoFournisseurs.php"},
+				{"LibelleItem": "__LRI_INDISPO_APPLICATIONS", "Type" : "option", "Lien" : "MyContinuity-IndispoApplications.php"}
+			]},
+			{"LibelleItem": "", "Type" : "separator"},
+			{"LibelleItem": "L_Sites", "Type" : "option", "Lien" : "MyContinuity-Sites.php"},
+			{"LibelleItem": "L_Applications", "Type" : "option", "Lien" : "MyContinuity-Applications.php"},
+			{"LibelleItem": "L_Applications_SI", "Type" : "option", "Lien" : "MyContinuity-ApplicationsSI.php"},
+			{"LibelleItem": "L_Fournisseurs", "Type" : "option", "Lien" : "MyContinuity-Fournisseurs.php"},
+			{"LibelleItem": "L_Parties_Prenantes", "Type" : "option", "Lien" : "MyContinuity-PartiesPrenantes.php"},
+			{"LibelleItem": "L_Echelles_Temps", "Type" : "option", "Lien" : "MyContinuity-EchellesTemps.php"},
+			{"LibelleItem": "L_Matrice_Impacts", "Type" : "option", "Lien" : "MyContinuity-MatriceImpacts.php"}
 		]},
-		{"LibelleItemPrincipale": "L_Visualisation", "Items": [
+		{"LibelleItemPrincipale": "__LRI_RAPPORTS", "Items": [
 			{"LibelleItem": "L_Visualiser_BIA", "Type" : "option", "Lien": "MyContinuity-VisualiserBIA.php"},
 			{"LibelleItem": "L_Editer_BIA", "Type" : "option", "Lien": "MyContinuity-EditionsBIA.php"}
 		]}

@@ -22,11 +22,32 @@ $(function() {
 				var statut = reponse['statut'];
 	
 				if( statut == 'success' ){
-					var texteMsg = reponse['texteMsg'];
-	
-					afficherMessage( texteMsg, statut );
-	
-					trier( $( 'div#entete_tableau div.row div:first'), true );
+					$('#s_cmp_id option').remove();
+
+					if ( reponse['cmp_id'] == '---' || reponse['cmp_id'] == '' ) {
+						$('#s_cmp_id').append('<option value="">---</option>');
+						afficherMessageCorps(reponse['L_Societe_Sans_Campagne'], reponse['L_Gestion_Campagnes']);
+						pbSynchronisation = 1;
+					} else {
+						// Mise à jour de la liste déroulante des Campagnes associées à la Société
+						var _Numero = 0, _Selected;
+						for (let element of reponse['Liste_Campagnes']) {
+							_Numero += 1;
+
+							if (_Numero == 1) {
+								_Selected = ' selected';
+							} else {
+								_Selected = '';
+							}
+
+							$('#s_cmp_id').append('<option value="' + element.cmp_id + '"' + _Selected + '>' + element.cmp_date + '</option>');
+						}
+					}
+
+					if ( reponse['sct_id'] != '---' && reponse['sct_id'] != ''
+					 && reponse['cmp_id'] != '---' && reponse['cmp_id'] != '') {
+						trier( $( 'div#entete_tableau div.row div:first'), false );
+					}
 				} else {
 					var texteMsg = reponse['texteMsg'];
 	
@@ -35,7 +56,8 @@ $(function() {
 			}
 		});
 	});
-	
+
+
 	// Active l'écoute du "select" sur le changement de Campagne.
 	$('#s_cmp_id').change( function() {
 		var sens_recherche = $( 'div#entete_tableau div.row div:first' ).attr( 'data-sens-tri' );
@@ -82,6 +104,7 @@ function trier( myElement, changerTri ) {
 			if( statut == 'success' ){
 				if ( reponse['s_cmp_id'] == '---' || reponse['s_cmp_id'] == '' ) {
 					$('#s_cmp_id').append('<option value="">---</option>');
+					//afficherMessageCorps(reponse['L_Societe_Sans_Campagne'], reponse['L_Gestion_Campagnes']);
 					afficherMessageCorps(reponse['L_Societe_Sans_Campagne'], reponse['L_Gestion_Campagnes']);
 				} else {
 					var texteMsg = reponse['texteHTML'];
@@ -174,25 +197,6 @@ function trier( myElement, changerTri ) {
 							});
 						});
 					}
-
-/*					if ( reponse[ 'droit_modifier' ] == 1 ) {
-						// Assigne l'événement "click" sur tous les boutons de Modification
-						$('.btn-modifier').click( function( event ){
-							var Id = $(this).attr('data-id');
-
-							ModalAjouterModifier( Id );
-						});
-					}
-
-					if ( reponse[ 'droit_supprimer' ] == 1 ) {
-						// Assigne l'événement "click" sur tous les boutons de Suactession
-						$('.btn-supprimer').click(function(){
-							var Id = $(this).attr('data-id');
-							var Libelle = $('#ACT_'+Id).find('div[data-src="act_nom"]').find('span').text();
-	
-							ModalSupprimer( Id, Libelle );
-						});
-					}*/
 				}
 
 				$('#rech_dmia').addClass('d-none');
@@ -206,4 +210,12 @@ function trier( myElement, changerTri ) {
 			}
 		}
 	});
+}
+
+
+function afficherMessageCorps(Libelle_Message, Libelle_Bouton) {
+	$('#corps_tableau').html(
+		'<h2 class="text-center">' + Libelle_Message + '</h2>' +
+		'<p class="text-center"><button class="btn btn-primary">' + Libelle_Bouton + '</button></p>'
+	);
 }

@@ -30,9 +30,9 @@ $L_ERR_DUPL_Echelle_Temps = '"Time scale" already in use';
 $L_Confirmer_Suppression_Echelle_Temps = 'Do you really want to remove the time scale "<span class="fg_couleur_1 fw-bold">%s</span>"?';
 $L_Confirmer_Suppression_Echelle_Temps_Associee = 'Please note that the time scale "<span class="fg_couleur_1 fw-bold">%s</span>" is associated with:';
 
-$L_Confirmer_Reinitialiser_Echelle_Temps = 'Do you want to reset the Campaign time scale "<span class="fg_couleur_1 fw-bold">%s</span>"?';
-$L_Initialiser_Echelle_Temps_Campagne = 'Initialize a default time scale';
-$L_Confirmer_Reinitialiser_Echelle_Temps = 'Do you want to reset the Campaign time scale "<span class="fg_couleur_1 fw-bold">%s</span>"?';
+$L_Confirmer_Reinitialiser_Echelle_Temps = '<i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2rem;"></i> Do you want to reset the Compagny\'s time scale "<span class="fg_couleur_1 fw-bold">%s</span>"?';
+$L_Initialiser_Echelle_Temps = 'Initialize a default time scale';
+$L_Reinitialiser_Echelle_Temps = 'Reset a default time scale';
 $L_Confirmer_Initialiser_Echelle_Temps_Defaut = 'Would you like to define a default time scale for the compagny "<span class="fg_couleur_1 fw-bold">%s</span>"?';
 
 ?>

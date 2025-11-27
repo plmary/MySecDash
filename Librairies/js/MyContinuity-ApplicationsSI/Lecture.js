@@ -178,11 +178,11 @@ function ModalAjouterModifier( app_id = '' ){
 
 			var Corps =
 				'<div class="row">' +
-				 '<label class="col-lg-2 col-form-label" for="app_nom">' + reponse[ 'L_Nom' ] + '</label>' +
+				 '<label class="col-lg-2 col-form-label fw-bold" for="app_nom">' + reponse[ 'L_Nom' ] + '</label>' +
 				 '<div class="col-lg-4">' +
 				  '<input id="app_nom" class="form-control" type="text" value="'+ app_nom + '" required>' +
 				 '</div>' +
-				 '<label class="col-lg-1 col-form-label text-end" for="app_nom_alias">' + reponse[ 'L_Alias' ] + '</label>' +
+				 '<label class="col-lg-1 col-form-label text-end fst-italic" for="app_nom_alias">' + reponse[ 'L_Alias' ] + '</label>' +
 				 '<div class="col-lg-4">' +
 				  '<input id="app_nom_alias" class="form-control" type="text" value="'+ app_nom_alias + '">' +
 				 '</div>' +
@@ -190,7 +190,7 @@ function ModalAjouterModifier( app_id = '' ){
 				'<div class="border m-3 p-3">' + 
 
 				'<div class="row">' +
-				 '<label class="col-lg-2 col-form-label" for="ete_id_dima_dsi">' + reponse[ 'L_DMIA' ] + '</label>' +
+				 '<label class="col-lg-2 col-form-label" for="ete_id_dima_dsi">' + reponse[ 'L_DMIA_DSI' ] + '</label>' +
 				 '<div class="col-lg-2">' +
 				  '<select id="ete_id_dima_dsi" class="form-select">'				 +
 				   '<option value="">'+reponse['L_Aucun']+'</option>';
@@ -212,7 +212,7 @@ function ModalAjouterModifier( app_id = '' ){
 				'</div>' + // .row
 
 				'<div class="row">' +
-				 '<label class="col-lg-2 col-form-label" for="ete_id_pdma_dsi">' + reponse[ 'L_PDMA' ] + '</label>' +
+				 '<label class="col-lg-2 col-form-label" for="ete_id_pdma_dsi">' + reponse[ 'L_PDMA_DSI' ] + '</label>' +
 				 '<div class="col-lg-2">' +
 				  '<select id="ete_id_pdma_dsi" class="form-select">' +
 				   '<option value="">'+reponse['L_Aucun']+'</option>';

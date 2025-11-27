@@ -21,14 +21,35 @@ $(function() {
 				var statut = reponse['statut'];
 	
 				if( statut == 'success' ){
-					var texteMsg = reponse['texteMsg'];
-	
-					afficherMessage( texteMsg, statut );
+					$('#s_cmp_id option').remove();
 
-					trier( $( 'div#entete_tableau div.row div:first'), true );
+					if ( reponse['cmp_id'] == '---' || reponse['cmp_id'] == '' ) {
+						$('#s_cmp_id').append('<option value="">---</option>');
+						afficherMessageCorps(reponse['L_Societe_Sans_Campagne'], reponse['L_Gestion_Campagnes']);
+						pbSynchronisation = 1;
+					} else {
+						// Mise à jour de la liste déroulante des Campagnes associées à la Société
+						var _Numero = 0, _Selected;
+						for (let element of reponse['Liste_Campagnes']) {
+							_Numero += 1;
+
+							if (_Numero == 1) {
+								_Selected = ' selected';
+							} else {
+								_Selected = '';
+							}
+
+							$('#s_cmp_id').append('<option value="' + element.cmp_id + '"' + _Selected + '>' + element.cmp_date + '</option>');
+						}
+					}
+
+					if ( reponse['sct_id'] != '---' && reponse['sct_id'] != ''
+					 && reponse['cmp_id'] != '---' && reponse['cmp_id'] != '') {
+						trier( $( 'div#entete_tableau div.row div:first'), false );
+					}
 				} else {
 					var texteMsg = reponse['texteMsg'];
-	
+
 					afficherMessage( texteMsg, statut );
 				}
 			}
@@ -229,4 +250,12 @@ function ModalValiderEntite( ent_id ){
 		}
 	});
 
+}
+
+
+function afficherMessageCorps(Libelle_Message, Libelle_Bouton) {
+	$('#corps_tableau').html(
+		'<h2 class="text-center">' + Libelle_Message + '</h2>' +
+		'<p class="text-center"><button class="btn btn-primary">' + Libelle_Bouton + '</button></p>'
+	);
 }

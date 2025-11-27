@@ -28,6 +28,7 @@ include( DIR_LIBRAIRIES . '/Class_Campagnes_PDO.inc.php' );
 include( DIR_LIBRAIRIES . '/Class_HBL_Societes_PDO.inc.php' );
 include( DIR_LIBRAIRIES . '/Class_Fournisseurs_PDO.inc.php' );
 include( DIR_LIBRAIRIES . '/Class_EchellesTemps_PDO.inc.php' );
+include( DIR_LIBRAIRIES . '/Class_MatriceImpacts_PDO.inc.php' );
 include_once( DIR_LIBRAIRIES . '/Class_Applications_PDO.inc.php' );
 
 
@@ -37,6 +38,7 @@ $objSocietes = new HBL_Societes();
 $objApplications = new Applications();
 $objFournisseurs = new Fournisseurs();
 $objEchellesTemps = new EchellesTemps();
+$objMatriceImpacts = new MatriceImpacts();
 
 
 // Définit le format des colonnes du tableau central.
@@ -67,7 +69,6 @@ $Droit_Ajouter_Fournisseurs = $PageHTML->controlerPermission('MyContinuity-Fourn
 switch( $Action ) {
  default:
 	$Liste_Societes = '';
-	$Liste_Campagnes = '';
 
 	// Initialise les listes déroulantes : Sociétés, Campagnes et Entités
 	try {
@@ -77,19 +78,22 @@ switch( $Action ) {
 		break;
 	}
 
-	if ( $Droit_Ajouter === TRUE ) {
-		$Boutons_Alternatifs[] = ['class'=>'btn-ajouter', 'libelle'=>$L_Ajouter, 'glyph'=>'plus'];
-	}
-	$Boutons_Alternatifs[] = ['class'=>'btn-rechercher', 'libelle'=>$L_Rechercher, 'glyph'=>'search'];
 
 	$Choix_Campagnes['id'] = 's_cmp_id';
 	$Choix_Campagnes['libelle'] = $L_Campagnes;
-
+	$Choix_Campagnes['desactive'] = 'oui';
+	
 	if ( $Liste_Campagnes != '' ) {
 		foreach( $Liste_Campagnes AS $Campagne ) {
 			$Choix_Campagnes['options'][] = array('id' => $Campagne->cmp_id, 'nom' => $Campagne->cmp_date );
 		}
 	}
+
+
+	if ( $Droit_Ajouter === TRUE ) {
+		$Boutons_Alternatifs[] = ['class'=>'btn-ajouter', 'libelle'=>$L_Ajouter, 'glyph'=>'plus'];
+	}
+	$Boutons_Alternatifs[] = ['class'=>'btn-rechercher', 'libelle'=>$L_Rechercher, 'glyph'=>'search'];
 
 	print( $PageHTML->construireEnteteHTML( $L_Gestion_Applications_SI, $Fichiers_JavaScript, '3' ) .
 		$PageHTML->construireNavbarJson('Logo-MyContinuity.svg', 'nav-items.json') .
@@ -138,8 +142,10 @@ switch( $Action ) {
 		'L_Non' => $L_No,
 		'L_Alias' => $L_Alias,
 		'L_DMIA' => $L_DMIA_Court,
-		'L_PDMA' => $L_PDMA_Court
-		);
+		'L_PDMA' => $L_PDMA_Court,
+		'L_DMIA_DSI' => $L_DMIA_SI,
+		'L_PDMA_DSI' => $L_PDMA_SI
+	);
 
 	if ( $Droit_Modifier === TRUE ) {
 		if ( isset($_POST['app_id']) and $_POST['app_id'] != '') {
@@ -151,7 +157,7 @@ switch( $Action ) {
 			$Libelles['Liste_Fournisseurs'] = listerFournisseurs();
 			$Libelles['Liste_Societes'] = listerSocietes();
 		}
-		$Libelles['Liste_Echelles'] = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_cmp_id']);
+		$Libelles['Liste_Echelles'] = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']);
 	}
 
 	print( json_encode( $Libelles ) );
@@ -476,6 +482,12 @@ switch( $Action ) {
 			$ListeApplications = $objApplications->rechercherApplicationsSI( $Trier, $_SESSION['s_sct_id'] );
 			$Total = $objApplications->RowCount;
 
+			$Liste_Campagnes = $objCampagnes->rechercherCampagnes( $_SESSION['s_sct_id' ], 'cmp_date-desc' );
+			$Derniere_Campagne = $Liste_Campagnes[0]->cmp_id;
+
+			$ListeMatriceImpactParChamp = $objMatriceImpacts->rechercherMatriceImpactsParChamp( $Derniere_Campagne, 'nim_poids' );
+			$ListeEchelleTempsParChamp = $objEchellesTemps->rechercherEchellesTempsParChamp( $_SESSION['s_sct_id'], 'ete_poids' );
+
 			$Liste_Echelles = $objEchellesTemps->rechercherEchellesTemps( $_SESSION['s_sct_id'] );
 			foreach( $Liste_Echelles as $Occurrence ) {
 				$Liste_Echelles[$Occurrence->ete_poids] = $Occurrence;
@@ -487,38 +499,55 @@ switch( $Action ) {
 				$Afficher_Activites = '';
 
 				if ( $Occurrence->act_noms != '' ) {
+					$_cpt = 0;
+
+					$_ent_nom = '';
+					$_ent_description = '';
+					$_act_nom = '';
+					$_nim_poids = '';
+					$_ete_poids = '';
+
 					foreach( explode('###', $Occurrence->act_noms) as $Activite ) {
-						if ($Afficher_Activites != '') $Afficher_Activites .= ', ';
-	
 						$t_Activite = explode('===', $Activite);
-						$t_Niveau = explode('---', $t_Activite[1]);
-	
-						$Afficher_Activites .= $t_Activite[0] . ' (<span class="fw-bold" style="color: #' . $t_Niveau[2] . '">' . $t_Niveau[0] . ' - ' . $t_Niveau[1] . '</span> / ' . $t_Activite[2] . ')';
+
+						if ($_cpt == 0 ) {
+							$_ent_nom = $t_Activite[0];
+							$_ent_description = $t_Activite[1];
+							$_act_id = $t_Activite[2];
+							$_act_nom = $t_Activite[3];
+							$_act_dima = $t_Activite[4];
+							$_act_pdma = $t_Activite[5];
+						} else {
+							if ( $_ent_nom != $t_Activite[0] || $_ent_description != $t_Activite[1] || $_act_nom != $t_Activite[2] ) {
+								list($_nim_poids, $_ete_poids) = $objApplications->recupererPoidsNiveauImpactEtEchelleTemps( $_act_id );
+
+								if ($Afficher_Activites != '') $Afficher_Activites .= ',<br>';
+								$Afficher_Activites .= $_ent_nom . ($_ent_description != '' ? ' - ' . $_ent_description : '') . ' - ' . $_act_nom . ' (<span class="fw-bold" style="color: #' . $ListeMatriceImpactParChamp[$_nim_poids]->nim_couleur . '">' . $ListeMatriceImpactParChamp[$_nim_poids]->nim_numero . ' - ' . $ListeMatriceImpactParChamp[$_nim_poids]->nim_nom_code . '</span> / ' . ($_ete_poids > 0 ? $ListeEchelleTempsParChamp[$_ete_poids]->ete_nom_code : '') . ') [DIMA : <b>'.$_act_dima.'</b> , PDMA : <b>'.$_act_pdma.'</b>]';
+
+								$_ent_nom = $t_Activite[0];
+								$_ent_description = $t_Activite[1];
+								$_act_nom = $t_Activite[2];
+								$_nim_poids = $t_Activite[3];
+								$_ete_poids = $t_Activite[4];
+							} else {
+								if ($t_Activite[3] > $_nim_poids ) {
+									$_nim_poids = $t_Activite[3];
+									$_ete_poids = $t_Activite[4];
+								}
+							}
+						}
+
+						$_cpt += 1;
 					}
-	
-					$Occurrence->act_noms = $Afficher_Activites;
+
+					if ( $_cpt > 0 && $Afficher_Activites == '' ) {
+						list($_nim_poids, $_ete_poids) = $objApplications->recupererPoidsNiveauImpactEtEchelleTemps( $_act_id );
+
+						$Afficher_Activites .= $_ent_nom . ($_ent_description != '' ? ' - ' . $_ent_description : '') . ' - ' . $_act_nom . ' (<span class="fw-bold" style="color: #' . $ListeMatriceImpactParChamp[$_nim_poids]->nim_couleur . '">' . $ListeMatriceImpactParChamp[$_nim_poids]->nim_numero . ' - ' . $ListeMatriceImpactParChamp[$_nim_poids]->nim_nom_code . '</span> / ' . ($_ete_poids > 0 ? $ListeEchelleTempsParChamp[$_ete_poids]->ete_nom_code : '') . ') [DIMA : <b>'.$_act_dima.'</b> , PDMA : <b>'.$_act_pdma.'</b>]';
+					}
 				}
 
-				if ($Occurrence->ete_poids_dima != NULL) {
-					$Occurrence->ete_nom_dima = $Liste_Echelles[$Occurrence->ete_poids_dima]->ete_nom_code;
-				} else {
-					$Occurrence->ete_nom_dima = '';
-				}
-				if ($Occurrence->ete_poids_pdma != NULL) {
-					$Occurrence->ete_nom_pdma = $Liste_Echelles[$Occurrence->ete_poids_pdma]->ete_nom_code;
-				} else {
-					$Occurrence->ete_nom_pdma = '';
-				}
-				if ($Occurrence->ete_poids_dima_dsi != NULL) {
-					$Occurrence->ete_nom_dima_dsi = $Liste_Echelles[$Occurrence->ete_poids_dima_dsi]->ete_nom_code;
-				} else {
-					$Occurrence->ete_nom_dima_dsi = '';
-				}
-				if ($Occurrence->ete_poids_pdma_dsi != NULL) {
-					$Occurrence->ete_nom_pdma_dsi = $Liste_Echelles[$Occurrence->ete_poids_pdma_dsi]->ete_nom_code;
-				} else {
-					$Occurrence->ete_nom_pdma_dsi = '';
-				}
+				$Occurrence->act_noms = $Afficher_Activites;
 
 				$Texte_HTML .= $PageHTML->creerOccurrenceCorpsTableau( $Occurrence->app_id, $Occurrence, $Format_Colonnes );
 			}
@@ -753,19 +782,19 @@ switch( $Action ) {
 
 			try {
 				$objApplications->majApplication( $_POST['app_id'], $_POST['app_nom'], $_POST['frn_id'], $_POST['app_hebergement'],
-					$_POST['app_niveau_service'], $_POST['app_description'], $_POST['sct_id'], $_POST['app_nom_alias']);
+					$_POST['app_niveau_service'], $_POST['app_description'], $_SESSION['s_sct_id'], $_POST['app_nom_alias']);
 
 				$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_APPLICATION', 'app_id="' . $_POST['app_id'] . '", ' .
 					'app_nom="' . $_POST[ 'app_nom' ] . '" app_nom_alias="' . $_POST[ 'app_nom_alias' ] . '", frn_id="' . $_POST[ 'frn_id' ] . '", app_hebergement="' . $_POST[ 'app_hebergement' ] . '", ' .
 					'app_niveau_service="' . $_POST[ 'app_niveau_service' ] . '", app_description="' . $_POST[ 'app_description' ] . '", ' .
-					'sct_id="' . $_POST['app_id'] . '"');
+					'sct_id="' . $_SESSION['s_sct_id'] . '", app_nom_alias="' . $_POST['app_nom_alias'] . '"');
 
-				$objApplications->majApplicationSI( $_POST['app_id'], $_SESSION['s_cmp_id'],
+				$objApplications->majApplicationSI( $_POST['app_id'], $_SESSION['s_sct_id'],
 					$_POST['ete_id_dima_dsi'], $_POST['scap_description_dima'],
 					$_POST['ete_id_pdma_dsi'], $_POST['scap_description_pdma']);
 				
 				$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_APPLICATION', 'app_id="' . $_POST['app_id'] . '", ' .
-					'cmp_id="' . $_SESSION[ 's_cmp_id' ] . '" ete_id_dima_dsi="' . $_POST[ 'ete_id_dima_dsi' ] . '", ' .
+					'sct_id="' . $_SESSION[ 's_sct_id' ] . '" ete_id_dima_dsi="' . $_POST[ 'ete_id_dima_dsi' ] . '", ' .
 					'scap_description_dima="' . $_POST[ 'scap_description_dima' ] . '", ete_id_pdma_dsi="' . $_POST[ 'ete_id_pdma_dsi' ] . '", ' .
 					'scap_description_pdma="' . $_POST[ 'scap_description_pdma' ] . '"');
 				
@@ -1028,7 +1057,7 @@ function listerEchelleTemps( $Init_Id = '', $Init_Libelle = '' ) {
 	
 	$objEchelleTemps = new EchellesTemps();
 	
-	$Liste = $objEchelleTemps->rechercherEchellesTemps($_SESSION['s_cmp_id']);
+	$Liste = $objEchelleTemps->rechercherEchellesTemps($_SESSION['s_sct_id']);
 	
 	$Code_HTML = '<option value="">' . $L_Neither . '</option>';
 	
@@ -1050,9 +1079,12 @@ function listerEchelleTemps( $Init_Id = '', $Init_Libelle = '' ) {
 }
 
 
+
+
+
 function actualiseSocieteCampagne($objSocietes, $objCampagnes, $forcer=0) {
 	/**
-	 * Actualise les listes Sociétés et Campagnes à l'entrée dans l'écran et en cas de changement.
+	 * Actualise les listes Sociétés, Campagnes et Entités à l'entrée dans l'écran et en cas de changement.
 	 *
 	 * \license Copyleft Loxense
 	 * \author Pierre-Luc MARY
@@ -1060,26 +1092,34 @@ function actualiseSocieteCampagne($objSocietes, $objCampagnes, $forcer=0) {
 	 *
 	 * \param[in] $objSocietes Objet permettant d'accéder aux fonctions de gestion des Sociétés
 	 * \param[in] $objCampagnes Objet permettant d'accéder aux fonctions de gestion des Campagnes
-	 * \param[in] $forcer Flag permettant de forcer le résultat (0=Tout charger, 1=Changer Société, 2=Changer Campagne, 3=Changer Entité)
+	 * \param[in] $forcer Flag permettant de forcer le résultat (0=Tout charger, 1=Changer Société, 2=Changer Campagne)
 	 *
 	 * \return Renvoi un tableau d'objet ou un tableau vide si pas de données trouvées. Lève une exception en cas d'erreur.
 	 */
 	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-
+	
 	$Liste_Societes = [];
 	$Liste_Campagnes = [];
-
-
+	
+	
 	switch ( $forcer ) {
 		case 1:
 			// Comme on vient de change de Société, on efface les variables de Session qui pointaient :
-			//  sur une Campagne.
-			// Ainsi, on forcera le repositionnement sur la première occurrence de Campagne.
+			//   sur une Campagne
+			//   et sur une Entité.
+			// Ainsi, on forcera le repositionnement sur la première occurrence de Campagne et d'Entité.
 			unset($_SESSION['s_cmp_id']);
+			unset($_SESSION['s_ent_id']);
+			break;
+			
+		case 2:
+			// Comme on vient de change de Campagne, on efface la variable de Session qui pointait sur une Entité.
+			// Ainsi, on forcera le repositionnement sur la première occurrence d'Entité.
+			unset($_SESSION['s_ent_id']);
 			break;
 	}
-
-
+	
+	
 	// Récupère les Sociétés accessibles pour l'Utilisateur
 	if ( $_SESSION['idn_super_admin'] === TRUE ) {
 		$Liste_Societes = $objSocietes->rechercherSocietes();
@@ -1115,42 +1155,54 @@ function actualiseSocieteCampagne($objSocietes, $objCampagnes, $forcer=0) {
 						break;
 					}
 				}
-
+				
 				if ( $_Autorise == 0 ) {
 					throw new Exception($L_Societe_Plus_Autorisee_Pour_Utilisateur, 0);
 				}
 			}
 		}
 	}
-
+	
 	// Récupère les Campagnes associées à la Société Sélectionnée.
 	$Liste_Campagnes = $objCampagnes->rechercherCampagnes($_SESSION['s_sct_id'], 'cmp_date-desc');
 	if ( $Liste_Campagnes == [] ) {
+		$tmpObj1 = new stdClass();
+		$tmpObj1->cmp_id = '';
+		$tmpObj1->cmp_date = '---';
+		$Liste_Campagnes[0] = $tmpObj1;
+		
+		$tmpObj2 = new stdClass();
+		$tmpObj2->ent_id = '';
+		$tmpObj2->ent_nom = '---';
+		$tmpObj2->total_activites = 0;
+		$Liste_Entites[0] = $tmpObj2;
+		
 		$_SESSION['s_cmp_id'] = '';
-
-		throw new Exception($L_Pas_Campagne_Pour_Societe, 0);
+		$_SESSION['s_ent_id'] = '';
+		
+		return [$Liste_Societes, $Liste_Campagnes];
 	} else {
 		if ( ! isset($_SESSION['s_cmp_id']) or $_SESSION['s_cmp_id'] == '' ) {
 			$_SESSION['s_cmp_id'] = $Liste_Campagnes[0]->cmp_id;
 		} else {
 			// On contrôle que l'utilisateur a encore accès à cette Société.
 			$_Autorise = 0;
-
+			
 			foreach ($Liste_Campagnes as $_Tmp) {
 				if ( $_Tmp->cmp_id == $_SESSION['s_cmp_id'] ) {
 					$_Autorise = 1;
 					break;
 				}
 			}
-
+			
 			if ( $_Autorise == 0 ) {
 				$_SESSION['s_cmp_id'] = $Liste_Campagnes[0]->cmp_id;
 			}
 		}
 	}
-
+	
 	//print($_SESSION['s_sct_id'].' - '.$_SESSION['s_cmp_id'].' - '.$_SESSION['s_ent_id'].'<hr>');
-
+	
 	return [$Liste_Societes, $Liste_Campagnes];
 }
 

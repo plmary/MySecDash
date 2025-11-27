@@ -5,7 +5,7 @@
 --
 -- Commentaire :
 -- Ce script crée toutes les tables et toutes les contraintes de la base de données "mysecdash".
--- Modèle SQL : 2.5
+-- Modèle SQL : MySecDash v1.5
 
 
 CREATE SEQUENCE public.tgs_tags_tgs_id_seq;
@@ -320,9 +320,9 @@ CREATE SEQUENCE public.ete_echelle_temps_ete_id_seq;
 
 CREATE TABLE public.ete_echelle_temps (
                 ete_id BIGINT NOT NULL DEFAULT nextval('public.ete_echelle_temps_ete_id_seq'),
+                sct_id BIGINT NOT NULL,
                 ete_poids SMALLINT NOT NULL,
                 ete_nom_code VARCHAR(60) NOT NULL,
-                sct_id BIGINT NOT NULL,
                 CONSTRAINT ete_echelle_temps_pk PRIMARY KEY (ete_id)
 );
 COMMENT ON COLUMN public.ete_echelle_temps.ete_poids IS 'Plus le poids est grand et plus le temps de reprise est long';
@@ -555,7 +555,7 @@ CREATE TABLE public.rut_redemarrage_utilisateurs (
 CREATE TABLE public.acfr_act_frn (
                 act_id BIGINT NOT NULL,
                 frn_id BIGINT NOT NULL,
-                ete_id BIGINT NOT NULL,
+                ete_id BIGINT,
                 acfr_consequence_indisponibilite TEXT,
                 acfr_palliatif_tiers TEXT,
                 CONSTRAINT acfr_act_frn_pk PRIMARY KEY (act_id, frn_id)
@@ -736,8 +736,8 @@ CREATE TABLE public.scap_sct_app (
                 sct_id BIGINT NOT NULL,
                 ete_id_dima_dsi BIGINT,
                 ete_id_pdma_dsi BIGINT,
-                cmap_description_dima TEXT,
-                cmap_description_pdma TEXT,
+                scap_description_dima TEXT,
+                scap_description_pdma TEXT,
                 CONSTRAINT scap_sct_app_pk PRIMARY KEY (app_id, sct_id)
 );
 
@@ -745,10 +745,10 @@ CREATE TABLE public.scap_sct_app (
 CREATE TABLE public.acap_act_app (
                 act_id BIGINT NOT NULL,
                 app_id BIGINT NOT NULL,
-                ete_id_dima BIGINT NOT NULL,
-                ete_id_pdma BIGINT NOT NULL,
+                ete_id_dima BIGINT,
+                ete_id_pdma BIGINT,
                 acap_palliatif TEXT,
-                acap_donnees TEXT NOT NULL,
+                acap_donnees TEXT,
                 acap_hebergement TEXT,
                 acap_niveau_service TEXT,
                 CONSTRAINT acap_act_app_pk PRIMARY KEY (act_id, app_id)
@@ -989,31 +989,31 @@ ON DELETE NO ACTION
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE public.acap_act_app ADD CONSTRAINT ete_tcap_dima_fk
+ALTER TABLE public.acap_act_app ADD CONSTRAINT ete_acap_dima_fk
 FOREIGN KEY (ete_id_dima)
 REFERENCES public.ete_echelle_temps (ete_id)
-ON DELETE CASCADE
+ON DELETE SET NULL
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE public.acap_act_app ADD CONSTRAINT ete_tcap_pdma_fk
+ALTER TABLE public.acap_act_app ADD CONSTRAINT ete_acap_pdma_fk
 FOREIGN KEY (ete_id_pdma)
 REFERENCES public.ete_echelle_temps (ete_id)
-ON DELETE CASCADE
+ON DELETE SET NULL
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
 ALTER TABLE public.dma_dmia_activite ADD CONSTRAINT ete_dma_fk
 FOREIGN KEY (ete_id)
 REFERENCES public.ete_echelle_temps (ete_id)
-ON DELETE NO ACTION
+ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE public.acfr_act_frn ADD CONSTRAINT ete_fret_fk
+ALTER TABLE public.acfr_act_frn ADD CONSTRAINT ete_acfr_fk
 FOREIGN KEY (ete_id)
 REFERENCES public.ete_echelle_temps (ete_id)
-ON DELETE NO ACTION
+ON DELETE SET NULL
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 

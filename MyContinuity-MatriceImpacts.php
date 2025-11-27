@@ -141,7 +141,7 @@ switch( $Action ) {
 				$Libelles['Liste_Types_Impact'] = $objCampagnes->rechercherTypesImpactCampagne( $_SESSION['s_cmp_id'] );
 				$Libelles['Liste_Matrice_Impacts'] = $objMatriceImpacts->rechercherMatriceImpactsParID( $_SESSION['s_cmp_id'] );
 				$Libelles['Liste_Entites'] = $objCampagnes->rechercherEntitesAssocieesCampagne( $_SESSION['s_sct_id'], $_SESSION['s_cmp_id'] );
-				$Libelles['Liste_Echelle_Temps'] = $objCampagnes->rechercherEchelleTempsCampagne( $_SESSION['s_cmp_id'] );
+				$Libelles['Liste_Echelle_Temps'] = $objCampagnes->rechercherEchelleTemps( $_SESSION['s_sct_id'] );
 
 				$Liste_Campagnes = $objCampagnes->rechercherCampagnes($_SESSION['s_sct_id']);
 				$Libelles['Liste_Campagnes'] = $Liste_Campagnes;

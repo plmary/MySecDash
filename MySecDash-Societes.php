@@ -145,7 +145,12 @@ switch( $Action ) {
 
 				$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_SOCIETE', 'sct_id="' . $sct_id . '", sct_nom="' . $_POST[ 'sct_nom' ] . '", sct_description="' . $_POST[ 'sct_description' ] . '"' );
 
-				$Occurrence = $PageHTML->creerOccurrenceCorpsTableau( $sct_id, $_POST['sct_nom'], $Format_Colonnes );
+				$Valeurs = new stdClass();
+				$Valeurs->sct_id = $sct_id;
+				$Valeurs->sct_nom = $_POST['sct_nom'];
+				$Valeurs->sct_description = $_POST['sct_description'];
+				
+				$Occurrence = $PageHTML->creerOccurrenceCorpsTableau( $sct_id, $Valeurs, $Format_Colonnes );
 
 				$Resultat = array( 'statut' => 'success',
 					'texteMsg' => $L_Societe_Creee,

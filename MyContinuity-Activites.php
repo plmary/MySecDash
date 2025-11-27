@@ -99,8 +99,11 @@ switch( $Action ) {
 			actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $objActivites);
 	} catch( Exception $e ) {
 		print('<h1 class="text-urgent">' . $e->getMessage() . '</h1>');
-		break;
+		//break;
 	}
+/*print_r($Liste_Societes);print('<hr>');
+print_r($Liste_Campagnes);print('<hr>');
+print_r($Liste_Entites);print('<hr>');*/
 
 	if ( $Droit_Ajouter === TRUE ) {
 		$Boutons_Alternatifs[] = ['class'=>'btn-ajouter', 'libelle'=>$L_Ajouter, 'glyph'=>'plus'];
@@ -126,15 +129,13 @@ switch( $Action ) {
 			$Choix_Entites['options'][] = array('id' => $Entite->ent_id, 'nom' => $Entite->ent_nom . ' (' . $Entite->total_activites . ' ' . ($Entite->total_activites > 1 ? $PageHTML->getLibelle('__LRI_ACTIVITES') : $PageHTML->getLibelle('__LRI_ACTIVITE') ) . ')' );
 		}
 	}
-//print_r($Choix_Entites);
 
 	$Fichiers_JavaScript[] = 'MatriceImpacts.js';
 
 	print $PageHTML->construireEnteteHTML( $L_Gestion_Activites, $Fichiers_JavaScript, 3 ) .
 		$PageHTML->construireNavbarJson('Logo-MyContinuity.svg', 'nav-items.json') .
 		$PageHTML->construireTitreEcran( $L_Gestion_Activites, $Liste_Societes, $Boutons_Alternatifs,
-			$Choix_Campagnes, '', $Choix_Entites );
-//print_r($_SERVER);
+		$Choix_Campagnes, '', $Choix_Entites );
 
 	if ( $Droit_Lecture === TRUE ) {
 		// Construit un tableau central vide.
@@ -2263,10 +2264,22 @@ function actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $objActivit
 	// Récupère les Campagnes associées à la Société Sélectionnée.
 	$Liste_Campagnes = $objCampagnes->rechercherCampagnes($_SESSION['s_sct_id'], 'cmp_date-desc');
 	if ( $Liste_Campagnes == [] ) {
+		$tmpObj1 = new stdClass();
+		$tmpObj1->cmp_id = '';
+		$tmpObj1->cmp_date = '---';
+		$Liste_Campagnes[0] = $tmpObj1;
+
+		$tmpObj2 = new stdClass();
+		$tmpObj2->ent_id = '';
+		$tmpObj2->ent_nom = '---';
+		$tmpObj2->total_activites = 0;
+		$Liste_Entites[0] = $tmpObj2;
+
 		$_SESSION['s_cmp_id'] = '';
 		$_SESSION['s_ent_id'] = '';
 
-		throw new Exception($L_Pas_Campagne_Pour_Societe, 0);
+		//throw new Exception($L_Pas_Campagne_Pour_Societe, 0);
+		return [$Liste_Societes, $Liste_Campagnes, $Liste_Entites];
 	} else {
 		if ( ! isset($_SESSION['s_cmp_id']) or $_SESSION['s_cmp_id'] == '' ) {
 			$_SESSION['s_cmp_id'] = $Liste_Campagnes[0]->cmp_id;
@@ -2290,6 +2303,12 @@ function actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $objActivit
 	// Récupère les Entités associées à la Campagne Sélectionnée
 	$Liste_Entites = $objActivites->rechercherEntitesCampagne($_SESSION['s_cmp_id']);
 	if ( $Liste_Entites == [] ) {
+		$tmpObj2 = new stdClass();
+		$tmpObj2->ent_id = '';
+		$tmpObj2->ent_nom = '---';
+		$tmpObj2->total_activites = 0;
+		$Liste_Entites[0] = $tmpObj2;
+
 		$_SESSION['s_ent_id'] = '';
 	} else {
 		if ( ! isset($_SESSION['s_ent_id']) or $_SESSION['s_ent_id'] == '' ) { // or $_SESSION['s_ent_id'] == '*' ) {
@@ -2309,8 +2328,6 @@ function actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $objActivit
 			}
 		}
 	}
-
-//print($_SESSION['s_sct_id'].' - '.$_SESSION['s_cmp_id'].' - '.$_SESSION['s_ent_id'].'<hr>');
 
 	return [$Liste_Societes, $Liste_Campagnes, $Liste_Entites];
 }

@@ -856,7 +856,9 @@ ORDER BY acst.act_id, sts_nom ';
 		 *
 		 * \return Renvoi une liste des Activités ou une liste vide
 		 */
-		$Request = 'SELECT
+
+		if ( $_SESSION['idn_super_admin'] === FALSE ) {
+			$Request = 'SELECT
 sct.sct_nom,
 ent.ent_nom, ent.ent_description,
 act.act_id, act.act_nom,
@@ -874,17 +876,36 @@ LEFT JOIN mim_matrice_impacts AS "mim" ON mim.mim_id = dma.mim_id
 LEFT JOIN nim_niveaux_impact AS "nim" ON nim.nim_id = mim.nim_id
 LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 
-		if ( $cmp_id != '' ) {
-			$Where = 'WHERE act.cmp_id = :cmp_id ';
+			$Where = 'WHERE sct.sct_id = :sct_id ';
+
+			if ( $cmp_id != '' ) {
+				$Where .= 'AND act.cmp_id = :cmp_id ';
+			}
+
+			$Where .= 'AND idsc.idn_id = :idn_id ';
 		} else {
-			$Where = '';
-		}
+			$Request = 'SELECT
+sct.sct_nom,
+ent.ent_nom, ent.ent_description,
+act.act_id, act.act_nom,
+dma.ete_id, dma.mim_id, ete.ete_poids, ete.ete_nom_code,
+nim.nim_numero, nim.nim_poids, nim.nim_nom_code, nim.nim_couleur,
+tim.tim_poids, tim.tim_nom_code
+				
+FROM sct_societes AS "sct"
+LEFT JOIN ent_entites AS "ent" ON ent.sct_id = sct.sct_id
+LEFT JOIN act_activites AS "act" ON act.ent_id = ent.ent_id
+LEFT JOIN dma_dmia_activite AS "dma" ON dma.act_id = act.act_id
+LEFT JOIN ete_echelle_temps AS "ete" ON ete.ete_id = dma.ete_id
+LEFT JOIN mim_matrice_impacts AS "mim" ON mim.mim_id = dma.mim_id
+LEFT JOIN nim_niveaux_impact AS "nim" ON nim.nim_id = mim.nim_id
+LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 
-		if ( $_SESSION['idn_super_admin'] === FALSE ) {
-			if ( $Where == '' ) $Where = 'WHERE ';
-			else $Where .= 'AND ';
+			$Where = 'WHERE sct.sct_id = :sct_id ';
 
-			$Where .= 'idsc.idn_id = :idn_id ';
+			if ( $cmp_id != '' ) {
+				$Where .= 'AND act.cmp_id = :cmp_id ';
+			}
 		}
 
 		$Request .= $Where;
@@ -926,6 +947,7 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 
 		$Query = $this->prepareSQL( $Request );
 
+		$this->bindSQL( $Query, ':sct_id', $_SESSION['s_sct_id'], PDO::PARAM_INT );
 		if ( $cmp_id != '' ) $this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT );
 		if ( $_SESSION['idn_super_admin'] === FALSE ) $this->bindSQL( $Query, ':idn_id', $_SESSION['idn_id'], PDO::PARAM_INT );
 

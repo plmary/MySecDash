@@ -31,9 +31,9 @@ $L_ERR_DUPL_Echelle_Temps = '"Echelle de temps" déjà utilisée';
 $L_Confirmer_Suppression_Echelle_Temps = 'Voulez-vous vraiment supprimer l\'échelle de temps "<span class="fg_couleur_1 fw-bold">%s</span>" ?';
 $L_Confirmer_Suppression_Echelle_Temps_Associee = 'Attention, l\'échelle de temps "<span class="fg_couleur_1 fw-bold">%s</span>" est associée avec :';
 
-$L_Confirmer_Reinitialiser_Echelle_Temps = 'Voulez-vous réinitialiser l\'échelle de temps de la Campagne "<span class="fg_couleur_1 fw-bold">%s</span>" ?';
-$L_Initialiser_Echelle_Temps_Campagne = 'Initialiser une échelle de temps par défaut';
-$L_Reinitialiser_Echelle_Temps_Campagne = 'Réinitialiser une échelle de temps par défaut';
+$L_Confirmer_Reinitialiser_Echelle_Temps = '<i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 2rem;"></i> Voulez-vous réinitialiser l\'échelle de temps de la Société "<span class="fg_couleur_1 fw-bold">%s</span>" ?';
+$L_Initialiser_Echelle_Temps = 'Initialiser une échelle de temps par défaut';
+$L_Reinitialiser_Echelle_Temps = 'Réinitialiser une échelle de temps par défaut';
 $L_Confirmer_Initialiser_Echelle_Temps_Defaut = 'Voulez-vous initialiser une échelle de temps par défaut pour la Société "<span class="fg_couleur_1 fw-bold">%s</span>" ?';
 
 ?>

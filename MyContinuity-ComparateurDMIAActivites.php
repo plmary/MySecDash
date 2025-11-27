@@ -212,7 +212,7 @@ switch( $Action ) {
 			$ListeActivites = $objActivites->listerActivitesUtilisateur( $Trier, $_SESSION['s_cmp_id'] );
 			$Liste_EchellesTemps = $objEchellesTemps->rechercherEchellesTemps( $_SESSION['s_sct_id'] );
 
-			if ( $ListeActivites != [] ) {
+			if ( $ListeActivites != [] && $Liste_EchellesTemps != [] ) {
 				$_largeur = 100 / count( $Liste_EchellesTemps );
 
 				$_Ligne_1 = '';
@@ -225,7 +225,7 @@ switch( $Action ) {
 				$_ent_nom = $ListeActivites[0]->sct_nom . ' > ' . $ListeActivites[0]->ent_nom . ($ListeActivites[0]->ent_nom != '' ? ' (' . $ListeActivites[0]->ent_description . ')' : '' );
 				$Occurrence_Precedente = $ListeActivites[0];
 
-				foreach ($ListeActivites as $Occurrence) {
+				foreach ($ListeActivites as $Occurrence) {//print($Occurrence->nim_numero.' - '.$Occurrence->tim_nom_code.'<br>');
 					$Lecture += 1;
 
 					if ( $Occurrence->act_id != $_act_id ) {
@@ -602,10 +602,14 @@ function actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $forcer=0) 
 	// Récupère les Campagnes associées à la Société Sélectionnée.
 	$Liste_Campagnes = $objCampagnes->rechercherCampagnes($_SESSION['s_sct_id'], 'cmp_date-desc');
 	if ( $Liste_Campagnes == [] ) {
+		$tmpObj1 = new stdClass();
+		$tmpObj1->cmp_id = '';
+		$tmpObj1->cmp_date = '---';
+		$Liste_Campagnes[0] = $tmpObj1;
+
 		$_SESSION['s_cmp_id'] = '';
-		$_SESSION['s_ent_id'] = '';
 		
-		throw new Exception($L_Pas_Campagne_Pour_Societe, 0);
+		return [$Liste_Societes, $Liste_Campagnes];
 	} else {
 		if ( ! isset($_SESSION['s_cmp_id']) or $_SESSION['s_cmp_id'] == '' ) {
 			$_SESSION['s_cmp_id'] = $Liste_Campagnes[0]->cmp_id;

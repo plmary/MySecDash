@@ -296,6 +296,36 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 	}
 
 
+	public function supprimerEchellesTemps( $sct_id = '' ) {
+		/**
+		 * Supprime toutes les échelles de temps d'une Société.
+		 *
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2025-11-21
+		 *
+		 * \param[in] $sct_id Identifiant de la Société sur laquelle on supprime toutes les échelles de temps
+		 *
+		 * \return Renvoi TRUE si les occurrences ont été supprimées, sinon FALSE. Lève une Exception en cas d'erreur.
+		 */
+		if ( $sct_id == '' ) return FALSE;
+		
+		$Query = $this->prepareSQL( 'DELETE ' .
+			'FROM ete_echelle_temps ' .
+			'WHERE sct_id = :sct_id' );
+		
+		$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT ) ;
+		
+		$this->executeSQL( $Query );
+		
+		if ( $this->RowCount == 0 ) {
+			return FALSE;
+		}
+		
+		return TRUE;
+	}
+	
+
 	public function controlerAssociationEchelleTemps( $ete_id ) {
 	/**
 	* Vérifie si cette Echelle de Temps est associée à un autre objet.
@@ -333,7 +363,7 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 	}
 
 
-	public function initialiserEchelleTempsDefautACampagne( $sct_id ) {
+	public function initialiserEchelleTempsDefaut( $sct_id ) {
 		/**
 		 * Initialise une Echelle de Temps par défaut à une Société.
 		 *
@@ -345,6 +375,10 @@ class EchellesTemps extends HBL_Connexioneur_BD {
 		 *
 		 * \return Renvoi TRUE si l'échelle de temps par défaut à bien était créés. Lève une Exception en cas d'erreur.
 		 */
+
+		// On supprime les échelles précédentes
+		$this->supprimerEchellesTemps( $sct_id );
+
 
 		$Request = 'INSERT INTO ete_echelle_temps (sct_id, ete_poids, ete_nom_code) VALUES
 			(:sct_id, 1, \'< 1 heure\'),

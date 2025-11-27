@@ -716,10 +716,10 @@ switch( $Action ) {
 						$tmp_ete_poids = $Activite->ete_poids;
 	
 						$section->addTitle($L_Activites_A_Redemarrer.' '.$Liste_Echelles_Temps_Poids[$Activite->ete_poids]->ete_nom_code, 2);
-		
+
 						$table = $section->addTable(['borderSize' => 6, 'borderColor' => '006699',
 							'alignment' => \PhpOffice\PhpWord\SimpleType\JcTable::CENTER, 'cellMargin' => 160, 'afterSpace' => 160]);
-		
+
 						$table->addRow(null, ['tblHeader' => true]);
 						$table->addCell(7000)->addText($L_Activite, $fontTitreTableau, $styleParagrapheTableau);
 						$table->addCell(5000)->addText($L_Entite, $fontTitreTableau, $styleParagrapheTableau);
@@ -2283,7 +2283,7 @@ switch( $Action ) {
 				$Liste_Niveaux_Impact_Poids[$Element->nim_poids] = $Element;
 			}
 
-			$Liste_Echelles_Temps = $objEchellesTemps->rechercherEchellesTemps($_POST['cmp_id']);
+			$Liste_Echelles_Temps = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']);
 			$Liste_Echelles_Temps_Poids = [];
 			foreach ($Liste_Echelles_Temps as $Element) {
 				$Liste_Echelles_Temps_Poids[$Element->ete_poids] = $Element;
@@ -2331,7 +2331,7 @@ switch( $Action ) {
 			$LettreColonne1 = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($PositionIndex);
 			$activeWorksheet->setCellValue($LettreColonne1.'1', $L_Impacts);
 			$activeWorksheet->getStyle($LettreColonne1.'1')->applyFromArray($fontChapitreDocument);
-			$EchellesTemps = $objEchellesTemps->rechercherEchellesTemps($_POST['cmp_id']);
+			$EchellesTemps = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']);
 			$LettreColonne2 = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($PositionIndex + ((count($EchellesTemps)-1)*2));
 			$activeWorksheet->mergeCells($LettreColonne1.'1:'.$LettreColonne2.'1');
 	
@@ -2572,7 +2572,7 @@ switch( $Action ) {
 				$Liste_Niveaux_Impact_Poids[$Element->nim_poids] = $Element;
 			}
 
-			$Liste_Echelles_Temps = $objEchellesTemps->rechercherEchellesTemps($_POST['cmp_id']);
+			$Liste_Echelles_Temps = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']);
 			$Liste_Echelles_Temps_Poids = [];
 			foreach ($Liste_Echelles_Temps as $Element) {
 				$Liste_Echelles_Temps_Poids[$Element->ete_poids] = $Element;
@@ -2720,8 +2720,12 @@ switch( $Action ) {
 
 					if ( $_nim_poids > 2 ) {
 						$_ete_poids = $Liste_Activites_ID[$_act_id]->ete_poids;
+
 						if ($_ete_poids != '') {
-							$textRun = $richText->createTextRun(' / ' . $Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
+							$textRun = $richText->createTextRun(' / ');
+							if ( isset($Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code) ) {
+								$textRun = $richText->createTextRun($Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
+							}
 							$textRun->getFont()->setBold(true);
 						}
 					}
@@ -2751,7 +2755,10 @@ switch( $Action ) {
 						if ( $_nim_poids > 2 ) {
 							$_ete_poids = $Liste_Activites_ID[$_act_id]->ete_poids;
 							if ($_ete_poids != '') {
-								$textRun = $richText->createTextRun(' / ' . $Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
+								$textRun = $richText->createTextRun(' / ');
+								if ( isset($Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code) ) {
+									$textRun = $richText->createTextRun($Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
+								}
 								$textRun->getFont()->setBold(true);
 							}
 						}
@@ -2764,10 +2771,18 @@ switch( $Action ) {
 				$activeWorksheet->getStyle('B'.$Ligne)->getAlignment()->setWrapText(true);
 
 
-				$activeWorksheet->setCellValue('C'.$Ligne, $Liste_Echelles_Temps_Poids[$Application->dmia]->ete_nom_code);
+				if ( isset($Liste_Echelles_Temps_Poids[$Application->dmia]->ete_nom_code) ) {
+					$activeWorksheet->setCellValue('C'.$Ligne, $Liste_Echelles_Temps_Poids[$Application->dmia]->ete_nom_code);
+				} else {
+					$activeWorksheet->setCellValue('C'.$Ligne, '');
+				}
 				$activeWorksheet->getStyle('C'.$Ligne)->applyFromArray($fontCourant);
 				
-				$activeWorksheet->setCellValue('D'.$Ligne, $Liste_Echelles_Temps_Poids[$Application->pdma]->ete_nom_code);
+				if ( isset($Liste_Echelles_Temps_Poids[$Application->pdma]->ete_nom_code) ) {
+					$activeWorksheet->setCellValue('D'.$Ligne, $Liste_Echelles_Temps_Poids[$Application->pdma]->ete_nom_code);
+				} else {
+					$activeWorksheet->setCellValue('D'.$Ligne, '');
+				}
 				$activeWorksheet->getStyle('D'.$Ligne)->applyFromArray($fontCourant);
 
 
@@ -2932,7 +2947,10 @@ switch( $Action ) {
 					if ( $_nim_poids > 2 ) {
 						$_ete_poids = $Liste_Activites_ID[$_act_id]->ete_poids;
 						if ($_ete_poids != '') {
-							$textRun = $richText->createTextRun(' / ' . $Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
+							$textRun = $richText->createTextRun(' / ');
+							if ( isset($Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code) ) {
+								$textRun = $richText->createTextRun(' / ' . $Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
+							}
 							$textRun->getFont()->setBold(true);
 						}
 					}
@@ -2960,7 +2978,10 @@ switch( $Action ) {
 						if ( $_nim_poids > 2 ) {
 							$_ete_poids = $Liste_Activites_ID[$_act_id]->ete_poids;
 							if ($_ete_poids != '') {
-								$textRun = $richText->createTextRun(' / ' . $Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
+								$textRun = $richText->createTextRun(' / ');
+								if ( isset($Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code) ) {
+									$textRun = $richText->createTextRun(' / ' . $Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
+								}
 								$textRun->getFont()->setBold(true);
 							}
 						}
@@ -3014,7 +3035,7 @@ switch( $Action ) {
 				$Liste_Niveaux_Impact_Poids[$Element->nim_poids] = $Element;
 			}
 			
-			$Liste_Echelles_Temps = $objEchellesTemps->rechercherEchellesTemps($_POST['cmp_id']);
+			$Liste_Echelles_Temps = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']);
 			$Liste_Echelles_Temps_Poids = [];
 			foreach ($Liste_Echelles_Temps as $Element) {
 				$Liste_Echelles_Temps_Poids[$Element->ete_poids] = $Element;
@@ -3035,7 +3056,7 @@ switch( $Action ) {
 
 			$PositionIndex = 3;
 
-			$EchellesTemps = $objEchellesTemps->rechercherEchellesTemps($_POST['cmp_id']);
+			$EchellesTemps = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']);
 
 			foreach ( $EchellesTemps as $EchelleTemps) {
 				$LettreColonne1 = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($PositionIndex);
@@ -3110,7 +3131,7 @@ switch( $Action ) {
 		// ======================
 		// Affichage de l'échelle
 		$Liste_Matrice_Impacts = $objMatriceImpacts->rechercherMatriceImpactsParID( $_POST['cmp_id'] );
-		$Liste_EchellesTemps = $objEchellesTemps->rechercherEchellesTemps($_POST['cmp_id']);
+		$Liste_EchellesTemps = $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']);
 		$Liste_Niveaux_Impact = $objCampagnes->rechercherNiveauxImpactCampagne( $_POST['cmp_id'] );
 		$Liste_Types_Impact = $objCampagnes->rechercherTypesImpactCampagne( $_POST['cmp_id'] );
 

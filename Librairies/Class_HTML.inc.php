@@ -31,7 +31,7 @@ public function __construct() {
 * \date 2015-07-22
 *
 */
-	$this->Version_Outil = '1.4-2'; // Version de l'outil
+	$this->Version_Outil = '1.5-0'; // Version de l'outil
 	
 	$this->Nom_Outil = '<span style="color: #717D11;">My</span><span style="color: #C34A36;">Sec</span><span style="color: #44808A;">Dash</span>';
 	$this->Nom_Outil_TXT = 'MySecDash';
@@ -576,8 +576,18 @@ public function traiterItemPrincipaleMenu($Item) {
 	$Barre_Menu = '';
 	
 	foreach($Item as $Objet => $Options) {
-		if ( isset(${$Options->LibelleItemPrincipale}) ) {
+/*		if ( isset(${$Options->LibelleItemPrincipale}) ) {
 			$Options->LibelleItemPrincipale = ${$Options->LibelleItemPrincipale};
+		}*/
+
+		$_Tmp = $this->getLibelle($Options->LibelleItemPrincipale);
+
+		if ( $_Tmp == '---*---' ) {
+			if ( isset(${$Options->LibelleItemPrincipale}) ) {
+				$Options->LibelleItemPrincipale = ${$Options->LibelleItemPrincipale};
+			}
+		} else {
+			$Options->LibelleItemPrincipale = $_Tmp;
 		}
 
 		$Barre_Menu .= "       <li class=\"nav-item dropdown\">\n" .
@@ -609,10 +619,15 @@ public function traiterItemPrincipaleMenu($Item) {
 public function traiterOptionMenu($Option) {
 	include DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php';
 
-	if ( isset(${$Option->LibelleItem}) ) {
-		$Option->LibelleItem = ${$Option->LibelleItem};
-	}
+	$_Tmp = $this->getLibelle($Option->LibelleItem);
 
+	if ( $_Tmp == '---*---' ) {
+		if ( isset(${$Option->LibelleItem}) ) {
+			$Option->LibelleItem = ${$Option->LibelleItem};
+		}
+	} else {
+		$Option->LibelleItem = $_Tmp;
+	}
 
 	if ( $this->controlerPermission($Option->Lien, 'RGH_1') === false ) {
 		return "          <li><a class=\"dropdown-item disabled\" >" . $Option->LibelleItem . "</a></li>\n";
@@ -626,8 +641,14 @@ public function traiterOptionMenu($Option) {
 public function traiterSousMenu($Option) {
 	include DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php';
 
-	if ( isset(${$Option->LibelleItem}) ) {
-		$Option->LibelleItem = ${$Option->LibelleItem};
+	$_Tmp = $this->getLibelle($Option->LibelleItem);
+
+	if ( $_Tmp == '---*---' ) {
+		if ( isset(${$Option->LibelleItem}) ) {
+			$Option->LibelleItem = ${$Option->LibelleItem};
+		}
+	} else {
+		$Option->LibelleItem = $_Tmp;
 	}
 
 	$Barre_Menu = "        <li class=\"dropdown-submenu\">\n" .
@@ -742,7 +763,15 @@ public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $
 
 		$tmpOptions = '';
 
-		$Objet_Titre_Ecran .= "     <select id=\"" . $Options_Titre_1['id'] . "\" class=\"form-select form-select-sm gris\">\n";
+		$_Desactive = '';
+		if (isset($Options_Titre_1['desactive'])) {
+			$Options_Titre_1['desactive'] = strtolower( $Options_Titre_1['desactive'] );
+			if ( $Options_Titre_1['desactive'] == 'oui' ) {
+				$_Desactive = ' disabled';
+			}
+		}
+
+		$Objet_Titre_Ecran .= "     <select id=\"" . $Options_Titre_1['id'] . "\" class=\"form-select form-select-sm gris\"' . $_Desactive . '>\n";
 		if ( isset($Options_Titre_1['options']) ) {
 			if (!isset($_SESSION[$Options_Titre_1['id']]) || $_SESSION[$Options_Titre_1['id']] == '---') {
 				$_SESSION[$Options_Titre_1['id']] = $Options_Titre_1['options'][0]['id'];

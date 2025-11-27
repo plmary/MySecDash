@@ -600,10 +600,10 @@ class Applications extends HBL_Connexioneur_BD {
 			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id
 			LEFT JOIN sct_societes AS "sct" ON sct.sct_id = app.sct_id
 			WHERE act.cmp_id = :cmp_id AND app.app_id IS NOT NULL ';
-*/
+
 		$Request = 'SELECT app.app_id, app.app_nom, app.app_nom_alias, app.app_hebergement, app.app_niveau_service, app.app_description,
 			ete4.ete_poids AS "ete_poids_dima_dsi", ete5.ete_poids AS "ete_poids_pdma_dsi", scap_description_dima, scap_description_pdma,
-			app.frn_id, app.sct_id, ete4.ete_id AS "ete_id_dima_dsi", ete5.ete_id AS "ete_id_pdma_dsi",
+			app.frn_id, app.sct_id, ete4.ete_id AS "ete_id_dima_dsi", ete5.ete_id AS "ete_id_pdma_dsi", cmp.cmp_id, cmp.cmp_date,
 			MIN(ete1.ete_poids) AS "ete_poids_dima", MIN(ete2.ete_poids) AS "ete_poids_pdma",
 			STRING_AGG(act.act_nom || \'===\' || nim.nim_numero || \'---\' || nim.nim_nom_code || \'---\' || nim.nim_couleur || \'===\'
 				|| ete3.ete_nom_code, \'###\') AS "act_noms"
@@ -620,15 +620,41 @@ class Applications extends HBL_Connexioneur_BD {
 			LEFT JOIN ete_echelle_temps AS "ete4" ON ete4.ete_id = scap.ete_id_dima_dsi
 			LEFT JOIN ete_echelle_temps AS "ete5" ON ete5.ete_id = scap.ete_id_pdma_dsi
 			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id
-			LEFT JOIN sct_societes AS "sct" ON sct.sct_id = app.sct_id ';
-//			WHERE act.cmp_id = :cmp_id ';
-		
+			LEFT JOIN sct_societes AS "sct" ON sct.sct_id = app.sct_id
+			LEFT JOIN cmp_campagnes AS "cmp" ON cmp.cmp_id = act.cmp_id
+			WHERE act.cmp_id = (SELECT cmp_id FROM cmp_campagnes WHERE sct_id = :sct_id AND cmp_date = (SELECT MAX(cmp_date) AS "cmp_date" FROM cmp_campagnes WHERE sct_id = :sct_id)) ';
+*/
+		$Request = 'SELECT app.app_id, app.app_nom, app.app_nom_alias, app.app_hebergement, app.app_niveau_service, app.app_description, app.frn_id, 
+			app.sct_id, ete_dima2.ete_nom_code AS "ete_nom_dima_dsi", ete_pdma2.ete_nom_code AS "ete_nom_pdma_dsi", act.cmp_id,
+			scap.ete_id_dima_dsi, scap.ete_id_pdma_dsi, scap.scap_description_dima, scap.scap_description_pdma,
+			string_agg( ent.ent_nom || \'===\' || ent.ent_description || \'===\' || act.act_id || \'===\' || act.act_nom
+				|| \'===\' || ete_dima.ete_nom_code || \'===\' || ete_pdma.ete_nom_code,
+				\'###\' ORDER BY ent.ent_nom, ent.ent_description, act.act_nom) AS act_noms
+
+		FROM act_activites AS "act"
+
+		LEFT JOIN ent_entites AS "ent" ON ent.ent_id = act.ent_id
+		LEFT JOIN acap_act_app AS "acap" ON acap.act_id = act.act_id
+		LEFT JOIN app_applications AS "app" ON app.app_id = acap.app_id
+		LEFT JOIN dma_dmia_activite AS "dma" ON dma.act_id = act.act_id AND dma.cmp_id = act.cmp_id
+		LEFT JOIN mim_matrice_impacts AS "mim" ON mim.mim_id = dma.mim_id
+		LEFT JOIN nim_niveaux_impact AS "nim" ON nim.nim_id = mim.nim_id
+		LEFT JOIN scap_sct_app AS "scap" ON scap.sct_id = :sct_id AND scap.app_id = app.app_id
+		LEFT JOIN ete_echelle_temps AS "ete_dima2" ON ete_dima2.ete_id = scap.ete_id_dima_dsi
+		LEFT JOIN ete_echelle_temps AS "ete_pdma2" ON ete_pdma2.ete_id = scap.ete_id_pdma_dsi
+		LEFT JOIN ete_echelle_temps AS "ete_dima" ON ete_dima.ete_id = acap.ete_id_dima
+		LEFT JOIN ete_echelle_temps AS "ete_pdma" ON ete_pdma.ete_id = acap.ete_id_pdma
+
+		WHERE act.cmp_id = (SELECT cmp_id FROM cmp_campagnes AS "cmp1" WHERE cmp1.cmp_date = (SELECT MAX(cmp_date) AS "cmp_date" FROM cmp_campagnes AS "cmp2" WHERE cmp2.sct_id = :sct_id) AND cmp1.sct_id = :sct_id)
+			AND app.app_id IS NOT NULL ';
+
 		if ($app_id != '') {
-			$Request .= 'WHERE app.app_id = :app_id ';
+			$Request .= 'AND app.app_id = :app_id ';
 		}
 
-		$Request .= 'GROUP BY app.app_id, app.app_nom, app.app_nom_alias, app.app_hebergement, app.app_niveau_service, app.app_description,
-			ete4.ete_poids, ete5.ete_poids, scap_description_dima, scap_description_pdma, ete4.ete_id, ete5.ete_id ';
+		$Request .= 'GROUP BY app.app_id, app.app_nom, app.app_nom_alias, app.app_hebergement, app.app_niveau_service, app.app_description, app.frn_id,
+			app.sct_id, ete_dima2.ete_nom_code, ete_pdma2.ete_nom_code, act.cmp_id, scap.ete_id_dima_dsi, scap.ete_id_pdma_dsi,
+			scap.scap_description_dima, scap.scap_description_pdma ';
 
 
 		$Request = $Request;
@@ -786,7 +812,65 @@ class Applications extends HBL_Connexioneur_BD {
 		
 		return $Occurrence->total;
 	}
-	
+
+
+	public function recupererPoidsNiveauImpactEtEchelleTemps( $act_id ) {
+		/**
+		 * Renvoie le poids maximum du niveau d'impact, ainsi que le poids du DIMA de l'Activité.
+		 *
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2025-11-26
+		 *
+		 * \param[in] $act_id Identifiant de l'Activité à calculer
+		 *
+		 * \return Renvoi un tableau contenant dans le 1er indice le poids maximum du niveau d'impact et dans le 2ème indice le poids du DIMA de l'Activité. Lève une Exception en cas d'erreur.
+		 */
+		$act_nim_poids = 0;
+		$act_ete_poids = 0;
+
+		$Request = 'SELECT act_id, max(nim.nim_poids) AS "nim_poids"
+			FROM dma_dmia_activite AS "dma"
+			LEFT JOIN mim_matrice_impacts AS "mim" ON mim.mim_id = dma.mim_id
+			LEFT JOIN nim_niveaux_impact AS "nim" ON nim.nim_id = mim.nim_id
+			WHERE dma.act_id = :act_id
+			GROUP BY act_id ' ;
+
+		$Query = $this->prepareSQL( $Request );
+
+		$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
+
+		$this->executeSQL( $Query );
+
+		$Occurrence = $Query->fetchObject() ;
+
+		if ( isset( $Occurrence->nim_poids ) ) {
+			$act_nim_poids = $Occurrence->nim_poids;
+		}
+
+
+		$Request = 'SELECT act_id, min(ete.ete_poids) AS "ete_poids"
+			FROM dma_dmia_activite AS "dma2"
+			LEFT JOIN mim_matrice_impacts AS "mim" ON mim.mim_id = dma2.mim_id
+			RIGHT JOIN nim_niveaux_impact AS "nim" ON nim.nim_id = mim.nim_id AND nim.nim_poids > 2
+			LEFT JOIN ete_echelle_temps AS "ete" ON ete.ete_id = dma2.ete_id
+			WHERE dma2.act_id = :act_id
+			GROUP BY act_id ' ;
+
+		$Query = $this->prepareSQL( $Request );
+
+		$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
+
+		$this->executeSQL( $Query );
+
+		$Occurrence = $Query->fetchObject() ;
+
+		if ( isset( $Occurrence->ete_poids ) ) {
+			$act_ete_poids = $Occurrence->ete_poids;
+		}
+
+		return [ $act_nim_poids, $act_ete_poids ];
+	}
 }
 
 ?>

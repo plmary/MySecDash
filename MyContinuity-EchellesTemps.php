@@ -498,25 +498,13 @@ switch( $Action ) {
 
 		$_SESSION['s_sct_id'] = $_POST['sct_id'];
 
-		try {
-			list($Liste_Societes, $Liste_Campagnes) =
-			actualiseSocieteCampagne($objSocietes, $objCampagnes, 2);
-		} catch ( Exception $e ) {
-			$Resultat = array( 'statut' => 'error',
-				'texteMsg' => $e->getMessage() );
-			echo json_encode( $Resultat );
-			break;
-		}
-
 		$Resultat = array( 'statut' => 'success',
 			'texteMsg' => $L_Societe_Change,
 			'sct_id' => $_SESSION['s_sct_id'],
-			'cmp_id' => $_SESSION['s_cmp_id'],
 			'L_Societe_Sans_Campagne' => $L_Societe_Sans_Campagne,
 			'L_Gestion_Campagnes' => $L_Gestion_Campagnes,
 			'L_Campagne_Sans_Entite' => $L_Campagne_Sans_Entite,
-			'L_Gestion_Entites' => $L_Gestion_Entites,
-			'Liste_Campagnes' => $Liste_Campagnes
+			'L_Gestion_Entites' => $L_Gestion_Entites
 		);
 	} else {
 		$Resultat = array( 'statut' => 'error',
@@ -528,49 +516,17 @@ switch( $Action ) {
 	break;
 
 
- case 'AJAX_Selectioner_Campagne':
-	if ( isset($_POST['cmp_id']) ) {
-		if ( ! $PageHTML->verifierCampagneAutorisee($_POST['cmp_id']) ) {
-			print( json_encode( array( 'Statut' => 'error',
-				'texteMsg' => $L_Pas_Droit_Ressource . ' (cmp_id="' . $_POST['cmp_id'] . '")'.' [' . __LINE__ . ']' ) ) );
-
-			$PageHTML->ecrireEvenement( 'ATP_ALERTE', 'OTP_SECURITE', $L_Pas_Droit_Ressource . ' (ent_id="' . $_POST['ent_id'] . '")'.' [' . __LINE__ . ']' );
-
-			exit();
-		}
-
-		$_SESSION['s_cmp_id'] = $_POST['cmp_id'];
-
-		try {
-			list($Liste_Societes, $Liste_Campagnes) =
-			actualiseSocieteCampagne($objSocietes, $objCampagnes, 3);
-		} catch ( Exception $e ) {
-			$Resultat = array( 'statut' => 'error',
-				'texteMsg' => $e->getMessage() );
-			echo json_encode( $Resultat );
-			break;
-		}
-
-		$Resultat = array( 'statut' => 'success',
-			'texteMsg' => $L_Campagne_Change,
-			'sct_id' => $_SESSION['s_sct_id'],
-			'cmp_id' => $_SESSION['s_cmp_id']
-		);
-	} else {
-		$Resultat = array( 'statut' => 'error',
-			'texteMsg' => $L_ERR_Champs_Obligatoires . ' (cmp_id)' );
-	}
-
-	echo json_encode( $Resultat );
-
-	break;
-
-
  case 'AJAX_Verifier_Avant_Initialisation':
 	if ( $Droit_Lecture === TRUE && isset($_SESSION['s_sct_id']) && $_SESSION['s_sct_id'] != '' ) {
-		$Message = sprintf( $L_Confirmer_Initialiser_Echelle_Temps_Defaut, $_POST['libelle_societe'] );
-		$Titre = $L_Initialiser_Echelle_Temps_Campagne;
-		$Bouton = $L_Initialiser;
+		if ( $objEchellesTemps->totalEchellesTemps( $_SESSION['s_sct_id'] ) > 0 ) {
+			$Message = sprintf( $L_Confirmer_Reinitialiser_Echelle_Temps, $_POST['libelle_societe'] );
+			$Titre = $L_Reinitialiser_Echelle_Temps;
+			$Bouton = $L_Reinitialiser;
+		} else {
+			$Message = sprintf( $L_Confirmer_Initialiser_Echelle_Temps_Defaut, $_POST['libelle_societe'] );
+			$Titre = $L_Initialiser_Echelle_Temps;
+			$Bouton = $L_Initialiser;
+		}
 
 		$Resultat = array( 'statut' => 'success',
 			'texteMsg' => $Message,
@@ -599,7 +555,7 @@ switch( $Action ) {
  case 'AJAX_Initialiser_Echelle_Temps':
 	if ( $Droit_Ajouter === TRUE && $Droit_Supprimer === TRUE ) {
 		try {
-			$objEchellesTemps->initialiserEchelleTempsDefautACampagne( $_SESSION['s_cmp_id'] );
+			$objEchellesTemps->initialiserEchelleTempsDefaut( $_SESSION['s_sct_id'] );
 
 			$Resultat = array(
 				'statut' => 'success',
@@ -624,121 +580,6 @@ switch( $Action ) {
 	}
 	
 	break;
-}
-
-
-
-function actualiseSocieteCampagne($objSocietes, $objCampagnes, $forcer=0) {
-	/**
-	 * Actualise les listes Sociétés et Campagnes à l'entrée dans l'écran et en cas de changement.
-	 *
-	 * \license Copyleft Loxense
-	 * \author Pierre-Luc MARY
-	 * \date 2024-10-01
-	 *
-	 * \param[in] $objSocietes Objet permettant d'accéder aux fonctions de gestion des Sociétés
-	 * \param[in] $objCampagnes Objet permettant d'accéder aux fonctions de gestion des Campagnes
-	 * \param[in] $forcer Flag permettant de forcer le résultat (0=Tout charger, 1=Changer Société, 2=Changer Campagne)
-	 *
-	 * \return Renvoi un tableau d'objet ou un tableau vide si pas de données trouvées. Lève une exception en cas d'erreur.
-	 */
-	include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
-	
-	$Liste_Societes = [];
-	$Liste_Campagnes = [];
-	
-	
-	switch ( $forcer ) {
-		case 1:
-			// Comme on vient de change de Société, on efface les variables de Session qui pointaient :
-			//   sur une Campagne
-			//   et sur une Entité.
-			// Ainsi, on forcera le repositionnement sur la première occurrence de Campagne et d'Entité.
-			unset($_SESSION['s_cmp_id']);
-			unset($_SESSION['s_ent_id']);
-			break;
-			
-		case 2:
-			// Comme on vient de change de Campagne, on efface la variable de Session qui pointait sur une Entité.
-			// Ainsi, on forcera le repositionnement sur la première occurrence d'Entité.
-			unset($_SESSION['s_ent_id']);
-			break;
-	}
-	
-	
-	// Récupère les Sociétés accessibles pour l'Utilisateur
-	if ( $_SESSION['idn_super_admin'] === TRUE ) {
-		$Liste_Societes = $objSocietes->rechercherSocietes();
-		if ( $Liste_Societes == [] ) {
-			// Si pas de société, alors on efface tout et on lève une exception.
-			$_SESSION['s_sct_id'] = '';
-			$_SESSION['s_cmp_id'] = '';
-			$_SESSION['s_ent_id'] = '';
-			
-			throw new Exception($L_Plus_De_Societe, 0);
-		} else {
-			// Si la variable de Session n'est pas initialisé, alors on l'initialise sur la première occurrence de notre résultat.
-			if ( ! isset($_SESSION['s_sct_id']) or $_SESSION['s_sct_id'] == '' ) {
-				$_SESSION['s_sct_id'] = $Liste_Societes[0]->sct_id;
-			}
-		}
-	} else {
-		$Liste_Societes = $objSocietes->rechercherSocietes('', '', $_SESSION['idn_id']);
-		if ( $Liste_Societes == [] ) {
-			// Si pas de société, alors on efface tout et on lève une exception.
-			$_SESSION['s_sct_id'] = '';
-			$_SESSION['s_cmp_id'] = '';
-			$_SESSION['s_ent_id'] = '';
-			
-			throw new Exception($L_Pas_Societe_Autorisee_Pour_Utilisateur, 0);
-		} else {
-			if ( ! isset($_SESSION['s_sct_id']) or $_SESSION['s_sct_id'] == '' ) {
-				$_SESSION['s_sct_id'] = $Liste_Societes[0]->sct_id;
-			} else {
-				// On contrôle que l'utilisateur a encore accès à cette Société, sinon on lève une exception.
-				$_Autorise = 0;
-				foreach ($Liste_Societes as $_Tmp) {
-					if ( $_Tmp->sct_id == $_SESSION['s_sct_id'] ) {
-						$_Autorise = 1;
-						break;
-					}
-				}
-				
-				if ( $_Autorise == 0 ) {
-					throw new Exception($L_Societe_Plus_Autorisee_Pour_Utilisateur, 0);
-				}
-			}
-		}
-	}
-	
-	// Récupère les Campagnes associées à la Société Sélectionnée.
-	$Liste_Campagnes = $objCampagnes->rechercherCampagnes($_SESSION['s_sct_id'], 'cmp_date-desc');
-	if ( $Liste_Campagnes == [] ) {
-		$_SESSION['s_cmp_id'] = '';
-		$_SESSION['s_ent_id'] = '';
-		
-		throw new Exception($L_Pas_Campagne_Pour_Societe, 0);
-	} else {
-		if ( ! isset($_SESSION['s_cmp_id']) or $_SESSION['s_cmp_id'] == '' ) {
-			$_SESSION['s_cmp_id'] = $Liste_Campagnes[0]->cmp_id;
-		} else {
-			// On contrôle que l'utilisateur a encore accès à cette Société.
-			$_Autorise = 0;
-			
-			foreach ($Liste_Campagnes as $_Tmp) {
-				if ( $_Tmp->cmp_id == $_SESSION['s_cmp_id'] ) {
-					$_Autorise = 1;
-					break;
-				}
-			}
-			
-			if ( $_Autorise == 0 ) {
-				$_SESSION['s_cmp_id'] = $Liste_Campagnes[0]->cmp_id;
-			}
-		}
-	}
-
-	return [$Liste_Societes, $Liste_Campagnes];
 }
 
 ?>

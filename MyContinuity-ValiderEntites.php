@@ -69,7 +69,7 @@ switch( $Action ) {
 	// Initialise les listes déroulantes : Sociétés, Campagnes et Entités
 	try {
 		list($Liste_Societes, $Liste_Campagnes) =
-		actualiseSocieteCampagneEntite($objSocietes, $objCampagnes);
+			actualiseSocieteCampagne($objSocietes, $objCampagnes);
 	} catch( Exception $e ) {
 		print('<h1 class="text-urgent">' . $e->getMessage() . '</h1>');
 		break;
@@ -243,20 +243,26 @@ switch( $Action ) {
 		$Trier = $_POST[ 'trier' ];
 
 		try {
-			$Entites = $objCampagnes->rechercherEntitesCampagne( $_SESSION['s_cmp_id'], '', $Trier );
-			$Total = $objCampagnes->RowCount;
+			if ( isset( $_SESSION['s_cmp_id'] ) && $_SESSION['s_cmp_id'] != '' ) {
+				$Entites = $objCampagnes->rechercherEntitesCampagne( $_SESSION['s_cmp_id'], '', $Trier );
+				$Total = $objCampagnes->RowCount;
 
-			$Texte_HTML = '';
+				$Texte_HTML = '';
 
-			foreach ($Entites as $Occurrence) {
-				if ($Occurrence->ent_description == NULL) $Occurrence->ent_description = '';
-				if ($Occurrence->ppr_id_validation != NULL) {
-					$Occurrence->ppr_id_validation = $Occurrence->ppr_nom . ' ' . $Occurrence->ppr_prenom;
-				} else {
-					$Occurrence->ppr_id_validation = '';
+				foreach ($Entites as $Occurrence) {
+					if ($Occurrence->ent_description == NULL) $Occurrence->ent_description = '';
+					if ($Occurrence->ppr_id_validation != NULL) {
+						$Occurrence->ppr_id_validation = $Occurrence->ppr_nom . ' ' . $Occurrence->ppr_prenom;
+					} else {
+						$Occurrence->ppr_id_validation = '';
+					}
+
+					$Texte_HTML .= $PageHTML->creerOccurrenceCorpsTableau( $Occurrence->ent_id, $Occurrence, $Format_Colonnes );
 				}
-				
-				$Texte_HTML .= $PageHTML->creerOccurrenceCorpsTableau( $Occurrence->ent_id, $Occurrence, $Format_Colonnes );
+			} else {
+				$Texte_HTML = '<div class="row justify-content-md-center mt-2"><div class="col col-lg-8"><h2 class="text-center">' . $L_Campagne_Sans_Entite . '</h2></div></div>' .
+					'<div class="row justify-content-md-center mb-2"><div class="col col-lg-4 text-center"><a href="' . URL_BASE . '/MySecDash-Entites.php" class="btn btn-primary btn-gerer-campagnes">' . $L_Gestion_Entites . '</a></div></div>';
+				$Total = 0;
 			}
 
 			echo json_encode( array(
@@ -267,7 +273,7 @@ switch( $Action ) {
 				'droit_supprimer' => $Droit_Supprimer,
 				'sct_id' => $_SESSION['s_sct_id'],
 				'cmp_id' => $_SESSION['s_cmp_id']
-				) );
+			) );
 		} catch( Exception $e ) {
 			echo json_encode( array(
 				'statut' => 'error',
@@ -298,7 +304,7 @@ switch( $Action ) {
 		
 		try {
 			list($Liste_Societes, $Liste_Campagnes) =
-				actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, 2);
+				actualiseSocieteCampagne($objSocietes, $objCampagnes, 2);
 		} catch ( Exception $e ) {
 			$Resultat = array( 'statut' => 'error',
 				'texteMsg' => $e->getMessage() );
@@ -341,7 +347,7 @@ switch( $Action ) {
 		
 		try {
 			list($Liste_Societes, $Liste_Campagnes) =
-				actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, 3);
+				actualiseSocieteCampagne($objSocietes, $objCampagnes, 3);
 		} catch ( Exception $e ) {
 			$Resultat = array( 'statut' => 'error',
 				'texteMsg' => $e->getMessage() );
@@ -366,7 +372,7 @@ switch( $Action ) {
 
 
 
-function actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $forcer=0) {
+function actualiseSocieteCampagne($objSocietes, $objCampagnes, $forcer=0) {
 	/**
 	 * Actualise les listes Sociétés, Campagnes et Entités à l'entrée dans l'écran et en cas de changement.
 	 *
@@ -450,10 +456,21 @@ function actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $forcer=0) 
 	// Récupère les Campagnes associées à la Société Sélectionnée.
 	$Liste_Campagnes = $objCampagnes->rechercherCampagnes($_SESSION['s_sct_id'], 'cmp_date-desc');
 	if ( $Liste_Campagnes == [] ) {
+		$tmpObj1 = new stdClass();
+		$tmpObj1->cmp_id = '';
+		$tmpObj1->cmp_date = '---';
+		$Liste_Campagnes[0] = $tmpObj1;
+
+		$tmpObj2 = new stdClass();
+		$tmpObj2->ent_id = '';
+		$tmpObj2->ent_nom = '---';
+		$tmpObj2->total_activites = 0;
+		$Liste_Entites[0] = $tmpObj2;
+
 		$_SESSION['s_cmp_id'] = '';
 		$_SESSION['s_ent_id'] = '';
-		
-		throw new Exception($L_Pas_Campagne_Pour_Societe, 0);
+
+		return [$Liste_Societes, $Liste_Campagnes];
 	} else {
 		if ( ! isset($_SESSION['s_cmp_id']) or $_SESSION['s_cmp_id'] == '' ) {
 			$_SESSION['s_cmp_id'] = $Liste_Campagnes[0]->cmp_id;

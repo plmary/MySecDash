@@ -567,7 +567,7 @@ function actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $forcer=0) 
 			throw new Exception($L_Plus_De_Societe, 0);
 		} else {
 			// Si la variable de Session n'est pas initialisé, alors on l'initialise sur la première occurrence de notre résultat.
-			if ( ! isset($_SESSION['s_sct_id']) or $_SESSION['s_sct_id'] == '' ) {
+			if ( ! isset($_SESSION['s_sct_id']) || $_SESSION['s_sct_id'] == '' || $_SESSION['s_sct_id'] == '*' ) {
 				$_SESSION['s_sct_id'] = $Liste_Societes[0]->sct_id;
 			}
 		}

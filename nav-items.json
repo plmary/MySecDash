@@ -31,9 +31,9 @@
 			]},
 			{"LibelleItem": "", "Type" : "separator"},
 			{"LibelleItem": "__LRI_PCM", "Type" : "sous-menu", "Items" : [
-				{"LibelleItem": "__LRI_INDISPO_PERSONNEL", "Type" : "option", "Lien" : "MyContinuity-IndispoPersonnel.php"},
-				{"LibelleItem": "__LRI_INDISPO_FOURNISSEURS", "Type" : "option", "Lien" : "MyContinuity-IndispoFournisseurs.php"},
-				{"LibelleItem": "__LRI_INDISPO_APPLICATIONS", "Type" : "option", "Lien" : "MyContinuity-IndispoApplications.php"}
+				{"LibelleItem": "__LRI_INDISPO_PERSONNELS", "Type" : "option", "Lien" : "MyContinuity-IndispoPersonnel.php"},
+				{"LibelleItem": "__LRI_INDISPO_FOURNISSEURS", "Type" : "option", "Lien" : "MyContinuity-IndispoFournisseur.php"},
+				{"LibelleItem": "__LRI_INDISPO_APPLICATIONS", "Type" : "option", "Lien" : "MyContinuity-IndispoApplication.php"}
 			]},
 			{"LibelleItem": "", "Type" : "separator"},
 			{"LibelleItem": "L_Sites", "Type" : "option", "Lien" : "MyContinuity-Sites.php"},
@@ -41,6 +41,7 @@
 			{"LibelleItem": "L_Applications_SI", "Type" : "option", "Lien" : "MyContinuity-ApplicationsSI.php"},
 			{"LibelleItem": "L_Fournisseurs", "Type" : "option", "Lien" : "MyContinuity-Fournisseurs.php"},
 			{"LibelleItem": "L_Parties_Prenantes", "Type" : "option", "Lien" : "MyContinuity-PartiesPrenantes.php"},
+			{"LibelleItem": "__LRI_Equipes_Internes", "Type" : "option", "Lien" : "MyContinuity-EquipesInternes.php"},
 			{"LibelleItem": "L_Echelles_Temps", "Type" : "option", "Lien" : "MyContinuity-EchellesTemps.php"},
 			{"LibelleItem": "L_Matrice_Impacts", "Type" : "option", "Lien" : "MyContinuity-MatriceImpacts.php"}
 		]},

@@ -50,4 +50,11 @@ $L_Effectifs_A_Distance = 'Effectifs à Distance';
 $L_Effectifs_En_Nominal = 'Effectifs en Nominal';
 
 $L_Informations_Complementaires_A_Dupliquer = 'Informations complémentaires à dupliquer';
+
+$L_Gerer_Donnees = 'Gérer les données';
+$L_Donnee_Cree = 'Donnée crée';
+$L_Donnee_Modifiee = 'Donnée modifiée';
+$L_Donnee_Supprimee = 'Donnée supprimée';
+$L_Donnee_Dupliquee = 'Donnée dupliquée';
+
 ?>

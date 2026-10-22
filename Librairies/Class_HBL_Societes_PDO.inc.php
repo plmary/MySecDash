@@ -119,7 +119,7 @@ class HBL_Societes extends HBL_Connexioneur_BD {
 	* \date 2023-12-22
 	*
 	* \param[in] $orderBy Permet de gérer l'ordre d'affichage.
-	* \param[in] $search Permet de recherchrer des Entités contenant une partie de cette chaîne.
+	* \param[in] $search Permet de rechercher des Sociétés par leurs noms ou leurs descriptions (contenant une partie de cette chaîne).
 	*
 	* \return Renvoi un tableau d'objet ou un tableau vide si pas de données trouvées. Lève une exception en cas d'erreur.
 	*/

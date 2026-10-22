@@ -68,9 +68,9 @@ class PartiesPrenantes extends HBL_Connexioneur_BD {
 
 		$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT );
 
-		$this->bindSQL( $Query, ':ppr_nom', $ppr_nom, PDO::PARAM_STR, L_NOM );
+		$this->bindSQL( $Query, ':ppr_nom', strtoupper($ppr_nom), PDO::PARAM_STR, L_NOM );
 
-		$this->bindSQL( $Query, ':ppr_prenom', $ppr_prenom, PDO::PARAM_STR, L_PRENOM );
+		$this->bindSQL( $Query, ':ppr_prenom', ucwords($ppr_prenom, " -'"), PDO::PARAM_STR, L_PRENOM );
 		
 		$this->bindSQL( $Query, ':ppr_interne', $ppr_interne, PDO::PARAM_BOOL );
 		

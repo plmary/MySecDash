@@ -459,6 +459,7 @@ $L_Disponibilite = 'Disponibilité';
 $L_Integrite = 'Intégrité';
 $L_Confidentialite = 'Confidentialité';
 $L_Preuve = 'Preuve';
+$L_Tracabilite = 'Traçabilité';
 
 $L_Mot_Passe = 'Mot de passe';
 

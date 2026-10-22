@@ -30,8 +30,7 @@
 	$L_Deconnexion = 'Logout';
 	$L_Connexion = 'Login';
 	$L_Changer_Mot_Passe_Obligatoire = 'You must change your password';
- 	$L_Modifier_Mot_Passe = 'Modify your password';
-  	$L_Reinitialiser_Mot_Passe = 'Reset your expiration time';
+	$L_Modifier_Mot_Passe = 'Modify your password';
 
 	$L_Droit_Modifie = 'Right modified';
 

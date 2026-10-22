@@ -434,7 +434,7 @@ function actualiseSocieteCampagne($objSocietes, $objCampagnes, $forcer=0) {
 			
 			throw new Exception($L_Pas_Societe_Autorisee_Pour_Utilisateur, 0);
 		} else {
-			if ( ! isset($_SESSION['s_sct_id']) or $_SESSION['s_sct_id'] == '' ) {
+			if ( ! isset($_SESSION['s_sct_id']) or $_SESSION['s_sct_id'] == '' or $_SESSION['s_sct_id'] == '*' ) {
 				$_SESSION['s_sct_id'] = $Liste_Societes[0]->sct_id;
 			} else {
 				// On contrôle que l'utilisateur a encore accès à cette Société, sinon on lève une exception.

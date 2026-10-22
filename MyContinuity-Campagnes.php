@@ -69,10 +69,12 @@ $Format_Colonnes[ 'Actions' ] = array( 'taille' => '2', 'titre' => $L_Actions,
 // Exécute l'action identifie
 switch( $Action ) {
  default:
-	if ( $_SESSION['idn_super_admin'] === TRUE ) {
-		$Liste_Societes = $objSocietes->rechercherSocietes();
-	} else {
-		$Liste_Societes = $objSocietes->rechercherSocietes('', '', $_SESSION['idn_id'] );
+	$Liste_Societes = $objSocietes->rechercherSocietes();
+
+	if ( isset( $_SESSION['s_sct_id'] ) ) {
+		if ($_SESSION['s_sct_id'] == '*') {
+			$_SESSION['s_sct_id'] = $Liste_Societes[0]->sct_id;
+		}
 	}
 
 	if ( $Droit_Ajouter === TRUE ) {
@@ -986,6 +988,8 @@ switch( $Action ) {
 				'statut' => 'success',
 				'texteMsg' => $L_PartiePrenante_Creee,
 				'ppr_id' => $Id_Partie_Prenante,
+				'ppr_nom' => strtoupper($_POST['ppr_nom']),
+				'ppr_prenom' => ucwords($_POST["ppr_prenom"], " -'"),
 				'L_Interne' => $PageHTML->getLibelle('__LRI_INTERNE'),
 				'L_Externe' => $PageHTML->getLibelle('__LRI_EXTERNE')
 			) );

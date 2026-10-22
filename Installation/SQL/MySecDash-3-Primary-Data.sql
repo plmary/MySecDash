@@ -86,7 +86,7 @@ SELECT pg_catalog.setval('ent_entites_ent_id_seq', 1, true);
 
 INSERT INTO idn_identites (
 idn_id, sct_id, cvl_id, idn_login, idn_authentifiant, idn_grain_sel, idn_changer_authentifiant, idn_super_admin, idn_tentative, idn_desactiver, idn_derniere_connexion, idn_date_expiration, idn_date_modification_authentifiant) VALUES(
-1, 1, 1, 'root', 'f6f3b63150785a187a6f425db0b07d34d46642b34a892d493b758bdefd2ceafa', 'Azdser23ddAAXx', false, true, 0, false, CURRENT_TIMESTAMP, '2030-01-01 00:00:00', CURRENT_TIMESTAMP);
+1, 1, 1, 'root', '$2y$10$i6e87./uT4rQ827UImUmvONqPmy4zzA5wKcfI1BjJyuVA237QpC62', 'Azdser23ddAAXx', true, true, 0, false, CURRENT_TIMESTAMP, '2030-01-01 00:00:00', CURRENT_TIMESTAMP);
 
 
 SELECT pg_catalog.setval('idn_identites_idn_id_seq', 1, true);
@@ -179,10 +179,12 @@ INSERT INTO ain_applications_internes (ain_id, tap_id, ain_libelle, ain_localisa
 (27, 1, 'Comparateur de DMIA sur Activités', 'MyContinuity-ComparateurDMIAActivites.php'),
 
 (28, 1, 'Gestion des Libellés du Référentiel', 'MySecDash-LibellesReferentiel.php'),
-(29, 1, 'Gestion des Applications par le SI', 'MyContinuity-ApplicationsSI.php');
+(29, 1, 'Gestion des Applications par le SI', 'MyContinuity-ApplicationsSI.php'),
 
+(30, 1, 'Gestion des Equipes Internes', 'MyContinuity-EquipesInternes.php');
 
-SELECT pg_catalog.setval('ain_applications_internes_ain_id_seq', 29, true);
+SELECT pg_catalog.setval('ain_applications_internes_ain_id_seq', 30, true);
+
 
 --(9,  1, 'Consultation des Matrices des Risques', 'MySecDash-MatricesRisques.php'),
 --(10, 1, 'Gestion de l''Appréciation des Risques', 'MySecDash-AppreciationRisques.php'),
@@ -418,7 +420,9 @@ INSERT INTO tpo_types_objet (tpo_code_libelle) VALUES
 ('OTP_ECHELLE_TEMPS'),
 ('OTP_SITE'),
 ('OTP_EFFECTIF'),
-('OTP_SECURITE');
+('OTP_SECURITE'),
+('OTP_EQUIPE_INTERNE'),
+('OTP_PRESTATAIRE');
 
 SELECT pg_catalog.setval('tpo_types_objet_tpo_id_seq', 52, true);
 

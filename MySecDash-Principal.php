@@ -20,6 +20,7 @@ include( DIR_LIBRAIRIES . '/Loxense-Entete-Standard.php' );
 // Charge les libellés en fonction de la langue sélectionnée.
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MySecDash-Connexion.php' );
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_' . basename( $Script ) );
+include_once( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Autorisations.inc.php' );
 
 
 // Exécute l'action identifiée

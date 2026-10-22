@@ -177,7 +177,12 @@ class Fournisseurs extends HBL_Connexioneur_BD {
 			LEFT JOIN tfr_types_fournisseur AS "tfr" ON tfr.tfr_id = frn.tfr_id ';
 
 		if ( $cmp_id != '' ) {
-			$Request .= 'LEFT JOIN cmfr_cmp_frn AS "cmfr" ON cmfr.frn_id = frn.frn_id ';
+			$Request = 'SELECT DISTINCT frn.*
+FROM act_activites AS "act"
+LEFT JOIN acfr_act_frn "acfr" ON acfr.act_id = act.act_id 
+LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = acfr.frn_id
+WHERE act.cmp_id = :cmp_id AND frn.frn_id IS NOT NULL
+ORDER BY frn.frn_nom ';
 		}
 			
 		if ( $frn_id != '' ) $Where .= 'WHERE frn_id = :frn_id ';

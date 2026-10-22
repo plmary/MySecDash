@@ -621,7 +621,7 @@ function ModalMAJCampagne( cmp_id = '' ){
 							if ( reponse['statut'] == 'success' ) {
 								ppr_id = reponse['ppr_id'];
 								
-								Nom_Complet_Entite = ppr_nom + ' ' + ppr_prenom;
+								Nom_Complet_Entite = reponse['ppr_nom'] + ' ' + reponse['ppr_prenom'];
 								if (ppr_interne != 1) {
 									Nom_Complet_Entite += ' ('+ reponse['L_Externe'] + ')';
 								} else {

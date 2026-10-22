@@ -62,7 +62,7 @@ $(function() {
 								_Selected = '';
 							}
 
-							$('#s_ent_id').append('<option value="' + element.ent_id + '"' + _Selected + '>' + element.ent_nom + ' (' + element.total_activites + ' ' + (element.total_activites > 1 ? reponse['L_Activites'] : reponse['L_Activite']) + ')</option>');
+							$('#s_ent_id').append('<option value="' + element.ent_id + '"' + _Selected + '>' + element.ent_nom + (element.ent_description != '' ? ' - ' + element.ent_description : '') + ' (' + element.total_activites + ' ' + (element.total_activites > 1 ? reponse['L_Activites'] : reponse['L_Activite']) + ')</option>');
 						}
 					}
 
@@ -104,7 +104,14 @@ $(function() {
 					} else {
 						// Mise à jour de la liste déroulante des Campagnes associées à la Société
 						for (let element of reponse['Liste_Entites']) {
-							$('#s_ent_id').append('<option value="' + element.ent_id + '">' + element.ent_nom + ' (' + element.total_activites + ' ' + (element.total_activites > 1 ? reponse['L_Activites'] : reponse['L_Activite']) + ')</option>');
+							//alert(element.ent_id+' == '+reponse['ent_id']);
+							if (element.ent_id == reponse['ent_id']) {
+								__Selected = ' selected';
+							} else {
+								__Selected = '';
+							}
+
+							$('#s_ent_id').append('<option value="' + element.ent_id + '"' + __Selected + '>' + element.ent_nom + (element.ent_description != '' ? ' - ' + element.ent_description : '') + ' (' + element.total_activites + ' ' + (element.total_activites > 1 ? reponse['L_Activites'] : reponse['L_Activite']) + ')</option>');
 						}
 					}
 					var texteMsg = reponse['texteMsg'];
@@ -794,7 +801,7 @@ function ModalAjouterModifier( act_id = '' ) {
 				// Affichage du niveau retenu.
 				_Row_2 += '<td class="border border-secondary-subtle cellule-echelle" id="echelle-1-'+EchelleTemps.ete_id+'" ' +
 					'data-ete_id="'+EchelleTemps.ete_id+'" ' +
-					'data-cmp_id="'+EchelleTemps.cmp_id+'" ' +
+					//'data-cmp_id="'+EchelleTemps.cmp_id+'" ' +
 					'data-ete_poids="'+EchelleTemps.ete_poids+'" ' +
 					Poids_Niveau_Impact+
 					Couleur_Echelle +
@@ -1055,7 +1062,8 @@ function ModalAjouterModifier( act_id = '' ) {
 						reponse['L_PDMA'], t_ete_id_pdma, reponse['L_Palliatif'], Application.acap_donnees,
 						Application.acap_palliatif,
 						reponse['L_Aucun'], Application.ete_id_dima_dsi, Application.ete_id_pdma_dsi,
-						reponse['L_DMIA_SI'], reponse['L_PDMA_SI']);
+						reponse['L_DMIA_SI'], reponse['L_PDMA_SI'], Application.associe, reponse['L_Nom'], reponse['L_Gerer_Donnees'],
+						reponse['L_Integrite'], reponse['L_Confidentialite'], reponse['L_Tracabilite'], reponse['L_Creer']);
 				}
 				Corps += '</div> <!-- #liste-donnees -->';
 			}
@@ -1202,12 +1210,47 @@ function ModalAjouterModifier( act_id = '' ) {
 					var tim_nom = $(this).attr('data-tim_nom');
 					var cellule_id = $('.cellule-echelle.active').attr('id').split('-')[2];
 
+					var __id = $('.cellule-echelle.active').attr('id');
+
 					$('.cellule-echelle.active').attr('data-mim_id', mim_id)
 						.attr('data-nim_poids', nim_poids).text(nim_numero)
 						.css('background-color', '#'+nim_couleur)
 						.trigger('click');
 
 					$('#echelle-2-'+cellule_id).text(tim_nom);
+
+
+					// Vérifie s'il faut aligner les données avec la nouvelle valeur saisie.
+					// Les autres cellules sont modifiées, si leurs valeurs sont inférieures à la valeur qui vient d'être saisie.
+//					alert(__id);
+					__elem = __id.split('-');
+					__base1 = __elem[0] + '-1-';
+					__base2 = __elem[0] + '-2-';
+					__number = Number(__elem[2]);
+//					alert(__id+' => '+__number);
+
+					for(let i = __number+1;i< __number+30;i++){
+						__id1 = __base1 + i;
+						__id2 = __base2 + i;
+						__found = $('td#'+__id1).attr('id');
+//						alert(__id1+' => '+__number);
+
+						if (__found != undefined) {
+							__next_poids = $('td#'+__id1).attr('data-nim_poids');
+							if (__next_poids == undefined) {
+								__next_poids = 0;
+							}
+							if (__next_poids < nim_poids) {
+								$('td#'+__id1).attr('data-mim_id', mim_id)
+									.attr('data-nim_poids', nim_poids).text(nim_numero)
+									.css('background-color', '#'+nim_couleur);
+	
+								$('td#'+__id2).text(tim_nom);
+							}
+						} else {
+							break;
+						}
+					}
 
 					$('[id^="mim_id-"]').removeClass('active');
 					$(this).addClass('active');
@@ -1675,9 +1718,9 @@ function afficherMessageCorps(Libelle_Message, Libelle_Bouton) {
 
 
 
-function creerOccurrenceApplicationDansListe(ID_Application, Nom_Application, Flag_Selection_Origine,
-	Selection_Actuelle, Liste_EchellesTemps, Libelle_DMIA, ID_DIMA, Libelle_PDMA, ID_PDMA,
-	Libelle_Palliatif, Donnees, Palliatif, Libelle_Aucun, ID_DIMA_DSI, ID_PDMA_DSI, Libelle_DMIA_SI, Libelle_PDMA_SI) {
+function creerOccurrenceApplicationDansListe(ID_Application, Nom_Application, Flag_Selection_Origine, Selection_Actuelle, Liste_EchellesTemps,
+	Libelle_DMIA, ID_DIMA, Libelle_PDMA, ID_PDMA, Libelle_Palliatif, Donnees, Palliatif, Libelle_Aucun, ID_DIMA_DSI, ID_PDMA_DSI, Libelle_DMIA_SI,
+	Libelle_PDMA_SI, ID_Activite, L_Nom, L_Gerer_Donnees, L_Integrite, L_Confidentialite, L_Tracabilite, L_Creer) {
 	if (Selection_Actuelle != '') {
 		var Champ_Obligatoire = 'required';
 	} else {
@@ -1757,8 +1800,37 @@ function creerOccurrenceApplicationDansListe(ID_Application, Nom_Application, Fl
 		'</div>' +
 		 '</div> <!-- .col-2 -->' +
 		 '<div class="col-3">' +
-		  '<textarea class="form-control" type="checkbox" id="acap_donnees-'+ID_Application+'" rows="3">' +
-		   Donnees+'</textarea>' +
+//		  '<textarea class="form-control" type="checkbox" id="acap_donnees-'+ID_Application+'" rows="3">' +
+//		   Donnees+'</textarea>' +
+		  '<table id="tabapp-' + ID_Application + '-' + ID_Activite + '" class="table table-bordered table-striped">' + 
+		   '<thead>' +
+		   '<tr>' +
+		    '<th>' + L_Nom + '</th>' +
+			'<th title="' + L_Integrite + '" class="text-center">I</th>' +
+			'<th title="' + L_Confidentialite + '" class="text-center">C</th>' +
+			'<th title="' + L_Tracabilite + '" class="text-center">T</th>' +
+		   '</tr>' +
+		  '</thead>' +
+		  '<tbody>';
+
+	if ( Donnees != null && Donnees != '' ) {
+		T_Occurrences = Donnees.split('###');
+		for (let Occurrences of T_Occurrences) {
+			Colonnes = Occurrences.split('---');
+	
+			Corps += '<tr id="dap_id-' + Colonnes[4] + '">' + 
+				'<td>' + Colonnes[0] + '</td>' +
+				'<td class="text-center">' + Colonnes[1] + '</td>' +
+				'<td class="text-center">' + Colonnes[2] + '</td>' +
+				'<td class="text-center">' + Colonnes[3] + '</td>' +
+				'</tr>';
+		}
+	}
+
+	Corps += '</tbody>' +
+		 '</table>' +
+		 '<a id="creer_donnees_application" class="btn btn-outline-secondary" ' +
+		  'href="javascript:creerSuperModal(' + ID_Application + ', ' + ID_Activite + ', \'' + L_Creer + '\')">' + L_Gerer_Donnees + '</a>' + 
 		 '</div> <!-- .col-3 -->' +
 		 '<div class="col-2">' +
 		  '<textarea class="form-control" type="checkbox" id="acap_palliatif-'+ID_Application+'" rows="3">' +
@@ -1769,6 +1841,218 @@ function creerOccurrenceApplicationDansListe(ID_Application, Nom_Application, Fl
 	return Corps;
 }
 
+
+function creerSuperModal( ID_Application, ID_Activite, L_Creer ) {
+	$.ajax({
+		url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Libeller_Donnees',
+		type: 'POST',
+		data: $.param({'app_id': ID_Application, 'act_id': ID_Activite}), // les paramètres sont protégés avant envoi
+		dataType: 'json',
+		success: function( reponse ) {
+			var Titre = reponse["L_Gerer_Donnees"];
+			var Bouton = reponse["L_Modifier"];
+			var ancienZindex;
+
+			var Corps = '<table id="tabapp-' + ID_Application + '-' + ID_Activite + '" class="table table-bordered table-striped">' + 
+			 '<thead>' +
+			  '<tr>' +
+			   '<th class="col-8">' + reponse["L_Nom"] + '</th>' +
+			   '<th class="text-center col-1">' + reponse['L_Integrite'] + '</th>' +
+			   '<th class="text-center col-1">' + reponse['L_Confidentialite'] + '</th>' +
+			   '<th class="text-center col-1">' + reponse['L_Tracabilite'] + '</th>' +
+			   '<th class="text-center col-1">' + reponse['L_Supprimer'] + '</th>' +
+			  '</tr>' +
+			 '</thead>' +
+			 '<tbody>';
+
+			for (let Donnees of reponse['Liste_Donnees']) {
+				if ( Donnees != '') {
+					Corps += '<tr class="data-modification" id="dap-' + Donnees.dap_id + '">' +
+						'<td><input id="dap-nom-' + Donnees.dap_id + '" type="text" class="form-control" data-old_value="' + Donnees.dap_nom_donnee_application + '" value="' + Donnees.dap_nom_donnee_application + '"></td>' +
+						'<td class="text-center"><input id="dap-i-' + Donnees.dap_id + '" type="number" class="form-control" data-old_value="' + Donnees.dap_integrite_donnee_application + '" value="' + Donnees.dap_integrite_donnee_application + '" min="1" max="4"></td>' +
+						'<td class="text-center"><input id="dap-c-' + Donnees.dap_id + '" type="number" class="form-control" data-old_value="' + Donnees.dap_confidentialite_donnee_application + '" value="' + Donnees.dap_confidentialite_donnee_application + '" min="1" max="4"></td>' +
+						'<td class="text-center"><input id="dap-t-' + Donnees.dap_id + '" type="number" class="form-control" data-old_value="' + Donnees.dap_tracabilite_donnee_application + '" value="' + Donnees.dap_tracabilite_donnee_application + '" min="1" max="4"></td>' +
+						'<td class="text-center"><input id="dap-delete-' + Donnees.dap_id + '" type="checkbox" class="form-check-input"></td>' +
+						'</tr>';
+				}
+			}
+
+			Corps += '</tbody>' +
+			 '</table>' +
+			 '<a id="creer-nouvelle-donnee" class="btn btn-outline-secondary">' + L_Creer + '</a>';
+
+			construireModal( 'superModal',
+				Titre,
+				Corps,
+				'idBoutonAjouter', Bouton,
+				true, reponse[ 'L_Fermer' ],
+				'formAjouterModifierData', 'modal-xxl' );
+		
+			$('#superModal').modal('show'); // Affiche la modale qui vient d'être créée
+		
+			// Attend que la modale soit affichée avant de donner le focus au champ.
+			$('#superModal').on('shown.bs.modal', function() {
+				$('#superModal').css('z-index', 1100);
+				ancienZindex = $('.modal-backdrop').css('z-index');
+				$('.modal-backdrop').css('z-index', 1099);
+			});
+		
+			// Supprime la modale après l'avoir caché.
+			$('#superModal').on('hidden.bs.modal', function() {
+				$('#superModal').remove();
+		
+				$('.modal-backdrop').css('z-index', ancienZindex);
+			});
+
+			// Création d'une nouvelle occurrence de données dans le tableau
+			var Index_Data_Creation = 0;
+			$('#creer-nouvelle-donnee').on('click', function() {
+				Index_Data_Creation += 1;
+
+				New_Occurrence = '<tr class="data-creation" id="new-data-' + Index_Data_Creation + '">' +
+					'<td><input type="text" class="form-control" id="dap-nom-new-' + Index_Data_Creation + '"></td>' +
+					'<td class="text-center"><input type="number" class="form-control" id="dap-i-new-' + Index_Data_Creation + '" value="1" min="1" max="4"></td>' +
+					'<td class="text-center"><input type="number" class="form-control" id="dap-c-new-' + Index_Data_Creation + '" value="1" min="1" max="4"></td>' +
+					'<td class="text-center"><input type="number" class="form-control" id="dap-t-new-' + Index_Data_Creation + '" value="1" min="1" max="4"></td>' +
+					'<td class="text-center">&nbsp;</td>' +
+					'</tr>';
+
+				$('#superModal tbody').append( New_Occurrence );
+			});
+
+
+
+			$('#formAjouterModifierData').submit( function( event ) { // Gère la soumission du formulaire.
+				event.preventDefault(); // Laisse le contrôle au Javascript.
+
+				// Gestion de la suppression des données
+				var Liste_ID_A_Supprimer = [];
+
+				$('input[id^=dap-delete-]').each( function( index, valeur ){
+					if ( $( this ).is(":checked") == true ) {
+						Liste_ID_A_Supprimer.push($(this).attr('id').split('-')[2]);
+					}
+				});
+
+				if ( Liste_ID_A_Supprimer != [] && Liste_ID_A_Supprimer != '' ) {
+					$.ajax({
+						url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Supprimer_Donnees',
+						type: 'POST',
+						data: $.param({'app_id': ID_Application, 'act_id': ID_Activite, 'liste_a_supprimer': Liste_ID_A_Supprimer}), // les paramètres sont protégés avant envoi
+						dataType: 'json',
+						success: function( reponse ) {
+							statut = reponse['statut'];
+							texteMsg = reponse['texteMsg'];
+
+							if (statut == 'success') {
+								for( let supp_id of Liste_ID_A_Supprimer) {
+									$('tr#dap-' + supp_id).remove();
+									$('table#tabapp-' + ID_Application + '-' + ID_Activite + ' tbody tr#dap_id-' + supp_id).remove();
+								}
+							}
+
+							afficherMessage( texteMsg, statut, 'body' );
+						}
+					});
+				}
+
+
+				// Gestion de la création des données
+				$('#superModal table tbody tr.data-creation').each( function( index, valeur ){
+					ID_New = $(this).attr('id').split('-')[2];
+					Nom_New = $('input#dap-nom-new-'+ID_New).val();
+
+					if ( Nom_New != '' ) {
+						Integrite_New = $('input#dap-i-new-'+ID_New).val();
+						Confidentialite_New = $('input#dap-c-new-'+ID_New).val();
+						Tracabilite_New = $('input#dap-t-new-'+ID_New).val();
+
+						$.ajax({
+							url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Creer_Donnees',
+							type: 'POST',
+							data: $.param({'app_id': ID_Application, 'act_id': ID_Activite,
+								'dap_nom_donnee_application': Nom_New, 'dap_integrite_donnee_application': Integrite_New,
+								'dap_confidentialite_donnee_application': Confidentialite_New,
+								'dap_tracabilite_donnee_application': Tracabilite_New}), // les paramètres sont protégés avant envoi
+							dataType: 'json',
+							success: function( reponse ) {
+								statut = reponse['statut'];
+								texteMsg = reponse['texteMsg'];
+
+								if (statut == 'success') {
+									$('table#tabapp-' + ID_Application + '-' + ID_Activite + ' tbody').append( '<tr id="dap_id-' + reponse['dap_id'] + '">' + 
+										'<td>' + reponse['dap_nom'] + '</td>' +
+										'<td class="text-center">' + reponse['dap_integrite'] + '</td>' +
+										'<td class="text-center">' + reponse['dap_confidentialite'] + '</td>' +
+										'<td class="text-center">' + reponse['dap_tracabilite'] + '</td>' +
+										'</tr>' );
+								}
+
+								afficherMessage( texteMsg, statut, 'body' );
+							}
+						});
+					} else {
+						$('tr#new-data-'+ID_New).remove();
+					}
+				});
+
+
+				// Gestion de la modification des données
+				$("#superModal table tbody tr.data-modification").each( function( index, valeur ){
+					ID_Modification = $(this).attr('id').split('-')[1];
+
+					Nom_New = $('input#dap-nom-'+ID_Modification).val();
+					Nom_Old = $('input#dap-nom-'+ID_Modification).attr('data-old_value');
+					Integrite_New = $('input#dap-i-'+ID_Modification).val();
+					Integrite_Old = $('input#dap-i-'+ID_Modification).attr('data-old_value');
+					Confidentialite_New = $('input#dap-c-'+ID_Modification).val();
+					Confidentialite_Old = $('input#dap-c-'+ID_Modification).attr('data-old_value');
+					Tracabilite_New = $('input#dap-t-'+ID_Modification).val();
+					Tracabilite_Old = $('input#dap-t-'+ID_Modification).attr('data-old_value');
+
+					if ( (Nom_New != Nom_Old) || (Integrite_New != Integrite_Old) || (Confidentialite_New != Confidentialite_Old)
+						|| (Tracabilite_New != Tracabilite_Old) ) {
+						S_ID_Modification = ID_Modification
+						S_Nom_New = Nom_New;
+						S_Integrite_New = Integrite_New;
+						S_Confidentialite_New = Confidentialite_New;
+						S_Tracabilite_New = Tracabilite_New;
+
+						$.ajax({
+							url: Parameters['URL_BASE'] + Parameters['SCRIPT'] + '?Action=AJAX_Modifier_Donnees',
+							type: 'POST',
+							data: $.param({'app_id': ID_Application, 'act_id': ID_Activite, 'dap_id': S_ID_Modification, 'dap_nom': S_Nom_New,
+								'dap_integrite': S_Integrite_New, 'dap_confidentialite': S_Confidentialite_New, 'dap_tracabilite': S_Tracabilite_New}), // les paramètres sont protégés avant envoi
+							dataType: 'json',
+							success: function( reponse ) {
+								statut = reponse['statut'];
+								texteMsg = reponse['texteMsg'];
+
+								if (statut == 'success') {
+									//alert('tr#dap_id-' + S_ID_Modification+' '+S_Nom_New);
+									$('tr#dap_id-' + S_ID_Modification).replaceWith(
+										'<tr id="dap_id-' + S_ID_Modification + '">' +
+										'<td>' + S_Nom_New + '</td>' +
+										'<td class="text-center">' + S_Integrite_New + '</td>' +
+										'<td class="text-center">' + S_Confidentialite_New + '</td>' +
+										'<td class="text-center">' + S_Tracabilite_New + '</td>' +
+										'</tr>'
+										);
+								}
+
+								afficherMessage( texteMsg, statut, 'body' );
+							}
+						});
+					}
+				});
+
+				$('#superModal').modal('hide'); // Cache la modale d'ajout.
+	
+				//afficherMessage( texteMsg, statut, 'body' );
+			});
+		}
+	});
+}
 
 
 function creerOccurrenceFournisseurDansListe(ID_Fournisseur, Nom_Fournisseur, Flag_Selection_Origine,

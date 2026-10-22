@@ -51,4 +51,10 @@ $L_Effectifs_En_Nominal = 'Nominal Staff';
 
 $L_Informations_Complementaires_A_Dupliquer = 'Additional data to duplicate';
 
+$L_Gerer_Donnees = 'Manage Data';
+$L_Donnee_Cree = 'Data created';
+$L_Donnee_Modifiee = 'Data modified';
+$L_Donnee_Supprimee = 'Data deleted';
+$L_Donnee_Dupliquee = 'Data duplicated';
+
 ?>

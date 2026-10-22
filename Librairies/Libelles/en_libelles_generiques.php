@@ -405,6 +405,12 @@ $L_Gestion_Grilles_Vraisemblances = 'Management of likelihood grids';
 $L_Criteres = 'Criteria';
 $L_Critere = 'Criteria';
 
+$L_Disponibilite = 'Availability';
+$L_Integrite = 'Integrity';
+$L_Confidentialite = 'Confidentialité';
+$L_Preuve = 'Evidence';
+$L_Tracabilite = 'Traceability';
+
 $L_Mot_Passe = 'Password';
 
 $L_Tout_Cocher_Decocher = 'Check / uncheck all';

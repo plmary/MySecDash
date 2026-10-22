@@ -142,6 +142,7 @@ switch( $Action ) {
 			'sct_id' => $_SESSION['s_sct_id'],
 			'cmp_id' => $_SESSION['s_cmp_id'],
 			'ent_id' => $_SESSION['s_ent_id'],
+			'L_Toutes' => $L_Toutes,
 			'L_Societe_Sans_Campagne' => $L_Societe_Sans_Campagne,
 			'L_Gestion_Campagnes' => $L_Gestion_Campagnes,
 			'L_Campagne_Sans_Entite' => $L_Campagne_Sans_Entite,
@@ -212,7 +213,7 @@ switch( $Action ) {
 	break;
 	
 	
- case 'AJAX_Synthese_Gloable':
+ case 'AJAX_Synthese_Globale':
 	if ( $Droit_Lecture === TRUE ) {
 		$Donnees = $objCampagnes->syntheseCampagne( $_SESSION['s_cmp_id'] );
 
@@ -452,10 +453,12 @@ switch( $Action ) {
 
 
 			$_Donnees_Application = '';
-			foreach(explode('##', $Application->acap_donnees) as $_Donnees) {
-				if ( $_Donnees != '' ) {
-					if ( $_Donnees_Application != '' ) { $_Donnees_Application .= ',<br>'; }
-					$_Donnees_Application .= $_Donnees;
+			if ($Application->acap_donnees != '') {
+				foreach(explode('##', $Application->acap_donnees) as $_Donnees) {
+					if ( $_Donnees != '' ) {
+						if ( $_Donnees_Application != '' ) { $_Donnees_Application .= ',<br>'; }
+						$_Donnees_Application .= $_Donnees;
+					}
 				}
 			}
 
@@ -541,10 +544,12 @@ switch( $Action ) {
 
 
 			$_Donnees_Application = '';
-			foreach(explode('##', $Application->acap_donnees) as $_Donnees) {
-				if ( $_Donnees != '' ) {
-					if ( $_Donnees_Application != '' ) { $_Donnees_Application .= ',<br>'; }
-					$_Donnees_Application .= $_Donnees;
+			if ($Application->acap_donnees != '') {
+				foreach(explode('##', $Application->acap_donnees) as $_Donnees) {
+					if ( $_Donnees != '' ) {
+						if ( $_Donnees_Application != '' ) { $_Donnees_Application .= ',<br>'; }
+						$_Donnees_Application .= $_Donnees;
+					}
 				}
 			}
 
@@ -621,6 +626,23 @@ switch( $Action ) {
 					'</tr>';
 			}
 
+			if ( $Fournisseur->act_nom != '' ) {
+				$t_Fournisseurs = explode('###', $Fournisseur->act_nom);
+				$Fournisseur->act_nom = '';
+
+				foreach( $t_Fournisseurs as $_Fournisseur) {
+					if ( $_Fournisseur[1] != '' ) {
+						$__Fournisseur = explode('===', $_Fournisseur);
+						$Fournisseur->act_nom .= $__Fournisseur[0];
+						if ( $__Fournisseur[1] != '' ) {
+							$dmia_Activite = $objActivites->recupererSensibiliteActivite($_SESSION['s_cmp_id'], $__Fournisseur[1]);
+							$Fournisseur->act_nom .= ' (<span class="fw-bold" style="color: #' . $dmia_Activite->nim_couleur . '">' . $dmia_Activite->nim_nom_code .
+							'</span>' . ($dmia_Activite->ete_nom_code != '' ? ' / <span class="fw-bold">' . $dmia_Activite->ete_nom_code . '</span>' : '') . ')<br>';
+						}
+					}
+				}
+			}
+
 			$Corps_HTML .= '<tr>' .
 				'<td>' . $Fournisseur->frn_nom . '</td>' .
 				'<td>' . $Fournisseur->tfr_nom_code . '</td>' .
@@ -672,11 +694,12 @@ switch( $Action ) {
 		$Nom_Entite = $Entite->ent_nom;
 		if ($Entite->ent_description != '') $Nom_Entite .= ' (' . $Entite->ent_description . ')';
 
+		// Début du corps à retourner à l'appelant
 		$Corps_HTML = '<h1 class="text-center">'.$L_BIA_Entite.' : '.$Nom_Entite.'</h1>';
 
 		// ======================================
 		// Liste des activités pour cette entité
-		$Corps_HTML .= '<h2 style="margin-top: 36px; padding: 6px 9px;" class="bg_couleur_1">' . $L_Liste_Activites . '</h2>' .
+		$Corps_HTML .= '<h2 style="margin-top: 36px; padding: 6px 9px;" class="bg_couleur_1 border-top border-warning border-4">' . $L_Liste_Activites . '</h2>' .
 			'<table class="table table-bordered">' .
 			'<tr>' .
 			 '<th width="70%">' . $L_Nom . '</th>' .
@@ -718,6 +741,8 @@ switch( $Action ) {
 		$Corps_HTML .= '</table>';
 
 
+		// ==================================
+		// Affiche le tableau de validation.
 		$Corps_HTML .= '<table class="table-visu table-bordered mt-3">' .
 			'<theader>' .
 			'<tr>' .
@@ -748,7 +773,7 @@ switch( $Action ) {
 
 		// =============================================
 		// Détail de chaque Activités pour cette Entité
-		$Corps_HTML .= '<h2 style="margin-top: 48px; padding: 6px 9px;" class="bg_couleur_1">' . $L_Detail_Activites . '</h2>';
+		$Corps_HTML .= '<h2 style="margin-top: 48px; padding: 6px 9px;" class="bg_couleur_1 border-top border-warning border-4">' . $L_Detail_Activites . '</h2>';
 
 		$Compteur = 0;
 
@@ -764,9 +789,11 @@ switch( $Action ) {
 			$Compteur += 1;
 
 			$Corps_HTML .= '<table class="table-visu-cartouche table-bordered">' .
+				'<thead>' .
 				'<tr>' .
 				'<th colspan="4" class="titre-visu-cartouche">' . $Activite->act_nom . '</th>' .
 				'</tr>' .
+				'</thead>' .
 				'<tbody>' .
 				'<tr>' .
 				 '<td width="25%">' . $L_Responsable_Activite . '</td>' .
@@ -908,7 +935,7 @@ switch( $Action ) {
 				'</table>' .
 				'<table class="table-visu table-bordered" style="margin-top: 0px; margin-bottom: 30px">' .
 				'<tr><td width="20%" class="bg-gris-clair"><i class="bi bi-info-circle-fill" style="font-size: 20px; color: cornflowerblue;"></i>&nbsp;' . $L_Justification_DMIA . '</td><td width="80%" class="fw-bold">' . $Activite->act_justification_dmia . '</td></tr>' .
-				'</table>' .
+				'</table>'; 
 				
 			// =============================
 			// Personnes Clés de l'Activité
@@ -1026,9 +1053,14 @@ switch( $Action ) {
 			
 			if ( $Infos['Liste_Applications'] != FALSE ) {
 				foreach ($Infos['Liste_Applications'] as $Application) {
-					$Application->acap_donnees = str_replace("\n", '<br>', $Application->acap_donnees);
-					$Application->acap_palliatif = str_replace("\n", '<br>', $Application->acap_palliatif);
-					
+					if ($Application->acap_donnees != '') {
+						$Application->acap_donnees = str_replace("\n", '<br>', $Application->acap_donnees);
+					}
+
+					if ($Application->acap_palliatif != '') {
+						$Application->acap_palliatif = str_replace("\n", '<br>', $Application->acap_palliatif);
+					}
+
 					$Corps_HTML .= '<tr>' .
 						'<td>' . $Application->app_nom . '</td>' .
 						'<td>' . $Application->frn_nom . '</td>' .

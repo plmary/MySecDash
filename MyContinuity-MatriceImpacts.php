@@ -50,7 +50,7 @@ switch( $Action ) {
 
 	$Liste_Campagnes = $objCampagnes->rechercherCampagnes($sct_id, 'cmp_date-desc');
 	if ( $Liste_Campagnes != '' && $Liste_Campagnes != [] ) {
-		if ( isset($_SESSION['s_cmp_id']) && $_SESSION['s_cmp_id'] != '---' ) {
+		if ( isset($_SESSION['s_cmp_id']) && $_SESSION['s_cmp_id'] != '---' && $_SESSION['s_cmp_id'] != '' ) {
 			$cmp_id = $_SESSION['s_cmp_id'];
 		} else {
 			$_SESSION['s_cmp_id'] = $cmp_id = $Liste_Campagnes[0]->cmp_id;
@@ -815,7 +815,7 @@ switch( $Action ) {
 
 		try {
 			list($Liste_Societes, $Liste_Campagnes) =
-			actualiseSocieteCampagne($objSocietes, $objCampagnes, 2);
+			actualiseSocieteCampagne($objSocietes, $objCampagnes, 1);
 		} catch ( Exception $e ) {
 			$Resultat = array( 'statut' => 'error',
 				'texteMsg' => $e->getMessage() );

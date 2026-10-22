@@ -1,7 +1,9 @@
 <?php
 
 /**
-* Ce script gère les Applications.
+* Ce script gère les Applications, mais avec la vue des équipes IT.
+* On définnit ici le niveau de DMIA et de PDMA offert par le niveau d'implémentation des outils par les équipes IT.
+* Pour cela, l'équipe IT voit ce qui est demandé par ses équipes métiers et il peut adapter sa réponse.
 *
 * \license Copyleft Loxense
 * \author Pierre-Luc MARY
@@ -499,50 +501,19 @@ switch( $Action ) {
 				$Afficher_Activites = '';
 
 				if ( $Occurrence->act_noms != '' ) {
-					$_cpt = 0;
-
-					$_ent_nom = '';
-					$_ent_description = '';
-					$_act_nom = '';
-					$_nim_poids = '';
-					$_ete_poids = '';
-
 					foreach( explode('###', $Occurrence->act_noms) as $Activite ) {
 						$t_Activite = explode('===', $Activite);
 
-						if ($_cpt == 0 ) {
-							$_ent_nom = $t_Activite[0];
-							$_ent_description = $t_Activite[1];
-							$_act_id = $t_Activite[2];
-							$_act_nom = $t_Activite[3];
-							$_act_dima = $t_Activite[4];
-							$_act_pdma = $t_Activite[5];
-						} else {
-							if ( $_ent_nom != $t_Activite[0] || $_ent_description != $t_Activite[1] || $_act_nom != $t_Activite[2] ) {
-								list($_nim_poids, $_ete_poids) = $objApplications->recupererPoidsNiveauImpactEtEchelleTemps( $_act_id );
+						$_ent_nom = $t_Activite[0];
+						$_ent_description = $t_Activite[1];
+						$_act_id = $t_Activite[2];
+						$_act_nom = $t_Activite[3];
+						$_act_dima = $t_Activite[4];
+						$_act_pdma = $t_Activite[5];
 
-								if ($Afficher_Activites != '') $Afficher_Activites .= ',<br>';
-								$Afficher_Activites .= $_ent_nom . ($_ent_description != '' ? ' - ' . $_ent_description : '') . ' - ' . $_act_nom . ' (<span class="fw-bold" style="color: #' . $ListeMatriceImpactParChamp[$_nim_poids]->nim_couleur . '">' . $ListeMatriceImpactParChamp[$_nim_poids]->nim_numero . ' - ' . $ListeMatriceImpactParChamp[$_nim_poids]->nim_nom_code . '</span> / ' . ($_ete_poids > 0 ? $ListeEchelleTempsParChamp[$_ete_poids]->ete_nom_code : '') . ') [DIMA : <b>'.$_act_dima.'</b> , PDMA : <b>'.$_act_pdma.'</b>]';
-
-								$_ent_nom = $t_Activite[0];
-								$_ent_description = $t_Activite[1];
-								$_act_nom = $t_Activite[2];
-								$_nim_poids = $t_Activite[3];
-								$_ete_poids = $t_Activite[4];
-							} else {
-								if ($t_Activite[3] > $_nim_poids ) {
-									$_nim_poids = $t_Activite[3];
-									$_ete_poids = $t_Activite[4];
-								}
-							}
-						}
-
-						$_cpt += 1;
-					}
-
-					if ( $_cpt > 0 && $Afficher_Activites == '' ) {
 						list($_nim_poids, $_ete_poids) = $objApplications->recupererPoidsNiveauImpactEtEchelleTemps( $_act_id );
 
+						if ($Afficher_Activites != '') $Afficher_Activites .= ',<br>';
 						$Afficher_Activites .= $_ent_nom . ($_ent_description != '' ? ' - ' . $_ent_description : '') . ' - ' . $_act_nom . ' (<span class="fw-bold" style="color: #' . $ListeMatriceImpactParChamp[$_nim_poids]->nim_couleur . '">' . $ListeMatriceImpactParChamp[$_nim_poids]->nim_numero . ' - ' . $ListeMatriceImpactParChamp[$_nim_poids]->nim_nom_code . '</span> / ' . ($_ete_poids > 0 ? $ListeEchelleTempsParChamp[$_ete_poids]->ete_nom_code : '') . ') [DIMA : <b>'.$_act_dima.'</b> , PDMA : <b>'.$_act_pdma.'</b>]';
 					}
 				}

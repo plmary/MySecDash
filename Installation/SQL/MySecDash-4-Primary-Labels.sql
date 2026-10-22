@@ -168,7 +168,11 @@ INSERT INTO lbr_libelles_referentiel (lbr_code, lng_id, lbr_libelle) VALUES
 ('OTP_EFFECTIF', 'fr', 'Effectif'),
 ('OTP_EFFECTIF', 'en', 'Staff'),
 ('OTP_SECURITE', 'fr', 'Sécurité'),
-('OTP_SECURITE', 'en', 'Security');
+('OTP_SECURITE', 'en', 'Security'),
+('OTP_EQUIPE_INTERNE', 'fr', 'Equipe interne'),
+('OTP_EQUIPE_INTERNE', 'en', 'Internal team'),
+('OTP_PRESTATAIRE', 'fr', 'Prestataire'),
+('OTP_PRESTATAIRE', 'en', 'Provider');
 
 
 INSERT INTO lbr_libelles_referentiel (lbr_code, lng_id, lbr_libelle) VALUES

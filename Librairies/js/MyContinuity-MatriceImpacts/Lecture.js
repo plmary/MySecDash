@@ -24,20 +24,32 @@ $(function() {
 					$('#s_cmp_id option').remove();
 
 					if ( reponse['Liste_Campagnes'] != [] && reponse['Liste_Campagnes'] != '' ) {
-						if (reponse['Liste_Campagnes'].length > 1) {
+						if (reponse['Liste_Campagnes'].length > 0) {
 							// Mise à jour de la liste déroulante des Campagnes associées à la Société
+							var Occurrence = 1;
+							var Selection = "";
 							for (let element of reponse['Liste_Campagnes']) {
-								$('#s_cmp_id').append('<option value="' + element.cmp_id + '">' + element.cmp_date + '</option>');
+								if ( Occurrence == 1 ) {
+									Selection = "selected";
+								} else {
+									Selection = "";
+								}
+								$('#s_cmp_id').append('<option value="' + element.cmp_id + '" ' + Selection + '>' + element.cmp_date + '</option>');
 							}
 						} else {
-							$('#s_cmp_id').val(reponse['Liste_Campagnes'][0].cmp_date);
+							$('#s_cmp_id option').remove();
+							$('#s_cmp_id').append('<option value="">---</option>');
 						}
 					} else {
-						$('#s_cmp_id').val('---');
+						$('#s_cmp_id option').remove();
+						$('#s_cmp_id').append('<option value="">---</option>');
 					}
-
-					charger();
+				} else {
+					$('#s_cmp_id option').remove();
+					$('#s_cmp_id').append('<option value="">---</option>');
 				}
+
+				charger();
 
 				afficherMessage(texteMsg, statut);
 			}

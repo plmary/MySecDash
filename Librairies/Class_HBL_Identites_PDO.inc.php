@@ -69,6 +69,9 @@ class HBL_Identites extends HBL_Parametres {
 	*
 	* \return Renvoi vrai si l'Identité a été créée ou modifiée, sinon lève une exception
 	*/
+		if ($SuperAdmin == 1 && $_SESSION['idn_super_admin'] == false) $SuperAdmin = false;
+		if ($SuperAdmin == true && $_SESSION['idn_super_admin'] == false) $SuperAdmin = false;
+
 		if ( $idn_id == '' ) {
 			$Request = 'INSERT INTO idn_identites (' .
 			 'sct_id, ' .
@@ -106,7 +109,7 @@ class HBL_Identites extends HBL_Parametres {
 
 			$Salt = $Security->genererMotPasse( $size, 2 );
 
-			$Authenticator = hash( 'sha256', $this->recupererParametre('default_password') . $Salt, FALSE );
+			$Authenticator = password_hash( $this->recupererParametre('default_password') . $Salt, PASSWORD_BCRYPT );
 
 			$this->bindSQL( $Query, ':idn_authentifiant', $Authenticator, PDO::PARAM_STR, L_IDN_AUTHENTICATOR );
 

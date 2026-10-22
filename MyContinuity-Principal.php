@@ -23,6 +23,7 @@ include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MySecDash-Connexion.ph
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MySecDash-Principal.php' );
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MyContinuity-MatriceImpacts.php' );
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_MyContinuity-Rapports.php' );
+include_once( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Autorisations.inc.php' );
 
 
 // Charge les classes utiles à cet écran.

@@ -110,12 +110,12 @@ function listerActions( Id_Identite, Attempt, Disable, Last_Connection, Expirati
 					'<div class="row">' +
 					'<div class="col-lg-3 col-form-label">' + reponse['L_Tentative'] + '</div>' +
 					'<div class="col-lg-3 col-form-label">' + Badge_Tentative + '</div>' +
-					'<div class="col-lg-4 col-form-label"><a class="btn btn-sm btn-outline-secondary" id="btn-tentative">' + reponse['L_Reset'] + '</a></div>' +
+					'<div class="col-lg-4 col-form-label"><a class="btn btn-sm btn-outline-secondary" id="btn-tentative">' + reponse['L_Reinitialiser_Tentative'] + '</a></div>' +
 					'</div>' +
 					'<div class="row">' +
 					'<div class="col-lg-3 col-form-label">' + reponse['L_Date_Expiration'] + '</div>' +
 					'<div class="col-lg-3 col-form-label">' + Expiration_Date + '</div>' +
-					'<div class="col-lg-4 col-form-label"><a class="btn btn-sm btn-outline-secondary" id="btn-expiration">' + reponse['L_Reset'] + '</a></div>' +
+					'<div class="col-lg-4 col-form-label"><a class="btn btn-sm btn-outline-secondary" id="btn-expiration">' + reponse['L_Reinitialiser_Date_Expiration'] + '</a></div>' +
 					'</div>' +
 					'<div class="row">' +
 					'<div class="col-lg-3 col-form-label">' + reponse['L_Derniere_Connexion'] + '</div>' +

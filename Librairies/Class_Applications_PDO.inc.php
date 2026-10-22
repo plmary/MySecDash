@@ -28,7 +28,7 @@ class Applications extends HBL_Connexioneur_BD {
 
 
 	public function majApplication( $app_id, $app_nom, $frn_id='', $app_hebergement='', $app_niveau_service='',
-		$app_description='', $sct_id = NULL, $app_nom_alias='' ) {
+		$app_description='', $sct_id = null, $app_nom_alias='' ) {
 	/**
 	* Créé ou actualise une Application.
 	*
@@ -46,6 +46,8 @@ class Applications extends HBL_Connexioneur_BD {
 	*
 	* \return Renvoi un booléen sur le succès de la création ou la modification de l'application
 	*/
+		if ($sct_id == '') $sct_id = null;
+
 		if ( $app_id == '' ) {
 			$Request = 'INSERT INTO app_applications 
 				( app_nom, app_nom_alias, frn_id, app_hebergement, app_niveau_service, app_description, sct_id ) VALUES
@@ -74,8 +76,8 @@ class Applications extends HBL_Connexioneur_BD {
 		$this->bindSQL( $Query, ':app_niveau_service', $app_niveau_service, PDO::PARAM_STR, L_APP_NIVEAU_SERVICE );
 		$this->bindSQL( $Query, ':app_description', $app_description, PDO::PARAM_LOB );
 
-		if ( $sct_id == NULL ) {
-			$this->bindSQL( $Query, ':sct_id', NULL, PDO::PARAM_NULL );
+		if ( $sct_id === null || $sct_id == '*' ) {
+			$this->bindSQL( $Query, ':sct_id', null, PDO::PARAM_NULL );
 		} else {
 			$this->bindSQL( $Query, ':sct_id', $sct_id, PDO::PARAM_INT );
 		}
@@ -440,7 +442,7 @@ class Applications extends HBL_Connexioneur_BD {
 	}
 
 
-	public function rechercherApplications( $Order = 'app_nom', $app_id = '', $sct_id = '' ) {
+	public function rechercherApplications( $Order = 'app_nom', $app_id = '', $sct_id = '*' ) {
 	/**
 	* Lister les Applications.
 	*
@@ -467,11 +469,6 @@ class Applications extends HBL_Connexioneur_BD {
 			if (! $_SESSION['idn_super_admin']) {
 				$Where = 'WHERE app.sct_id IS NULL ';
 			}
-/*
-			if ($sct_id != '') {
-				$Where .= 'OR app.sct_id = :sct_id ';
-			}
-*/
 		} else {
 			$Request = 'SELECT DISTINCT app.*, frn.*, sct.*
 				FROM ent_entites AS "ent"
@@ -481,7 +478,7 @@ class Applications extends HBL_Connexioneur_BD {
 				LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id
 				LEFT JOIN sct_societes AS "sct" ON sct.sct_id = app.sct_id ';
 
-			$Where = 'WHERE ent.sct_id = :sct_id and app.app_nom != \'\' ';
+			$Where = 'WHERE (app.sct_id = :sct_id OR app.sct_id IS NULL) AND app.app_nom != \'\' ';
 		}
 
 		if ($app_id != '') {
@@ -494,7 +491,6 @@ class Applications extends HBL_Connexioneur_BD {
 		}
 
 		$Request = $Request . $Where;
-//print($Request);
 
 		switch ( $Order ) {
 		 default:
@@ -579,57 +575,13 @@ class Applications extends HBL_Connexioneur_BD {
 		 * \return Renvoi une liste d'Applications ou une liste vide
 		 */
 
-/*		$Request = 'SELECT app.app_id, app.app_nom, app.app_nom_alias, app.app_hebergement, app.app_niveau_service, app.app_description,
-			ete4.ete_poids AS "ete_poids_dima_dsi", ete5.ete_poids AS "ete_poids_pdma_dsi", scap_description_dima, scap_description_pdma,
-			app.frn_id, app.sct_id, ete4.ete_id AS "ete_id_dima_dsi", ete5.ete_id AS "ete_id_pdma_dsi",
-			MIN(ete1.ete_poids) AS "ete_poids_dima", MIN(ete2.ete_poids) AS "ete_poids_pdma",
-			STRING_AGG(act.act_nom || \'===\' || nim.nim_numero || \'---\' || nim.nim_nom_code || \'---\' || nim.nim_couleur || \'===\'
-				|| ete3.ete_nom_code, \'###\') AS "act_noms"
-			FROM act_activites AS "act"
-			LEFT JOIN acap_act_app AS "acap" ON acap.act_id = act.act_id
-			LEFT JOIN ete_echelle_temps AS "ete1" ON ete1.ete_id = acap.ete_id_dima
-			LEFT JOIN ete_echelle_temps AS "ete2" ON ete2.ete_id = acap.ete_id_pdma
-			LEFT JOIN app_applications AS "app" ON app.app_id = acap.app_id
-			LEFT JOIN dma_dmia_activite AS "dma" ON dma.act_id = act.act_id
-			LEFT JOIN ete_echelle_temps AS "ete3" ON ete3.ete_id = dma.ete_id
-			LEFT JOIN mim_matrice_impacts AS "mim" ON mim.mim_id = dma.mim_id
-			LEFT JOIN nim_niveaux_impact AS "nim" ON nim.nim_id = mim.nim_id
-			LEFT JOIN scap_cmp_app AS "scap" ON scap.app_id = app.app_id AND scap.cmp_id = :cmp_id
-			LEFT JOIN ete_echelle_temps AS "ete4" ON ete4.ete_id = scap.ete_id_dima_dsi
-			LEFT JOIN ete_echelle_temps AS "ete5" ON ete5.ete_id = scap.ete_id_pdma_dsi
-			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id
-			LEFT JOIN sct_societes AS "sct" ON sct.sct_id = app.sct_id
-			WHERE act.cmp_id = :cmp_id AND app.app_id IS NOT NULL ';
-
-		$Request = 'SELECT app.app_id, app.app_nom, app.app_nom_alias, app.app_hebergement, app.app_niveau_service, app.app_description,
-			ete4.ete_poids AS "ete_poids_dima_dsi", ete5.ete_poids AS "ete_poids_pdma_dsi", scap_description_dima, scap_description_pdma,
-			app.frn_id, app.sct_id, ete4.ete_id AS "ete_id_dima_dsi", ete5.ete_id AS "ete_id_pdma_dsi", cmp.cmp_id, cmp.cmp_date,
-			MIN(ete1.ete_poids) AS "ete_poids_dima", MIN(ete2.ete_poids) AS "ete_poids_pdma",
-			STRING_AGG(act.act_nom || \'===\' || nim.nim_numero || \'---\' || nim.nim_nom_code || \'---\' || nim.nim_couleur || \'===\'
-				|| ete3.ete_nom_code, \'###\') AS "act_noms"
-			FROM app_applications AS "app"
-			LEFT JOIN acap_act_app AS "acap" ON acap.app_id = app.app_id
-			LEFT JOIN act_activites AS "act" ON acap.act_id = act.act_id
-			LEFT JOIN ete_echelle_temps AS "ete1" ON ete1.ete_id = acap.ete_id_dima
-			LEFT JOIN ete_echelle_temps AS "ete2" ON ete2.ete_id = acap.ete_id_pdma
-			LEFT JOIN dma_dmia_activite AS "dma" ON dma.act_id = act.act_id
-			LEFT JOIN ete_echelle_temps AS "ete3" ON ete3.ete_id = dma.ete_id
-			LEFT JOIN mim_matrice_impacts AS "mim" ON mim.mim_id = dma.mim_id
-			LEFT JOIN nim_niveaux_impact AS "nim" ON nim.nim_id = mim.nim_id
-			LEFT JOIN scap_sct_app AS "scap" ON scap.app_id = app.app_id AND scap.sct_id = :sct_id
-			LEFT JOIN ete_echelle_temps AS "ete4" ON ete4.ete_id = scap.ete_id_dima_dsi
-			LEFT JOIN ete_echelle_temps AS "ete5" ON ete5.ete_id = scap.ete_id_pdma_dsi
-			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id
-			LEFT JOIN sct_societes AS "sct" ON sct.sct_id = app.sct_id
-			LEFT JOIN cmp_campagnes AS "cmp" ON cmp.cmp_id = act.cmp_id
-			WHERE act.cmp_id = (SELECT cmp_id FROM cmp_campagnes WHERE sct_id = :sct_id AND cmp_date = (SELECT MAX(cmp_date) AS "cmp_date" FROM cmp_campagnes WHERE sct_id = :sct_id)) ';
-*/
 		$Request = 'SELECT app.app_id, app.app_nom, app.app_nom_alias, app.app_hebergement, app.app_niveau_service, app.app_description, app.frn_id, 
 			app.sct_id, ete_dima2.ete_nom_code AS "ete_nom_dima_dsi", ete_pdma2.ete_nom_code AS "ete_nom_pdma_dsi", act.cmp_id,
 			scap.ete_id_dima_dsi, scap.ete_id_pdma_dsi, scap.scap_description_dima, scap.scap_description_pdma,
-			string_agg( ent.ent_nom || \'===\' || ent.ent_description || \'===\' || act.act_id || \'===\' || act.act_nom
+			string_agg(DISTINCT ent.ent_nom || \'===\' || ent.ent_description || \'===\' || act.act_id || \'===\' || act.act_nom
 				|| \'===\' || ete_dima.ete_nom_code || \'===\' || ete_pdma.ete_nom_code,
-				\'###\' ORDER BY ent.ent_nom, ent.ent_description, act.act_nom) AS act_noms
+				\'###\' ORDER BY ent.ent_nom || \'===\' || ent.ent_description || \'===\' || act.act_id || \'===\' || act.act_nom
+				|| \'===\' || ete_dima.ete_nom_code || \'===\' || ete_pdma.ete_nom_code) AS act_noms
 
 		FROM act_activites AS "act"
 

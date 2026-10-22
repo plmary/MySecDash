@@ -31,7 +31,7 @@ public function __construct() {
 * \date 2015-07-22
 *
 */
-	$this->Version_Outil = '1.5-0'; // Version de l'outil
+	$this->Version_Outil = '1.6-0'; // Version de l'outil
 	
 	$this->Nom_Outil = '<span style="color: #717D11;">My</span><span style="color: #C34A36;">Sec</span><span style="color: #44808A;">Dash</span>';
 	$this->Nom_Outil_TXT = 'MySecDash';
@@ -861,8 +861,56 @@ public function construireTitreEcran( $Titre_Ecran, $Societes_Autorisees = [], $
 
 		$Objet_Titre_Ecran .= $tmpOptions .
 			"     </select>\n" .
-			"    </div> <!-- .input-group -->\n" .
-			"   </div> <!-- #option-titre-menu 2 -->\n";
+			"    </div> <!-- .input-group -->\n";
+
+		if (isset($Options_Titre_2['id2'])) {
+			$tmpOptions = '';
+			$Objet_Titre_Ecran .= "    <div class=\"input-group col-lg-5 mt-2\">\n" .
+			"    <span class=\"input-group-text libelle-alternative-titre-menu\">" . $Options_Titre_2['libelle2'] . "</span>\n" .
+			"     <select id=\"" . $Options_Titre_2['id2'] . "\" class=\"form-select\">\n";
+			
+			if (isset($Options_Titre_2['options2'])) {
+				if (!isset($_SESSION[$Options_Titre_2['id2']]) || $_SESSION[$Options_Titre_2['id2']] == '---') {
+					$_SESSION[$Options_Titre_2['id2']] = $Options_Titre_2['options2'][0]['id'];
+				}
+				
+				switch( count($Options_Titre_2['options2']) ) {
+					default:
+						foreach( $Options_Titre_2['options2'] as $Option_Titre_2 ) {
+							$Infos_Complementaires = '';
+							
+							if ( array_key_exists('infos',$Option_Titre_2) ) {
+								foreach( $Option_Titre_2['infos'] as $Info ) {
+									$Infos_Complementaires .= " data-" . $Info['nom'] . "=\"" . $Info['valeur'] . "\"";
+								}
+							}
+							if ( isset($_SESSION[$Options_Titre_2['id2']]) ) {
+								if ( $_SESSION[$Options_Titre_2['id2']] == $Option_Titre_2['id'] ) {
+									$Opt_Defaut = ' selected';
+								} else {
+									$Opt_Defaut = '';
+								}
+							}
+							$tmpOptions .= "      <option value=\"". $Option_Titre_2['id'] . "\"" . $Infos_Complementaires . $Opt_Defaut . ">". $Option_Titre_2['nom'] . "</option>\n";
+						}
+						
+						break;
+						
+					case 0:
+						$tmpOptions .= "      <option value=\"\">---</option>\n";
+						
+						break;
+				}
+			} else {
+				$tmpOptions .= "      <option value=\"\">---</option>\n";
+			}
+			
+			$Objet_Titre_Ecran .= $tmpOptions .
+			"     </select>\n" .
+			"    </div> <!-- .input-group -->\n";
+		}
+
+		$Objet_Titre_Ecran .= "   </div> <!-- #option-titre-menu 2 -->\n";
 	}
 
 	if ( $Options_Titre_3 != '' and $Options_Titre_3 != [] ) {
@@ -1355,7 +1403,7 @@ public function afficherNotification( $Message, $Flag_Avertissement = false ) {
 
 	$Texte .= "style=\"position:absolute;top:175px;width:80%;left:10%;cursor:pointer;\" onClick=\"javascript:effacerMessage('" . $IdMessage . "');\">" .
 		" <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\" aria-label=\"" . $L_Fermer . "\"></button>" .
-		" <span class=\"glyphicon glyphicon-" . $Icon . " aria-hidden=\"true\"></span> " . $Message .
+		" <span class=\"glyphicon glyphicon-" . $Icon . " aria-hidden=\"true\"></span> " . htmlspecialchars($Message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') .
 		"</div>";
 
 	return $Texte . "		</div>\n";

@@ -144,7 +144,6 @@ switch( $Action ) {
 		'L_Reset' => $L_Reset,
 		'L_Jamais_Connecte' => $L_Jamais_Connecte,
 		'L_Date_Derniere_Connexion_Ancienne' => $L_Date_Derniere_Connexion_Ancienne,
-		'L_Reinitialiser_Mot_Passe' => $L_Reinitialiser_Mot_Passe,
 		'max_attempt' => $PageHTML->recupererParametre('max_attempt'),
 		'account_lifetime' => $PageHTML->recupererParametre('account_lifetime'),
 		'is_super_admin' => $_SESSION['idn_super_admin'],
@@ -154,7 +153,10 @@ switch( $Action ) {
 		's_sct_id' => $_SESSION['s_sct_id'],
 		'Civilites' => $objCivilites->rechercherCivilites(),
 		'Droits_Civilites' => $PageHTML->permissionsGroupees('MySecDash-Civilites.php'),
-		'L_Tout_Cocher_Decocher' => $L_Tout_Cocher_Decocher
+		'L_Tout_Cocher_Decocher' => $L_Tout_Cocher_Decocher,
+		'L_Reinitialiser_Mot_Passe' => $L_Reinitialiser_Mot_Passe,
+		'L_Reinitialiser_Tentative' => $L_Reinitialiser_Tentative,
+		'L_Reinitialiser_Date_Expiration' => $L_Reinitialiser_Date_Expiration
 		);
 
 	if ( $Droit_Lecture === TRUE ) {
@@ -706,10 +708,10 @@ switch( $Action ) {
 				if ( $_POST['id'] == $_SESSION['idn_id'] ) {
 					echo json_encode( array(
 						'statut' => 'error',
-						'texteMsg' => $L_Pas_Droit_Ressource . ' (idn_id="' . $_POST['idn_id'] . '")'.' [' . __LINE__ . ']'
+						'texteMsg' => $L_Pas_Droit_Ressource . ' (idn_id="' . $_POST['id'] . '")'.' [' . __LINE__ . ']'
 					) );
 					
-					$PageHTML->ecrireEvenement( 'ATP_ALERTE', 'OTP_SECURITE', $L_Pas_Droit_Ressource . ' (idn_id="' . $_POST['idn_id'] . '")'.' [' . __LINE__ . ']' );
+					$PageHTML->ecrireEvenement( 'ATP_ALERTE', 'OTP_SECURITE', $L_Pas_Droit_Ressource . ' (idn_id="' . $_POST['id'] . '")'.' [' . __LINE__ . ']' );
 					
 					exit();
 				}
@@ -1031,6 +1033,16 @@ switch( $Action ) {
 
 
  case 'AJAX_Reset_Tentative':
+	if ( $Droit_Modifier === FALSE ) {
+		$Resultat = array(
+			'statut' => 'error',
+			'texteMsg' => $L_No_Authorize
+		);
+
+		echo json_encode( $Resultat );
+		exit();
+	}
+
 	if ( ! isset( $_POST['id']) ) {
 		echo json_encode( array(
 			'statut' => 'error',
@@ -1056,6 +1068,16 @@ switch( $Action ) {
 
 
  case 'AJAX_Activer':
+	if ( $Droit_Modifier === FALSE ) {
+		$Resultat = array(
+			'statut' => 'error',
+			'texteMsg' => $L_No_Authorize
+		);
+
+		echo json_encode( $Resultat );
+		exit();
+	}
+
 	if ( ! isset( $_POST['id']) ) {
 		echo json_encode( array(
 			'statut' => 'error',
@@ -1082,6 +1104,16 @@ switch( $Action ) {
 
 
  case 'AJAX_Desactiver':
+	if ( $Droit_Modifier === FALSE ) {
+		$Resultat = array(
+			'statut' => 'error',
+			'texteMsg' => $L_No_Authorize
+		);
+
+		echo json_encode( $Resultat );
+		exit();
+	}
+
 	if ( ! isset( $_POST['id']) ) {
 		echo json_encode( array(
 			'statut' => 'error',
@@ -1108,6 +1140,16 @@ switch( $Action ) {
 
 
  case 'AJAX_Reset_Expiration':
+	if ( $Droit_Modifier === FALSE ) {
+		$Resultat = array(
+			'statut' => 'error',
+			'texteMsg' => $L_No_Authorize
+		);
+
+		echo json_encode( $Resultat );
+		exit();
+	}
+
 	if ( ! isset( $_POST['id']) ) {
 		echo json_encode( array(
 			'statut' => 'error',
@@ -1134,11 +1176,22 @@ switch( $Action ) {
 
 
  case 'AJAX_Reset_Password':
+	if ( $Droit_Modifier === FALSE ) {
+		$Resultat = array(
+			'statut' => 'error',
+			'texteMsg' => $L_No_Authorize
+		);
+
+		echo json_encode( $Resultat );
+		exit();
+	}
+
 	if ( ! isset( $_POST['id']) ) {
 		echo json_encode( array(
 			'statut' => 'error',
 			'texteMsg' => $L_Field_Mandatory,
-			) );		
+			) );
+		break;
 	}
 
 	try {
@@ -1160,6 +1213,16 @@ switch( $Action ) {
 
 
  case 'AJAX_Associer_Entites':
+	if ( $Droit_Modifier === FALSE ) {
+		$Resultat = array(
+			'statut' => 'error',
+			'texteMsg' => $L_No_Authorize
+		);
+
+		echo json_encode( $Resultat );
+		exit();
+	}
+
 	if ( ! isset( $_POST['idn_id'] ) ) {
 		echo json_encode( array(
 			'statut' => 'error',
@@ -1207,6 +1270,16 @@ switch( $Action ) {
 
 
  case 'AJAX_Associer_Profils':
+	if ( $Droit_Modifier === FALSE ) {
+		$Resultat = array(
+			'statut' => 'error',
+			'texteMsg' => $L_No_Authorize
+		);
+
+		echo json_encode( $Resultat );
+		exit();
+	}
+
 	if ( ! isset( $_POST['idn_id'] ) ) {
 		echo json_encode( array(
 			'statut' => 'error',

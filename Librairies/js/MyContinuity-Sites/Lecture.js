@@ -150,7 +150,7 @@ function ModalMAJ( sts_id = '' ){
 				'<div class="mb-3">' +
 				'<label class="col-lg-2 col-form-label" for="sts_description">' + reponse[ 'L_Description' ] + '</label>' +
 				'<div class="col-lg-12">' +
-				'<textarea id="sts_description" class="form-control" rows="3" required>' + sts_description + '</textarea>' +
+				'<textarea id="sts_description" class="form-control" rows="3">' + sts_description + '</textarea>' +
 				'</div>' +
 				'</div>';
 /*				'<ul class="nav nav-tabs">' +

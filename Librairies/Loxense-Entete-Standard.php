@@ -2,15 +2,50 @@
 
 // Démarre le gestionnaire de session du serveur.
 session_save_path( DIR_SESSION );
+
+ini_set('session.use_only_cookies', '1');
+ini_set('session.use_strict_mode', '1');
+
+session_set_cookie_params([
+	'lifetime' => 0,       // cookie de session, pas de date d'expiration persistante
+	'path'     => '/',
+	'secure'   => true,    // transmis uniquement en HTTPS
+	'httponly' => true,    // inaccessible au JavaScript
+	'samesite' => 'Lax',   // protection CSRF de base
+]);
+
 session_start();
+
+
+// Charge les classes utiles à cet écran.
+include( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
+
+// Instanciation des différents objets.
+$PageHTML = new HTML();
+
 
 // Initialise la langue Française par défaut.
 if ( ! isset( $_SESSION[ 'Language' ] ) ) $_SESSION[ 'Language' ] = 'fr';
 
+
+$Existe = false;
+
 // Récupère le code langue, quand celui-ci est précisé.
 if ( array_key_exists( 'Lang', $_GET ) ) {
 	$_SESSION[ 'Language' ] = $_GET[ 'Lang' ];
+
+	foreach ($PageHTML->listerLanguesSysteme() as $Langue) {
+		if ($Langue == $_SESSION[ 'Language' ]) {
+			$Existe = true;
+			break;
+		}
+	}
 }
+
+if ($Existe == false) {
+	$_SESSION[ 'Language' ] = 'fr';
+}
+
 
 $Script = $_SERVER[ 'SCRIPT_NAME' ];
 $URI = $_SERVER[ 'REQUEST_URI' ];
@@ -23,12 +58,6 @@ if ( ! array_key_exists( 'HTTPS', $_SERVER ) )
 // Charge les libellés en fonction de la langue sélectionnée.
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
 include( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Generiques.inc.php' );
-
-// Charge les classes utiles à cet écran.
-include( DIR_LIBRAIRIES . '/Class_HTML.inc.php' );
-
-// Instanciation des différents objets.
-$PageHTML = new HTML();
 
 
 // Vérifie que le Client reste celui qui a initialisé la Session.

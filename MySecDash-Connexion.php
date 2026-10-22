@@ -47,6 +47,7 @@ if ( array_key_exists( 'Lang', $_GET ) ) {
 // Charge les fichiers de libellés.
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_' . basename( $Script ) );
 include( DIR_LIBELLES . '/' . $_SESSION[ 'Language' ] . '_libelles_generiques.php' );
+include_once( HBL_DIR_LABELS . '/' . $_SESSION[ 'Language' ] . '_HBL_Autorisations.inc.php' );
 
 
 // Charge les classes utiles à l'écran.
@@ -129,9 +130,9 @@ switch( $Action ) {
 	if ( ! $PageHTML->controlerComplexiteMotPasse( $_POST[ 'N_Password' ],
 	 $PageHTML->recupererParametre( 'password_complexity' ) ) ) {
 		if ( $Error == 1 ) {
-			$Error_Message .= ', ' . ${'L_ERR_Complexity_' . $PageHTML->recupererParametre( 'password_complexity' )} ;
+			$Error_Message .= ', ' . ${'L_ERR_Complexite_' . $PageHTML->recupererParametre( 'password_complexity' )} ;
 		} else {
-			$Error_Message = ${'L_ERR_Complexity_' . $PageHTML->recupererParametre( 'password_complexity' )} ;
+			$Error_Message = ${'L_ERR_Complexite_' . $PageHTML->recupererParametre( 'password_complexity' )} ;
 			$Error = 1;
 		}
 	}

@@ -126,7 +126,7 @@ print_r($Liste_Entites);print('<hr>');*/
 
 	if ( $Liste_Entites != '' ) {
 		foreach( $Liste_Entites AS $Entite ) {
-			$Choix_Entites['options'][] = array('id' => $Entite->ent_id, 'nom' => $Entite->ent_nom . ' (' . $Entite->total_activites . ' ' . ($Entite->total_activites > 1 ? $PageHTML->getLibelle('__LRI_ACTIVITES') : $PageHTML->getLibelle('__LRI_ACTIVITE') ) . ')' );
+			$Choix_Entites['options'][] = array('id' => $Entite->ent_id, 'nom' => $Entite->ent_nom . ($Entite->ent_description != '' ? ' - ' . $Entite->ent_description : '') . ' (' . $Entite->total_activites . ' ' . ($Entite->total_activites > 1 ? $PageHTML->getLibelle('__LRI_ACTIVITES') : $PageHTML->getLibelle('__LRI_ACTIVITE') ) . ')' );
 		}
 	}
 
@@ -207,6 +207,12 @@ print_r($Liste_Entites);print('<hr>');*/
 		'L_Dependances_Internes_Aval' => $L_Dependances_Internes_Aval,
 		'L_Justification_DMIA' => $L_Justification_DMIA,
 		'L_Consequence_Indisponibilite' => $L_Consequence_Indisponibilite,
+		'L_Gerer_Donnees' => $L_Gerer_Donnees,
+		'L_Disponibilite' => $L_Disponibilite,
+		'L_Integrite' => $L_Integrite,
+		'L_Confidentialite' => $L_Confidentialite,
+		'L_Preuve' => $L_Preuve,
+		'L_Tracabilite' => $L_Tracabilite,
 		'Liste_Civilites' => $objCivilites->rechercherCivilites(),
 		'Liste_Identites' => $objIdentites->rechercherIdentites( $_SESSION['s_sct_id'] ),
 		'Liste_Sites' => $objActivites->rechercherSitesAssociesActivite( $_SESSION['s_cmp_id'], 0 ), //rechercherSitesCampagne( $_SESSION['s_cmp_id'] ),
@@ -255,8 +261,75 @@ print_r($Liste_Entites);print('<hr>');*/
 	}
 
 	print( json_encode( $Libelles ) );
-		
+
 	exit();
+
+
+ case 'AJAX_Libeller_Donnees':
+	$Libelles = array( 'statut' => 'success',
+	'L_Fermer' => $L_Fermer,
+	'L_Ajouter' => $L_Ajouter,
+	'L_Modifier' => $L_Modify,
+	'L_Supprimer' => $L_Delete,
+	'L_Creer' => $L_Creer,
+	'L_Nom' => $L_Nom,
+	'L_CPCA' => $L_CPCA,
+	'L_Date_Validation' => $L_Date_Validation,
+	'L_Validation' => $L_Validation,
+	'L_Libelle' => $L_Label,
+	'L_Description' => $L_Description,
+	'L_Role' => $L_Role,
+	'L_Oui' => $L_Yes,
+	'L_Non' => $L_No,
+	'L_Site_Nominal' => $L_Site_Nominal,
+	'L_Site_Secours' => $L_Site_Secours,
+	'L_Besoins_Continuite_Activite' => $L_Besoins_Continuite_Activite,
+	'L_DMIA' => $L_DMIA,
+	'L_PDMA' => $L_PDMA,
+	'L_DMIA_SI' => $L_DMIA_SI,
+	'L_PDMA_SI' => $L_PDMA_SI,
+	'L_Libelle_DMIA' => $L_Libelle_DMIA,
+	'L_Libelle_PDMA' => $L_Libelle_PDMA,
+	'L_Palliatif' => $L_Palliatif,
+	'L_Responsable_Activite' => $L_Responsable_Activite,
+	'L_Suppleant' => $L_Suppleant,
+	'L_Cartouche' => $L_Cartouche,
+	'L_Ajouter_PartiePrenante' => $L_Ajouter_PartiePrenante,
+	'L_Prenom' => $L_Prenom,
+	'L_Interne' => $L_Interne,
+	'L_Aucun' => $L_Neither,
+	'L_Activite_Teletravaillable' => $L_Activite_Teletravaillable,
+	'L_Niveau' => $L_Niveau,
+	'L_Type' => $L_Type,
+	'L_Sites' => $L_Sites,
+	'L_Personnes_Cles' => $L_Personnes_Cles,
+	'L_Applications' => $L_Applications,
+	'L_Fournisseurs' => $L_Fournisseurs,
+	'L_Interdependances' => $L_Interdependances,
+	'L_Rechercher' => $L_Rechercher,
+	'L_Niveau_Impact' => $L_Niveau_Impact,
+	'L_Hebergement' => $L_Hebergement,
+	'L_Niveau_Service' => $L_Niveau_Service,
+	'L_ERR_Champs_Obligatoires' => $L_ERR_Champs_Obligatoires,
+	'L_ERR_Champ_Obligatoire' => $L_ERR_Champ_Obligatoire,
+	'L_Donnees' => $L_Donnees,
+	'L_Dependances_Internes_Amont' => $L_Dependances_Internes_Amont,
+	'L_Dependances_Internes_Aval' => $L_Dependances_Internes_Aval,
+	'L_Justification_DMIA' => $L_Justification_DMIA,
+	'L_Consequence_Indisponibilite' => $L_Consequence_Indisponibilite,
+	'L_Gerer_Donnees' => $L_Gerer_Donnees,
+	'L_Disponibilite' => $L_Disponibilite,
+	'L_Integrite' => $L_Integrite,
+	'L_Confidentialite' => $L_Confidentialite,
+	'L_Preuve' => $L_Preuve,
+	'L_Tracabilite' => $L_Tracabilite,
+	'Liste_Donnees' => $objActivites->rechercherDonneesApplicationActivite( $_POST['act_id'], $_POST['app_id'] )
+	);
+
+	print( json_encode( $Libelles ) );
+	
+	exit();
+
 
 
  case 'AJAX_Ajouter':
@@ -490,19 +563,18 @@ print_r($Liste_Entites);print('<hr>');*/
 						$app_id = $Element[0];
 						$ete_id_dima = $Element[1];
 						$ete_id_pdma = $Element[2];
-						$acap_donnees = $Element[3];
-						$acap_palliatif = $Element[4];
-						$acap_hebergement = $Element[5];
-						$acap_niveau_service = $Element[6];
+						$acap_palliatif = $Element[3];
+						$acap_hebergement = $Element[4];
+						$acap_niveau_service = $Element[5];
 						
 						$_fonctionCourante = 'ajouterApplicationActivite';
 						$objActivites->ajouterApplicationActivite($Id_Activite,
-							$app_id, $ete_id_dima, $ete_id_pdma, $acap_donnees, $acap_palliatif, $acap_hebergement, $acap_niveau_service);
+							$app_id, $ete_id_dima, $ete_id_pdma, $acap_palliatif, $acap_hebergement, $acap_niveau_service);
 						
 						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_ACTIVITE',
 							'act_id="' . $Id_Activite .
 							'", app_id="' . $app_id . '", ete_id_dima="' . $ete_id_dima . '", ete_id_pdma="' . $ete_id_pdma . '"' .
-							', acap_donnees="' . $acap_donnees . '", acap_palliatif="' . $acap_palliatif . '"' .
+							', acap_palliatif="' . $acap_palliatif . '"' .
 							', acap_hebergement="' . $acap_hebergement . '", acap_niveau_service="' . $acap_niveau_service . '"' );
 					}
 				}
@@ -1336,21 +1408,19 @@ print_r($Liste_Entites);print('<hr>');*/
 						$app_id = $Element[0];
 						$ete_id_dima = $Element[1];
 						$ete_id_pdma = $Element[2];
-						$acap_donnees = $Element[3];
-						$acap_palliatif = $Element[4];
-						$acap_hebergement = $Element[5];
-						$acap_niveau_service = $Element[6];
+						$acap_palliatif = $Element[3];
+						$acap_hebergement = $Element[4];
+						$acap_niveau_service = $Element[5];
 						
 						$_fonctionCourante = 'ajouterApplicationActivite';
 						$objActivites->ajouterApplicationActivite($_POST['act_id'],
-							$app_id, $ete_id_dima, $ete_id_pdma, $acap_donnees, $acap_palliatif, $acap_hebergement, $acap_niveau_service);
+							$app_id, $ete_id_dima, $ete_id_pdma, $acap_palliatif, $acap_hebergement, $acap_niveau_service);
 						
 						$PageHTML->ecrireEvenement( 'ATP_ECRITURE', 'OTP_ACTIVITE',
 							'act_id="' . $_POST['act_id'] . '"' .
 							', app_id="' . $app_id . '", ete_id_dima="' . $ete_id_dima . '"' .
-							', ete_id_pdma="' . $ete_id_pdma . '", acap_donnees="' . $acap_donnees . '"' .
-							', acap_palliatif="' . $acap_palliatif . '", acap_hebergement="' . $acap_hebergement . '"' .
-							', acap_niveau_service="' . $acap_niveau_service . '"');
+							', ete_id_pdma="' . $ete_id_pdma . '", acap_palliatif="' . $acap_palliatif . '"' .
+							', acap_hebergement="' . $acap_hebergement . '", acap_niveau_service="' . $acap_niveau_service . '"');
 					}
 				}
 
@@ -1361,19 +1431,18 @@ print_r($Liste_Entites);print('<hr>');*/
 						$app_id = $Element[0];
 						$ete_id_dima = $Element[1];
 						$ete_id_pdma = $Element[2];
-						$acap_donnees = $Element[3];
-						$acap_palliatif = $Element[4];
-						$acap_hebergement = $Element[5];
-						$acap_niveau_service = $Element[6];
+						$acap_palliatif = $Element[3];
+						$acap_hebergement = $Element[4];
+						$acap_niveau_service = $Element[5];
 
 						$_fonctionCourante = 'modifierApplicationActivite';
 						$objActivites->modifierApplicationActivite($_POST['act_id'], 
-							$app_id, $ete_id_dima , $ete_id_pdma, $acap_donnees, $acap_palliatif, $acap_hebergement, $acap_niveau_service);
+							$app_id, $ete_id_dima , $ete_id_pdma, $acap_palliatif, $acap_hebergement, $acap_niveau_service);
 
 						$PageHTML->ecrireEvenement( 'ATP_MODIFICATION', 'OTP_ACTIVITE',
 							'act_id="' . $_POST['act_id'] . '"' .
 							', app_id="' . $app_id . '", ete_id_dima="' . $ete_id_dima . '"' .
-							', ete_id_pdma="' . $ete_id_pdma . '", acap_donnees="' . $acap_donnees . '"' .
+							', ete_id_pdma="' . $ete_id_pdma . '"' .
 							', acap_palliatif="' . $acap_palliatif . '", acap_hebergement="' . $acap_hebergement . '"' .
 							', acap_niveau_service="' . $acap_niveau_service . '"');
 					}
@@ -1900,11 +1969,21 @@ print_r($Liste_Entites);print('<hr>');*/
 			$Resultat = array( 'statut' => 'success',
 				'texteMsg' => $L_Application_Cree,
 				'app_id' => $app_id,
-				'Liste_EchellesTemps' => $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_cmp_id']),
+				'Liste_EchellesTemps' => $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']),
 				'L_DMIA' => $L_DMIA,
 				'L_PDMA' => $L_PDMA,
 				'L_Palliatif' => $L_Palliatif,
 				'L_Aucun' => $L_Neither,
+				'L_DMIA_SI' => $L_DMIA_SI,
+				'L_PDMA_SI' => $L_PDMA_SI,
+				'L_Nom' => $L_Nom,
+				'L_Gerer_Donnees' => $L_Gerer_Donnees,
+				'L_Disponibilite' => $L_Disponibilite,
+				'L_Integrite' => $L_Integrite,
+				'L_Confidentialite' => $L_Confidentialite,
+				'L_Preuve' => $L_Preuve,
+				'L_Tracabilite' => $L_Tracabilite,
+				'L_Creer' => $L_Creer,
 				'L_Hebergement' => $L_Hebergement,
 				'L_Niveau_Service' => $L_Niveau_Service
 			);
@@ -1980,7 +2059,7 @@ print_r($Liste_Entites);print('<hr>');*/
 			$Resultat = array( 'statut' => 'success',
 				'texteMsg' => $L_Fournisseur_Cree,
 				'frn_id' => $frn_id,
-				'Liste_EchellesTemps' => $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_cmp_id']),
+				'Liste_EchellesTemps' => $objEchellesTemps->rechercherEchellesTemps($_SESSION['s_sct_id']),
 				'L_DMIA' => $L_DMIA,
 				'L_PDMA' => $L_PDMA,
 				'L_Palliatif' => $L_Palliatif,
@@ -2128,7 +2207,220 @@ print_r($Liste_Entites);print('<hr>');*/
 	echo json_encode( $Resultat );
 
 	break;
+
+
+ case 'AJAX_Creer_Donnees':
+	if ( isset($_POST['app_id']) && isset($_POST['act_id']) ) {
+		$_POST['app_id'] = $PageHTML->controlerTypeValeur( $_POST['app_id'], 'NUMBER' );
+		if ( $_POST['app_id'] == -1 ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $L_Invalid_Value . ' (app_id)'
+			) );
+
+			exit();
+		}
+
+		$_POST['act_id'] = $PageHTML->controlerTypeValeur( $_POST['act_id'], 'NUMBER' );
+		if ( $_POST['act_id'] == -1 ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $L_Invalid_Value . ' (act_id)'
+			) );
+
+			exit();
+		}
+
+		$_POST['dap_nom_donnee_application'] = $PageHTML->controlerTypeValeur( $_POST['dap_nom_donnee_application'], 'ASCII' );
+		if ( $_POST['dap_nom_donnee_application'] == -1 ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $L_Invalid_Value . ' (dap_nom_donnee_application)'
+			) );
+
+			exit();
+		}
+
+		$_POST['dap_integrite_donnee_application'] = $PageHTML->controlerTypeValeur( $_POST['dap_integrite_donnee_application'], 'NUMBER' );
+		if ( $_POST['dap_integrite_donnee_application'] == -1 ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $L_Invalid_Value . ' (dap_integrite_donnee_application)'
+			) );
+
+			exit();
+		}
+
+		$_POST['dap_confidentialite_donnee_application'] = $PageHTML->controlerTypeValeur( $_POST['dap_confidentialite_donnee_application'], 'NUMBER' );
+		if ( $_POST['dap_confidentialite_donnee_application'] == -1 ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $L_Invalid_Value . ' (dap_confidentialite_donnee_application)'
+			) );
+
+			exit();
+		}
+
+		$_POST['dap_tracabilite_donnee_application'] = $PageHTML->controlerTypeValeur( $_POST['dap_tracabilite_donnee_application'], 'NUMBER' );
+		if ( $_POST['dap_tracabilite_donnee_application'] == -1 ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $L_Invalid_Value . ' (dap_tracabilite_donnee_application)'
+			) );
+
+			exit();
+		}
+
+		try {
+			$objActivites->creerDonneesApplicationActivite($_POST['act_id'], $_POST['app_id'], $_POST['dap_nom_donnee_application'],
+				$_POST['dap_integrite_donnee_application'], $_POST['dap_confidentialite_donnee_application'],
+				$_POST['dap_tracabilite_donnee_application']);
+		} catch (Exception $e) {
+			$Resultat = array( 'statut' => 'error',
+				'texteMsg' => $e->getMessage() );
+			echo json_encode( $Resultat );
+			break;
+		}
+
+		$Resultat = array( 'statut' => 'success',
+			'texteMsg' => $L_Donnee_Cree,
+			'dap_id' => $objActivites->LastInsertId,
+			'dap_nom' => $_POST['dap_nom_donnee_application'],
+			'dap_integrite' => $_POST['dap_integrite_donnee_application'],
+			'dap_confidentialite' => $_POST['dap_confidentialite_donnee_application'],
+			'dap_tracabilite' => $_POST['dap_tracabilite_donnee_application']
+		);
+	} else {
+		$Resultat = array( 'statut' => 'error',
+			'texteMsg' => $L_ERR_Champs_Obligatoires . ' (ent_id)' );
+	}
+
+	echo json_encode( $Resultat );
+
+	break;
+	
+	
+ case 'AJAX_Modifier_Donnees':
+ 	if ( isset($_POST['app_id']) && isset($_POST['act_id']) && isset($_POST['dap_id']) ) {
+		$_POST['app_id'] = $PageHTML->controlerTypeValeur( $_POST['app_id'], 'NUMBER' );
+		if ( $_POST['app_id'] == -1 ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $L_Invalid_Value . ' (app_id)'
+			) );
+
+			exit();
+		}
+
+		$_POST['act_id'] = $PageHTML->controlerTypeValeur( $_POST['act_id'], 'NUMBER' );
+		if ( $_POST['act_id'] == -1 ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $L_Invalid_Value . ' (act_id)'
+			) );
+
+			exit();
+		}
+
+		$_POST['dap_id'] = $PageHTML->controlerTypeValeur( $_POST['dap_id'], 'NUMBER' );
+		if ( $_POST['dap_id'] == -1 ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $L_Invalid_Value . ' (dap_id)'
+			) );
+			
+			exit();
+		}
+		
+		$_POST['dap_nom'] = $PageHTML->controlerTypeValeur( $_POST['dap_nom'], 'ASCII' );
+		if ( $_POST['dap_nom'] == -1 ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $L_Invalid_Value . ' (dap_nom)'
+			) );
+			
+			exit();
+		}
+		
+		$_POST['dap_integrite'] = $PageHTML->controlerTypeValeur( $_POST['dap_integrite'], 'NUMBER' );
+		if ( $_POST['dap_integrite'] == -1 ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $L_Invalid_Value . ' (dap_integrite)'
+			) );
+			
+			exit();
+		}
+		
+		$_POST['dap_confidentialite'] = $PageHTML->controlerTypeValeur( $_POST['dap_confidentialite'], 'NUMBER' );
+		if ( $_POST['dap_confidentialite'] == -1 ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $L_Invalid_Value . ' (dap_confidentialite)'
+			) );
+			
+			exit();
+		}
+		
+		$_POST['dap_tracabilite'] = $PageHTML->controlerTypeValeur( $_POST['dap_tracabilite'], 'NUMBER' );
+		if ( $_POST['dap_tracabilite'] == -1 ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $L_Invalid_Value . ' (dap_tracabilite)'
+			) );
+			
+			exit();
+		}
+		
+		try {
+			$objActivites->modifierDonneesApplicationActivite($_POST['dap_id'], $_POST['act_id'], $_POST['app_id'], 
+				$_POST['dap_nom'], $_POST['dap_integrite'], $_POST['dap_confidentialite'], $_POST['dap_tracabilite'] );
+		} catch (Exception $e) {
+			$Resultat = array( 'statut' => 'error',
+				'texteMsg' => $e->getMessage() );
+			echo json_encode( $Resultat );
+			break;
+		}
+
+		$Resultat = array( 'statut' => 'success',
+			'texteMsg' => $L_Donnee_Modifiee
+		);
+	} else {
+		$Resultat = array( 'statut' => 'error',
+			'texteMsg' => $L_ERR_Champs_Obligatoires . ' (dap_id, app_id, act_id)' );
+	}
+
+	echo json_encode( $Resultat );
+
+	break;
+
+
+ case 'AJAX_Supprimer_Donnees':
+	if ( isset( $_POST['liste_a_supprimer']) ) {
+		foreach($_POST['liste_a_supprimer'] as $dap_id) {
+			try {
+				$objActivites->supprimerDonneesApplicationActivite($dap_id);
+			} catch (Exception $e) {
+				$Resultat = array( 'statut' => 'error',
+					'texteMsg' => $e->getMessage() );
+				echo json_encode( $Resultat );
+				break;
+			}
+		}
+
+		$Resultat = array( 'statut' => 'success',
+			'texteMsg' => $L_Donnee_Supprimee
+		);
+
+		echo json_encode( $Resultat );
+	} else {
+		$Resultat = array( 'statut' => 'error',
+			'texteMsg' => $L_ERR_Champs_Obligatoires . ' (liste_a_supprimer)' );
+	}
+
+	break;
 }
+
 
 
 
@@ -2228,7 +2520,7 @@ function actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $objActivit
 			throw new Exception($L_Plus_De_Societe, 0);
 		} else {
 			// Si la variable de Session n'est pas initialisé, alors on l'initialise sur la première occurrence de notre résultat.
-			if ( ! isset($_SESSION['s_sct_id']) or $_SESSION['s_sct_id'] == '' ) {
+			if ( ! isset($_SESSION['s_sct_id']) || $_SESSION['s_sct_id'] == '' || $_SESSION['s_sct_id'] == '*' ) {
 				$_SESSION['s_sct_id'] = $Liste_Societes[0]->sct_id;
 			}
 		}
@@ -2302,6 +2594,7 @@ function actualiseSocieteCampagneEntite($objSocietes, $objCampagnes, $objActivit
 
 	// Récupère les Entités associées à la Campagne Sélectionnée
 	$Liste_Entites = $objActivites->rechercherEntitesCampagne($_SESSION['s_cmp_id']);
+
 	if ( $Liste_Entites == [] ) {
 		$tmpObj2 = new stdClass();
 		$tmpObj2->ent_id = '';

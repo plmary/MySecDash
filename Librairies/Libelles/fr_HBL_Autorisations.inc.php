@@ -31,8 +31,7 @@
 	$L_Connexion = 'Connexion';
 	$L_Changer_Mot_Passe_Obligatoire = 'Vous devez changer de mot de passe';
 	$L_Modifier_Mot_Passe = 'Changer votre mot de passe';
-	$L_Reinitialiser_Mot_Passe = 'Remettre à zéro votre temps d\'expiration';
-   
+
 	$L_Droit_Modifie = 'Droit modifié';
 
 	$L_ERR_Champs_Obligatoires = 'Les champs sont obligatoires';

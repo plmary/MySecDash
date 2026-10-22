@@ -1,0 +1,13 @@
+<?php
+$domain = argv;
+
+// Enregistrements A (IPv4)
+$records = dns_get_record($domain, DNS_A);
+
+if ($records === false || $records === []) {
+    echo "Aucun enregistrement trouvé";
+} else {
+    foreach ($records as $record) {
+        echo $record['ip'] . PHP_EOL;
+    }
+}

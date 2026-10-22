@@ -178,11 +178,11 @@ class HBL_Authentifications extends HBL_Autorisations {
 				/* --------------------------------------------------------------------------------------
 				** Vérifie si le mot de passe de l'utilisateur est cohérent avec le grain de sel en plus.
 				*/
-				$Authenticator = hash( 'sha256', $Authenticator . $Occurrence->idn_grain_sel, FALSE );
+			 	$Authenticator = password_verify( $Authenticator . $Occurrence->idn_grain_sel, $Occurrence->idn_authentifiant );
 
-				if ( $Authenticator != $Occurrence->idn_authentifiant ) {
+				if ( $Authenticator != true ) {
 					$this->incrementeTentative( $Occurrence->idn_login );
-					
+
 					return FALSE;
 				}
 
@@ -237,6 +237,7 @@ class HBL_Authentifications extends HBL_Autorisations {
 		 
 		$this->executeSQL( $Query );
 
+		//session_regenerate_id(true);
 
 		$_SESSION[ 'idn_id' ] = $Occurrence->idn_id ;
 		$_SESSION[ 'sct_id' ] = $Occurrence->sct_id ;
@@ -294,6 +295,7 @@ class HBL_Authentifications extends HBL_Autorisations {
 	* \return Retourne toujours vrai
 	*/
 		$_SESSION = array();
+		session_destroy();
 
 		return TRUE;
 	}
@@ -352,7 +354,7 @@ class HBL_Authentifications extends HBL_Autorisations {
 		
 		$this->bindSQL( $Query, ':idn_id', $idn_id, PDO::PARAM_INT );
 		
-		$Authenticator = hash( 'sha256', $this->recupererParametre('default_password') . $Salt, FALSE );
+		$Authenticator = password_hash( $this->recupererParametre('default_password') . $Salt, PASSWORD_BCRYPT );
 		
 		$this->bindSQL( $Query, ':Authenticator', $Authenticator,
 		 PDO::PARAM_STR, L_IDN_AUTHENTICATOR );
@@ -386,11 +388,28 @@ class HBL_Authentifications extends HBL_Autorisations {
 	* \return Retourne vrai en cas de succès, sinon lève une exception en cas d'erreur
 	*/
 		// ===========================================================
+		// Contrôle l'ancien mot de passe de l'utilisateur.
+		$Request = 'SELECT * FROM idn_identites WHERE idn_id = :idn_id ';
+
+		$Query = $this->prepareSQL( $Request );
+
+		$this->bindSQL( $Query, ':idn_id', $Idn_Id, PDO::PARAM_INT );
+
+		$this->executeSQL( $Query );
+
+		$Occurrence = $Query->fetchObject();
+
+		if ( password_verify($O_Password . $Occurrence->idn_grain_sel, $Occurrence->idn_authentifiant) != true ) {
+			return FALSE;
+		}
+
+		// ===========================================================
 		// Calcule un nouveau grain de sel spécifique à l'utilisateur.
 		$size = 16;
 		$complexity = 2; // Majuscules, Minuscules et Chiffres
-		
+
 		$Salt = $this->genererMotPasse( $size, $complexity );
+
 
 		// ===================================
 		// Récupère les données de l'identité.
@@ -399,35 +418,23 @@ class HBL_Authentifications extends HBL_Autorisations {
 		 'idn_grain_sel = :Salt, ' .
 		 'idn_date_modification_authentifiant = \'' . date( 'Y-m-d H:i:s' ) . '\', ' .
 		 'idn_changer_authentifiant = FALSE ' .
-		 'WHERE idn_id = :Idn_Id AND idn_authentifiant = :O_Password ' ;
-		 
+		 'WHERE idn_id = :Idn_Id ' ;
+
 		$Query = $this->prepareSQL( $Request );
-		
-		
+
 		$this->bindSQL( $Query, ':Idn_Id', $Idn_Id, PDO::PARAM_INT );
-		
+
 		$this->bindSQL( $Query, ':Salt', $Salt, PDO::PARAM_STR, L_IDN_SALT );
-		
 
-		$N_Password = hash( 'sha256', $N_Password . $Salt, FALSE );
-		
-		$this->bindSQL( $Query, ':N_Password', $N_Password,
-		 PDO::PARAM_STR, L_IDN_AUTHENTICATOR );
-		 
+		$N_Password = password_hash( $N_Password . $Salt, PASSWORD_BCRYPT );
 
-		$Old_Salt = $this->recupereGrainSel( '', $Idn_Id );
+		$this->bindSQL( $Query, ':N_Password', $N_Password, PDO::PARAM_STR, L_IDN_AUTHENTICATOR );
 
-		$O_Password = hash( 'sha256', $O_Password . $Old_Salt, FALSE );
-		
-		$this->bindSQL( $Query, ':O_Password', $O_Password,
-		 PDO::PARAM_STR, L_IDN_AUTHENTICATOR );
-
-		
 		$Result = $this->executeSQL( $Query );
 
 		if ( $Result->rowCount() == 0 ) return FALSE;
 
- 		return TRUE;
+		return TRUE;
 	}
 
 

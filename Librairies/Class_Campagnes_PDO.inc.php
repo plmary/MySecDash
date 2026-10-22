@@ -794,6 +794,13 @@ WHERE act.cmp_id = :cmp_id ';
 		 * \return Renvoi TRUE si l'association à créer. Lève une Exception en cas d'erreur.
 		 */
 
+		if (($ppr_id_cpca == '' || $ppr_id_cpca == null)
+			&& ($cmen_date_entretien_cpca == '' || $cmen_date_entretien_cpca == null)
+			&& ($cmen_effectif_total == '' || $cmen_effectif_total == null)) {
+				return true;
+		}
+
+
 		$Request = 'UPDATE cmen_cmp_ent SET ';
 
 		$Champs = '';
@@ -1631,7 +1638,7 @@ WHERE act.cmp_id = :cmp_id ';
 		$Request = 'SELECT app.app_id, app.app_nom, app.app_niveau_service, app.app_hebergement, MIN(ete.ete_poids) AS "dmia", MIN(ete1.ete_poids) AS "pdma",
 STRING_AGG( ent.ent_nom || \'+++\' || ent.ent_description || \'+++ - \' || act.act_nom || \'###\'||act.act_id, \',<br>\' ORDER BY ent_nom, act_nom ) AS "act_nom",
 STRING_AGG( DISTINCT acap.acap_palliatif, \'##\' ) AS "acap_palliatif",
-STRING_AGG( DISTINCT acap.acap_donnees, \'##\' ) AS "acap_donnees",
+STRING_AGG( DISTINCT \'- \' || dap_nom_donnee_application || \' = I\' || dap_integrite_donnee_application || \' C\' || dap_confidentialite_donnee_application || \' T\' || dap_tracabilite_donnee_application, \'##\' ) AS "acap_donnees",
 STRING_AGG( DISTINCT acap.acap_hebergement, \'##\' ) AS "acap_hebergement",
 STRING_AGG( DISTINCT acap.acap_niveau_service, \'##\' ) AS "acap_niveau_service"
 FROM act_activites AS "act"
@@ -1640,6 +1647,7 @@ LEFT JOIN ent_entites AS "ent" ON ent.ent_id = act.ent_id
 LEFT JOIN app_applications AS "app" ON app.app_id = acap.app_id
 LEFT JOIN ete_echelle_temps AS "ete" ON ete.ete_id = acap.ete_id_dima
 LEFT JOIN ete_echelle_temps AS "ete1" ON ete1.ete_id = acap.ete_id_pdma
+LEFT JOIN dap_donnees_application AS "dap" ON dap.act_id = acap.act_id AND dap.app_id = acap.app_id
 WHERE act.cmp_id = :cmp_id ';
 
 		if ( $dmia != '*' ) {
@@ -1689,12 +1697,13 @@ ORDER BY dmia, app.app_nom ';
 		$Request = 'SELECT app.app_nom, app.app_description, app.app_hebergement, app.app_niveau_service, acap.acap_hebergement, acap.acap_niveau_service,
 MIN(ete.ete_poids) AS "pdma",
 STRING_AGG(ent_nom || \' (\' || ent_description || \') - \' || act_nom, \',//\' ORDER BY ent_nom, act_nom) AS "act_nom",
-STRING_AGG( DISTINCT acap.acap_donnees, \'##\' ) AS "acap_donnees"
+STRING_AGG( DISTINCT \'- \' || dap_nom_donnee_application || \' = I\' || dap_integrite_donnee_application || \' C\' || dap_confidentialite_donnee_application || \' T\' || dap_tracabilite_donnee_application, \'##\' ) AS "acap_donnees"
 FROM app_applications AS "app"
 LEFT JOIN acap_act_app AS "acap" ON acap.app_id = app.app_id
 LEFT JOIN ete_echelle_temps AS "ete" ON ete.ete_id = acap.ete_id_pdma
 LEFT JOIN act_activites AS "act" ON act.act_id = acap.act_id
 LEFT JOIN ent_entites AS "ent" ON ent.ent_id = act.ent_id
+LEFT JOIN dap_donnees_application AS "dap" ON dap.act_id = acap.act_id AND dap.app_id = acap.app_id
 WHERE ete_poids IS NOT NULL AND act.cmp_id = :cmp_id ';
 
 		if ( $pdma != '*' ) {
@@ -1790,8 +1799,8 @@ ORDER BY ent.ent_nom, ppr.ppr_prenom, ppr.ppr_nom ';
 		$Request = 'SELECT frn.frn_nom, frn.frn_description, tfr.tfr_nom_code,
 			ent.ent_nom, ent.ent_description,
 			ete.ete_poids, ete.ete_nom_code,
-			acfr.acfr_consequence_indisponibilite, acfr.acfr_palliatif_tiers,
-			STRING_AGG( act.act_nom || \'###\'||act.act_id, \',<br>\' ORDER BY ent_nom, act_nom ) AS "act_nom"
+			STRING_AGG( acfr.acfr_consequence_indisponibilite || \'===\' || acfr.acfr_palliatif_tiers, \'###\' ) AS "act_frn",
+			STRING_AGG( act.act_nom || \'===\'||act.act_id, \'###\' ORDER BY ent_nom, act_nom ) AS "act_nom"
 			FROM acfr_act_frn AS "acfr"
 			LEFT JOIN act_activites AS "act"  ON acfr.act_id = act.act_id
 			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = acfr.frn_id
@@ -1809,8 +1818,8 @@ ORDER BY ent.ent_nom, ppr.ppr_prenom, ppr.ppr_nom ';
 			$Request .= 'AND act.ent_id = :ent_id ';
 		}
 
-		$Request .= 'GROUP BY frn.frn_nom, frn.frn_description, tfr.tfr_nom_code, ent.ent_nom, ent.ent_description, ete.ete_poids, ete.ete_nom_code, acfr.acfr_consequence_indisponibilite, acfr.acfr_palliatif_tiers
-ORDER BY ete.ete_poids, ent.ent_nom, tfr.tfr_nom_code, frn.frn_nom ';
+		$Request .= 'GROUP BY frn.frn_nom, frn.frn_description, tfr.tfr_nom_code, ent.ent_nom, ent.ent_description, ete.ete_poids, ete.ete_nom_code
+			ORDER BY ete.ete_poids, ent.ent_nom, tfr.tfr_nom_code, frn.frn_nom ';
 
 		$Query = $this->prepareSQL( $Request );
 

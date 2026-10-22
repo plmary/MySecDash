@@ -807,15 +807,48 @@ switch( $Action ) {
 	
 			exit();
 		}
-	
-	
+
+
+		if ( ! filter_var($_POST['ldap_ip_address'], FILTER_VALIDATE_IP) ) {
+			$records = dns_get_record($_POST['ldap_ip_address'], DNS_A);
+			if ($records === false || $records === []) {
+				echo json_encode( array(
+					'statut' => 'error',
+					'texteMsg' => $PageHTML->getLibelle('__LRI_ADRESSE_IP_INVALIDE') . ' (' . $_POST['ldap_ip_address'] . ')'
+				) );
+
+				exit();
+			}
+		}
+
+
+		if ( ! filter_var($_POST['ldap_ip_port'], FILTER_VALIDATE_INT) ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $PageHTML->getLibelle('__LRI_ERREUR_NOMBRE_ATTENDU') . ' (' . $_POST['ldap_ip_port'] . ')'
+			) );
+
+			exit();
+		}
+		
+		
+		if ( ! filter_var($_POST['ldap_protocol_version'], FILTER_VALIDATE_INT) ) {
+			echo json_encode( array(
+				'statut' => 'error',
+				'texteMsg' => $PageHTML->getLibelle('__LRI_ERREUR_NOMBRE_ATTENDU') . ' (' . $_POST['ldap_protocol_version'] . ')'
+			) );
+			
+			exit();
+		}
+		
+
 		if ( $_POST['ldap_ssl'] == 'true' ) {
 			$_POST['ldap_ssl'] = 'true';
 		} else {
 			$_POST['ldap_ssl'] = 'false';
 		}
-	
-	
+
+
 		try {
 			$P_Fichier_Conf = fopen( DIR_RESTREINT . '/Config_LDAP.inc.php', 'w' );
 	
@@ -831,12 +864,12 @@ switch( $Action ) {
 				"*\n" .
 				"*/\n" .
 				"\n" .
-				"\$_LDAP_Server = '" . $_POST['ldap_ip_address'] . "'; // IP address server or server name\n" .
-				"\$_LDAP_Port = '" . $_POST['ldap_ip_port'] . "'; // IP port server\n" .
-				"\$_LDAP_Protocol_Version = '" . $_POST['ldap_ip_address'] . "'; // Protocol version\n" .
-				"\$_LDAP_Organization = '" . $_POST['ldap_organization'] . "'; // Organization tree\n" .
-				"\$_LDAP_RDN_Prefix = '" . $_POST['ldap_rdn_prefix'] . "'; // RDN prefix\n" .
-				"\$_LDAP_SSL = '" . $_POST['ldap_ssl'] . "'; // SSL protocol\n" .
+				"\$_LDAP_Server = '" . htmlspecialchars($_POST['ldap_ip_address'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "'; // IP address server or server name\n" .
+				"\$_LDAP_Port = '" . htmlspecialchars($_POST['ldap_ip_port'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "'; // IP port server\n" .
+				"\$_LDAP_Protocol_Version = '" . htmlspecialchars($_POST['ldap_protocol_version'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "'; // Protocol version\n" .
+				"\$_LDAP_Organization = '" . htmlspecialchars($_POST['ldap_organization'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "'; // Organization tree\n" .
+				"\$_LDAP_RDN_Prefix = '" . htmlspecialchars($_POST['ldap_rdn_prefix'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "'; // RDN prefix\n" .
+				"\$_LDAP_SSL = '" . htmlspecialchars($_POST['ldap_ssl'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "'; // SSL protocol\n" .
 				"\n" .
 				"?>\n"
 		 	);

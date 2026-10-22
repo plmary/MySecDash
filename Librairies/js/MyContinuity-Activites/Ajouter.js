@@ -87,13 +87,12 @@ function AjouterActivite() {
 			app_id = $(element).attr('id').split('-')[1];
 			ete_id_dima = $('#ete_id_dima-'+app_id).val();
 			ete_id_pdma = $('#ete_id_pdma-'+app_id).val();
-			acap_donnees = $('#acap_donnees-'+app_id).val();
 			acap_palliatif = $('#acap_palliatif-'+app_id).val();
 			acap_hebergement = $('#acap_hebergement-'+app_id).val();
 			acap_niveau_service = $('#acap_niveau_service-'+app_id).val();
 
 			if ( $(element).attr('data-old_value') == 0) {
-				Liste_APP_Ajouter.push([app_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif, acap_hebergement, acap_niveau_service]);
+				Liste_APP_Ajouter.push([app_id, ete_id_dima, ete_id_pdma, acap_palliatif, acap_hebergement, acap_niveau_service]);
 				total_applications += 1;
 			}
 		}
@@ -477,7 +476,9 @@ function creerApplication() {
 
 				Corps = creerOccurrenceApplicationDansListe(app_id, Nom_Complet,
 					0, ' checked', reponse['Liste_EchellesTemps'], reponse['L_DMIA'], '',
-					reponse['L_PDMA'], '', reponse['L_Palliatif'], '', '', reponse['L_Aucun']);
+					reponse['L_PDMA'], '', reponse['L_Palliatif'], '', '', reponse['L_Aucun'], null, null, reponse['L_DMIA_SI'], reponse['L_PDMA_SI'],
+					'', reponse['L_Nom'], reponse['L_Gerer_Donnees'], reponse['L_Integrite'], reponse['L_Confidentialite'],
+					reponse['L_Tracabilite'], reponse['L_Creer']);
 
 				$('div#zone-applications div#liste-donnees').prepend( Corps );
 

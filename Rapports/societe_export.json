@@ -1,0 +1,859 @@
+{
+    "type": "societe",
+    "version": "1.0",
+    "export_date": "2025-12-03 22:36:39",
+    "data": {
+        "societe": {
+            "sct_id": 2,
+            "sct_nom": "LFDE",
+            "sct_description": "La Française De l'Echiquier"
+        },
+        "tags": [],
+        "echelles_temps": [
+            {
+                "ete_id": 46,
+                "ete_poids": 3,
+                "ete_nom_code": "2 jours",
+                "sct_id": 2
+            },
+            {
+                "ete_id": 47,
+                "ete_poids": 4,
+                "ete_nom_code": "3 jours",
+                "sct_id": 2
+            },
+            {
+                "ete_id": 48,
+                "ete_poids": 5,
+                "ete_nom_code": "1 semaine",
+                "sct_id": 2
+            },
+            {
+                "ete_id": 49,
+                "ete_poids": 6,
+                "ete_nom_code": "2 semaines",
+                "sct_id": 2
+            },
+            {
+                "ete_id": 50,
+                "ete_poids": 7,
+                "ete_nom_code": "1 mois",
+                "sct_id": 2
+            },
+            {
+                "ete_id": 45,
+                "ete_poids": 2,
+                "ete_nom_code": "1 jour",
+                "sct_id": 2
+            },
+            {
+                "ete_id": 44,
+                "ete_poids": 1,
+                "ete_nom_code": "4 heures",
+                "sct_id": 2
+            }
+        ],
+        "entites": [
+            {
+                "ent_id": 3,
+                "sct_id": 2,
+                "ent_nom": "RH",
+                "ent_description": "Ressources Humaines"
+            },
+            {
+                "ent_id": 5,
+                "sct_id": 2,
+                "ent_nom": "CIC",
+                "ent_description": "Contrôle Interne & Conformité"
+            },
+            {
+                "ent_id": 6,
+                "sct_id": 2,
+                "ent_nom": "DEV",
+                "ent_description": "Développement"
+            },
+            {
+                "ent_id": 7,
+                "sct_id": 2,
+                "ent_nom": "GC \/ GA",
+                "ent_description": "Gestion Collective \/ Gestion Actions"
+            },
+            {
+                "ent_id": 9,
+                "sct_id": 2,
+                "ent_nom": "GC \/ GAL",
+                "ent_description": "Gestion Collective \/ Gestion ALternative"
+            },
+            {
+                "ent_id": 11,
+                "sct_id": 2,
+                "ent_nom": "GC \/ MAC",
+                "ent_description": "Gestion Collective \/ Multi-Actifs & Crédit"
+            },
+            {
+                "ent_id": 12,
+                "sct_id": 2,
+                "ent_nom": "GC \/ I",
+                "ent_description": "Gestion Collective \/ Intermédiation"
+            },
+            {
+                "ent_id": 14,
+                "sct_id": 2,
+                "ent_nom": "OP",
+                "ent_description": "Opérations"
+            },
+            {
+                "ent_id": 15,
+                "sct_id": 2,
+                "ent_nom": "OP \/ IT",
+                "ent_description": "Opérations \/ IT"
+            },
+            {
+                "ent_id": 16,
+                "sct_id": 2,
+                "ent_nom": "OP \/ MOA",
+                "ent_description": "Opérations \/ Middle Office Actif"
+            },
+            {
+                "ent_id": 2,
+                "sct_id": 2,
+                "ent_nom": "SG \/ Finance",
+                "ent_description": "Secrétariat Général \/ Pôle Finance"
+            },
+            {
+                "ent_id": 18,
+                "sct_id": 2,
+                "ent_nom": "SG \/ R",
+                "ent_description": "Secrétariat Général \/ Risques"
+            },
+            {
+                "ent_id": 19,
+                "sct_id": 2,
+                "ent_nom": "SG \/ MG",
+                "ent_description": "Secrétariat Général \/ Moyens Généraux"
+            },
+            {
+                "ent_id": 20,
+                "sct_id": 2,
+                "ent_nom": "SG \/ J",
+                "ent_description": "Secrétariat Général \/ Juridiques"
+            },
+            {
+                "ent_id": 21,
+                "sct_id": 2,
+                "ent_nom": "MCR \/ SC",
+                "ent_description": "Marketing, Communication & RSE \/ Service Clients"
+            },
+            {
+                "ent_id": 8,
+                "sct_id": 2,
+                "ent_nom": "GP",
+                "ent_description": "Gestion Privée"
+            },
+            {
+                "ent_id": 13,
+                "sct_id": 2,
+                "ent_nom": "GC \/ RIR",
+                "ent_description": "Gestion Collective \/ Recherche Investissement Responsable"
+            },
+            {
+                "ent_id": 4,
+                "sct_id": 2,
+                "ent_nom": "BRS",
+                "ent_description": "Business & Regulatory Solutions"
+            },
+            {
+                "ent_id": 17,
+                "sct_id": 2,
+                "ent_nom": "OP \/ MOP",
+                "ent_description": "Opérations \/ Middle Office Passif"
+            },
+            {
+                "ent_id": 10,
+                "sct_id": 2,
+                "ent_nom": "GC \/ AA",
+                "ent_description": "Gestion Collective \/ Allocation d'Actifs"
+            },
+            {
+                "ent_id": 28,
+                "sct_id": 2,
+                "ent_nom": "MCR \/ MD",
+                "ent_description": "Marketing, Communication & RSE \/ Marketing Data"
+            }
+        ],
+        "entites_tags": [],
+        "sites": [
+            {
+                "sts_id": 4,
+                "sct_id": 2,
+                "sts_nom": "Paris Iéna",
+                "sts_description": "Site Utilisateurs"
+            },
+            {
+                "sts_id": 16,
+                "sct_id": 2,
+                "sts_nom": "Bordeaux",
+                "sts_description": "Site Utilisateurs"
+            }
+        ],
+        "sites_tags": [],
+        "parties_prenantes": [
+            {
+                "ppr_id": 6,
+                "sct_id": 2,
+                "ppr_nom": "FARRUGIA",
+                "ppr_prenom": "Caroline",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 7,
+                "sct_id": 2,
+                "ppr_nom": "CHARRIER",
+                "ppr_prenom": "Pauline",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 10,
+                "sct_id": 2,
+                "ppr_nom": "BERLY",
+                "ppr_prenom": "Geoffroy",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 11,
+                "sct_id": 2,
+                "ppr_nom": "OLIVIER",
+                "ppr_prenom": "Luc",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 12,
+                "sct_id": 2,
+                "ppr_nom": "GRUTTER",
+                "ppr_prenom": "Alexis",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 13,
+                "sct_id": 2,
+                "ppr_nom": "LARRIEU-GIBIER",
+                "ppr_prenom": "Mélanie",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 14,
+                "sct_id": 2,
+                "ppr_nom": "MARY",
+                "ppr_prenom": "Pierre-Luc",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 15,
+                "sct_id": 2,
+                "ppr_nom": "KRUK",
+                "ppr_prenom": "David",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 16,
+                "sct_id": 2,
+                "ppr_nom": "SARAGUSTI",
+                "ppr_prenom": "Uriel",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 17,
+                "sct_id": 2,
+                "ppr_nom": "DURANDEAU",
+                "ppr_prenom": "Matthieu",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 18,
+                "sct_id": 2,
+                "ppr_nom": "JACQUOT",
+                "ppr_prenom": "Aurélien",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 19,
+                "sct_id": 2,
+                "ppr_nom": "PORRINI",
+                "ppr_prenom": "Louis",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 20,
+                "sct_id": 2,
+                "ppr_nom": "SOLNON",
+                "ppr_prenom": "Jean-François",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 21,
+                "sct_id": 2,
+                "ppr_nom": "DJALOUT",
+                "ppr_prenom": "Mansour",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 22,
+                "sct_id": 2,
+                "ppr_nom": "BARBARIT",
+                "ppr_prenom": "Fabien",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 23,
+                "sct_id": 2,
+                "ppr_nom": "BEAUPERTUY",
+                "ppr_prenom": "Alexandre",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 24,
+                "sct_id": 2,
+                "ppr_nom": "BREUCQ",
+                "ppr_prenom": "Nicolas",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 25,
+                "sct_id": 2,
+                "ppr_nom": "TRAN",
+                "ppr_prenom": "Audrey",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 26,
+                "sct_id": 2,
+                "ppr_nom": "RACHEDI",
+                "ppr_prenom": "Hakima",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 27,
+                "sct_id": 2,
+                "ppr_nom": "TURET",
+                "ppr_prenom": "Emilie",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 28,
+                "sct_id": 2,
+                "ppr_nom": "KORNER",
+                "ppr_prenom": "Solenn",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 29,
+                "sct_id": 2,
+                "ppr_nom": "BRAMLY",
+                "ppr_prenom": "Franck",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 30,
+                "sct_id": 2,
+                "ppr_nom": "PREAUX",
+                "ppr_prenom": "Alexandra",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 31,
+                "sct_id": 2,
+                "ppr_nom": "COSTES",
+                "ppr_prenom": "Bertrand",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 32,
+                "sct_id": 2,
+                "ppr_nom": "GENIN",
+                "ppr_prenom": "Paul",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 33,
+                "sct_id": 2,
+                "ppr_nom": "LINDENTAL",
+                "ppr_prenom": "Typhanie",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 34,
+                "sct_id": 2,
+                "ppr_nom": "JOUANNO",
+                "ppr_prenom": "Anne-Claire",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 35,
+                "sct_id": 2,
+                "ppr_nom": "SEPTFONS",
+                "ppr_prenom": "Paul",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 36,
+                "sct_id": 2,
+                "ppr_nom": "DESCAMPEAU",
+                "ppr_prenom": "Romain",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 37,
+                "sct_id": 2,
+                "ppr_nom": "VIDAL-ENGAURAND",
+                "ppr_prenom": "Régis",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 38,
+                "sct_id": 2,
+                "ppr_nom": "DUFFOUR",
+                "ppr_prenom": "Edouard",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 39,
+                "sct_id": 2,
+                "ppr_nom": "MEYRE",
+                "ppr_prenom": "Fabienne",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 40,
+                "sct_id": 2,
+                "ppr_nom": "FOURNIER",
+                "ppr_prenom": "Nicolas",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 41,
+                "sct_id": 2,
+                "ppr_nom": "BAH",
+                "ppr_prenom": "Mamadou",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 42,
+                "sct_id": 2,
+                "ppr_nom": "ARTAZ",
+                "ppr_prenom": "Enguerrand",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 43,
+                "sct_id": 2,
+                "ppr_nom": "LEBLANC",
+                "ppr_prenom": "Matthieu",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 44,
+                "sct_id": 2,
+                "ppr_nom": "UBEDA",
+                "ppr_prenom": "Sébastien",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 45,
+                "sct_id": 2,
+                "ppr_nom": "MEGHRAOUA",
+                "ppr_prenom": "Yassine",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 46,
+                "sct_id": 2,
+                "ppr_nom": "BEN FADHEL",
+                "ppr_prenom": "Chems",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 47,
+                "sct_id": 2,
+                "ppr_nom": "GOVINDASSAMY",
+                "ppr_prenom": "Vick",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 48,
+                "sct_id": 2,
+                "ppr_nom": "WANG",
+                "ppr_prenom": "Wei",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 49,
+                "sct_id": 2,
+                "ppr_nom": "OUEDERNI",
+                "ppr_prenom": "Lofti",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 50,
+                "sct_id": 2,
+                "ppr_nom": "SAUGNE",
+                "ppr_prenom": "Michel",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 51,
+                "sct_id": 2,
+                "ppr_nom": "DE BERRANGER",
+                "ppr_prenom": "Olivier",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 52,
+                "sct_id": 2,
+                "ppr_nom": "LEBRETON",
+                "ppr_prenom": "Christine",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 53,
+                "sct_id": 2,
+                "ppr_nom": "BERTHE",
+                "ppr_prenom": "Ludovic",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 55,
+                "sct_id": 2,
+                "ppr_nom": "JORION",
+                "ppr_prenom": "Isabelle",
+                "ppr_interne": true,
+                "ppr_description": ""
+            },
+            {
+                "ppr_id": 56,
+                "sct_id": 2,
+                "ppr_nom": "GEZE PALLARES",
+                "ppr_prenom": "Marine",
+                "ppr_interne": true,
+                "ppr_description": ""
+            }
+        ],
+        "parties_prenantes_tags": [],
+        "identites": [],
+        "applications": [
+            {
+                "app_id": 42,
+                "frn_id": 29,
+                "app_nom": "Cube Finance",
+                "app_hebergement": "PaaS (Wikitree)",
+                "app_niveau_service": "",
+                "app_description": "Développement LFDE",
+                "sct_id": 2,
+                "app_nom_alias": null,
+                "frn_nom": "LFDE"
+            },
+            {
+                "app_id": 73,
+                "frn_id": 29,
+                "app_nom": "Cube GP",
+                "app_hebergement": "PaaS (Wikitree)",
+                "app_niveau_service": "",
+                "app_description": "",
+                "sct_id": 2,
+                "app_nom_alias": null,
+                "frn_nom": "LFDE"
+            },
+            {
+                "app_id": 53,
+                "frn_id": 70,
+                "app_nom": "Adjuto",
+                "app_hebergement": "SaaS (Fundinfo)",
+                "app_niveau_service": "Silver",
+                "app_description": "descr1",
+                "sct_id": 2,
+                "app_nom_alias": "",
+                "frn_nom": "Fundinfo"
+            },
+            {
+                "app_id": 33,
+                "frn_id": 31,
+                "app_nom": "Air PM",
+                "app_hebergement": "PaaS (Wikitree)",
+                "app_niveau_service": "",
+                "app_description": "TMA par l'éditeur",
+                "sct_id": 2,
+                "app_nom_alias": null,
+                "frn_nom": "OneWealthPlace"
+            },
+            {
+                "app_id": 61,
+                "frn_id": 29,
+                "app_nom": "Tunel (ouverture de compte)",
+                "app_hebergement": "",
+                "app_niveau_service": "LFDE",
+                "app_description": "",
+                "sct_id": 2,
+                "app_nom_alias": null,
+                "frn_nom": "LFDE"
+            },
+            {
+                "app_id": 27,
+                "frn_id": 29,
+                "app_nom": "Cube",
+                "app_hebergement": "PaaS (Wikitree)",
+                "app_niveau_service": "",
+                "app_description": "Développement LFDE",
+                "sct_id": 2,
+                "app_nom_alias": null,
+                "frn_nom": "LFDE"
+            },
+            {
+                "app_id": 78,
+                "frn_id": 29,
+                "app_nom": "Peacemaker",
+                "app_hebergement": "On Premise",
+                "app_niveau_service": "LFDE",
+                "app_description": "",
+                "sct_id": 2,
+                "app_nom_alias": "",
+                "frn_nom": "LFDE"
+            }
+        ],
+        "societes_applications": [
+            {
+                "app_id": 78,
+                "sct_id": 2,
+                "ete_id_dima_dsi": null,
+                "ete_id_pdma_dsi": null,
+                "scap_description_dima": "",
+                "scap_description_pdma": ""
+            },
+            {
+                "app_id": 53,
+                "sct_id": 2,
+                "ete_id_dima_dsi": 45,
+                "ete_id_pdma_dsi": 46,
+                "scap_description_dima": "",
+                "scap_description_pdma": ""
+            }
+        ],
+        "applications_tags": [],
+        "fournisseurs": [
+            {
+                "frn_id": 29,
+                "tfr_id": 2,
+                "frn_nom": "LFDE",
+                "frn_description": "",
+                "tfr_nom_code": "Editeur de Solutions"
+            },
+            {
+                "frn_id": 31,
+                "tfr_id": 2,
+                "frn_nom": "OneWealthPlace",
+                "frn_description": "",
+                "tfr_nom_code": "Editeur de Solutions"
+            },
+            {
+                "frn_id": 70,
+                "tfr_id": 2,
+                "frn_nom": "Fundinfo",
+                "frn_description": "",
+                "tfr_nom_code": "Editeur de Solutions"
+            }
+        ],
+        "fournisseurs_tags": [],
+        "campagnes": [
+            {
+                "cmp_id": 2,
+                "sct_id": 2,
+                "idn_id": 1,
+                "cmp_date": "2024-08-30",
+                "cmp_flag_validation": false,
+                "cmp_date_validation": null,
+                "cmp_niveau_impact_accepte": 2
+            }
+        ],
+        "campagnes_entites": [
+            {
+                "ent_id": 7,
+                "cmp_id": 2,
+                "ppr_id_validation": 11,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 11,
+                "cmen_date_entretien_cpca": "2024-08-26",
+                "cmen_effectif_total": 40
+            },
+            {
+                "ent_id": 2,
+                "cmp_id": 2,
+                "ppr_id_validation": 38,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 38,
+                "cmen_date_entretien_cpca": "2024-07-22",
+                "cmen_effectif_total": 0
+            },
+            {
+                "ent_id": 15,
+                "cmp_id": 2,
+                "ppr_id_validation": 44,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 44,
+                "cmen_date_entretien_cpca": "2024-09-10",
+                "cmen_effectif_total": 0
+            },
+            {
+                "ent_id": 8,
+                "cmp_id": 2,
+                "ppr_id_validation": 27,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 27,
+                "cmen_date_entretien_cpca": "2024-09-03",
+                "cmen_effectif_total": 0
+            },
+            {
+                "ent_id": 4,
+                "cmp_id": 2,
+                "ppr_id_validation": 6,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 6,
+                "cmen_date_entretien_cpca": "2024-08-20",
+                "cmen_effectif_total": 4
+            },
+            {
+                "ent_id": 18,
+                "cmp_id": 2,
+                "ppr_id_validation": 40,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 40,
+                "cmen_date_entretien_cpca": "2024-07-23",
+                "cmen_effectif_total": 0
+            },
+            {
+                "ent_id": 10,
+                "cmp_id": 2,
+                "ppr_id_validation": 42,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 42,
+                "cmen_date_entretien_cpca": "2024-08-26",
+                "cmen_effectif_total": 4
+            },
+            {
+                "ent_id": 17,
+                "cmp_id": 2,
+                "ppr_id_validation": 20,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 20,
+                "cmen_date_entretien_cpca": "2024-08-05",
+                "cmen_effectif_total": 0
+            },
+            {
+                "ent_id": 16,
+                "cmp_id": 2,
+                "ppr_id_validation": 20,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 20,
+                "cmen_date_entretien_cpca": "2024-09-02",
+                "cmen_effectif_total": 0
+            },
+            {
+                "ent_id": 21,
+                "cmp_id": 2,
+                "ppr_id_validation": 35,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 35,
+                "cmen_date_entretien_cpca": "2024-09-10",
+                "cmen_effectif_total": 0
+            },
+            {
+                "ent_id": 11,
+                "cmp_id": 2,
+                "ppr_id_validation": 16,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 16,
+                "cmen_date_entretien_cpca": "2024-08-30",
+                "cmen_effectif_total": 5
+            },
+            {
+                "ent_id": 12,
+                "cmp_id": 2,
+                "ppr_id_validation": 15,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 15,
+                "cmen_date_entretien_cpca": "2024-08-29",
+                "cmen_effectif_total": 4
+            },
+            {
+                "ent_id": 5,
+                "cmp_id": 2,
+                "ppr_id_validation": 10,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 10,
+                "cmen_date_entretien_cpca": "2024-08-20",
+                "cmen_effectif_total": 3
+            },
+            {
+                "ent_id": 3,
+                "cmp_id": 2,
+                "ppr_id_validation": 55,
+                "cmen_date_validation": "2024-11-07",
+                "ppr_id_cpca": 55,
+                "cmen_date_entretien_cpca": "2024-08-26",
+                "cmen_effectif_total": 0
+            },
+            {
+                "ent_id": 9,
+                "cmp_id": 2,
+                "ppr_id_validation": 12,
+                "cmen_date_validation": "2024-10-25",
+                "ppr_id_cpca": 12,
+                "cmen_date_entretien_cpca": "2024-08-27",
+                "cmen_effectif_total": 2
+            }
+        ]
+    }
+}

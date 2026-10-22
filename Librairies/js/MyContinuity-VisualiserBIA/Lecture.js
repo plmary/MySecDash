@@ -35,9 +35,13 @@ $(function() {
 						}
 					} else {
 						// Mise à jour de la liste déroulante des Campagnes associées à la Société
+						$('#s_ent_id').append('<option value="*">' + reponse['L_Toutes'] + '</option>');
+
 						for (let element of reponse['Liste_Entites']) {
 							$('#s_ent_id').append('<option value="' + element.ent_id + '">' + element.ent_nom + '</option>');
 						}
+
+						$('#s_ent_id option:nth-child(2)').prop('selected', true);
 					}
 
 					if ( reponse['sct_id'] != '---' && reponse['sct_id'] != ''
@@ -145,7 +149,7 @@ function afficherMessageCorps(Libelle_Message, Libelle_Bouton) {
 
 function afficherSynthese(ent_id) {
 	if (ent_id == '*') {
-		var Action = 'AJAX_Synthese_Gloable';
+		var Action = 'AJAX_Synthese_Globale';
 	} else {
 		var Action = 'AJAX_Synthese_Specifique';
 	}

@@ -107,16 +107,15 @@ function ModifierActivite( act_id ) {
 			app_id = $(element).attr('id').split('-')[1];
 			ete_id_dima = $('#ete_id_dima-'+app_id).val();
 			ete_id_pdma = $('#ete_id_pdma-'+app_id).val();
-			acap_donnees = $('#acap_donnees-'+app_id).val();
 			acap_palliatif = $('#acap_palliatif-'+app_id).val();
 			acap_hebergement = $('#acap_hebergement-'+app_id).val();
 			acap_niveau_service = $('#acap_niveau_service-'+app_id).val();
 
 			if ( $(element).attr('data-old_value') == 0) {
-				Liste_APP_Ajouter.push([app_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif, acap_hebergement, acap_niveau_service]);
+				Liste_APP_Ajouter.push([app_id, ete_id_dima, ete_id_pdma, acap_palliatif, acap_hebergement, acap_niveau_service]);
 				total_applications += 1;
 			} else {
-				Liste_APP_Modifier.push([app_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif, acap_hebergement, acap_niveau_service]);
+				Liste_APP_Modifier.push([app_id, ete_id_dima, ete_id_pdma, acap_palliatif, acap_hebergement, acap_niveau_service]);
 			}
 		} else {
 			if ( $(element).attr('data-old_value') == 1) {

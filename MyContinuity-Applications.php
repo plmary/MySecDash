@@ -1,7 +1,7 @@
 <?php
 
 /**
-* Ce script gère les Applications.
+* Ce script gère toutes les Applications de la base de données.
 *
 * \license Copyleft Loxense
 * \author Pierre-Luc MARY
@@ -219,7 +219,15 @@ switch( $Action ) {
 				$Valeurs->frn_id = $_POST[ 'frn_nom' ];
 				$Valeurs->app_hebergement = $_POST['app_hebergement'];
 				$Valeurs->app_niveau_service = $_POST['app_niveau_service'];
-				$Valeurs->app_description = $_POST['app_description'];
+//				$Valeurs->app_description = $_POST['app_description'];
+
+				if ( $_SESSION['s_sct_id'] == '*' ) {
+					$_sct_id = '';
+				} else {
+					$_sct_id = $_SESSION['s_sct_id'];
+				}
+
+				$Valeurs->sct_id = $_sct_id;
 
 				$Occurrence = $PageHTML->creerOccurrenceCorpsTableau( $Id_Application, $Valeurs, $Format_Colonnes );
 
@@ -518,14 +526,16 @@ switch( $Action ) {
 					exit();
 				}
 
-				$_POST['sct_id'] = $PageHTML->controlerTypeValeur( $_POST['sct_id'], 'NUMERIC' );
-				if ( $_POST['sct_id'] == -1 ) {
-					echo json_encode( array(
-						'statut' => 'error',
-						'texteMsg' => $L_Invalid_Value . ' (sct_id)'
-					) );
+				if ( $_POST['sct_id'] != '') {
+					$_POST['sct_id'] = $PageHTML->controlerTypeValeur( $_POST['sct_id'], 'NUMERIC' );
+					if ( $_POST['sct_id'] == -1 ) {
+						echo json_encode( array(
+							'statut' => 'error',
+							'texteMsg' => $L_Invalid_Value . ' (sct_id)'
+						) );
 
-					exit();
+						exit();
+					}
 				}
 
 				$_POST['app_hebergement'] = $PageHTML->controlerTypeValeur( $_POST['app_hebergement'], 'ASCII' );

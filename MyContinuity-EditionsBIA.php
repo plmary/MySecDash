@@ -865,6 +865,7 @@ switch( $Action ) {
 				}
 
 
+				if ($Application->acap_donnees == NULL) $Application->acap_donnees = '';
 				$textlines = explode('##', $Application->acap_donnees);
 				$textrun = $table->addCell(2250)->addTextRun();
 				if (count($textlines) > 0) {
@@ -950,6 +951,7 @@ switch( $Action ) {
 				}
 
 
+				if ($Application->acap_donnees == NULL) $Application->acap_donnees = '';
 				$textlines = explode('##', $Application->acap_donnees);
 				$textrun = $table->addCell(6750)->addTextRun();
 				if (count($textlines) > 0) {
@@ -1054,13 +1056,13 @@ switch( $Action ) {
 				$table->addCell(3500)->addText($Fournisseur->frn_nom, $fontTexteTableau, $styleParagrapheTableau);
 				$table->addCell(3500)->addText($Fournisseur->tfr_nom_code, $fontTexteTableau, $styleParagrapheTableau);
 				$table->addCell(4000)->addText($Fournisseur->ent_nom . ' (' . $Fournisseur->ent_description . ')', $fontTexteTableau, $styleParagrapheTableau);
-				$textlines = explode('<br>', $Fournisseur->act_nom);
+				$textlines = explode('###', $Fournisseur->act_nom);
 				$textrun = $table->addCell(4000)->addTextRun();
-				$textrun->addText(array_shift($textlines), $fontTexteTableau, $styleParagrapheTableau);
+				$textrun->addText(explode('===',array_shift($textlines))[0], $fontTexteTableau, $styleParagrapheTableau);
 
 				foreach($textlines as $line) {
 					$textrun->addTextBreak(2);
-					$textrun->addText($line, $fontTexteTableau, $styleParagrapheTableau);
+					$textrun->addText(explode('===',$line)[0], $fontTexteTableau, $styleParagrapheTableau);
 				}
 			}
 		}
@@ -2788,6 +2790,7 @@ switch( $Action ) {
 
 				$richText = new \PhpOffice\PhpSpreadsheet\RichText\RichText();
 
+				if ($Application->acap_donnees == NULL) $Application->acap_donnees = '';
 				$textlines = explode('##', $Application->acap_donnees);
 				if (count($textlines) > 0) {
 					$compteur = 0;
@@ -2929,7 +2932,7 @@ switch( $Action ) {
 
 				$textlines = explode(',<br>', $Fournisseur->act_nom);
 
-				$line = explode('###', array_shift($textlines));
+				$line = explode('===', array_shift($textlines));
 				$_act_nom = $line[0];
 				$_act_id = $line[1];
 
@@ -2949,7 +2952,7 @@ switch( $Action ) {
 						if ($_ete_poids != '') {
 							$textRun = $richText->createTextRun(' / ');
 							if ( isset($Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code) ) {
-								$textRun = $richText->createTextRun(' / ' . $Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
+								$textRun = $richText->createTextRun($Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
 							}
 							$textRun->getFont()->setBold(true);
 						}
@@ -2980,7 +2983,7 @@ switch( $Action ) {
 							if ($_ete_poids != '') {
 								$textRun = $richText->createTextRun(' / ');
 								if ( isset($Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code) ) {
-									$textRun = $richText->createTextRun(' / ' . $Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
+									$textRun = $richText->createTextRun($Liste_Echelles_Temps_Poids[$_ete_poids]->ete_nom_code);
 								}
 								$textRun->getFont()->setBold(true);
 							}
@@ -2997,12 +3000,16 @@ switch( $Action ) {
 				$activeWorksheet->setCellValue('E'.$Ligne, $Fournisseur->ete_nom_code);
 				$activeWorksheet->getStyle('E'.$Ligne)->applyFromArray($fontCourant);
 
-				$activeWorksheet->setCellValue('F'.$Ligne, $Fournisseur->acfr_consequence_indisponibilite);
+				if ( isset($Fournisseur->acfr_consequence_indisponibilite) ) {
+					$activeWorksheet->setCellValue('F'.$Ligne, $Fournisseur->acfr_consequence_indisponibilite);
+				}
 				$activeWorksheet->getStyle('F'.$Ligne)->applyFromArray($fontCourant);
-
-				$activeWorksheet->setCellValue('G'.$Ligne, $Fournisseur->acfr_palliatif_tiers);
+				
+				if ( isset($Fournisseur->acfr_palliatif_tiers) ) {
+					$activeWorksheet->setCellValue('G'.$Ligne, $Fournisseur->acfr_palliatif_tiers);
+				}
 				$activeWorksheet->getStyle('G'.$Ligne)->applyFromArray($fontCourant);
-
+				
 				$Ligne += 1;
 			}
 
@@ -3274,6 +3281,12 @@ switch( $Action ) {
 
 
  case 'AJAX_Charger_Impression':
+	$Repertoire = dirname($_GET['Nom_Fichier_Complet']);
+	if ($Repertoire != DIR_RAPPORTS) {
+		print('Erreur : Le répertoire des "rapports" a été modifié.<br>Fournit : "'.$Repertoire.'"<br>Attendu : "'.DIR_RAPPORTS.'"');
+		exit();
+	}
+
 	// Envoi le fichier généré à l'appelant.
 	header( 'Content-Description: File Transfer' );
 	header( 'Content-Type: application/octet-stream' );

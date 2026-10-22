@@ -1406,7 +1406,7 @@ div[data-src="associations"] .btn-row {
 }
 
 .titre-visu-cartouche {
-	font-size: 1.75rem;
+	font-size: 1.3rem;
 	color: white;
 	background-color: #44808A;
 	font-weight: 500;
@@ -1417,6 +1417,9 @@ div[data-src="associations"] .btn-row {
 	padding: .5rem .5rem;
 }
 
+hr.spacer {
+	margin: 3px 0px;
+}
 /*
 .table-visu th {
 	background-color: silver;

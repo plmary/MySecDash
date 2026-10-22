@@ -105,7 +105,9 @@ function trier( myElement, changerTri ) {
 				$('div#corps_tableau').html( reponse[ 'texteHTML'] );
 
 				if ( $('#s_sct_id').is('input') == false ) {
-					$('#s_sct_id').val( reponse['sct_id'] );
+					if (reponse['sct_id'] != '*') {
+						$('#s_sct_id').val( reponse['sct_id'] );
+					}
 				}
 
 				$('#s_cmp_id').val( reponse['cmp_id'] );

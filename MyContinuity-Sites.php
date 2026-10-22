@@ -126,14 +126,14 @@ switch( $Action ) {
 				exit();
 			}
 
-			if ( $_POST['sts_description'] == '' ) {
+/*			if ( $_POST['sts_description'] == '' ) {
 				$Resultat = array( 'statut' => 'error',
 					'titreMsg' => $L_Error,
 					'texteMsg' => $L_Field_Mandatory . ' (sts_description)' );
 				
 				echo json_encode( $Resultat );
 				exit();
-			}
+			} */
 
 
 			$_POST['sts_nom'] = $PageHTML->controlerTypeValeur( $_POST['sts_nom'], 'ASCII' );
@@ -227,14 +227,14 @@ switch( $Action ) {
 				exit();
 			}
 
-			if ( $_POST['sts_description'] == '' ) {
+/*			if ( $_POST['sts_description'] == '' ) {
 				$Resultat = array( 'statut' => 'error',
 					'titreMsg' => $L_Error,
 					'texteMsg' => $L_Field_Mandatory . ' (sts_description)' );
 
 				echo json_encode( $Resultat );
 				exit();
-			}
+			} */
 
 
 			$_POST['sts_id'] = $PageHTML->controlerTypeValeur( $_POST['sts_id'], 'NUMBER' );

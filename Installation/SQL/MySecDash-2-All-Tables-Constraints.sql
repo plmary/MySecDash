@@ -1,11 +1,13 @@
 --
 -- Auteur  : Pierre-Luc MARY
--- Date    : 2025-10-25
+-- Date    : 2026-08-26
 -- Package : MySecDash
 --
 -- Commentaire :
 -- Ce script crée toutes les tables et toutes les contraintes de la base de données "mysecdash".
--- Modèle SQL : MySecDash v1.5
+-- Modèle SQL : MySecDash v1.6-0
+
+
 
 
 CREATE SEQUENCE public.tgs_tags_tgs_id_seq;
@@ -14,18 +16,18 @@ CREATE TABLE public.tgs_tags (
                 tgs_id BIGINT NOT NULL DEFAULT nextval('public.tgs_tags_tgs_id_seq'),
                 tgs_code VARCHAR(10) NOT NULL,
                 tgs_libelle VARCHAR(60) NOT NULL,
-                tgs_description TEXT NOT NULL,
+                tgs_description TEXT,
                 CONSTRAINT tgs_tags_pk PRIMARY KEY (tgs_id)
 );
 
 
 ALTER SEQUENCE public.tgs_tags_tgs_id_seq OWNED BY public.tgs_tags.tgs_id;
 
-CREATE UNIQUE INDEX tgs_code_u
+CREATE UNIQUE INDEX idx_u_tgs_code
  ON public.tgs_tags
  ( tgs_code );
 
-CREATE UNIQUE INDEX tgs_libelle_u
+CREATE UNIQUE INDEX idx_u_tgs_libelle
  ON public.tgs_tags
  ( tgs_libelle );
 
@@ -52,7 +54,7 @@ CREATE TABLE public.cvl_civilites (
 
 ALTER SEQUENCE public.cvl_civilites_cvl_id_seq OWNED BY public.cvl_civilites.cvl_id;
 
-CREATE UNIQUE INDEX cvl_civilities_u1
+CREATE UNIQUE INDEX idx_u_cvl_civilities
  ON public.cvl_civilites
  ( cvl_nom, cvl_prenom );
 
@@ -68,7 +70,7 @@ CREATE TABLE public.prf_profils (
 
 ALTER SEQUENCE public.prf_profils_prf_id_seq OWNED BY public.prf_profils.prf_id;
 
-CREATE UNIQUE INDEX prf_profils_u1
+CREATE UNIQUE INDEX idx_u_prf_libelle
  ON public.prf_profils
  ( prf_libelle );
 
@@ -94,7 +96,7 @@ CREATE TABLE public.tap_types_application (
 
 ALTER SEQUENCE public.tap_types_application_tap_id_seq OWNED BY public.tap_types_application.tap_id;
 
-CREATE UNIQUE INDEX tap_types_application_u1
+CREATE UNIQUE INDEX idx_u_tap_code_libelle
  ON public.tap_types_application
  ( tap_code_libelle );
 
@@ -116,9 +118,17 @@ COMMENT ON COLUMN public.ain_applications_internes.ain_maintenance IS 'Pour sign
 
 ALTER SEQUENCE public.ain_applications_internes_ain_id_seq OWNED BY public.ain_applications_internes.ain_id;
 
-CREATE UNIQUE INDEX app_applications_u1
+CREATE UNIQUE INDEX idx_u_app_applications
  ON public.ain_applications_internes
  ( ain_localisation );
+
+CREATE INDEX idx_ain_tap_id
+ ON public.ain_applications_internes
+ ( tap_id );
+
+CREATE INDEX idx_ain_maintenance
+ ON public.ain_applications_internes
+ ( ain_maintenance );
 
 CREATE SEQUENCE public.tfr_types_fournisseur_tfr_id_seq;
 
@@ -131,7 +141,7 @@ CREATE TABLE public.tfr_types_fournisseur (
 
 ALTER SEQUENCE public.tfr_types_fournisseur_tfr_id_seq OWNED BY public.tfr_types_fournisseur.tfr_id;
 
-CREATE UNIQUE INDEX tfr_u_nom_idx
+CREATE UNIQUE INDEX idx_u_tfr_types_fournisseur
  ON public.tfr_types_fournisseur
  ( tfr_nom_code );
 
@@ -153,9 +163,29 @@ CREATE TABLE public.hac_historiques_activites (
 
 ALTER SEQUENCE public.hac_historiques_activites_hac_id_seq OWNED BY public.hac_historiques_activites.hac_id;
 
-CREATE INDEX hac_idx_1
+CREATE INDEX idx_hac_id_application_metier
  ON public.hac_historiques_activites
  ( hac_id_application_metier );
+
+CREATE INDEX idx_hac_tpa_id
+ ON public.hac_historiques_activites
+ ( tpa_id );
+
+CREATE INDEX idx_hac_tpo_id
+ ON public.hac_historiques_activites
+ ( tpo_id );
+
+CREATE INDEX idx_hac_crs_id
+ ON public.hac_historiques_activites
+ ( crs_id );
+
+CREATE INDEX idx_hac_date
+ ON public.hac_historiques_activites
+ ( hac_date DESC );
+
+CREATE INDEX idx_hac_composite
+ ON public.hac_historiques_activites
+ ( tpa_id, tpo_id, hac_date DESC );
 
 CREATE SEQUENCE public.frn_fournisseurs_frn_id_seq;
 
@@ -170,9 +200,13 @@ CREATE TABLE public.frn_fournisseurs (
 
 ALTER SEQUENCE public.frn_fournisseurs_frn_id_seq OWNED BY public.frn_fournisseurs.frn_id;
 
-CREATE UNIQUE INDEX frn_u_nom_idx
+CREATE UNIQUE INDEX idx_u_frn_nom
  ON public.frn_fournisseurs
  ( frn_nom );
+
+CREATE INDEX idx_frn_tfr_id
+ ON public.frn_fournisseurs
+ ( tfr_id );
 
 CREATE TABLE public.frtg_frn_tgs (
                 tgs_id BIGINT NOT NULL,
@@ -180,6 +214,10 @@ CREATE TABLE public.frtg_frn_tgs (
                 CONSTRAINT frtg_frn_tgs_pk PRIMARY KEY (tgs_id, frn_id)
 );
 
+
+CREATE INDEX idx_frtg_frn_id
+ ON public.frtg_frn_tgs
+ ( frn_id );
 
 CREATE SEQUENCE public.tad_types_action_defaut_tad_id_seq;
 
@@ -209,6 +247,10 @@ CREATE TABLE public.adf_actions_defaut (
 
 ALTER SEQUENCE public.adf_actions_defaut_adf_id_seq OWNED BY public.adf_actions_defaut.adf_id;
 
+CREATE INDEX idx_adf_tad_id
+ ON public.adf_actions_defaut
+ ( tad_id );
+
 CREATE SEQUENCE public.rpp_roles_parties_prenantes_rpp_id_seq;
 
 CREATE TABLE public.rpp_roles_parties_prenantes (
@@ -220,7 +262,7 @@ CREATE TABLE public.rpp_roles_parties_prenantes (
 
 ALTER SEQUENCE public.rpp_roles_parties_prenantes_rpp_id_seq OWNED BY public.rpp_roles_parties_prenantes.rpp_id;
 
-CREATE UNIQUE INDEX rpp_u_nom_idx
+CREATE UNIQUE INDEX idx_u_rpp_nom_code
  ON public.rpp_roles_parties_prenantes
  ( rpp_nom_code );
 
@@ -244,7 +286,7 @@ COMMENT ON COLUMN public.prs_parametres_systeme.prs_super_admin IS 'Flag pour au
 
 ALTER SEQUENCE public.prs_parametres_systeme_prs_id_seq OWNED BY public.prs_parametres_systeme.prs_id;
 
-CREATE UNIQUE INDEX spr_idx
+CREATE UNIQUE INDEX idx_u_prs_nom
  ON public.prs_parametres_systeme
  ( prs_nom );
 
@@ -269,9 +311,13 @@ CREATE TABLE public.lbr_libelles_referentiel (
 
 ALTER SEQUENCE public.lbr_libelles_referentiel_lbr_id_seq OWNED BY public.lbr_libelles_referentiel.lbr_id;
 
-CREATE UNIQUE INDEX lbr_idx_nom_lng
+CREATE UNIQUE INDEX idx_u_lbr_composite
  ON public.lbr_libelles_referentiel
  ( lng_id, lbr_code );
+
+CREATE INDEX idx_lbr_lng_id
+ ON public.lbr_libelles_referentiel
+ ( lng_id );
 
 CREATE SEQUENCE public.drt_droits_drt_id_seq;
 
@@ -288,7 +334,7 @@ COMMENT ON TABLE public.drt_droits IS '1 - Lecture
 
 ALTER SEQUENCE public.drt_droits_drt_id_seq OWNED BY public.drt_droits.drt_id;
 
-CREATE UNIQUE INDEX rgh_rights_u2
+CREATE UNIQUE INDEX idx_u_drt_code_libelle
  ON public.drt_droits
  ( drt_code_libelle );
 
@@ -299,6 +345,14 @@ CREATE TABLE public.caa_controle_acces_application_interne (
                 CONSTRAINT caa_controle_acces_application_interne_pk PRIMARY KEY (prf_id, drt_id, ain_id)
 );
 
+
+CREATE INDEX idx_caa_ain_id
+ ON public.caa_controle_acces_application_interne
+ ( ain_id );
+
+CREATE INDEX idx_caa_drt_id
+ ON public.caa_controle_acces_application_interne
+ ( drt_id );
 
 CREATE SEQUENCE public.sct_societes_sct_id_seq;
 
@@ -312,9 +366,30 @@ CREATE TABLE public.sct_societes (
 
 ALTER SEQUENCE public.sct_societes_sct_id_seq OWNED BY public.sct_societes.sct_id;
 
-CREATE UNIQUE INDEX sct_u_nom_idx
+CREATE UNIQUE INDEX idx_u_sct_nom
  ON public.sct_societes
  ( sct_nom );
+
+CREATE SEQUENCE public.ein_equipes_internes_ein_id_seq;
+
+CREATE TABLE public.ein_equipes_internes (
+                ein_id BIGINT NOT NULL DEFAULT nextval('public.ein_equipes_internes_ein_id_seq'),
+                sct_id BIGINT NOT NULL,
+                ein_nom VARCHAR(100) NOT NULL,
+                ein_description TEXT,
+                CONSTRAINT ein_equipes_internes_pk PRIMARY KEY (ein_id)
+);
+
+
+ALTER SEQUENCE public.ein_equipes_internes_ein_id_seq OWNED BY public.ein_equipes_internes.ein_id;
+
+CREATE INDEX idx_ein_sct_id
+ ON public.ein_equipes_internes
+ ( sct_id );
+
+CREATE UNIQUE INDEX idx_u_ein_nom
+ ON public.ein_equipes_internes
+ ( ein_nom );
 
 CREATE SEQUENCE public.ete_echelle_temps_ete_id_seq;
 
@@ -330,13 +405,17 @@ COMMENT ON COLUMN public.ete_echelle_temps.ete_poids IS 'Plus le poids est grand
 
 ALTER SEQUENCE public.ete_echelle_temps_ete_id_seq OWNED BY public.ete_echelle_temps.ete_id;
 
-CREATE INDEX ete_u_nom_idx
+CREATE INDEX idx_ete_nom_code
  ON public.ete_echelle_temps
  ( ete_nom_code );
 
-CREATE UNIQUE INDEX ete_u_poids_idx
+CREATE UNIQUE INDEX idx_ete_u_composite
  ON public.ete_echelle_temps
- ( ete_poids );
+ ( ete_poids, sct_id );
+
+CREATE INDEX idx_ete_sct_id
+ ON public.ete_echelle_temps
+ ( sct_id );
 
 CREATE TABLE public.sctg_sct_tgs (
                 tgs_id BIGINT NOT NULL,
@@ -344,6 +423,10 @@ CREATE TABLE public.sctg_sct_tgs (
                 CONSTRAINT sctg_sct_tgs_pk PRIMARY KEY (tgs_id, sct_id)
 );
 
+
+CREATE INDEX idx_sctg_sct_id
+ ON public.sctg_sct_tgs
+ ( sct_id );
 
 CREATE SEQUENCE public.idn_identites_idn_id_seq;
 
@@ -369,9 +452,33 @@ CREATE TABLE public.idn_identites (
 
 ALTER SEQUENCE public.idn_identites_idn_id_seq OWNED BY public.idn_identites.idn_id;
 
-CREATE UNIQUE INDEX idn_identities_u1
+CREATE UNIQUE INDEX idx_u_idn_login
  ON public.idn_identites
  ( idn_login );
+
+CREATE INDEX idx_idn_sct_id
+ ON public.idn_identites
+ ( sct_id );
+
+CREATE INDEX idx_idn_cvl_id
+ ON public.idn_identites
+ ( cvl_id );
+
+CREATE INDEX idx_idn_derniere_connexion
+ ON public.idn_identites
+ ( idn_derniere_connexion );
+
+CREATE INDEX idx_idn_date_expiration
+ ON public.idn_identites
+ ( idn_date_expiration );
+
+CREATE INDEX idx_idn_desactiver
+ ON public.idn_identites
+ ( idn_desactiver );
+
+CREATE INDEX idx_idn_super_admin
+ ON public.idn_identites
+ ( idn_super_admin );
 
 CREATE TABLE public.hsa_historique_authentifiant (
                 idn_id BIGINT NOT NULL,
@@ -389,12 +496,20 @@ CREATE TABLE public.idpr_idn_prf (
 );
 
 
+CREATE INDEX idx_idpr_prf_id
+ ON public.idpr_idn_prf
+ ( prf_id );
+
 CREATE TABLE public.idtg_idn_tgs (
                 tgs_id BIGINT NOT NULL,
                 idn_id BIGINT NOT NULL,
                 CONSTRAINT idtg_idn_tgs_pk PRIMARY KEY (tgs_id, idn_id)
 );
 
+
+CREATE INDEX idx_idtg_idn_id
+ ON public.idtg_idn_tgs
+ ( idn_id );
 
 CREATE TABLE public.idsc_idn_sct (
                 idn_id BIGINT NOT NULL,
@@ -404,6 +519,10 @@ CREATE TABLE public.idsc_idn_sct (
 );
 COMMENT ON COLUMN public.idsc_idn_sct.idsc_admin IS 'Flag pour autoriser l''utilisateur à administrer cette Société ultérieurement';
 
+
+CREATE INDEX idx_idsc_sct_id
+ ON public.idsc_idn_sct
+ ( sct_id );
 
 CREATE SEQUENCE public.ent_entites_ent_id_seq;
 
@@ -419,16 +538,24 @@ COMMENT ON TABLE public.ent_entites IS 'Une Entité est une représentation du d
 
 ALTER SEQUENCE public.ent_entites_ent_id_seq OWNED BY public.ent_entites.ent_id;
 
-CREATE UNIQUE INDEX ent_u_nom_idx
+CREATE UNIQUE INDEX idx_u_ent_composite
  ON public.ent_entites
  ( ent_nom, sct_id );
 
+CREATE INDEX idx_ent_sct_id
+ ON public.ent_entites
+ ( sct_id );
+
 CREATE TABLE public.entg_ent_tgs (
-                ent_id BIGINT NOT NULL,
                 tgs_id BIGINT NOT NULL,
-                CONSTRAINT entg_ent_tgs_pk PRIMARY KEY (ent_id, tgs_id)
+                ent_id BIGINT NOT NULL,
+                CONSTRAINT entg_ent_tgs_pk PRIMARY KEY (tgs_id, ent_id)
 );
 
+
+CREATE INDEX idx_entg_tgs_id
+ ON public.entg_ent_tgs
+ ( ent_id );
 
 CREATE TABLE public.iden_idn_ent (
                 idn_id BIGINT NOT NULL,
@@ -438,6 +565,10 @@ CREATE TABLE public.iden_idn_ent (
 );
 COMMENT ON COLUMN public.iden_idn_ent.iden_admin IS 'Flag pour autoriser l''utilisateur à administrer cette Entité ultérieurement';
 
+
+CREATE INDEX idx_iden_ent_id
+ ON public.iden_idn_ent
+ ( ent_id );
 
 CREATE SEQUENCE public.sts_sites_sts_id_seq;
 
@@ -452,9 +583,13 @@ CREATE TABLE public.sts_sites (
 
 ALTER SEQUENCE public.sts_sites_sts_id_seq OWNED BY public.sts_sites.sts_id;
 
-CREATE UNIQUE INDEX sts_u_nom_idx
+CREATE UNIQUE INDEX idx_u_sts_composite
  ON public.sts_sites
  ( sct_id, sts_nom );
+
+CREATE INDEX idx_sts_sct_id
+ ON public.sts_sites
+ ( sct_id );
 
 CREATE TABLE public.sttg_sts_tgs (
                 tgs_id BIGINT NOT NULL,
@@ -462,6 +597,10 @@ CREATE TABLE public.sttg_sts_tgs (
                 CONSTRAINT sttg_sts_tgs_pk PRIMARY KEY (tgs_id, sts_id)
 );
 
+
+CREATE INDEX idx_sttg_sts_id
+ ON public.sttg_sts_tgs
+ ( sts_id );
 
 CREATE SEQUENCE public.ppr_parties_prenantes_ppr_id_seq;
 
@@ -480,9 +619,13 @@ false = externe';
 
 ALTER SEQUENCE public.ppr_parties_prenantes_ppr_id_seq OWNED BY public.ppr_parties_prenantes.ppr_id;
 
-CREATE UNIQUE INDEX ppr_u_nom_idx
+CREATE UNIQUE INDEX idx_u_ppr_composite
  ON public.ppr_parties_prenantes
  ( sct_id, ppr_nom, ppr_prenom );
+
+CREATE INDEX idx_ppr_sct_id
+ ON public.ppr_parties_prenantes
+ ( sct_id );
 
 CREATE TABLE public.pptg_ppr_tgs (
                 ppr_id BIGINT NOT NULL,
@@ -490,6 +633,10 @@ CREATE TABLE public.pptg_ppr_tgs (
                 CONSTRAINT pptg_ppr_tgs_pk PRIMARY KEY (ppr_id, tgs_id)
 );
 
+
+CREATE INDEX idx_pptg_tgs_id
+ ON public.pptg_ppr_tgs
+ ( ppr_id );
 
 CREATE SEQUENCE public.cmp_campagnes_cmp_id_seq;
 
@@ -509,9 +656,25 @@ TRUE = La Campagne est validé';
 
 ALTER SEQUENCE public.cmp_campagnes_cmp_id_seq OWNED BY public.cmp_campagnes.cmp_id;
 
-CREATE UNIQUE INDEX cmp_u_nom_idx
+CREATE UNIQUE INDEX idx_u_cmp_composite
  ON public.cmp_campagnes
  ( sct_id, cmp_date );
+
+CREATE INDEX idx_cmp_sct_id
+ ON public.cmp_campagnes
+ ( sct_id );
+
+CREATE INDEX idx_cmp_idn_id
+ ON public.cmp_campagnes
+ ( idn_id );
+
+CREATE INDEX idx_cmp_date
+ ON public.cmp_campagnes
+ ( cmp_date );
+
+CREATE INDEX idx_cmp_flag_validation
+ ON public.cmp_campagnes
+ ( cmp_flag_validation );
 
 CREATE SEQUENCE public.act_activites_act_id_seq;
 
@@ -540,9 +703,103 @@ TRUE = Activité télétravaillable';
 
 ALTER SEQUENCE public.act_activites_act_id_seq OWNED BY public.act_activites.act_id;
 
-CREATE UNIQUE INDEX act_u_nom_idx
+CREATE UNIQUE INDEX idx_u_act_composite
  ON public.act_activites
  ( act_nom, ent_id, cmp_id );
+
+CREATE INDEX idx_act_ent_id
+ ON public.act_activites
+ ( ent_id );
+
+CREATE INDEX activit_s_idx
+ ON public.act_activites
+ ( cmp_id );
+
+CREATE INDEX idx_act_ppr_responsable
+ ON public.act_activites
+ ( ppr_id_responsable );
+
+CREATE INDEX idx_act_ppr_suppleant
+ ON public.act_activites
+ ( ppr_id_suppleant );
+
+CREATE SEQUENCE public.pap_prestataires_autres_prestataires_pap_id_seq;
+
+CREATE TABLE public.pap_prestataires_autres_prestataires (
+                pap_id BIGINT NOT NULL DEFAULT nextval('public.pap_prestataires_autres_prestataires_pap_id_seq'),
+                frn_id BIGINT NOT NULL,
+                act_id BIGINT NOT NULL,
+                frn_id_nouveau BIGINT NOT NULL,
+                ete_id BIGINT NOT NULL,
+                pap_contact VARCHAR(100),
+                pap_commentaires TEXT,
+                CONSTRAINT pap_prestataires_autres_prestataires_pk PRIMARY KEY (pap_id)
+);
+
+
+ALTER SEQUENCE public.pap_prestataires_autres_prestataires_pap_id_seq OWNED BY public.pap_prestataires_autres_prestataires.pap_id;
+
+CREATE INDEX idx_pap_composite
+ ON public.pap_prestataires_autres_prestataires
+ ( frn_id, act_id );
+
+CREATE INDEX idx_pap_ete_id
+ ON public.pap_prestataires_autres_prestataires
+ ( ete_id );
+
+CREATE SEQUENCE public.ipp_indisponibilite_personnel_prestataire_ipp_id_seq;
+
+CREATE TABLE public.ipp_indisponibilite_personnel_prestataire (
+                ipp_id BIGINT NOT NULL DEFAULT nextval('public.ipp_indisponibilite_personnel_prestataire_ipp_id_seq'),
+                act_id BIGINT NOT NULL,
+                frn_id BIGINT NOT NULL,
+                ete_id BIGINT NOT NULL,
+                ipp_contact VARCHAR(100),
+                ipp_commentaires TEXT,
+                CONSTRAINT ipp_indisponibilite_personnel_prestataire_pk PRIMARY KEY (ipp_id)
+);
+
+
+ALTER SEQUENCE public.ipp_indisponibilite_personnel_prestataire_ipp_id_seq OWNED BY public.ipp_indisponibilite_personnel_prestataire.ipp_id;
+
+CREATE INDEX idx_ipp_act_id
+ ON public.ipp_indisponibilite_personnel_prestataire
+ ( act_id );
+
+CREATE INDEX idx_ipp_frn_id
+ ON public.ipp_indisponibilite_personnel_prestataire
+ ( frn_id );
+
+CREATE INDEX idx_ipp_ete_id
+ ON public.ipp_indisponibilite_personnel_prestataire
+ ( ete_id );
+
+CREATE SEQUENCE public.ipi_indisponibilite_personnel_interne_ipi_id_seq;
+
+CREATE TABLE public.ipi_indisponibilite_personnel_interne (
+                ipi_id BIGINT NOT NULL DEFAULT nextval('public.ipi_indisponibilite_personnel_interne_ipi_id_seq'),
+                act_id BIGINT NOT NULL,
+                ein_id BIGINT NOT NULL,
+                ete_id BIGINT NOT NULL,
+                ppr_id BIGINT,
+                ipi_commentaires TEXT,
+                CONSTRAINT ipi_indisponibilite_personnel_interne_pk PRIMARY KEY (ipi_id)
+);
+
+
+ALTER SEQUENCE public.ipi_indisponibilite_personnel_interne_ipi_id_seq OWNED BY public.ipi_indisponibilite_personnel_interne.ipi_id;
+
+CREATE INDEX idx_ipi_act_id
+ ON public.ipi_indisponibilite_personnel_interne
+ ( act_id );
+
+CREATE INDEX idx_ipi_ein_id
+ ON public.ipi_indisponibilite_personnel_interne
+ ( ein_id );
+
+CREATE INDEX idx_ipi_ete_id
+ ON public.ipi_indisponibilite_personnel_interne
+ ( ete_id );
 
 CREATE TABLE public.rut_redemarrage_utilisateurs (
                 ete_id BIGINT NOT NULL,
@@ -551,6 +808,10 @@ CREATE TABLE public.rut_redemarrage_utilisateurs (
                 CONSTRAINT rut_redemarrage_utilisateurs_pk PRIMARY KEY (ete_id, act_id)
 );
 
+
+CREATE INDEX idx_rut_act_id
+ ON public.rut_redemarrage_utilisateurs
+ ( act_id );
 
 CREATE TABLE public.acfr_act_frn (
                 act_id BIGINT NOT NULL,
@@ -562,6 +823,34 @@ CREATE TABLE public.acfr_act_frn (
 );
 
 
+CREATE INDEX idx_acfr_frn_id
+ ON public.acfr_act_frn
+ ( frn_id );
+
+CREATE INDEX idx_acfr_ete_id
+ ON public.acfr_act_frn
+ ( ete_id );
+
+CREATE SEQUENCE public.pei_prestataires_vers_equipes_internes_pei_id_seq;
+
+CREATE TABLE public.pei_prestataires_vers_equipes_internes (
+                pei_id BIGINT NOT NULL DEFAULT nextval('public.pei_prestataires_vers_equipes_internes_pei_id_seq'),
+                frn_id BIGINT NOT NULL,
+                act_id BIGINT NOT NULL,
+                ein_id BIGINT NOT NULL,
+                ete_id BIGINT NOT NULL,
+                ppr_id BIGINT NOT NULL,
+                pei_commentaires TEXT,
+                CONSTRAINT pei_prestataires_vers_equipes_internes_pk PRIMARY KEY (pei_id)
+);
+
+
+ALTER SEQUENCE public.pei_prestataires_vers_equipes_internes_pei_id_seq OWNED BY public.pei_prestataires_vers_equipes_internes.pei_id;
+
+CREATE INDEX idx_pei_ppr_id
+ ON public.pei_prestataires_vers_equipes_internes
+ ( ppr_id );
+
 CREATE TABLE public.actg_act_tgs (
                 tgs_id BIGINT NOT NULL,
                 act_id BIGINT NOT NULL,
@@ -569,12 +858,20 @@ CREATE TABLE public.actg_act_tgs (
 );
 
 
+CREATE INDEX idx_actg_act_id
+ ON public.actg_act_tgs
+ ( act_id );
+
 CREATE TABLE public.cmst_cmp_sts (
                 cmp_id BIGINT NOT NULL,
                 sts_id BIGINT NOT NULL,
                 CONSTRAINT cmst_cmp_sts_pk PRIMARY KEY (cmp_id, sts_id)
 );
 
+
+CREATE INDEX idx_cmst_sts_id
+ ON public.cmst_cmp_sts
+ ( sts_id );
 
 CREATE TABLE public.acst_act_sts (
                 act_id BIGINT NOT NULL,
@@ -586,6 +883,10 @@ CREATE TABLE public.acst_act_sts (
 COMMENT ON COLUMN public.acst_act_sts.acst_type_site IS '0 = Site Nominal pour l''Activité
 1 = Site de Secours pour l''Activité';
 
+
+CREATE INDEX idx_acst_composite
+ ON public.acst_act_sts
+ ( cmp_id, sts_id );
 
 CREATE SEQUENCE public.nim_niveaux_impact_nim_id_seq;
 
@@ -602,17 +903,21 @@ CREATE TABLE public.nim_niveaux_impact (
 
 ALTER SEQUENCE public.nim_niveaux_impact_nim_id_seq OWNED BY public.nim_niveaux_impact.nim_id;
 
-CREATE UNIQUE INDEX nim_u_nom_idx
+CREATE UNIQUE INDEX idx_u_nim_nom_code
  ON public.nim_niveaux_impact
  ( nim_nom_code, cmp_id );
 
-CREATE UNIQUE INDEX nim_u_numero_idx
+CREATE UNIQUE INDEX idx_u_nim_numero
  ON public.nim_niveaux_impact
  ( cmp_id, nim_numero );
 
-CREATE UNIQUE INDEX nim_u_poids_idx
+CREATE UNIQUE INDEX idx_u_nim_poids
  ON public.nim_niveaux_impact
  ( cmp_id, nim_poids );
+
+CREATE INDEX idx_nim_cmp_id
+ ON public.nim_niveaux_impact
+ ( cmp_id );
 
 CREATE SEQUENCE public.tim_types_impact_tim_id_seq;
 
@@ -627,13 +932,17 @@ CREATE TABLE public.tim_types_impact (
 
 ALTER SEQUENCE public.tim_types_impact_tim_id_seq OWNED BY public.tim_types_impact.tim_id;
 
-CREATE UNIQUE INDEX tim_u_nom_idx
+CREATE UNIQUE INDEX idx_u_tim_nom_code
  ON public.tim_types_impact
  ( tim_nom_code, cmp_id );
 
-CREATE UNIQUE INDEX tim_u_poids_idx
+CREATE UNIQUE INDEX idx_u_tim_poids
  ON public.tim_types_impact
  ( cmp_id, tim_poids );
+
+CREATE INDEX idx_tim_cmp_id
+ ON public.tim_types_impact
+ ( cmp_id );
 
 CREATE SEQUENCE public.mim_matrice_impacts_mim_id_seq;
 
@@ -649,9 +958,21 @@ CREATE TABLE public.mim_matrice_impacts (
 
 ALTER SEQUENCE public.mim_matrice_impacts_mim_id_seq OWNED BY public.mim_matrice_impacts.mim_id;
 
-CREATE UNIQUE INDEX mim_u1_idx
+CREATE UNIQUE INDEX idx_u_mim_composite
  ON public.mim_matrice_impacts
  ( nim_id, tim_id, cmp_id );
+
+CREATE INDEX idx_mim_cmp_id
+ ON public.mim_matrice_impacts
+ ( cmp_id );
+
+CREATE INDEX idx_mim_nim_id
+ ON public.mim_matrice_impacts
+ ( nim_id );
+
+CREATE INDEX idx_mim_tim_id
+ ON public.mim_matrice_impacts
+ ( tim_id );
 
 CREATE TABLE public.ppac_ppr_act (
                 ppr_id BIGINT NOT NULL,
@@ -661,6 +982,14 @@ CREATE TABLE public.ppac_ppr_act (
                 CONSTRAINT ppac_ppr_act_pk PRIMARY KEY (ppr_id, act_id, cmp_id)
 );
 
+
+CREATE INDEX idx_ppac_act_id
+ ON public.ppac_ppr_act
+ ( act_id );
+
+CREATE INDEX idx_ppac_cmp_id
+ ON public.ppac_ppr_act
+ ( cmp_id );
 
 CREATE SEQUENCE public.dma_dmia_activite_dma_id_seq;
 
@@ -676,6 +1005,26 @@ CREATE TABLE public.dma_dmia_activite (
 
 ALTER SEQUENCE public.dma_dmia_activite_dma_id_seq OWNED BY public.dma_dmia_activite.dma_id;
 
+CREATE UNIQUE INDEX idx_u_dma_composite
+ ON public.dma_dmia_activite
+ ( act_id, ete_id, mim_id, cmp_id );
+
+CREATE INDEX idx_dma_act_id
+ ON public.dma_dmia_activite
+ ( act_id );
+
+CREATE INDEX idx_dma_ete_id
+ ON public.dma_dmia_activite
+ ( ete_id );
+
+CREATE INDEX idx_dma_mim_id
+ ON public.dma_dmia_activite
+ ( mim_id );
+
+CREATE INDEX idx_dma_cmp_id
+ ON public.dma_dmia_activite
+ ( cmp_id );
+
 CREATE TABLE public.cmen_cmp_ent (
                 ent_id BIGINT NOT NULL,
                 cmp_id BIGINT NOT NULL,
@@ -687,6 +1036,18 @@ CREATE TABLE public.cmen_cmp_ent (
                 CONSTRAINT cmen_cmp_ent_pk PRIMARY KEY (ent_id, cmp_id)
 );
 
+
+CREATE INDEX idx_cmen_cmp_id
+ ON public.cmen_cmp_ent
+ ( cmp_id );
+
+CREATE INDEX idx_cmen_ppr_cpca
+ ON public.cmen_cmp_ent
+ ( ppr_id_cpca );
+
+CREATE INDEX idx_cmen_ppr_validation
+ ON public.cmen_cmp_ent
+ ( ppr_id_validation );
 
 CREATE SEQUENCE public.pac_plan_actions_pac_id_seq;
 
@@ -706,9 +1067,13 @@ CREATE TABLE public.pac_plan_actions (
 
 ALTER SEQUENCE public.pac_plan_actions_pac_id_seq OWNED BY public.pac_plan_actions.pac_id;
 
-CREATE UNIQUE INDEX pac_u_nom_idx
+CREATE UNIQUE INDEX idx_pac_composite
  ON public.pac_plan_actions
  ( cmp_id, pac_nom );
+
+CREATE INDEX idx_pac_cmp_id
+ ON public.pac_plan_actions
+ ( cmp_id );
 
 CREATE SEQUENCE public.app_applications_app_id_seq;
 
@@ -727,9 +1092,17 @@ CREATE TABLE public.app_applications (
 
 ALTER SEQUENCE public.app_applications_app_id_seq OWNED BY public.app_applications.app_id;
 
-CREATE UNIQUE INDEX app_u_nom_idx
+CREATE UNIQUE INDEX idx_u_app_nom
  ON public.app_applications
  ( app_nom );
+
+CREATE INDEX idx_app_frn_id
+ ON public.app_applications
+ ( frn_id );
+
+CREATE INDEX idx_app_sct_id
+ ON public.app_applications
+ ( sct_id );
 
 CREATE TABLE public.scap_sct_app (
                 app_id BIGINT NOT NULL,
@@ -742,21 +1115,77 @@ CREATE TABLE public.scap_sct_app (
 );
 
 
+CREATE INDEX idx_scap_sct_id
+ ON public.scap_sct_app
+ ( sct_id );
+
+CREATE INDEX idx_scap_ete_dima
+ ON public.scap_sct_app
+ ( ete_id_dima_dsi );
+
 CREATE TABLE public.acap_act_app (
                 act_id BIGINT NOT NULL,
                 app_id BIGINT NOT NULL,
                 ete_id_dima BIGINT,
                 ete_id_pdma BIGINT,
+                acap_hebergement VARCHAR(100),
+                acap_niveau_service VARCHAR(100),
                 acap_palliatif TEXT,
-                acap_donnees TEXT,
-                acap_hebergement TEXT,
-                acap_niveau_service TEXT,
                 CONSTRAINT acap_act_app_pk PRIMARY KEY (act_id, app_id)
 );
 COMMENT ON COLUMN public.acap_act_app.ete_id_dima IS 'DIMA = Durée d''Interruption Maximale Admise';
 COMMENT ON COLUMN public.acap_act_app.ete_id_pdma IS 'PDMA = Perte de Données Maximale Admise';
-COMMENT ON COLUMN public.acap_act_app.acap_donnees IS 'Nom données 1=ICT;Nom données 2=ICT...';
 
+
+CREATE INDEX idx_acap_app_id
+ ON public.acap_act_app
+ ( app_id );
+
+CREATE INDEX idx_acap_ete_dima
+ ON public.acap_act_app
+ ( ete_id_dima );
+
+CREATE INDEX idx_acap_ete_pdma
+ ON public.acap_act_app
+ ( ete_id_pdma );
+
+CREATE INDEX idx_acap_composite
+ ON public.acap_act_app
+ ( act_id, app_id );
+
+CREATE SEQUENCE public.appa_applications_palliatives_appa_id_seq;
+
+CREATE TABLE public.appa_applications_palliatives (
+                appa_id BIGINT NOT NULL DEFAULT nextval('public.appa_applications_palliatives_appa_id_seq'),
+                act_id BIGINT NOT NULL,
+                app_id BIGINT NOT NULL,
+                app_id_secours BIGINT NOT NULL,
+                appa_mode_operatoire TEXT,
+                CONSTRAINT appa_applications_palliatives_pk PRIMARY KEY (appa_id)
+);
+
+
+ALTER SEQUENCE public.appa_applications_palliatives_appa_id_seq OWNED BY public.appa_applications_palliatives.appa_id;
+
+CREATE UNIQUE INDEX idx_u_appa
+ ON public.appa_applications_palliatives
+ ( act_id, app_id, app_id_secours );
+
+CREATE SEQUENCE public.dap_donnees_application_dap_id_seq;
+
+CREATE TABLE public.dap_donnees_application (
+                dap_id BIGINT NOT NULL DEFAULT nextval('public.dap_donnees_application_dap_id_seq'),
+                act_id BIGINT NOT NULL,
+                app_id BIGINT NOT NULL,
+                dap_nom_donnee_application VARCHAR(100) NOT NULL,
+                dap_integrite_donnee_application SMALLINT DEFAULT 1 NOT NULL,
+                dap_confidentialite_donnee_application SMALLINT DEFAULT 1 NOT NULL,
+                dap_tracabilite_donnee_application SMALLINT DEFAULT 1 NOT NULL,
+                CONSTRAINT dap_donnees_application_pk PRIMARY KEY (dap_id)
+);
+
+
+ALTER SEQUENCE public.dap_donnees_application_dap_id_seq OWNED BY public.dap_donnees_application.dap_id;
 
 CREATE TABLE public.aptg_app_tgs (
                 app_id BIGINT NOT NULL,
@@ -764,6 +1193,10 @@ CREATE TABLE public.aptg_app_tgs (
                 CONSTRAINT aptg_app_tgs_pk PRIMARY KEY (app_id, tgs_id)
 );
 
+
+CREATE INDEX idx_aptg_app_id
+ ON public.aptg_app_tgs
+ ( app_id );
 
 ALTER TABLE public.idtg_idn_tgs ADD CONSTRAINT tgs_idtg_fk
 FOREIGN KEY (tgs_id)
@@ -873,7 +1306,7 @@ NOT DEFERRABLE;
 ALTER TABLE public.frn_fournisseurs ADD CONSTRAINT tfr_frn_fk
 FOREIGN KEY (tfr_id)
 REFERENCES public.tfr_types_fournisseur (tfr_id)
-ON DELETE NO ACTION
+ON DELETE SET NULL
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
@@ -894,7 +1327,28 @@ NOT DEFERRABLE;
 ALTER TABLE public.acfr_act_frn ADD CONSTRAINT frn_acfr_fk
 FOREIGN KEY (frn_id)
 REFERENCES public.frn_fournisseurs (frn_id)
-ON DELETE NO ACTION
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.ipp_indisponibilite_personnel_prestataire ADD CONSTRAINT frn_ipp_fk
+FOREIGN KEY (frn_id)
+REFERENCES public.frn_fournisseurs (frn_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.pap_prestataires_autres_prestataires ADD CONSTRAINT frn_pap_nouveau_fk
+FOREIGN KEY (frn_id_nouveau)
+REFERENCES public.frn_fournisseurs (frn_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.pap_prestataires_autres_prestataires ADD CONSTRAINT frn_pap_origine_fk
+FOREIGN KEY (frn_id)
+REFERENCES public.frn_fournisseurs (frn_id)
+ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
@@ -982,10 +1436,31 @@ ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
-ALTER TABLE public.ete_echelle_temps ADD CONSTRAINT sct_societes_ete_echelle_temps_fk
+ALTER TABLE public.ete_echelle_temps ADD CONSTRAINT sct_ete_fk
 FOREIGN KEY (sct_id)
 REFERENCES public.sct_societes (sct_id)
-ON DELETE NO ACTION
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.ein_equipes_internes ADD CONSTRAINT sct_ein_fk
+FOREIGN KEY (sct_id)
+REFERENCES public.sct_societes (sct_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.ipi_indisponibilite_personnel_interne ADD CONSTRAINT ein_ipi_fk
+FOREIGN KEY (ein_id)
+REFERENCES public.ein_equipes_internes (ein_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.pei_prestataires_vers_equipes_internes ADD CONSTRAINT ein_pei_fk
+FOREIGN KEY (ein_id)
+REFERENCES public.ein_equipes_internes (ein_id)
+ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
@@ -1035,6 +1510,34 @@ ALTER TABLE public.scap_sct_app ADD CONSTRAINT ete_scap_pdma_fk
 FOREIGN KEY (ete_id_pdma_dsi)
 REFERENCES public.ete_echelle_temps (ete_id)
 ON DELETE SET NULL
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.ipi_indisponibilite_personnel_interne ADD CONSTRAINT ete_ipi_fk
+FOREIGN KEY (ete_id)
+REFERENCES public.ete_echelle_temps (ete_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.ipp_indisponibilite_personnel_prestataire ADD CONSTRAINT ete_ipp_fk
+FOREIGN KEY (ete_id)
+REFERENCES public.ete_echelle_temps (ete_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.pap_prestataires_autres_prestataires ADD CONSTRAINT ete_pap_fk
+FOREIGN KEY (ete_id)
+REFERENCES public.ete_echelle_temps (ete_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.pei_prestataires_vers_equipes_internes ADD CONSTRAINT ete_pei_fk
+FOREIGN KEY (ete_id)
+REFERENCES public.ete_echelle_temps (ete_id)
+ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
@@ -1150,6 +1653,20 @@ ON DELETE SET NULL
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
+ALTER TABLE public.ipi_indisponibilite_personnel_interne ADD CONSTRAINT ppr_ipi_fk
+FOREIGN KEY (ppr_id)
+REFERENCES public.ppr_parties_prenantes (ppr_id)
+ON DELETE SET NULL
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.pei_prestataires_vers_equipes_internes ADD CONSTRAINT ppr_pei_fk
+FOREIGN KEY (ppr_id)
+REFERENCES public.ppr_parties_prenantes (ppr_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
 ALTER TABLE public.pac_plan_actions ADD CONSTRAINT cmp_pac_fk
 FOREIGN KEY (cmp_id)
 REFERENCES public.cmp_campagnes (cmp_id)
@@ -1262,6 +1779,34 @@ ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
+ALTER TABLE public.ipi_indisponibilite_personnel_interne ADD CONSTRAINT act_ipe_fk
+FOREIGN KEY (act_id)
+REFERENCES public.act_activites (act_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.ipp_indisponibilite_personnel_prestataire ADD CONSTRAINT act_ipp_fk
+FOREIGN KEY (act_id)
+REFERENCES public.act_activites (act_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.pap_prestataires_autres_prestataires ADD CONSTRAINT act_pap_fk
+FOREIGN KEY (act_id)
+REFERENCES public.act_activites (act_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.pei_prestataires_vers_equipes_internes ADD CONSTRAINT acfr_pei_fk
+FOREIGN KEY (frn_id, act_id)
+REFERENCES public.acfr_act_frn (frn_id, act_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
 ALTER TABLE public.acst_act_sts ADD CONSTRAINT cmst_acst_fk
 FOREIGN KEY (cmp_id, sts_id)
 REFERENCES public.cmst_cmp_sts (cmp_id, sts_id)
@@ -1286,7 +1831,7 @@ NOT DEFERRABLE;
 ALTER TABLE public.dma_dmia_activite ADD CONSTRAINT mim_dma_fk
 FOREIGN KEY (mim_id)
 REFERENCES public.mim_matrice_impacts (mim_id)
-ON DELETE NO ACTION
+ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;
 
@@ -1307,6 +1852,20 @@ NOT DEFERRABLE;
 ALTER TABLE public.scap_sct_app ADD CONSTRAINT app_scap_fk
 FOREIGN KEY (app_id)
 REFERENCES public.app_applications (app_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.dap_donnees_application ADD CONSTRAINT acap_dap_fk
+FOREIGN KEY (act_id, app_id)
+REFERENCES public.acap_act_app (act_id, app_id)
+ON DELETE CASCADE
+ON UPDATE NO ACTION
+NOT DEFERRABLE;
+
+ALTER TABLE public.appa_applications_palliatives ADD CONSTRAINT acap_appa_fk
+FOREIGN KEY (act_id, app_id)
+REFERENCES public.acap_act_app (act_id, app_id)
 ON DELETE CASCADE
 ON UPDATE NO ACTION
 NOT DEFERRABLE;

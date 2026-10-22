@@ -768,7 +768,7 @@ WHERE iden.idn_id = ' . $_SESSION['idn_id'] . ' AND idn.idn_id = :idn_id ';
 		 * \return Retourne "TRUE" si autorisé et changement effectué, sinon lève une exception.
 		 */
 
-		$Texte = $_SERVER['HTTP_USER_AGENT'] . '##' . $_SERVER['HTTP_ACCEPT_LANGUAGE'] . '##' . $_SERVER['HTTP_ACCEPT_ENCODING'] .
+		$Texte = $_SERVER['HTTP_HOST'] . '##' . $_SERVER['HTTP_USER_AGENT'] . '##' . $_SERVER['HTTP_ACCEPT_LANGUAGE'] . '##' . $_SERVER['HTTP_ACCEPT_ENCODING'] .
 			'##' . $_SERVER['HTTP_COOKIE'] . '##' . $_SERVER['REMOTE_ADDR'];
 
 		return hash('sha256', $Texte );
@@ -818,6 +818,27 @@ WHERE iden.idn_id = ' . $_SESSION['idn_id'] . ' AND idn.idn_id = :idn_id ';
 			//print($_SESSION['jeton_session'].' == '.$New_Jeton);
 			return FALSE;
 		}
+	}
+
+
+	public function listerLanguesSysteme() {
+		/**
+		 * Récupère toutes langues déclarées dans le système
+		 *
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2026-10-01
+		 *
+		 * \return Retourne une liste de langues, sinon lève une exception en cas d'erreur.
+		 */
+
+		$Request = 'SELECT * FROM lng_langages ';
+
+		$Query = $this->prepareSQL( $Request );
+
+		$this->executeSQL( $Query );
+
+		return $Query->fetchAll();
 	}
 }
 

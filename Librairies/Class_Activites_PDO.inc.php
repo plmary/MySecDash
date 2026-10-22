@@ -405,8 +405,8 @@ class Activites extends HBL_Connexioneur_BD {
 
 				foreach( $Query->fetchAll( PDO::FETCH_CLASS ) as $Element ) {
 					$Request = 'INSERT INTO acap_act_app
-						(act_id, app_id, ete_id_dima, ete_id_pdma, acap_palliatif, acap_donnees, acap_hebergement, acap_niveau_service) VALUES
-						(:act_id, :app_id, :ete_id_dima, :ete_id_pdma, :acap_palliatif, :acap_donnees, :acap_hebergement, :acap_niveau_service) ';
+						(act_id, app_id, ete_id_dima, ete_id_pdma, acap_palliatif, acap_hebergement, acap_niveau_service) VALUES
+						(:act_id, :app_id, :ete_id_dima, :ete_id_pdma, :acap_palliatif, :acap_hebergement, :acap_niveau_service) ';
 
 					$Query = $this->prepareSQL( $Request );
 
@@ -415,7 +415,6 @@ class Activites extends HBL_Connexioneur_BD {
 					$this->bindSQL( $Query, ':ete_id_dima', $Element->ete_id_dima, PDO::PARAM_INT );
 					$this->bindSQL( $Query, ':ete_id_pdma', $Element->ete_id_pdma, PDO::PARAM_INT );
 					$this->bindSQL( $Query, ':acap_palliatif', $Element->acap_palliatif, PDO::PARAM_LOB );
-					$this->bindSQL( $Query, ':acap_donnees', $Element->acap_donnees, PDO::PARAM_LOB );
 					$this->bindSQL( $Query, ':acap_hebergement', $Element->acap_hebergement, PDO::PARAM_LOB );
 					$this->bindSQL( $Query, ':acap_niveau_service', $Element->acap_niveau_service, PDO::PARAM_LOB );
 
@@ -1511,7 +1510,7 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 
 	public function recupererDMIA($cmp_id, $act_id) {
 		/**
-		 * Récupère le DMIA des Activités associées à une Campagne.
+		 * Récupère le DMIA d'une Activité associée à une Campagne.
 		 *
 		 * \license Copyright Loxense
 		 * \author Pierre-Luc MARY
@@ -1537,6 +1536,65 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		$this->executeSQL( $Query );
 
 		return $Query->fetchAll( PDO::FETCH_CLASS );
+	}
+
+	
+	public function recupererSensibiliteActivite($cmp_id, $act_id, $affichage = '') {
+		/**
+		 * Récupère la sensibilité (Niveau d'impact et DMIA) d'une Activité.
+		 *
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2024-08-18
+		 *
+		 * \param[in] $cmp_id Identifiant de la Campagne associée
+		 * \param[in] $act_id Identifiant de l'Activité associée
+		 *
+		 * \return Renvoi les occurrences qui sont associées à une Campagne. Lève une Exception en cas d'erreur.
+		 */
+		$Request = 'SELECT nim.nim_poids, nim.nim_numero, nim.nim_nom_code, nim.nim_couleur, ete.ete_poids, ete.ete_nom_code
+	FROM dma_dmia_activite AS "dma"
+	LEFT JOIN mim_matrice_impacts AS "mim" ON mim.mim_id = dma.mim_id
+	LEFT JOIN nim_niveaux_impact AS "nim" ON nim.nim_id = mim.nim_id
+	LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id
+	LEFT JOIN ete_echelle_temps AS "ete" ON ete.ete_id = dma.ete_id
+	WHERE dma.cmp_id = :cmp_id AND dma.act_id = :act_id
+	ORDER BY ete_poids ';
+
+		$Query = $this->prepareSQL( $Request );
+
+		$this->bindSQL( $Query, ':cmp_id', $cmp_id, PDO::PARAM_INT ) ;
+		$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT ) ;
+
+		$this->executeSQL( $Query );
+
+		$Donnees = $Query->fetchAll( PDO::FETCH_CLASS );
+
+		$Niveau_Impact = 0;
+		$Couleur_Impact = '';
+		$DMIA = '';
+
+		foreach( $Donnees as $infos_activite ) { //print_r($infos_activite);print('<hr>');
+			if ( $affichage == '') {
+				if ( $DMIA == '' && $infos_activite->nim_poids >= 3 ) {
+					$DMIA = $infos_activite->ete_nom_code;
+				}
+			} else {
+				$DMIA = $infos_activite->ete_nom_code;
+			}
+
+			$Niveau_Impact = $infos_activite->nim_nom_code;
+			$Numero_Impact = $infos_activite->nim_numero;
+			$Couleur_Impact = $infos_activite->nim_couleur;
+		}
+
+		$Donnees = new stdClass();
+		$Donnees->ete_nom_code = $DMIA;
+		$Donnees->nim_nom_code = $Niveau_Impact;
+		$Donnees->nim_numero = $Numero_Impact;
+		$Donnees->nim_couleur = $Couleur_Impact;
+		
+		return $Donnees;
 	}
 
 
@@ -1818,17 +1876,35 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 *
 		 * \return Renvoi l'occurrence listant les associations du Site ou FALSE si pas d'entité. Lève une Exception en cas d'erreur.
 		 */
-		$Request = 'SELECT app.*, frn.*, acap.act_id AS "associe", acap.ete_id_dima, acap.ete_id_pdma, scap.ete_id_dima_dsi, scap.ete_id_pdma_dsi, 
-			acap.acap_donnees, acap.acap_palliatif, acap.acap_hebergement, acap.acap_niveau_service
+/*		$Request = 'SELECT app.*, frn.*, acap.act_id AS "associe", acap.ete_id_dima, acap.ete_id_pdma, scap.ete_id_dima_dsi, scap.ete_id_pdma_dsi, 
+			acap.acap_palliatif, acap.acap_hebergement, acap.acap_niveau_service, acap_donnees
 			FROM app_applications AS "app"
 			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id
 			LEFT JOIN
-				(SELECT app_id, act_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif, acap_hebergement, acap_niveau_service
-					FROM acap_act_app WHERE act_id = :act_id) AS "acap" ON acap.app_id = app.app_id
+				(SELECT acap.app_id, acap.act_id, acap.ete_id_dima, acap.ete_id_pdma, acap_palliatif, acap_hebergement, acap_niveau_service,
+					STRING_AGG( DISTINCT dap_nom_donnee_application || \'---\' || dap_integrite_donnee_application || \'---\' || dap_confidentialite_donnee_application || \'---\' || dap_tracabilite_donnee_application || \'---\' || dap_id, \'###\' ) AS "acap_donnees"
+					FROM acap_act_app AS "acap"
+					LEFT JOIN dap_donnees_application AS "dap" ON dap.act_id = acap.act_id AND dap.app_id = acap.app_id
+					WHERE acap.act_id = :act_id
+					GROUP BY acap.app_id, acap.act_id, acap.ete_id_dima, acap.ete_id_pdma, acap_palliatif, acap_hebergement, acap_niveau_service) AS "acap" ON acap.app_id = app.app_id
 			LEFT JOIN act_activites AS "act" ON act.act_id = acap.act_id
 			LEFT JOIN scap_sct_app AS "scap" ON scap.app_id = app.app_id AND scap.sct_id = :sct_id
-			ORDER BY acap.act_id, app.app_nom ';
+			ORDER BY acap.act_id, app.app_nom ';*/
 
+		$Request = 'SELECT app.*, frn.*, acap.act_id AS "associe", acap.ete_id_dima, acap.ete_id_pdma, scap.ete_id_dima_dsi, scap.ete_id_pdma_dsi,
+			acap.acap_palliatif, acap.acap_hebergement, acap.acap_niveau_service, acap_donnees
+			FROM app_applications AS "app"
+			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id
+			LEFT JOIN
+				(SELECT acap.app_id, acap.act_id, acap.ete_id_dima, acap.ete_id_pdma, acap_palliatif, acap_hebergement, acap_niveau_service,
+					STRING_AGG( DISTINCT dap_nom_donnee_application || \'---\' || dap_integrite_donnee_application || \'---\' || dap_confidentialite_donnee_application || \'---\' || dap_tracabilite_donnee_application || \'---\' || dap_id, \'###\' ) AS "acap_donnees"
+					FROM acap_act_app AS "acap"
+					LEFT JOIN dap_donnees_application AS "dap" ON dap.act_id = acap.act_id AND dap.app_id = acap.app_id
+					WHERE acap.act_id = :act_id
+					GROUP BY acap.app_id, acap.act_id, acap.ete_id_dima, acap.ete_id_pdma, acap_palliatif, acap_hebergement, acap_niveau_service) AS "acap" ON acap.app_id = app.app_id
+			LEFT JOIN scap_sct_app AS "scap" ON scap.app_id = app.app_id AND scap.sct_id = :sct_id
+			ORDER BY acap.act_id, app.app_nom ';
+//print('<hr>'.$Request);		
 
 		$Query = $this->prepareSQL( $Request );
 
@@ -1857,13 +1933,20 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 *
 		 * \return Renvoi l'occurrence listant les associations du Site ou FALSE si pas d'entité. Lève une Exception en cas d'erreur.
 		 */
-		$Request = 'SELECT acap.*, app.*, frn.*, ete1.ete_nom_code AS "ete_id_dima", ete2.ete_nom_code AS "ete_id_pdma"
+		$Request = 'SELECT acap.ete_id_dima, acap.ete_id_pdma, acap.acap_palliatif, acap.acap_hebergement, acap.acap_niveau_service,
+			app.app_id, app.frn_id, app.sct_id, app.app_nom, app.app_nom_alias, app.app_hebergement, app.app_niveau_service, app.app_description,
+			frn.frn_id, frn.tfr_id, frn.frn_nom, frn.frn_description, ete1.ete_nom_code AS "ete_id_dima", ete2.ete_nom_code AS "ete_id_pdma",
+			STRING_AGG(DISTINCT dap_nom_donnee_application || \'=\' || dap_integrite_donnee_application || dap_confidentialite_donnee_application || dap_tracabilite_donnee_application, \'\n\') AS "acap_donnees"
 			FROM acap_act_app AS "acap"
 			LEFT JOIN app_applications AS "app" ON app.app_id = acap.app_id
 			LEFT JOIN frn_fournisseurs AS "frn" ON frn.frn_id = app.frn_id
+			LEFT JOIN dap_donnees_application AS "dap" ON dap.act_id = acap.act_id AND dap.app_id = acap.app_id
 			LEFT JOIN ete_echelle_temps AS "ete1" ON ete1.ete_id = acap.ete_id_dima
 			LEFT JOIN ete_echelle_temps AS "ete2" ON ete2.ete_id = acap.ete_id_pdma
 			WHERE acap.act_id = :act_id
+			GROUP BY acap.ete_id_dima, acap.ete_id_pdma, acap.acap_palliatif, acap.acap_hebergement, acap.acap_niveau_service,
+			app.app_id, app.frn_id, app.sct_id, app.app_nom, app.app_nom_alias, app.app_hebergement, app.app_niveau_service, app.app_description,
+			frn.frn_id, frn.tfr_id, frn.frn_nom, frn.frn_description, ete1.ete_nom_code, ete2.ete_nom_code
 			ORDER BY app.app_nom ';
 		
 		
@@ -1879,11 +1962,10 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		
 		return $Query->fetchAll( PDO::FETCH_CLASS );
 	}
-	
 
 
 	public function ajouterApplicationActivite( $act_id, $app_id, $ete_id_dima, $ete_id_pdma,
-		$acap_donnees="", $acap_palliatif="", $acap_hebergement="", $acap_niveau_service="" ) {
+		$acap_palliatif="", $acap_hebergement="", $acap_niveau_service="" ) {
 		/**
 		 * Associe une Application à une Activité.
 		 *
@@ -1895,7 +1977,6 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 * \param[in] $app_id Identifiant de l'Application à associer
 		 * \param[in] $ete_id_dima Identifiant de l'échelle de temps pour le DMIA de l'Application
 		 * \param[in] $ete_id_pdma Identifiant de l'échelle de temps pour le PDMA de l'Application
-		 * \param[in] $acap_donnees Données associées à cette Application
 		 * \param[in] $acap_palliatif Commentaire sur le palliatif
 		 * \param[in] $acap_hebergement Hébergement spécifique de l'Application pour cette Activité
 		 * \param[in] $acap_niveau_service Niveau de Service spécifique de l'Application pour cette Activité
@@ -1903,8 +1984,8 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 * \return Renvoi TRUE si l'occurrence est créée. Lève une Exception en cas d'erreur.
 		 */
 		$Request = 'INSERT INTO acap_act_app AS "acap"
-			(act_id, app_id, ete_id_dima, ete_id_pdma, acap_donnees, acap_palliatif, acap_hebergement, acap_niveau_service)
-			VALUES (:act_id, :app_id, :ete_id_dima, :ete_id_pdma, :acap_donnees, :acap_palliatif, :acap_hebergement, :acap_niveau_service) ';
+			(act_id, app_id, ete_id_dima, ete_id_pdma, acap_palliatif, acap_hebergement, acap_niveau_service)
+			VALUES (:act_id, :app_id, :ete_id_dima, :ete_id_pdma, :acap_palliatif, :acap_hebergement, :acap_niveau_service) ';
 
 		$Query = $this->prepareSQL( $Request );
 
@@ -1912,7 +1993,6 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		$this->bindSQL( $Query, ':app_id', $app_id, PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':ete_id_dima', $ete_id_dima, PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':ete_id_pdma', $ete_id_pdma, PDO::PARAM_INT );
-		$this->bindSQL( $Query, ':acap_donnees', $acap_donnees, PDO::PARAM_LOB );
 		$this->bindSQL( $Query, ':acap_palliatif', $acap_palliatif, PDO::PARAM_LOB );
 		$this->bindSQL( $Query, ':acap_hebergement', $acap_hebergement, PDO::PARAM_LOB );
 		$this->bindSQL( $Query, ':acap_niveau_service', $acap_niveau_service, PDO::PARAM_LOB );
@@ -1929,7 +2009,7 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 
 
 	public function modifierApplicationActivite( $act_id, $app_id, $ete_id_dima, $ete_id_pdma,
-		$acap_donnees="", $acap_palliatif="", $acap_hebergement="", $acap_niveau_service="" ) {
+		$acap_palliatif="", $acap_hebergement="", $acap_niveau_service="" ) {
 		/**
 		 * Modifie une Application à une Activité.
 		 *
@@ -1941,7 +2021,6 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 * \param[in] $app_id Identifiant de l'Application à associer
 		 * \param[in] $ete_id_dima Identifiant de l'échelle de temps pour le DMIA de l'Application
 		 * \param[in] $ete_id_pdma Identifiant de l'échelle de temps pour le PDMA de l'Application
-		 * \param[in] $acap_donnees Description des Données associées à l'Application
 		 * \param[in] $acap_palliatif Commentaire sur le palliatif
 		 * \param[in] $acap_hebergement Hébergement spécifique de l'Application pour cette Activité
 		 * \param[in] $acap_niveau_service Niveau de Service spécifique de l'Application pour cette Activité
@@ -1951,7 +2030,6 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		$Request = 'UPDATE acap_act_app SET 
 			ete_id_dima = :ete_id_dima,
 			ete_id_pdma = :ete_id_pdma,
-			acap_donnees = :acap_donnees,
 			acap_palliatif = :acap_palliatif,
 			acap_hebergement = :acap_hebergement,
 			acap_niveau_service = :acap_niveau_service
@@ -1964,7 +2042,6 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		$this->bindSQL( $Query, ':app_id', $app_id, PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':ete_id_dima', $ete_id_dima, PDO::PARAM_INT );
 		$this->bindSQL( $Query, ':ete_id_pdma', $ete_id_pdma, PDO::PARAM_INT );
-		$this->bindSQL( $Query, ':acap_donnees', $acap_donnees, PDO::PARAM_LOB );
 		$this->bindSQL( $Query, ':acap_palliatif', $acap_palliatif, PDO::PARAM_LOB );
 		$this->bindSQL( $Query, ':acap_hebergement', $acap_hebergement, PDO::PARAM_LOB );
 		$this->bindSQL( $Query, ':acap_niveau_service', $acap_niveau_service, PDO::PARAM_LOB );
@@ -2025,18 +2102,20 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		 */
 
 		if ( $_SESSION['idn_super_admin'] === TRUE ) {
-			$Request = 'SELECT ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description, COUNT(DISTINCT act_id) AS "total_activites"
-				FROM act_activites AS "act"
-				LEFT JOIN ent_entites AS "ent" ON ent.ent_id = act.ent_id
-				WHERE act.cmp_id = :cmp_id
+			$Request = 'SELECT ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description, COUNT(DISTINCT act.act_id) AS "total_activites" 
+				FROM cmen_cmp_ent AS "cmen" 
+				LEFT JOIN ent_entites AS "ent" ON ent.ent_id = cmen.ent_id 
+				LEFT JOIN act_activites AS "act" ON act.ent_id = cmen.ent_id  AND act.cmp_id = :cmp_id
+				WHERE cmen.cmp_id = :cmp_id
 				GROUP BY ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description
 				ORDER BY ent_nom ';
 		} else {
-			$Request = 'SELECT ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description, COUNT(DISTINCT act_id) AS "total_activites"
-				FROM iden_idn_ent AS "iden"
-				LEFT JOIN act_activites AS "act" ON act.ent_id = iden.ent_id
-				LEFT JOIN ent_entites AS "ent" ON ent.ent_id = iden.ent_id
-				WHERE iden.idn_id = :idn_id AND act.cmp_id = :cmp_id
+			$Request = 'SELECT ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description, COUNT(DISTINCT act.act_id) AS "total_activites" 
+				FROM cmen_cmp_ent AS "cmen" 
+				LEFT JOIN ent_entites AS "ent" ON ent.ent_id = cmen.ent_id 
+				LEFT JOIN act_activites AS "act" ON act.ent_id = cmen.ent_id  AND act.cmp_id = :cmp_id
+				LEFT JOIN iden_idn_ent AS "iden" ON iden.ent_id = cmen.ent_id
+				WHERE cmen.cmp_id = :cmp_id AND iden.idn_id = :idn_id
 				GROUP BY ent.ent_id, ent.sct_id, ent.ent_nom, ent.ent_description
 				ORDER BY ent_nom ';
 		}
@@ -2050,7 +2129,48 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 		}
 
 		$this->executeSQL( $Query );
+
+		return $Query->fetchAll( PDO::FETCH_CLASS );
+	}
+
+
+	public function rechercherActivitesEntiteCampagne( $cmp_id, $ent_id ) {
+		/**
+		 * Rechercher les Activités associées à une Campagne et une Entité.
+		 *
+		 * \license Copyleft Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2026-08-29
+		 *
+		 * \param[in] $cmp_id Identifiant de la Campagne à utiliser pour la recherche
+		 * \param[in] $ent_id Identifiant de l'Entité à utiliser pour la recherche
+		 *
+		 * \return Renvoi la liste des Activités. Sinon lève une Exception en cas d'erreur.
+		 */
+
+		if ( $_SESSION['idn_super_admin'] === TRUE ) {
+			$Request = 'SELECT act.act_id, act.cmp_id, act.ent_id, act.act_nom
+				FROM act_activites AS "act"
+				WHERE act.cmp_id = :cmp_id AND act.ent_id = :ent_id
+				ORDER BY act.act_nom ';
+		} else {
+			$Request = 'SELECT act.act_id, act.cmp_id, act.ent_id, act.act_nom
+				FROM act_activites AS "act"
+				WHERE act.cmp_id = :cmp_id AND act.ent_id IN (SELECT ent_id FROM iden_idn_ent WHERE idn_id = :idn_id AND ent_id = :ent_id)
+				ORDER BY act.act_nom ';
+		}
+
+		$Query = $this->prepareSQL( $Request );
+
+		$this->bindSQL( $Query, ':cmp_id', intval($cmp_id), PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':ent_id', intval($ent_id), PDO::PARAM_INT );
 		
+		if ( $_SESSION['idn_super_admin'] === FALSE ) {
+			$this->bindSQL( $Query, ':idn_id', $_SESSION['idn_id'], PDO::PARAM_INT );
+		}
+
+		$this->executeSQL( $Query );
+
 		return $Query->fetchAll( PDO::FETCH_CLASS );
 	}
 
@@ -2208,8 +2328,8 @@ LEFT JOIN tim_types_impact AS "tim" ON tim.tim_id = mim.tim_id ';
 			
 			return TRUE;
 	}
-	
-	
+
+
 	public function supprimerFournisseurActivite( $act_id, $frn_id ) {
 		/**
 		 * Supprime l'association entre un Fournisseur et une Activité.
@@ -2310,6 +2430,162 @@ max_dmia.ete_poids, ent_nom, ent_description ';
 		$this->executeSQL( $Query );
 
 		return $Query->fetchAll( PDO::FETCH_CLASS );
+	}
+
+
+	public function rechercherDonneesApplicationActivite( $act_id, $app_id ) {
+		/**
+		 * Lister les Données rattachées à une Application, elle même rattachée à une Activité.
+		 *
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2026-08-18
+		 *
+		 * \param[in] $act_id Identifiant de l'Activité de rattachement
+		 * \param[in] $app_id Identifiant de l'Application de rattachement
+		 *
+		 * \return Renvoi une liste des Données rattachées à cette Application et cette Activité
+		 */
+
+		$Request = 'SELECT *
+FROM dap_donnees_application AS "dap"
+LEFT JOIN act_activites AS "act" ON act.act_id = dap.act_id
+LEFT JOIN app_applications AS "app" ON app.app_id = dap.app_id
+WHERE dap.act_id = :act_id AND dap.app_id = :app_id
+ORDER BY dap_nom_donnee_application ';
+
+		$Query = $this->prepareSQL( $Request );
+
+		$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':app_id', $app_id, PDO::PARAM_INT );
+
+		$this->executeSQL( $Query );
+
+		return $Query->fetchAll( PDO::FETCH_CLASS );
+	}
+
+
+	public function creerDonneesApplicationActivite( $act_id, $app_id, $dap_nom_donnee_application, $dap_integrite_donnee_application,
+		$dap_confidentialite_donnee_application, $dap_tracabilite_donnee_application ) {
+		/**
+		 * Créer les Données rattachées à une Application, elle même rattachée à une Activité.
+		 *
+		 * \license Copyright Loxense
+		 * \author Pierre-Luc MARY
+		 * \date 2026-08-19
+		 *
+		 * \param[in] $act_id Identifiant de l'Activité de rattachement
+		 * \param[in] $app_id Identifiant de l'Application de rattachement
+		 * \param[in] $dap_nom_donnee_application Nom de la nouvelle donnée
+		 * \param[in] $dap_integrite_donnee_application Niveau d'Intégrité de la nouvelle donnée
+		 * \param[in] $dap_confidentialite_donnee_application Niveau de Confidentialité de la nouvelle donnée
+		 * \param[in] $dap_tracabilite_donnee_application Niveau de Traçabilité de la nouvelle donnée
+		 *
+		 * \return Renvoi TRUE si les Données ont été créées. Sinon, lève une exception.
+		 */
+
+		$Request = 'INSERT INTO dap_donnees_application
+(act_id, app_id, dap_nom_donnee_application, dap_integrite_donnee_application, dap_confidentialite_donnee_application,
+dap_tracabilite_donnee_application) VALUES
+(:act_id, :app_id, :dap_nom_donnee_application, :dap_integrite_donnee_application, :dap_confidentialite_donnee_application,
+:dap_tracabilite_donnee_application) ';
+
+		$Query = $this->prepareSQL( $Request );
+
+		$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':app_id', $app_id, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':dap_nom_donnee_application', $dap_nom_donnee_application, PDO::PARAM_STR, L_NOM );
+		$this->bindSQL( $Query, ':dap_integrite_donnee_application', $dap_integrite_donnee_application, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':dap_confidentialite_donnee_application', $dap_confidentialite_donnee_application, PDO::PARAM_INT );
+		$this->bindSQL( $Query, ':dap_tracabilite_donnee_application', $dap_tracabilite_donnee_application, PDO::PARAM_INT );
+		
+		$this->executeSQL( $Query );
+
+		if ( $this->RowCount == 0 ) {
+			return FALSE;
+		}
+
+		switch( $this->getAttribute(PDO::ATTR_DRIVER_NAME) ) {
+			default;
+			$this->LastInsertId = $this->lastInsertId();
+			break;
+
+			case 'pgsql';
+			$this->LastInsertId = $this->lastInsertId( 'dap_donnees_application_dap_id_seq' );
+			break;
+		}
+
+		return TRUE;
+	}
+
+
+	public function modifierDonneesApplicationActivite( $dap_id, $act_id, $app_id, $dap_nom_donnee_application, $dap_integrite_donnee_application,
+		$dap_confidentialite_donnee_application, $dap_tracabilite_donnee_application ) {
+			/**
+			 * Modifier les Données rattachées à une Application, elle même rattachée à une Activité.
+			 *
+			 * \license Copyright Loxense
+			 * \author Pierre-Luc MARY
+			 * \date 2026-08-19
+			 *
+			 * \param[in] $dap_id Identifiant des Données à modifier
+			 * \param[in] $act_id Identifiant de l'Activité de rattachement
+			 * \param[in] $app_id Identifiant de l'Application de rattachement
+			 * \param[in] $dap_nom_donnee_application Nom de la nouvelle donnée
+			 * \param[in] $dap_integrite_donnee_application Niveau d'Intégrité de la nouvelle donnée
+			 * \param[in] $dap_confidentialite_donnee_application Niveau de Confidentialité de la nouvelle donnée
+			 * \param[in] $dap_tracabilite_donnee_application Niveau de Traçabilité de la nouvelle donnée
+			 *
+			 * \return Renvoi TRUE si les Données ont été modifiées, sinon lève une excpetion.
+			 */
+
+			$Request = 'UPDATE dap_donnees_application SET
+act_id = :act_id,
+app_id = :app_id,
+dap_nom_donnee_application = :dap_nom_donnee_application,
+dap_integrite_donnee_application = :dap_integrite_donnee_application,
+dap_confidentialite_donnee_application = :dap_confidentialite_donnee_application,
+dap_tracabilite_donnee_application = :dap_tracabilite_donnee_application
+WHERE dap_id = :dap_id ';
+
+			$Query = $this->prepareSQL( $Request );
+
+			$this->bindSQL( $Query, ':dap_id', $dap_id, PDO::PARAM_INT );
+			$this->bindSQL( $Query, ':act_id', $act_id, PDO::PARAM_INT );
+			$this->bindSQL( $Query, ':app_id', $app_id, PDO::PARAM_INT );
+			$this->bindSQL( $Query, ':dap_nom_donnee_application', $dap_nom_donnee_application, PDO::PARAM_STR, L_NOM );
+			$this->bindSQL( $Query, ':dap_integrite_donnee_application', $dap_integrite_donnee_application, PDO::PARAM_INT );
+			$this->bindSQL( $Query, ':dap_confidentialite_donnee_application', $dap_confidentialite_donnee_application, PDO::PARAM_INT );
+			$this->bindSQL( $Query, ':dap_tracabilite_donnee_application', $dap_tracabilite_donnee_application, PDO::PARAM_INT );
+			
+			$this->executeSQL( $Query );
+
+			return TRUE;
+	}
+
+
+	public function supprimerDonneesApplicationActivite( $dap_id ) {
+			/**
+			 * Supprimer les Données rattachées à une Application, elle même rattachée à une Activité.
+			 *
+			 * \license Copyright Loxense
+			 * \author Pierre-Luc MARY
+			 * \date 2026-08-19
+			 *
+			 * \param[in] $dap_id Identifiant de la Donnée à supprimer
+			 *
+			 * \return Renvoi un TRUE si les données ont été supprimées, sinon lève une exception.
+			 */
+
+			$Request = 'DELETE FROM dap_donnees_application WHERE dap_id = :dap_id ';
+
+			$Query = $this->prepareSQL( $Request );
+
+			$this->bindSQL( $Query, ':dap_id', $dap_id, PDO::PARAM_INT );
+
+			$this->executeSQL( $Query );
+
+			return TRUE;
 	}
 }
 

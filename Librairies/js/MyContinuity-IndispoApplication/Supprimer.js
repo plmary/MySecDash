@@ -1,0 +1,2 @@
+function ModalSupprimer( Id, Libelle ){
+}
